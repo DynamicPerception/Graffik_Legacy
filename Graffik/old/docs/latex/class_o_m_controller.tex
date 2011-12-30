@@ -1,0 +1,123 @@
+\hypertarget{class_o_m_controller}{
+\section{OMController Class Reference}
+\label{class_o_m_controller}\index{OMController@{OMController}}
+}
+
+
+{\ttfamily \#include $<$omcontroller.h$>$}
+
+Inheritance diagram for OMController:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_o_m_controller}
+\end{center}
+\end{figure}
+\subsection*{Signals}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{class_o_m_controller_a16a02fca40829bb599649af820b59dec}{commandQueued} (\hyperlink{class_o_m_command_buffer}{OMCommandBuffer} $\ast$)
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_o_m_controller_a37eb41ecd6775bd52ed520de69791ee5}{OMController} (char $\ast$)
+\item 
+\hyperlink{class_o_m_controller_a47ede74e236098c8b6f99c3de09f83b2}{$\sim$OMController} ()
+\item 
+\hyperlink{class_o_m_controller_a3480c3c367380bcea66825aae681c5c2}{OMController} (const \hyperlink{class_o_m_controller}{OMController} \&)
+\item 
+void \hyperlink{class_o_m_controller_a6cd9727f3c24525d0fa2903f59c4f2d9}{queueCommand} (\hyperlink{class_o_m_command_buffer}{OMCommandBuffer} $\ast$\&cmdBuf)
+\item 
+void \hyperlink{class_o_m_controller_a1e175037d84423402c04f73bc913f735}{connect} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{class_o_m_controller_a37eb41ecd6775bd52ed520de69791ee5}{
+\index{OMController@{OMController}!OMController@{OMController}}
+\index{OMController@{OMController}!OMController@{OMController}}
+\subsubsection[{OMController}]{\setlength{\rightskip}{0pt plus 5cm}OMController::OMController (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{port}
+\end{DoxyParamCaption}
+)}}
+\label{class_o_m_controller_a37eb41ecd6775bd52ed520de69791ee5}
+Constructs a new Controller
+
+Create a new controller, attached to a particular port. You must also specify the buffer size for commands waiting to go out.
+
+
+\begin{DoxyParams}{Parameters}
+{\em port} & The serial port name \\
+\hline
+\end{DoxyParams}
+\hypertarget{class_o_m_controller_a47ede74e236098c8b6f99c3de09f83b2}{
+\index{OMController@{OMController}!$\sim$OMController@{$\sim$OMController}}
+\index{$\sim$OMController@{$\sim$OMController}!OMController@{OMController}}
+\subsubsection[{$\sim$OMController}]{\setlength{\rightskip}{0pt plus 5cm}OMController::$\sim$OMController (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{class_o_m_controller_a47ede74e236098c8b6f99c3de09f83b2}
+\hypertarget{class_o_m_controller_a3480c3c367380bcea66825aae681c5c2}{
+\index{OMController@{OMController}!OMController@{OMController}}
+\index{OMController@{OMController}!OMController@{OMController}}
+\subsubsection[{OMController}]{\setlength{\rightskip}{0pt plus 5cm}OMController::OMController (
+\begin{DoxyParamCaption}
+\item[{const {\bf OMController} \&}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{class_o_m_controller_a3480c3c367380bcea66825aae681c5c2}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{class_o_m_controller_a16a02fca40829bb599649af820b59dec}{
+\index{OMController@{OMController}!commandQueued@{commandQueued}}
+\index{commandQueued@{commandQueued}!OMController@{OMController}}
+\subsubsection[{commandQueued}]{\setlength{\rightskip}{0pt plus 5cm}void OMController::commandQueued (
+\begin{DoxyParamCaption}
+\item[{{\bf OMCommandBuffer} $\ast$}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}signal\mbox{]}}}}
+\label{class_o_m_controller_a16a02fca40829bb599649af820b59dec}
+\hypertarget{class_o_m_controller_a1e175037d84423402c04f73bc913f735}{
+\index{OMController@{OMController}!connect@{connect}}
+\index{connect@{connect}!OMController@{OMController}}
+\subsubsection[{connect}]{\setlength{\rightskip}{0pt plus 5cm}void OMController::connect (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{class_o_m_controller_a1e175037d84423402c04f73bc913f735}
+Connect to the specified serial port
+
+Opens the configured serial device
+
+
+\begin{DoxyExceptions}{Exceptions}
+{\em errSerialNotAvailable} & Serial connection was unavailable. \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{class_o_m_controller_a6cd9727f3c24525d0fa2903f59c4f2d9}{
+\index{OMController@{OMController}!queueCommand@{queueCommand}}
+\index{queueCommand@{queueCommand}!OMController@{OMController}}
+\subsubsection[{queueCommand}]{\setlength{\rightskip}{0pt plus 5cm}void OMController::queueCommand (
+\begin{DoxyParamCaption}
+\item[{{\bf OMCommandBuffer} $\ast$\&}]{cmdBuf}
+\end{DoxyParamCaption}
+)}}
+\label{class_o_m_controller_a6cd9727f3c24525d0fa2903f59c4f2d9}
+Adds a command to the command queue
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmdBuf} & The address of a properly created (i.e. payload set) \hyperlink{class_o_m_command_buffer}{OMCommandBuffer} object pointer \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+\hyperlink{omcontroller_8h}{omcontroller.h}\item 
+\hyperlink{omcontroller_8cpp}{omcontroller.cpp}\end{DoxyCompactItemize}

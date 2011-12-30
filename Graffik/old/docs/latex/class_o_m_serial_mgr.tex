@@ -1,0 +1,117 @@
+\hypertarget{class_o_m_serial_mgr}{
+\section{OMSerialMgr Class Reference}
+\label{class_o_m_serial_mgr}\index{OMSerialMgr@{OMSerialMgr}}
+}
+
+
+{\ttfamily \#include $<$omserialmgr.h$>$}
+
+Inheritance diagram for OMSerialMgr:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_o_m_serial_mgr}
+\end{center}
+\end{figure}
+\subsection*{Public Slots}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{class_o_m_serial_mgr_af4cad4cb9f1a51d4c843f7b2da2ed438}{commandAdded} (\hyperlink{class_o_m_command_buffer}{OMCommandBuffer} $\ast$)
+\end{DoxyCompactItemize}
+\subsection*{Signals}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{class_o_m_serial_mgr_a12dd6030d34fb0b5ec83b9fd5adda481}{commandComplete} (\hyperlink{class_o_m_command_buffer}{OMCommandBuffer} $\ast$)
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_o_m_serial_mgr_aaf3e717e0d05702a9490845d146718a6}{OMSerialMgr} (char $\ast$)
+\item 
+void \hyperlink{class_o_m_serial_mgr_ab1939185db07f5fb4cf73819c776384d}{connect} ()
+\item 
+void \hyperlink{class_o_m_serial_mgr_aeb0015e25ab9758c1db5c374a2c84612}{run} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{class_o_m_serial_mgr_aaf3e717e0d05702a9490845d146718a6}{
+\index{OMSerialMgr@{OMSerialMgr}!OMSerialMgr@{OMSerialMgr}}
+\index{OMSerialMgr@{OMSerialMgr}!OMSerialMgr@{OMSerialMgr}}
+\subsubsection[{OMSerialMgr}]{\setlength{\rightskip}{0pt plus 5cm}OMSerialMgr::OMSerialMgr (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{port}
+\end{DoxyParamCaption}
+)}}
+\label{class_o_m_serial_mgr_aaf3e717e0d05702a9490845d146718a6}
+\hyperlink{class_open_mo_co}{OpenMoCo} Serial Manager
+
+Create a new serial manager for a serial port. Creates a new serial object and a thread to manage messages being sent to and from that serial object.
+
+
+\begin{DoxyParams}{Parameters}
+{\em port} & The serial port name \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{class_o_m_serial_mgr_af4cad4cb9f1a51d4c843f7b2da2ed438}{
+\index{OMSerialMgr@{OMSerialMgr}!commandAdded@{commandAdded}}
+\index{commandAdded@{commandAdded}!OMSerialMgr@{OMSerialMgr}}
+\subsubsection[{commandAdded}]{\setlength{\rightskip}{0pt plus 5cm}void OMSerialMgr::commandAdded (
+\begin{DoxyParamCaption}
+\item[{{\bf OMCommandBuffer} $\ast$}]{thsCmd}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}slot\mbox{]}}}}
+\label{class_o_m_serial_mgr_af4cad4cb9f1a51d4c843f7b2da2ed438}
+Command Entry Slot
+
+Issue a command to the serial device
+
+
+\begin{DoxyParams}{Parameters}
+{\em thsCmd} & The command buffer to be sent \\
+\hline
+\end{DoxyParams}
+\hypertarget{class_o_m_serial_mgr_a12dd6030d34fb0b5ec83b9fd5adda481}{
+\index{OMSerialMgr@{OMSerialMgr}!commandComplete@{commandComplete}}
+\index{commandComplete@{commandComplete}!OMSerialMgr@{OMSerialMgr}}
+\subsubsection[{commandComplete}]{\setlength{\rightskip}{0pt plus 5cm}void OMSerialMgr::commandComplete (
+\begin{DoxyParamCaption}
+\item[{{\bf OMCommandBuffer} $\ast$}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}signal\mbox{]}}}}
+\label{class_o_m_serial_mgr_a12dd6030d34fb0b5ec83b9fd5adda481}
+\hypertarget{class_o_m_serial_mgr_ab1939185db07f5fb4cf73819c776384d}{
+\index{OMSerialMgr@{OMSerialMgr}!connect@{connect}}
+\index{connect@{connect}!OMSerialMgr@{OMSerialMgr}}
+\subsubsection[{connect}]{\setlength{\rightskip}{0pt plus 5cm}void OMSerialMgr::connect (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{class_o_m_serial_mgr_ab1939185db07f5fb4cf73819c776384d}
+Connect to serial device
+
+Initiates serial connection.
+
+
+\begin{DoxyExceptions}{Exceptions}
+{\em errSerialNotAvailable} & The serial port could not be opened. \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{class_o_m_serial_mgr_aeb0015e25ab9758c1db5c374a2c84612}{
+\index{OMSerialMgr@{OMSerialMgr}!run@{run}}
+\index{run@{run}!OMSerialMgr@{OMSerialMgr}}
+\subsubsection[{run}]{\setlength{\rightskip}{0pt plus 5cm}void OMSerialMgr::run (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{class_o_m_serial_mgr_aeb0015e25ab9758c1db5c374a2c84612}
+
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+\hyperlink{omserialmgr_8h}{omserialmgr.h}\item 
+\hyperlink{omserialmgr_8cpp}{omserialmgr.cpp}\end{DoxyCompactItemize}
