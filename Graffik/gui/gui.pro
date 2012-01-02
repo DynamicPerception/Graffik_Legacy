@@ -16,23 +16,23 @@ INCLUDEPATH  += ../libs/qextserialport/src/ \
                 ../libs/OpenMoCo/OpenMoCo \
                 .
 
+
  # link to openmoco libraries
 
 
 win32 {
     CONFIG(debug, debug|release) {
         LIBS += -L../libs/OpenMoCo/debug
- #       INCLUDEPATH += "/Program Files/Microsoft SDKs/Windows/v7.1/Include"
     }
     CONFIG(release, debug|release) {
         LIBS += -L../libs/OpenMoCo/release
-#        INCLUDEPATH += "C:/Program Files/Microsoft SDKs/Windows/v7.1/Include"
     }
 }
 
 macx {
     LIBS += -L../libs/OpenMoCo/build
 }
+
 
 
 LIBS += -lopenmoco
@@ -49,13 +49,16 @@ macx {
 
 SOURCES += main.cpp\
 	   mainwindow.cpp \
-           slimwindow.cpp 
+           slimwindow.cpp \ 
+    filmwindow.cpp
 
 HEADERS  += mainwindow.h \
-	    slimwindow.h 
+	    slimwindow.h \ 
+    filmwindow.h
 
 FORMS    += mainwindow.ui \
-	    slimwindow.ui 
+	    slimwindow.ui \ 
+    filmwindow.ui
 
  # load core widgets and other items
 include(core/core.pri)

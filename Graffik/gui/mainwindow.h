@@ -14,6 +14,7 @@
 #include "Slim/slimcommandparser.h"
 
 #include "slimwindow.h"
+#include "filmwindow.h"
 
 namespace Ui {
     class MainWindow;
@@ -32,6 +33,7 @@ public:
 private:
     Ui::MainWindow *ui;
     SlimWindow* _slimWindow;
+    filmWindow* _filmWindow;
     addNetDialog* _addNet;
     addDeviceDialog* _addDev;
     OMNetwork* _net;

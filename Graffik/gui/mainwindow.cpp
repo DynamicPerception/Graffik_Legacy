@@ -12,8 +12,10 @@ MainWindow::MainWindow(QWidget *parent) :
     _netModel = new networkModel(_net, this);
     _parser = new SlimCommandParser();
     _slimWindow =  new SlimWindow(_net, _parser, ui->tabs);
+    _filmWindow = new filmWindow(this);
 
     ui->tabs->addTab(_slimWindow, "Slim");
+    ui->tabs->addTab(_filmWindow, "Film");
 
 }
 
@@ -21,8 +23,10 @@ MainWindow::~MainWindow()
 {
     delete ui;
     delete _slimWindow;
+    delete _filmWindow;
     delete _parser;
     delete _net;
+    delete _netModel;
 }
 
 void MainWindow::on_actionAdd_Bus_triggered() {
