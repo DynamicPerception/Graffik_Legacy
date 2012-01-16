@@ -94,7 +94,7 @@ public:
    unsigned short address();
    unsigned short version();
    QString type();
-   int id();
+   int id();   
 
 protected:
 

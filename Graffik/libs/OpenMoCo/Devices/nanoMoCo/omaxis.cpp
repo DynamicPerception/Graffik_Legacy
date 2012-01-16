@@ -115,6 +115,33 @@ const int OMAxis::move(bool dir, unsigned short steps) {
    return this->command(COMPROG, progMove, dir, steps);
 }
 
+/** Move Motor Now
+
+   Moves motor immediately, with easing.
+
+   You must specify the direction to move, the number of steps to move,
+   the time to arrive at the destination (in milliseconds), the time to
+   accelerate (in ms), and the time to decelerate (in ms).
+
+   @param dir
+   Direction
+
+   @param step
+   Total steps
+
+   @param arrive
+   Arrival time (in mS)
+
+   @param accel
+   Accel time (in mS)
+
+   @param decel
+   Decel time (in mS)
+
+   @return
+   The ID of the command
+   */
+
 const int OMAxis::move(bool dir, unsigned long step, unsigned long arrive, unsigned long accel, unsigned long decel) {
 
     char* data = new char[20]();
@@ -156,6 +183,91 @@ const int OMAxis::move(bool dir, unsigned long step, unsigned long arrive, unsig
    delete[] data;
 }
 
+/** Plan Motion
+
+   Plans a complex, eased move across a shot cycle (for automated
+   shoot-move-shoot cycles).
+
+   You must specify the direction to move, the number of steps to move,
+   the number of shots to take, the count of shots over which acceleration
+   occurs, and the count of shots over which deceleration occurs.
+
+   @param dir
+   Direction
+
+   @param step
+   Total steps
+
+   @param shots
+   Total shot cycles
+
+   @param accel
+   Acceleration shot cycles
+
+   @param decel
+   Deceleration shot cycles
+
+   @return
+   The ID of the command
+   */
+
+const int OMAxis::plan(bool dir, unsigned long step, unsigned long shots, unsigned long accel, unsigned long decel) {
+
+    char* data = new char[20]();
+
+        // place in direction and spacer bytes
+    data[0] = dir;
+    data[5] = 32;
+    data[10] = 32;
+    data[15] = 32;
+
+
+    char* dPtr = data;
+    dPtr += 1;
+
+        // copy steps into place
+    char* cD = nwo(step);
+    memcpy((void*) dPtr, cD, 4);
+    delete[] cD;
+
+        // copy shot count
+    dPtr += 5;
+    cD = nwo(shots);
+    memcpy((void*) dPtr, cD, 4);
+    delete[] cD;
+
+        // copy accel time
+    dPtr += 5;
+    cD = nwo(accel);
+    memcpy((void*) dPtr, cD, 4);
+    delete[] cD;
+
+        // copy decel time
+    dPtr += 5;
+    cD = nwo(decel);
+    memcpy((void*) dPtr, cD, 4);
+    delete[] cD;
+
+   return this->command(COMPROG, progPlan, data, 20);
+   delete[] data;
+}
+
+/** Set Easing Algorithm
+
+ Sets the current easing algorithm in use
+
+ @param p_ease
+ The easing algorithm, one of: OM_MOT_LINEAR, OM_MOT_QUAD, or OM_MOT_QUADINV
+
+ @return
+ The ID of the command
+ */
+
+const int OMAxis::easing(unsigned char p_ease) {
+   return this->command(COMDATA, dataMot, motEase, (char) p_ease);
+
+}
+
 /** Stop Motor Movement
 
  Stop continuous motion movement, when not running in
@@ -188,7 +300,7 @@ const int OMAxis::home() {
  Specifies Maximum Stepping rate
 
  @param p_Rate
- Stepping rate, one of the following: 5000, 4000, 2000, or 1000
+ Stepping rate, one of the following: 10000, 5000, 4000, 2000, or 1000
 
  @return
  The ID of the command
@@ -503,7 +615,35 @@ const int OMAxis::exposureRepeatAction(unsigned char slot, unsigned char action)
 
 const int OMAxis::getVersion() {
 
-   return this->command(COMPROG, progStat, statVersion);
+   return this->command(COMCORE, coreVersion);
+}
+
+/** Status: Device Identifier
+
+ Retrieves the device identifier of the given axis.
+
+
+ @return
+ The ID of the command
+ */
+
+const int OMAxis::getId() {
+
+   return this->command(COMCORE, coreId);
+}
+
+/** Status: Bus Protocol Version
+
+ Retrieves the bus protocol version of the given axis.
+
+
+ @return
+ The ID of the command
+ */
+
+const int OMAxis::getBusVer() {
+
+   return this->command(COMCORE, coreBus);
 }
 
 /** Status: Interval
@@ -726,6 +866,20 @@ const int OMAxis::motorDisable() {
     return this->command(COMDATA, dataMot, motDisable);
 }
 
+/** Change Node Address
+
+  Immediately changes the address of the node, you must use
+  the new address for this device after calling this command.
+
+  @return
+  The ID of the command
+  */
+
+const int OMAxis::changeAddress(uint8_t p_addr) {
+    return this->command(COMCORE, coreAddr, (char) p_addr);
+}
+
+
 void OMAxis::_initScripting() {
 
    this->addNamedCommand("start", static_cast<f_callBack>(&OMAxis::_slimStart));
@@ -747,7 +901,10 @@ void OMAxis::_initScripting() {
    this->addNamedCommand("tie", static_cast<f_callBack>(&OMAxis::_slimTie));
    this->addNamedCommand("repeat", static_cast<f_callBack>(&OMAxis::_slimRepeat));
    this->addNamedCommand("status", static_cast<f_callBack>(&OMAxis::_slimStatus) );
-
+   this->addNamedCommand("plan", static_cast<f_callBack>(&OMAxis::_slimPlan) );
+   this->addNamedCommand("easing", static_cast<f_callBack>(&OMAxis::_slimEasing) );
+   this->addNamedCommand("address", static_cast<f_callBack>(&OMAxis::_slimAddr) );
+   this->addNamedCommand("home", static_cast<f_callBack>(&OMAxis::_slimHome) );
 }
 
 const int OMAxis::_slimMax(QStringList& p_str) {
@@ -777,6 +934,10 @@ const int OMAxis::_slimStop(QStringList& p_str) {
 
 const int OMAxis::_slimPause(QStringList& p_str) {
     return pause();
+}
+
+const int OMAxis::_slimHome(QStringList& p_str) {
+    return home();
 }
 
 
@@ -940,6 +1101,25 @@ const int OMAxis::_slimMove(QStringList& p_str) {
     throw SLIM_ERR_ARG;
 }
 
+const int OMAxis::_slimPlan(QStringList& p_str) {
+    if( p_str.isEmpty() )
+        throw SLIM_ERR_ARGS;
+
+    int argCnt = p_str.count();
+
+    if( argCnt != 5 )
+        throw SLIM_ERR_ARGS;
+
+    bool dir = false;
+
+    if( p_str[0] == "true" || p_str[0] == "1" )
+        dir = true;
+
+        return plan( dir, p_str[1].toULong(), p_str[2].toULong(), p_str[3].toULong(), p_str[4].toULong() );
+
+    throw SLIM_ERR_ARG;
+}
+
 
 const int OMAxis::_slimStatus(QStringList& p_str) {
     if( p_str.isEmpty() )
@@ -971,7 +1151,45 @@ const int OMAxis::_slimStatus(QStringList& p_str) {
         return getExposing();
     else if( p_str[0] == "version")
         return getVersion();
+    else if( p_str[0] == "bus")
+        return getBusVer();
+    else if( p_str[0] == "id")
+        return getId();
     else
         throw SLIM_ERR_ARG;
 
+}
+
+// motor easing mode
+const int OMAxis::_slimEasing(QStringList& p_str) {
+
+   if( p_str.isEmpty() )
+       throw SLIM_ERR_ARGS;
+
+   if( p_str[0] == "linear" ) {
+       return easing(OM_MOT_LINEAR);
+   }
+   else if( p_str[0] == "quad" ) {
+       return easing(OM_MOT_QUAD);
+   }
+   else if( p_str[0] == "invquad" ) {
+       return easing(OM_MOT_QUADINV);
+   }
+   else {
+       throw SLIM_ERR_ARG;
+   }
+
+}
+
+const int OMAxis::_slimAddr(QStringList& p_str) {
+
+    if( p_str.isEmpty() )
+        throw SLIM_ERR_ARGS;
+
+    uint8_t addr = (uint8_t) p_str[0].toUInt();
+
+    const int id = changeAddress(addr);
+    // protected, inherited member
+    deviceAddress = addr;
+    return id;
 }

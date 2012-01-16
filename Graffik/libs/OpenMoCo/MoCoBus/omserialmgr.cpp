@@ -204,13 +204,13 @@ int OMSerialMgr::_getSerByte() {
 
 
         // do nothing while no bytes are ready,
-        // and wait no longer than 20mS for bytes to be ready
+        // and wait no longer than TIMEOUT ms for bytes to be ready
 
     QElapsedTimer timer;
     timer.start();
 
     while(_qSer->bytesAvailable() <= 0) {
-        if( timer.elapsed() > 20 )
+        if( timer.elapsed() > OM_SER_TIMEOUT )
             break;
     }
 

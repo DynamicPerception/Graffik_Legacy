@@ -11,7 +11,7 @@
 // result data types
 
 enum {
-   R_BYTE, R_UINT, R_INT, R_LONG, R_ULONG, R_FLOAT
+   R_BYTE, R_UINT, R_INT, R_LONG, R_ULONG, R_FLOAT, R_STRING
 };
 
 class OpenMoCo

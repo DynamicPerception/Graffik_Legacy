@@ -10,6 +10,10 @@
 #include "Slim/slimscriptdevice.h"
 
 
+#define OM_MOT_LINEAR   1
+#define OM_MOT_QUAD     2
+#define OM_MOT_QUADINV  3
+
 /**
 
   OMAxis provides the primary interface to a nanomoco engine
@@ -121,8 +125,13 @@ public:
     const int maxStepSpeed(unsigned short);
     const int debug(bool);
 
+    const int changeAddress(uint8_t);
+
     const int move(bool, unsigned short);
     const int move(bool, unsigned long, unsigned long, unsigned long, unsigned long);
+    const int plan(bool, unsigned long, unsigned long, unsigned long, unsigned long);
+
+    const int easing(unsigned char);
 
     const int stopMotor();
 
@@ -164,6 +173,8 @@ public:
     const int getMaxAccelDelay();
     const int getCamera(); */
     const int getVersion();
+    const int getBusVer();
+    const int getId();
 
 
 
@@ -198,8 +209,12 @@ private:
         const int _slimSpeed(QStringList&);
         const int _slimMs(QStringList&);
         const int _slimMove(QStringList&);
+        const int _slimHome(QStringList&);
+        const int _slimPlan(QStringList&);
+        const int _slimEasing(QStringList&);
 
         const int _slimStatus(QStringList&);
+        const int _slimAddr(QStringList&);
 
         static const char  progNoop   = 0;
         static const char  progPlay   = 1;
@@ -239,6 +254,8 @@ private:
         static const char   motHome     = 7;
         static const char   motBack     = 8;
         static const char   motCont     = 9;
+        static const char   motEase     = 10;
+        static const char   motContEn   = 11;
 
         static const char   camInt      = 1;
         static const char   camExp      = 2;
@@ -252,9 +269,14 @@ private:
         static const char   camCMHome   = 10;
         static const char   camCExpDv   = 11;
 
+        static const char    COMCORE = 1;
+        static const char    COMPROG = 2;
+        static const char    COMDATA = 3;
 
-        static const char    COMPROG = 1;
-        static const char    COMDATA = 2;
+        static const char coreBus       = 1;
+        static const char coreVersion   = 3;
+        static const char coreId        = 2;
+        static const char coreAddr      = 4;
 
         static const char statVersion   = 0;
         static const char statRunning   = 1;

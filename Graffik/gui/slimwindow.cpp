@@ -123,11 +123,17 @@ void SlimWindow::onCmdResult(slimCommand p_cmd) {
             qint32 foo = qFromBigEndian<qint32>((uchar*)res);
             resStr.setNum((float) foo);
         }
+        else if( resType == R_STRING) {
+            resStr = QString::fromAscii(res, resSize);
+        }
+
+        delete res;
 
     }
 
     ui->commandResults->append(com);
     ui->commandResults->append("    " + resStr);
+
 
     qDebug() << "Response Data from command " << com;
 

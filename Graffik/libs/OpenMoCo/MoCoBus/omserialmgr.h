@@ -11,6 +11,8 @@
 #include "omcommandbuffer.h"
 
 
+#define OM_SER_TIMEOUT  100
+
 class OMMoCoBus;
 
 
