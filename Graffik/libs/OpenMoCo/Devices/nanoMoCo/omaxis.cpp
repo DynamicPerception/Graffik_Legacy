@@ -879,6 +879,24 @@ const int OMAxis::changeAddress(uint8_t p_addr) {
     return this->command(COMCORE, coreAddr, (char) p_addr);
 }
 
+/** Set Timing Node
+
+  One node on the bus may control timing for all other nodes
+  by sending a "clear to execute" signal at the appropriate
+  time.  This allows multiple nodes to synchronize with
+  each other.  Only one node on the bus may be the timing
+  master.
+
+  @param p_mast
+  True if this node should be the timing master, false if not.
+
+  @return
+  The ID of the command
+  */
+
+const int OMAxis::timing(bool p_mast) {
+    return this->command(COMDATA, dataMot, motDisable);
+}
 
 void OMAxis::_initScripting() {
 
@@ -905,6 +923,8 @@ void OMAxis::_initScripting() {
    this->addNamedCommand("easing", static_cast<f_callBack>(&OMAxis::_slimEasing) );
    this->addNamedCommand("address", static_cast<f_callBack>(&OMAxis::_slimAddr) );
    this->addNamedCommand("home", static_cast<f_callBack>(&OMAxis::_slimHome) );
+   this->addNamedCommand("master", static_cast<f_callBack>(&OMAxis::_slimMaster) );
+
 }
 
 const int OMAxis::_slimMax(QStringList& p_str) {
@@ -984,6 +1004,20 @@ const int OMAxis::_slimDir(QStringList& p_str) {
         return direction(true);
     else if( p_str[0] == "false" || p_str[0] == "0" )
         return direction(false);
+    else
+        throw SLIM_ERR_ARG;
+
+}
+
+const int OMAxis::_slimMaster(QStringList& p_str) {
+
+    if( p_str.isEmpty() )
+        throw SLIM_ERR_ARGS;
+
+    if( p_str[0] == "true" || p_str[0] == "1" )
+        return timing(true);
+    else if( p_str[0] == "false" || p_str[0] == "0" )
+        return timing(false);
     else
         throw SLIM_ERR_ARG;
 

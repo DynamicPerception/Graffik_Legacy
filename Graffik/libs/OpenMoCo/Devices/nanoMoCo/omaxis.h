@@ -133,6 +133,8 @@ public:
 
     const int easing(unsigned char);
 
+    const int timing(bool);
+
     const int stopMotor();
 
     const int steps(unsigned short);
@@ -215,6 +217,8 @@ private:
 
         const int _slimStatus(QStringList&);
         const int _slimAddr(QStringList&);
+
+        const int _slimMaster(QStringList&);
 
         static const char  progNoop   = 0;
         static const char  progPlay   = 1;
