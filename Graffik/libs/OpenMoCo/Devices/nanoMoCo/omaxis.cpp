@@ -1107,8 +1107,8 @@ const int OMAxis::_slimMs(QStringList& p_str) {
     unsigned char arg = p_str[0].toUShort();
 
         // only allowed values
-    if( arg != 1 || arg != 2 || arg != 4 || arg != 8 || arg != 16 )
-        throw SLIM_ERR_ARG;
+//    if( arg != 1 || arg != 2 || arg != 4 || arg != 8 || arg != 16 )
+//        throw SLIM_ERR_ARG;
 
     return microSteps(arg);
 }

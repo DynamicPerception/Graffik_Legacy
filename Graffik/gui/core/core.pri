@@ -7,7 +7,7 @@ HEADERS                 += core/SpeedDial/dialspeed.h \
     core/motionarea.h \
     core/NetworkManager/networkmanager.h \
     core/NetworkModel/networkmodel.h \
-    core/AxisTimeline/axistimeline.h
+ #   core/AxisTimeline/axistimeline.h
 			   
 SOURCES                 += core/SpeedDial/dialspeed.cpp \
                            core/ErrorDialog/errordialog.cpp \
@@ -18,7 +18,7 @@ SOURCES                 += core/SpeedDial/dialspeed.cpp \
     core/motionarea.cpp \
     core/NetworkManager/networkmanager.cpp \
     core/NetworkModel/networkmodel.cpp \
-    core/AxisTimeline/axistimeline.cpp
+ #   core/AxisTimeline/axistimeline.cpp
 			   
 FORMS 			+= core/SpeedDial/dialspeed.ui \
 			   core/ErrorDialog/errordialog.ui \
@@ -27,6 +27,6 @@ FORMS 			+= core/SpeedDial/dialspeed.ui \
     core/AddDeviceDialog/adddevicedialog.ui \
     core/motionarea.ui \
     core/NetworkManager/networkmanager.ui \
-    core/AxisTimeline/axistimeline.ui
+  #  core/AxisTimeline/axistimeline.ui
 	   
 	   

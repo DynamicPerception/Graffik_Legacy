@@ -27,17 +27,19 @@ win32 {
     CONFIG(release, debug|release) {
         LIBS += -L../libs/OpenMoCo/release
     }
+
+    LIBS += -L../libs/qextserialport/src/build
 }
 
 macx {
     LIBS += -L../libs/OpenMoCo/build
+    LIBS += -L/Users/church/lib
 }
 
 
 
 LIBS += -lopenmoco
 
-LIBS += -L../libs/qextserialport/src/build \
 
 win32 {
     LIBS += -lqextserialport1
