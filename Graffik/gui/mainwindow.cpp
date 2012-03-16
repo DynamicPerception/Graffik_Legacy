@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+
 #include <QDebug>
 #include <QFileDialog>
 
@@ -12,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     _netModel = new networkModel(_net, this);
     _parser = new SlimCommandParser();
     _slimWindow =  new SlimWindow(_net, _parser, ui->tabs);
-    _filmWindow = new filmWindow(this);
+    _filmWindow = new filmWindow(_net, this);
 
     ui->tabs->addTab(_slimWindow, "Slim");
     ui->tabs->addTab(_filmWindow, "Film");

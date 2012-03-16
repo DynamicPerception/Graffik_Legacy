@@ -13,6 +13,7 @@
 
 #include "Slim/slimcommandparser.h"
 
+
 #include "slimwindow.h"
 #include "filmwindow.h"
 
@@ -39,7 +40,6 @@ private:
     OMNetwork* _net;
     networkModel* _netModel;
     SlimCommandParser* _parser;
-
 
 public slots:
     void on_actionOpen_File_triggered();

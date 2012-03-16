@@ -64,9 +64,12 @@ FORMS    += mainwindow.ui \
 
  # load core widgets and other items
 include(core/core.pri)
+include(film/film.pri)
 
 #RESOURCES += \
 #    buttons.qrc
 
 RESOURCES += \
     icons.qrc
+
+OTHER_FILES +=
