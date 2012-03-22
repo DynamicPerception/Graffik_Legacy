@@ -10,6 +10,8 @@ filmWindow::filmWindow(OMNetwork* c_net, QWidget *parent) :
     _ldModel = new LiveDeviceModel(_net, this);
 
     ui->devButtonList->setModel(_ldModel);
+//    ui->devButtonList->setMovement(QListView::Free);
+//    ui->devButtonList->setDragDropMode(QAbstractItemView::InternalMove);
 }
 
 filmWindow::~filmWindow()
