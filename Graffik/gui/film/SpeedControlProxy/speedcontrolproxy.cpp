@@ -8,12 +8,16 @@ SpeedControlProxy::SpeedControlProxy(OMNetwork* c_net, QObject *parent) :
     m_net = c_net;
     m_curDev = 0;
 
-    QObject::connect(m_net, SIGNAL(deviceAdded(QString,unsigned short)), this, SLOT(_deviceAdded(QString,unsigned short)), Qt::QueuedConnection);
+    QObject::connect(m_net, SIGNAL(deviceAdded(OMdeviceInfo*)), this, SLOT(_deviceAdded(OMdeviceInfo*)), Qt::QueuedConnection);
 }
 
 
-void SpeedControlProxy::_deviceAdded(QString p_bus, unsigned short p_addr) {
-    qDebug() << "SCP: Received new device" << p_bus << p_addr;
-    OMdeviceInfo* devinfo = m_net->deviceInfo(p_bus, p_addr);
-    m_devList.insert(p_addr, devinfo->device);
+void SpeedControlProxy::_deviceAdded(OMdeviceInfo *p_dev) {
+    qDebug() << "SCP: Received new device" << p_dev->name;
+    m_devList.insert(p_dev->device->address(), p_dev);
+}
+
+void SpeedControlProxy::deviceChange(unsigned short p_addr) {
+    qDebug() << "SCP: Change Device" << p_addr;
+    m_curDev = m_devList.value(p_addr);
 }

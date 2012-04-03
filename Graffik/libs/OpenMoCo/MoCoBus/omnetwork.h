@@ -169,6 +169,7 @@ signals:
 
     void busAdded(QString);
     void deviceAdded(QString, unsigned short);
+    void deviceAdded(OMdeviceInfo*);
 
 private slots:
     void _queued(OMCommandBuffer*);

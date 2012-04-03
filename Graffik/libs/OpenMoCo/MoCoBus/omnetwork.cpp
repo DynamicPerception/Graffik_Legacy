@@ -321,6 +321,7 @@ void OMNetwork::addDevice(QString p_port, unsigned short p_addr, QString p_type,
     m_devIds[newDev->device->id()] = newDev;
 
     emit deviceAdded(p_port, p_addr);
+    emit deviceAdded(newDev);
 }
 
 

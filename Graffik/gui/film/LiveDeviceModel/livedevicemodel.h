@@ -7,24 +7,30 @@
 #include <QList>
 
 #include "MoCoBus/omnetwork.h"
+#include "speedcontrolproxy.h"
 
 class LiveDeviceModel : public QAbstractTableModel
 {
     Q_OBJECT
 
 public:
-    explicit LiveDeviceModel(OMNetwork* c_net, QObject *parent = 0);
+    explicit LiveDeviceModel(OMNetwork* c_net, SpeedControlProxy* c_spd, QObject *parent = 0);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
 
 private slots:
-    void _deviceAdded(QString, unsigned short);
+    void _deviceAdded(OMdeviceInfo* p_dev);
+    void _deviceClicked(const QModelIndex & p_item);
+
+signals:
+    void deviceSelected(unsigned short);
 
 private:
     OMNetwork* m_net;
-    QList< QHash<QString, unsigned short> > m_cacheDevs;
+    SpeedControlProxy* m_spd;
+    QList<OMdeviceInfo*> m_cacheDevs;
 };
 
 #endif // LIVEDEVICEMODEL_H

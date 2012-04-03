@@ -26,12 +26,15 @@ public:
 signals:
 
 public slots:
-    void _deviceAdded(QString, unsigned short);
-    void _speedPosChange(int p_value);
+//    void speedPosChange(int p_value);
+    void deviceChange(unsigned short p_addr);
+
+private slots:
+    void _deviceAdded(OMdeviceInfo* p_dev);
 
 private:
     OMNetwork* m_net;
-    QHash<unsigned short, OMDevice*> m_devList;
+    QHash<unsigned short, OMdeviceInfo*> m_devList;
     OMDevice* m_curDev;
 };
 
