@@ -3,8 +3,9 @@
 
 #include <QWidget>
 
-#include "film/LiveDeviceModel/livedevicemodel.h"
 #include "MoCoBus/omnetwork.h"
+#include "film/LiveDeviceModel/livedevicemodel.h"
+#include "film/SpeedControlProxy/speedcontrolproxy.h"
 
 namespace Ui {
 class filmWindow;
@@ -15,12 +16,13 @@ class filmWindow : public QWidget
     Q_OBJECT
     
 public:
-    explicit filmWindow(OMNetwork* c_net, QWidget *parent = 0);
+    filmWindow(OMNetwork* c_net, QWidget *parent = 0);
     ~filmWindow();
     
 private:
     Ui::filmWindow *ui;
     LiveDeviceModel* _ldModel;
+    SpeedControlProxy* _scp;
     OMNetwork* _net;
 };
 

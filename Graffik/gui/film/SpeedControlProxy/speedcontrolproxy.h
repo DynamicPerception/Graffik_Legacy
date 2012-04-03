@@ -5,6 +5,7 @@
 #include <QHash>
 
 #include "MoCoBus/omnetwork.h"
+#include "livedevicemodel.h"
 
 /**
 
@@ -21,19 +22,20 @@ class SpeedControlProxy : public QObject
 {
     Q_OBJECT
 public:
-    SpeedControlProxy(OMNetwork* c_net, QObject *parent = 0);
+    SpeedControlProxy(OMNetwork* c_net, LiveDeviceModel* c_ldm, QObject *parent = 0);
     
 signals:
 
 public slots:
 //    void speedPosChange(int p_value);
-    void deviceChange(unsigned short p_addr);
 
 private slots:
     void _deviceAdded(OMdeviceInfo* p_dev);
+    void _deviceChange(unsigned short p_addr);
 
 private:
     OMNetwork* m_net;
+    LiveDeviceModel* m_ldm;
     QHash<unsigned short, OMdeviceInfo*> m_devList;
     OMDevice* m_curDev;
 };

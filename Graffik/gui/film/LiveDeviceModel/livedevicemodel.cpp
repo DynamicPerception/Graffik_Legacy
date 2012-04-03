@@ -4,12 +4,10 @@
 #include <QString>
 #include <QDebug>
 
-LiveDeviceModel::LiveDeviceModel(OMNetwork* c_net, SpeedControlProxy* c_spd, QObject *parent) : QAbstractTableModel(parent) {
+LiveDeviceModel::LiveDeviceModel(OMNetwork* c_net, QObject *parent) : QAbstractTableModel(parent) {
     m_net = c_net;
-    m_spd = c_spd;
         // listen to signal from network model
     QObject::connect(m_net, SIGNAL(deviceAdded(QString,unsigned short)), this, SLOT(_deviceAdded(QString,unsigned short)), Qt::QueuedConnection);
-    QObject::connect(this, SIGNAL(deviceSelected(unsigned short))), m_spd, SLOT(deviceChanged(unsigned short), Qt::QueuedConnection);
 }
 
 

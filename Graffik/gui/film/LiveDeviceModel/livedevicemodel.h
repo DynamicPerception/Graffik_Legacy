@@ -7,14 +7,14 @@
 #include <QList>
 
 #include "MoCoBus/omnetwork.h"
-#include "speedcontrolproxy.h"
+
 
 class LiveDeviceModel : public QAbstractTableModel
 {
     Q_OBJECT
 
 public:
-    explicit LiveDeviceModel(OMNetwork* c_net, SpeedControlProxy* c_spd, QObject *parent = 0);
+    LiveDeviceModel(OMNetwork* c_net, QObject *parent = 0);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
