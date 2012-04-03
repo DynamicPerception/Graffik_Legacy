@@ -21,7 +21,7 @@ void LiveDeviceModel::_deviceAdded(OMdeviceInfo *p_dev) {
     endInsertRows();
 }
 
-void LiveDeviceModel::_deviceClicked(const QModelIndex &p_item) {
+void LiveDeviceModel::deviceClicked(const QModelIndex &p_item) {
     if( index.row() > rowCount() || index.column() > 0 )
         return;
 

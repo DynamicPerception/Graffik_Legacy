@@ -22,7 +22,9 @@ public:
 
 private slots:
     void _deviceAdded(OMdeviceInfo* p_dev);
-    void _deviceClicked(const QModelIndex & p_item);
+
+public slots:
+    void deviceClicked(const QModelIndex & p_item);
 
 signals:
     void deviceSelected(unsigned short);
