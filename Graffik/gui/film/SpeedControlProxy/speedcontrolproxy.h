@@ -5,7 +5,7 @@
 #include <QHash>
 
 #include "MoCoBus/omnetwork.h"
-#include "livedevicemodel.h"
+#include "film/LiveDeviceModel/livedevicemodel.h"
 
 /**
 
@@ -27,7 +27,7 @@ public:
 signals:
 
 public slots:
-//    void speedPosChange(int p_value);
+  //  void speedPosChange(int p_value);
 
 private slots:
     void _deviceAdded(OMdeviceInfo* p_dev);

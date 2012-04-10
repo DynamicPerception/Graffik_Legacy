@@ -12,7 +12,7 @@ filmWindow::filmWindow(OMNetwork* c_net, QWidget *parent) :
 
     ui->devButtonList->setModel(_ldModel);
         // pass a click on to the model via signal
-    QObject::connect(ui->devButtonList, SIGNAL(clicked(const QModelIndex &))), _ldModel, SLOT(deviceClicked(const QModelIndex &), Qt::QueuedConnection);
+    QObject::connect(ui->devButtonList, SIGNAL(clicked(const QModelIndex &)), _ldModel, SLOT(deviceClicked(const QModelIndex &)), Qt::QueuedConnection);
 
 //    ui->devButtonList->setMovement(QListView::Free);
 //    ui->devButtonList->setDragDropMode(QAbstractItemView::InternalMove);

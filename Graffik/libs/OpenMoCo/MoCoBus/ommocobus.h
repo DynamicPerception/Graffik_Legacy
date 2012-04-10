@@ -92,6 +92,7 @@ public:
     unsigned short id();
 
     void connect();
+    QString port();
 
 signals:
     void queued(OMCommandBuffer*);

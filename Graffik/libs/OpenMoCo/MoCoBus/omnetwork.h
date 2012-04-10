@@ -168,6 +168,8 @@ signals:
     void queued(OMCommandBuffer*);
 
     void busAdded(QString);
+    void busAdded(OMbusInfo*);
+
     void deviceAdded(QString, unsigned short);
     void deviceAdded(OMdeviceInfo*);
 

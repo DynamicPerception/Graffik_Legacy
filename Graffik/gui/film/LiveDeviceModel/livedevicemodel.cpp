@@ -7,7 +7,7 @@
 LiveDeviceModel::LiveDeviceModel(OMNetwork* c_net, QObject *parent) : QAbstractTableModel(parent) {
     m_net = c_net;
         // listen to signal from network model
-    QObject::connect(m_net, SIGNAL(deviceAdded(QString,unsigned short)), this, SLOT(_deviceAdded(QString,unsigned short)), Qt::QueuedConnection);
+    QObject::connect(m_net, SIGNAL(deviceAdded(OMdeviceInfo*)), this, SLOT(_deviceAdded(OMdeviceInfo*)), Qt::QueuedConnection);
 }
 
 
@@ -20,10 +20,10 @@ void LiveDeviceModel::_deviceAdded(OMdeviceInfo *p_dev) {
 }
 
 void LiveDeviceModel::deviceClicked(const QModelIndex &p_item) {
-    if( index.row() > rowCount() || index.column() > 0 )
+    if( p_item.row() > rowCount() || p_item.column() > 0 )
         return;
 
-    OMdeviceInfo* myDev = m_cacheDevs.at(index.row());
+    OMdeviceInfo* myDev = m_cacheDevs.at(p_item.row());
     emit deviceSelected(myDev->device->address());
 }
 
@@ -38,7 +38,7 @@ int LiveDeviceModel::columnCount(const QModelIndex &parent) const {
 
 QVariant LiveDeviceModel::data(const QModelIndex &index, int role) const {
 
-    qDebug() << "LDM Request for row" << index.row() << " Column " << index.column();
+  //  qDebug() << "LDM Request for row" << index.row() << " Column " << index.column();
 
     if( index.row() > rowCount() || index.column() > 0 || role != Qt::DisplayRole )
         return QVariant();
@@ -46,7 +46,7 @@ QVariant LiveDeviceModel::data(const QModelIndex &index, int role) const {
     OMdeviceInfo* myDev = m_cacheDevs.at(index.row());
 
     if( index.column() == 0 ) {
-        qDebug() << "LDM Dev: " << myDev->name;
+    //    qDebug() << "LDM Dev: " << myDev->name;
         return QVariant(myDev->name);
     }
 

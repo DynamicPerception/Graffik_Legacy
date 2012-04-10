@@ -84,6 +84,12 @@ void OMMoCoBus::connect() {
 
 }
 
+/** Return bus port name
+  */
+
+QString OMMoCoBus::port() {
+    return(m_port);
+}
 
 /** Adds a command to the command queue
 

@@ -354,7 +354,7 @@
           </widget>
          </item>
          <item row="5" column="0" colspan="4">
-          <widget class="QDoubleSpinBox" name="doubleSpinBox"/>
+          <widget class="QDoubleSpinBox" name="jogMaxSpeedWheel"/>
          </item>
          <item row="2" column="0" rowspan="2" colspan="2">
           <widget class="QDial" name="dial">
@@ -395,9 +395,6 @@
            </property>
            <property name="sizeConstraint">
             <enum>QLayout::SetFixedSize</enum>
-           </property>
-           <property name="margin">
-            <number>0</number>
            </property>
            <item>
             <widget class="QPushButton" name="pushButton_2">
@@ -492,7 +489,6 @@
         <height>153</height>
        </rect>
       </property>
-      <zorder></zorder>
      </widget>
     </widget>
    </item>

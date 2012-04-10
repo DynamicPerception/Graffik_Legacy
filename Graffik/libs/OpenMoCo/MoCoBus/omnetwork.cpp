@@ -124,6 +124,7 @@ void OMNetwork::addBus(QString p_port, QString p_name) {
     QObject::connect(bus, SIGNAL(queued(OMCommandBuffer*)), this, SLOT(_queued(OMCommandBuffer*)), Qt::QueuedConnection);
 
     emit busAdded(p_port);
+    emit busAdded(net);
 
 }
 

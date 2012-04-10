@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include "core/UserData/userdata.h"
+
 #include <QDebug>
 #include <QFileDialog>
 

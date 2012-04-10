@@ -154,9 +154,7 @@ public:
 
     const int getInterval();
     const int getExposure();
- //   const int getFocus();
     const int getExposureDelay();
- //  const int getFocusShutter();
     const int getShotCount();
     const int getDirection();
     const int getRampSteps();
@@ -169,11 +167,8 @@ public:
     const int getRunTime();
     const int getExposing();
 
-/*    const int getSleep();
-    const int getStatus();
-    const int getMinAccelDelay();
-    const int getMaxAccelDelay();
-    const int getCamera(); */
+
+
     const int getVersion();
     const int getBusVer();
     const int getId();

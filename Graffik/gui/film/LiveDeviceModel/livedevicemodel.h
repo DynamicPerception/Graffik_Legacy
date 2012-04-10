@@ -31,7 +31,6 @@ signals:
 
 private:
     OMNetwork* m_net;
-    SpeedControlProxy* m_spd;
     QList<OMdeviceInfo*> m_cacheDevs;
 };
 
