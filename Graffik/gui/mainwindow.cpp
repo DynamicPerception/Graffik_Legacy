@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "core/UserData/userdata.h"
 
 #include <QDebug>
 #include <QFileDialog>
@@ -16,9 +15,26 @@ MainWindow::MainWindow(QWidget *parent) :
     _parser = new SlimCommandParser();
     _slimWindow =  new SlimWindow(_net, _parser, ui->tabs);
     _filmWindow = new filmWindow(_net, this);
+    _uData = new UserData(this);
 
     ui->tabs->addTab(_slimWindow, "Slim");
     ui->tabs->addTab(_filmWindow, "Film");
+
+        // make sure that the slim parser can update its alias and registration when a new device is added
+        // (must be done before recoverBuses)
+    QObject::connect(_net, SIGNAL(deviceAdded(OMbusInfo*,OMdeviceInfo*)), _slimWindow, SLOT(registerNewDevice(OMbusInfo*,OMdeviceInfo*)), Qt::QueuedConnection);
+
+        // recover stored bus data back to network manager
+        // Do this BEFORE connecting up the signals and slots in uData to
+        // avoid wasting time writing back the same data to the
+        // ini file.  This recovers all buses and devices
+    _uData->recoverBuses(_net);
+
+        // connect network manager to userdata handlers (to save input information automatically)
+    QObject::connect(_net, SIGNAL(busAdded(OMbusInfo*)), _uData, SLOT(busAdded(OMbusInfo*)), Qt::QueuedConnection);
+    QObject::connect(_net, SIGNAL(deviceAdded(OMbusInfo*,OMdeviceInfo*)), _uData, SLOT(deviceAdded(OMbusInfo*,OMdeviceInfo*)), Qt::QueuedConnection);
+
+
 
 }
 
@@ -30,6 +46,7 @@ MainWindow::~MainWindow()
     delete _parser;
     delete _net;
     delete _netModel;
+    delete _uData;
 }
 
 void MainWindow::on_actionAdd_Bus_triggered() {

@@ -52,8 +52,8 @@ OMNetwork::~OMNetwork() {
         // delete all objects we added to the heap
     foreach( QString thsBus, m_busList.keys() ) {
 
-        OMbusInfo bus = m_busList.value(thsBus);
-        QHash<unsigned short, OMdeviceInfo*>* devices = &bus.devices;
+        OMbusInfo* bus = m_busList.value(thsBus);
+        QHash<unsigned short, OMdeviceInfo*>* devices = &bus->devices;
 
             // get rid of any devices we added to the bus
         foreach( unsigned short thsDev, devices->keys() ) {
@@ -87,6 +87,9 @@ OMNetwork::~OMNetwork() {
 
   @throws OM_NET_DUPE
   This port has already been used for a bus
+
+  May additionally throw any error returned by OMMoCoBus::connect()
+
   */
 
 void OMNetwork::addBus(QString p_port, QString p_name) {
@@ -110,12 +113,12 @@ void OMNetwork::addBus(QString p_port, QString p_name) {
     }
 
 
-    OMbusInfo net;
+    OMbusInfo* net = new OMbusInfo;
 
-    net.bus = bus;
-    net.name = p_name;
-    net.color = QColor("blue");
-    net.devices = QHash<unsigned short, OMdeviceInfo*>();
+    net->bus = bus;
+    net->name = p_name;
+    net->color = QColor("blue");
+    net->devices = QHash<unsigned short, OMdeviceInfo*>();
 
     m_busList[p_port] = net;
 
@@ -148,7 +151,7 @@ void OMNetwork::busColor(QString p_port, QColor p_color) {
     if( ! m_busList.contains(p_port) )
         throw OM_NET_BUS;
 
-    m_busList[p_port].color = p_color;
+    m_busList[p_port]->color = p_color;
 }
 
 /** Delete Bus
@@ -169,10 +172,10 @@ bool OMNetwork::deleteBus(QString p_port) {
     if( ! m_busList.contains(p_port) )
         return false;
 
-    delete m_busList[p_port].bus;
+    delete m_busList[p_port]->bus;
 
         // eliminate any and all devices attached to this bus
-    foreach( unsigned short addr, m_busList[p_port].devices.keys() ) {
+    foreach( unsigned short addr, m_busList[p_port]->devices.keys() ) {
         deleteDevice(p_port, addr);
     }
 
@@ -203,8 +206,8 @@ bool OMNetwork::busExists(QString p_port) {
 
   @code
 
-  OMbusInfo info = network.busInfo("COM1");
-  OMMoCoBus* bus = info.bus();
+  OMbusInfo* info = network.busInfo("COM1");
+  OMMoCoBus* bus = info->bus();
   @endcode
 
   @throws OM_NET_BUS
@@ -214,7 +217,7 @@ bool OMNetwork::busExists(QString p_port) {
   The bus information for the specified bus.
   */
 
-OMbusInfo OMNetwork::busInfo(QString p_port) {
+OMbusInfo* OMNetwork::busInfo(QString p_port) {
 
     if( ! m_busList.contains(p_port) )
         throw OM_NET_BUS;
@@ -242,9 +245,9 @@ OMbusInfo OMNetwork::busInfo(QString p_port) {
 
   network.addDevice(port, addr, "My Device Type", "pan");
 
-  OMdeviceInfo info = network.deviceInfo(port, addr);
+  OMdeviceInfo* info = network.deviceInfo(port, addr);
 
-  OMDevice* bdev = info.device;
+  OMDevice* bdev = info->device;
   qDebug() << "Device Library Version " << bdev->version();
 
   MyDevType* newDev = dynamic_cast<MyDevType*> bdev;
@@ -298,7 +301,7 @@ void OMNetwork::addDevice(QString p_port, unsigned short p_addr, QString p_type,
     if( ! m_busList.contains(p_port) )
         throw OM_NET_BUS;
 
-    QHash<unsigned short, OMdeviceInfo*>* devList = &m_busList[p_port].devices;
+    QHash<unsigned short, OMdeviceInfo*>* devList = &m_busList[p_port]->devices;
 
         // address already used?
     if( devList->contains(p_addr) )
@@ -314,7 +317,7 @@ void OMNetwork::addDevice(QString p_port, unsigned short p_addr, QString p_type,
     newDev->errors = 0;
     newDev->name = p_name;
     newDev->type = p_type;
-    newDev->device = this->_createDevice(m_busList[p_port].bus, p_addr, p_type);
+    newDev->device = this->_createDevice(m_busList[p_port]->bus, p_addr, p_type);
 
     devList->insert(p_addr, newDev);
 
@@ -322,6 +325,7 @@ void OMNetwork::addDevice(QString p_port, unsigned short p_addr, QString p_type,
     m_devIds[newDev->device->id()] = newDev;
 
     emit deviceAdded(p_port, p_addr);
+    emit deviceAdded(m_busList[p_port], newDev);
     emit deviceAdded(newDev);
 }
 
@@ -351,10 +355,10 @@ void OMNetwork::deleteDevice(QString p_port, unsigned short p_addr) {
         throw OM_NET_BUS;
 
         // address not there?
-    if( ! m_busList[p_port].devices.contains(p_addr) )
+    if( ! m_busList[p_port]->devices.contains(p_addr) )
         throw OM_NET_ADDR;
 
-    OMdeviceInfo* thsDev = m_busList[p_port].devices.value(p_addr);
+    OMdeviceInfo* thsDev = m_busList[p_port]->devices.value(p_addr);
 
         // remove device from our quick look-up id map
     m_devIds.remove(thsDev->device->id());
@@ -405,7 +409,7 @@ OMdeviceInfo* OMNetwork::deviceInfo(QString p_port, unsigned short p_addr) {
         throw OM_NET_BUS;
 
 
-    QHash<unsigned short, OMdeviceInfo*>* devList = &m_busList[p_port].devices;
+    QHash<unsigned short, OMdeviceInfo*>* devList = &m_busList[p_port]->devices;
 
         // address not found?
     if( ! devList->contains(p_addr) )
@@ -448,7 +452,7 @@ QList<unsigned short> OMNetwork::getDevices(QString p_port) {
     if( ! m_busList.contains(p_port) )
         return QList<unsigned short>();
 
-    QHash<unsigned short, OMdeviceInfo*>* devList = &m_busList[p_port].devices;
+    QHash<unsigned short, OMdeviceInfo*>* devList = &m_busList[p_port]->devices;
 
     return devList->keys();
 }

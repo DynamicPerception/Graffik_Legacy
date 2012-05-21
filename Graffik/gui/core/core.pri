@@ -1,3 +1,6 @@
+DEFINES *= QT_USE_QSTRINGBUILDER
+
+
 HEADERS                 += core/SpeedDial/dialspeed.h \
 			   core/ErrorDialog/errordialog.h \
 			   core/AddNetDialog/addnetdialog.h \ 

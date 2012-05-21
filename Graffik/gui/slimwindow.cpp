@@ -146,6 +146,21 @@ void SlimWindow::onDialActivate() {
     _dialSpd->show();
 }
 
+void SlimWindow::registerNewDevice(OMbusInfo *p_bus, OMdeviceInfo *p_dev) {
+    if( _parser != 0 ) {
+        qDebug() << "Add to Slim Parser";
+            // register device with slim command parser
+        SlimScriptDevice* sdev = dynamic_cast<SlimScriptDevice*>(p_dev->device);
+        if( sdev != 0 ) {
+                // do not attempt to add the device if it is not derived
+                // from SlimScriptDevice
+            _parser->registerDevice(sdev, p_bus->bus->port(), p_dev->device->address());
+            _parser->addAlias(p_dev->name, p_bus->bus->port(), p_dev->device->address());
+        }
+    }
+
+}
+
 /*void SlimWindow::onSlide(int value) {
     qDebug() << value;
 

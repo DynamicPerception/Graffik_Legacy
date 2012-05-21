@@ -19,15 +19,13 @@ addDeviceDialog::addDeviceDialog(OMNetwork *c_net, QWidget *parent) :
     _initInputs();
 }
 
-addDeviceDialog::addDeviceDialog(OMNetwork *c_net, SlimCommandParser *c_parse, QWidget *parent) :
+addDeviceDialog::addDeviceDialog(OMNetwork *c_net, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::addDeviceDialog)
 {
     ui->setupUi(this);
 
     _net = c_net;
-    _parser = c_parse;
-
 
     _initInputs();
 }
@@ -62,8 +60,8 @@ void addDeviceDialog::updateBuses() {
 
     foreach( QString port, usedPorts ) {
         qDebug() << "Found port " << port;
-        OMbusInfo bus = _net->busInfo(port);
-        ui->busList->addItem(bus.name, QVariant(port));
+        OMbusInfo* bus = _net->busInfo(port);
+        ui->busList->addItem(bus->name, QVariant(port));
     }
 
 }
@@ -112,20 +110,6 @@ void addDeviceDialog::accept() {
         er.exec();
     }
     else {
-        if( _parser != 0 ) {
-            qDebug() << "Add to Slim Parser";
-                // register device with slim command parser
-            OMdeviceInfo* devInfo = _net->deviceInfo(port, d_addr);
-            SlimScriptDevice* sdev = dynamic_cast<SlimScriptDevice*>(devInfo->device);
-            if( sdev != 0 ) {
-                    // do not attempt to add the device if it is not derived
-                    // from SlimScriptDevice
-                _parser->registerDevice(sdev, port, d_addr);
-                _parser->addAlias(name, port, d_addr);
-            }
-        }
-
-
         this->done(1);
     }
 

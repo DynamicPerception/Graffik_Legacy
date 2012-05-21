@@ -39,7 +39,7 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
         if( index.column() == 0 ) {
             // get network name
             QString name = _cmdVec.at(index.row()).network;
-            name = m_net->busInfo(name).name;
+            name = m_net->busInfo(name)->name;
             return QVariant(name);
         }
         else if( index.column() == 1 ) {
@@ -72,7 +72,7 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
      else if( role == Qt::BackgroundRole ) {
          if( index.column() == 0 ) {
              // color background of network area by user-specified color
-             QColor bgCol = m_net->busInfo(_cmdVec.at(index.row()).network).color;
+             QColor bgCol = m_net->busInfo(_cmdVec.at(index.row()).network)->color;
              QBrush netBackground(bgCol);
              return(netBackground);
          }

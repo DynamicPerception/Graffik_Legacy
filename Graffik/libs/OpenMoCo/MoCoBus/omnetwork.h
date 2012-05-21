@@ -122,7 +122,7 @@ public:
     bool deleteBus(QString);
     bool busExists(QString);
     void busColor(QString, QColor);
-    OMbusInfo busInfo(QString);
+    OMbusInfo* busInfo(QString);
     QList<QString> getBuses();
 
     void addDevice(QString, unsigned short, QString, QString);
@@ -133,7 +133,7 @@ public:
 
 private:
         // "port" points to bus info.
-    QHash<QString, OMbusInfo> m_busList;
+    QHash<QString, OMbusInfo*> m_busList;
         // device ids to devices...
     QHash<int, OMdeviceInfo*> m_devIds;
         // list of valid device type names
@@ -171,6 +171,7 @@ signals:
     void busAdded(OMbusInfo*);
 
     void deviceAdded(QString, unsigned short);
+    void deviceAdded(OMbusInfo*, OMdeviceInfo*);
     void deviceAdded(OMdeviceInfo*);
 
 private slots:

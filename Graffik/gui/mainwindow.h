@@ -5,6 +5,8 @@
 
 #include "MoCoBus/omnetwork.h"
 
+#include "core/UserData/userdata.h"
+
 #include "core/AddNetDialog/addnetdialog.h"
 #include "core/AddDeviceDialog/adddevicedialog.h"
 
@@ -40,6 +42,7 @@ private:
     OMNetwork* _net;
     networkModel* _netModel;
     SlimCommandParser* _parser;
+    UserData* _uData;
 
 public slots:
     void on_actionOpen_File_triggered();

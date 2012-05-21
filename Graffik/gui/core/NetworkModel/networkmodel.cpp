@@ -33,8 +33,8 @@ OMNetwork* networkModel::net() {
 void networkModel::addBus(QString p_port) {
     QStandardItem* parent = invisibleRootItem();
 
-    OMbusInfo bus = m_net->busInfo(p_port);
-    QStandardItem* newItem = new QStandardItem(bus.name);
+    OMbusInfo* bus = m_net->busInfo(p_port);
+    QStandardItem* newItem = new QStandardItem(bus->name);
 
         // prevent editing
     newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
@@ -47,7 +47,7 @@ void networkModel::addBus(QString p_port) {
 
 void networkModel::addDevice(QString p_port, unsigned short p_addr) {
 
-    QString name = m_net->busInfo(p_port).name;
+    QString name = m_net->busInfo(p_port)->name;
     QList<QStandardItem*> parentList = findItems(name);
 
     if( parentList.length() < 1 || parentList.length() > 1 ) {

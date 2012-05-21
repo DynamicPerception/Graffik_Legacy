@@ -31,6 +31,8 @@ private slots:
     void onDialActivate();
     void onCmdResult(slimCommand);
 
+public slots:
+        void registerNewDevice(OMbusInfo* p_bus, OMdeviceInfo* p_dev);
 private:
 
     Ui::SlimWindow *ui;
