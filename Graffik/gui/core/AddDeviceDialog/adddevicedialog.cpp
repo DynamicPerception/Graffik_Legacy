@@ -19,16 +19,6 @@ addDeviceDialog::addDeviceDialog(OMNetwork *c_net, QWidget *parent) :
     _initInputs();
 }
 
-addDeviceDialog::addDeviceDialog(OMNetwork *c_net, QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::addDeviceDialog)
-{
-    ui->setupUi(this);
-
-    _net = c_net;
-
-    _initInputs();
-}
 
 addDeviceDialog::~addDeviceDialog()
 {

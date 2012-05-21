@@ -16,7 +16,6 @@ class addDeviceDialog : public QDialog
     Q_OBJECT
     
 public:
-    explicit addDeviceDialog(OMNetwork*, QWidget *parent = 0);
     addDeviceDialog(OMNetwork*, QWidget *parent = 0);
     ~addDeviceDialog();
     

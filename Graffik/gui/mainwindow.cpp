@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     _slimWindow =  new SlimWindow(_net, _parser, ui->tabs);
     _filmWindow = new filmWindow(_net, this);
     _uData = new UserData(this);
+    _axisOpts = new OMAxisFilmOptions(this);
 
     ui->tabs->addTab(_slimWindow, "Slim");
     ui->tabs->addTab(_filmWindow, "Film");
@@ -23,6 +24,9 @@ MainWindow::MainWindow(QWidget *parent) :
         // make sure that the slim parser can update its alias and registration when a new device is added
         // (must be done before recoverBuses)
     QObject::connect(_net, SIGNAL(deviceAdded(OMbusInfo*,OMdeviceInfo*)), _slimWindow, SLOT(registerNewDevice(OMbusInfo*,OMdeviceInfo*)), Qt::QueuedConnection);
+
+        // create new options for devices as they are added
+    QObject::connect(_net, SIGNAL(deviceAdded(OMbusInfo*,OMdeviceInfo*)), _axisOpts, SLOT(deviceAdded(OMbusInfo*,OMdeviceInfo*)), Qt::QueuedConnection);
 
         // recover stored bus data back to network manager
         // Do this BEFORE connecting up the signals and slots in uData to
@@ -55,7 +59,7 @@ void MainWindow::on_actionAdd_Bus_triggered() {
 }
 
 void MainWindow::on_actionAdd_Device_triggered() {
-    addDeviceDialog addDev(_net, _parser, this);
+    addDeviceDialog addDev(_net, this);
     addDev.exec();
 }
 
@@ -66,7 +70,7 @@ void MainWindow::on_actionOpen_File_triggered() {
 }
 
 void MainWindow::on_actionManage_Network_triggered() {
-    networkManager netMan(_netModel, _parser, this);
+    networkManager netMan(_netModel, this);
     netMan.exec();
 }
 

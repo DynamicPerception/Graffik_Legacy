@@ -13,6 +13,12 @@
 #include "core/NetworkModel/networkmodel.h"
 #include "core/NetworkManager/networkmanager.h"
 
+    // TODO: this stuff needs to either move to Film
+    // or be changed to core
+
+#include "film/OMAxisFilmOptions/omaxisfilmoptions.h"
+#include "film/OMAxisFilmOptions/omaxisfilmoptionsdialog.h"
+
 #include "Slim/slimcommandparser.h"
 
 
@@ -43,6 +49,7 @@ private:
     networkModel* _netModel;
     SlimCommandParser* _parser;
     UserData* _uData;
+    OMAxisFilmOptions* _axisOpts;
 
 public slots:
     void on_actionOpen_File_triggered();
