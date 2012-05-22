@@ -1,5 +1,7 @@
 #include "omaxisfilmoptions.h"
 
+#include <QDebug>
+
 OMAxisFilmOptions::OMAxisFilmOptions(QObject *parent) :
     QObject(parent)
 {
@@ -31,6 +33,7 @@ void OMAxisFilmOptions::setOptions(unsigned short p_addr, OMaxisOptions *p_opts)
 
 
 void OMAxisFilmOptions::deviceAdded(OMbusInfo *p_bus, OMdeviceInfo *p_dev) {
+    qDebug() << "OAFO: Added new device" << p_dev->device->address();
     m_optList[p_dev->device->address()] = new OMaxisOptions;
 }
 

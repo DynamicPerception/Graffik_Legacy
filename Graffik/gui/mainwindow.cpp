@@ -11,12 +11,12 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     _net = new OMNetwork();
+    _axisOpts = new OMAxisFilmOptions(this);
     _netModel = new networkModel(_net, this);
     _parser = new SlimCommandParser();
     _slimWindow =  new SlimWindow(_net, _parser, ui->tabs);
     _filmWindow = new filmWindow(_net, this);
     _uData = new UserData(this);
-    _axisOpts = new OMAxisFilmOptions(this);
 
     ui->tabs->addTab(_slimWindow, "Slim");
     ui->tabs->addTab(_filmWindow, "Film");
@@ -51,6 +51,7 @@ MainWindow::~MainWindow()
     delete _net;
     delete _netModel;
     delete _uData;
+    delete _axisOpts;
 }
 
 void MainWindow::on_actionAdd_Bus_triggered() {
@@ -70,7 +71,7 @@ void MainWindow::on_actionOpen_File_triggered() {
 }
 
 void MainWindow::on_actionManage_Network_triggered() {
-    networkManager netMan(_netModel, this);
+    networkManager netMan(_netModel, _axisOpts, this);
     netMan.exec();
 }
 

@@ -1,5 +1,7 @@
 #include <QDebug>
 
+#include <QIcon>
+
 #include "networkmodel.h"
 
 networkModel::networkModel(OMNetwork* c_net, QObject *parent) :
@@ -8,10 +10,10 @@ networkModel::networkModel(OMNetwork* c_net, QObject *parent) :
     m_net = c_net;
 
     QStringList headerLabels;
-    headerLabels << "Bus";
     headerLabels << "Name";
     headerLabels << "Address";
     headerLabels << "Type";
+    headerLabels << "Actions";
 
     this->setHorizontalHeaderLabels(headerLabels);
 
@@ -39,7 +41,7 @@ void networkModel::addBus(QString p_port) {
         // prevent editing
     newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
         // three child columns
-    newItem->setColumnCount(3);
+    newItem->setColumnCount(4);
 
     parent->appendRow(newItem);
 
@@ -59,16 +61,20 @@ void networkModel::addDevice(QString p_port, unsigned short p_addr) {
 
     QList<QStandardItem*> display;
     QString addr;
+
     addr.setNum(dev->device->address());
 
     display.append(new QStandardItem(dev->name));
     display.append(new QStandardItem(addr));
     display.append(new QStandardItem(dev->type));
+    display.append(new QStandardItem(QIcon(":icons/img/configure.png"), ""));
+
 
         // prevent editing
     display[0]->setFlags(display[0]->flags() & ~Qt::ItemIsEditable);
     display[1]->setFlags(display[1]->flags() & ~Qt::ItemIsEditable);
     display[2]->setFlags(display[2]->flags() & ~Qt::ItemIsEditable);
+    display[3]->setFlags(display[2]->flags() & ~Qt::ItemIsEditable);
 
     parentList[0]->appendRow(display);
 

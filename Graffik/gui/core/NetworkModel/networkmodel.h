@@ -5,6 +5,10 @@
 
 #include "MoCoBus/omnetwork.h"
 
+  // which column holds the configure icon?
+#define NETMODEL_CONFIG_COL 3
+#define NETMODEL_ADDR_COL 1
+
 class networkModel : public QStandardItemModel
 {
     Q_OBJECT
