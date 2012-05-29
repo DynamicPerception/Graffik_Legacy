@@ -2,10 +2,18 @@
 #define SPEEDCONTROLPROXY_H
 
 #include <QObject>
+#include <QThread>
 #include <QHash>
+#include <QTimer>
 
 #include "MoCoBus/omnetwork.h"
+#include "Devices/nanoMoCo/omaxis.h"
 #include "film/LiveDeviceModel/livedevicemodel.h"
+#include "film/OMAxisFilmOptions/omaxisfilmoptions.h"
+
+    // timer period mS - changes speed every period during
+    // damping
+#define SCP_TIME_PERIOD 100
 
 /**
 
@@ -13,6 +21,11 @@
 
   Used within the Film portion of the GUI to proxy changes in the speed dial to the
   currently selected axis.
+
+  Sends commands directly to axis, does not check to see if command is successfully
+  received.
+
+  Provides damping through the use of a continuous fire timer.
 
   @author
   C. A. Church
@@ -22,22 +35,46 @@ class SpeedControlProxy : public QObject
 {
     Q_OBJECT
 public:
-    SpeedControlProxy(OMNetwork* c_net, LiveDeviceModel* c_ldm, QObject *parent = 0);
+    explicit SpeedControlProxy(OMAxisFilmOptions *c_opts);
+    ~SpeedControlProxy();
     
+    void maxSpeed(float p_pct);
+    void setDamping(float p_secs);
+    void startDampTimer();
+    void stopDampTimer();
+
 signals:
 
 public slots:
-  //  void speedPosChange(int p_value);
+    void speedPosChange(int p_value);
+    void deviceChange(unsigned short p_addr);
+    void deviceAdded(OMdeviceInfo* p_dev);
+
 
 private slots:
-    void _deviceAdded(OMdeviceInfo* p_dev);
-    void _deviceChange(unsigned short p_addr);
+
+    void _timerFire();
 
 private:
-    OMNetwork* m_net;
-    LiveDeviceModel* m_ldm;
+
     QHash<unsigned short, OMdeviceInfo*> m_devList;
-    OMDevice* m_curDev;
+    OMAxis* m_curDev;
+    OMaxisOptions* m_opts;
+    OMAxisFilmOptions* m_optObj;
+    float m_maxpct;
+    bool m_curDir;
+    float m_curSpd;
+    float m_nextSpd;
+
+    unsigned int m_dampPeriods;
+    unsigned int m_curPeriod;
+
+    QTimer* m_timer;
+
+    bool m_devSelected;
+
+    void _changeDir(bool p_dir);
+
 };
 
 #endif // SPEEDCONTROLPROXY_H

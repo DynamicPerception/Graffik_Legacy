@@ -31,7 +31,7 @@ class OMMoCoBus;
 
   */
 
-class OMSerialMgr : public QThread, public OpenMoCo
+class OMSerialMgr : public QObject, public OpenMoCo
 {
     Q_OBJECT
 
@@ -42,7 +42,7 @@ public:
 
     const bool isConnected();
 
-    void run();
+   // void run();
 
 signals:
     void commandComplete(OMCommandBuffer*);

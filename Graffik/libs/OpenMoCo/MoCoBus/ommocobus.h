@@ -115,7 +115,11 @@ private:
 
     bool _connected;
 
+    bool m_threadStarted;
+
     QString m_port;
+
+    QThread* m_serThread;
 
 };
 

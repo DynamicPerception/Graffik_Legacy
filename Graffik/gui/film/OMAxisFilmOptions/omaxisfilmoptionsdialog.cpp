@@ -3,12 +3,15 @@
 #include "omaxisfilmoptionsdialog.h"
 #include "ui_omaxisfilmoptionsdialog.h"
 
+#include "core/ConfirmDialog/confirmdialog.h"
+
 OMAxisFilmOptionsDialog::OMAxisFilmOptionsDialog(OMAxisFilmOptions* c_opts, unsigned short c_addr, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::OMAxisFilmOptionsDialog)
 {
     ui->setupUi(this);
     m_opts = c_opts->getOptions(c_addr);
+    m_optObj = c_opts;
     m_addr = c_addr;
 
     _initInputs();
@@ -53,7 +56,6 @@ void OMAxisFilmOptionsDialog::_initInputs() {
 
         // disable inputs if one of the pre-defined types
     if( m_opts->axisType != AXIS_CUSTOM ) {
-        // ui->masterCheck->setCheckable(false);
         ui->maxLine->setDisabled(true);
         ui->ratioLine->setDisabled(true);
         ui->typeCombo->setDisabled(true);
@@ -114,5 +116,36 @@ void OMAxisFilmOptionsDialog::_accept() {
     m_opts->axisMove = ui->typeCombo->itemData(ui->typeCombo->currentIndex()).toUInt();
     m_opts->ratio = ui->ratioLine->text().toFloat();
     m_opts->maxSteps = ui->maxLine->text().toUInt();
-    m_opts->master = ui->masterCheck->checkState();
+
+    m_opts->jogLimit = m_opts->maxSteps;
+    m_opts->jogDamp = OM_OPT_JOGDAMP;
+
+    if( m_opts->master != ui->masterCheck->checkState() ) {
+            // changing the timing master flag has implications, force the user to confirm
+            // do nothing if they do not confirm
+        if( m_opts->master == false ) {
+            QString confTxt = "By setting this device as the timing master, you will automatically unset any existing master device. Do you want to do this?";
+            ConfirmDialog dia(confTxt, this);
+            int res = dia.exec();
+            if( res == QDialog::Accepted ) {
+                m_optObj->setMaster(m_addr);
+            }
+        }
+        else {
+            QString confTxt = "If you unset this device as the timing master, you must manually select and edit another device and configure it as timing master for synchronization to work. Do you want to do this?";
+            ConfirmDialog dia(confTxt, this);
+            int res = dia.exec();
+            if( res == QDialog::Accepted ) {
+                m_opts->master = false;
+            }
+
+        }
+    }
+
+        // this may seem redundant since we're working with a pointer to the actual options,
+        // but it forces the axis options object to do any necessary cleanup and signaling
+        // after we muck with the contents
+
+    m_optObj->setOptions(m_addr, m_opts);
+
 }

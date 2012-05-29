@@ -19,7 +19,10 @@
 OMMoCoBus::OMMoCoBus(QString p_port) : OpenMoCo(), QObject()
 {
 
+
     m_port = p_port;
+    m_threadStarted = false;
+
     _connected = false;
     _setupSerial();
 
@@ -28,8 +31,14 @@ OMMoCoBus::OMMoCoBus(QString p_port) : OpenMoCo(), QObject()
 
 OMMoCoBus::~OMMoCoBus() {
         // delete the object we created
-    _serMgr->quit();
-    delete _serMgr;
+
+    if( m_threadStarted ) {
+        m_serThread->quit();
+        m_serThread->wait();
+        delete m_serThread;
+        delete _serMgr;
+    }
+
 }
 
 
@@ -51,6 +60,9 @@ void OMMoCoBus::_setupSerial() {
 
     qDebug() << "SerCreated";
 
+    m_serThread = new QThread;
+
+
 
     qRegisterMetaType<OMCommandBuffer*>("OMCommandBuffer");
 
@@ -60,7 +72,12 @@ void OMMoCoBus::_setupSerial() {
     QObject::connect(_serMgr, SIGNAL(commandComplete(OMCommandBuffer*)), this, SLOT(commandCompleted(OMCommandBuffer*)), Qt::QueuedConnection);
         // reflect signal
     QObject::connect(_serMgr, SIGNAL(commandComplete(OMCommandBuffer*)), this, SIGNAL(complete(OMCommandBuffer*)), Qt::QueuedConnection);
+
+    _serMgr->moveToThread(m_serThread);
+    m_serThread->start();
+    m_threadStarted = true;
 }
+
 
 
 /** Connect to the specified serial port
@@ -74,6 +91,8 @@ void OMMoCoBus::_setupSerial() {
 
 void OMMoCoBus::connect() {
 
+    if(_connected)
+        return;
 
     try {
         _serMgr->connect();
@@ -81,6 +100,8 @@ void OMMoCoBus::connect() {
     catch (int e) {
         throw e;
     }
+
+    _connected = true;
 
 }
 

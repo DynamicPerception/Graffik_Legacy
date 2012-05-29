@@ -93,6 +93,20 @@ const int OMAxis::pause() {
 
 }
 
+/** Enable or Disable Continuous Motion
+
+  Enables or disables continuous motion, if continuous motion is
+  enabled, control the continuous speed with the speed() method,
+  and use move(dir, 0) to start movement.  You may continuously
+  alter the speed of travel by calling speed() with a new speed
+  during the movement.
+
+ */
+
+const int OMAxis::continuous(bool en) {
+    return this->command(COMDATA, dataMot, motContEn, (char) en);
+}
+
 /** Move Motor Now
 
  Moves motor a given number of steps immediately in the given direction.
@@ -924,6 +938,8 @@ void OMAxis::_initScripting() {
    this->addNamedCommand("address", static_cast<f_callBack>(&OMAxis::_slimAddr) );
    this->addNamedCommand("home", static_cast<f_callBack>(&OMAxis::_slimHome) );
    this->addNamedCommand("master", static_cast<f_callBack>(&OMAxis::_slimMaster) );
+   this->addNamedCommand("continuous", static_cast<f_callBack>(&OMAxis::_slimContinuous) );
+    this->addNamedCommand("stopmotor", static_cast<f_callBack>(&OMAxis::_slimStopMotor) );
 
 }
 
@@ -952,6 +968,9 @@ const int OMAxis::_slimStop(QStringList& p_str) {
     return stop();
 }
 
+const int OMAxis::_slimStopMotor(QStringList& p_str) {
+    return stopMotor();
+}
 const int OMAxis::_slimPause(QStringList& p_str) {
     return pause();
 }
@@ -978,6 +997,25 @@ const int OMAxis::_slimMotor(QStringList& p_str) {
     }
 
 }
+
+// motor continuous slim command
+const int OMAxis::_slimContinuous(QStringList& p_str) {
+
+   if( p_str.isEmpty() )
+       throw SLIM_ERR_ARGS;
+
+   if( p_str[0] == "enable" ) {
+       return continuous(true);
+   }
+   else if( p_str[0] == "disable" ) {
+       return continuous(false);
+   }
+   else {
+       throw SLIM_ERR_ARG;
+   }
+
+}
+
 
 const int OMAxis::_slimLed(QStringList& p_str) {
 

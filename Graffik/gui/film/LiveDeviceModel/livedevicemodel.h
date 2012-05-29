@@ -14,23 +14,23 @@ class LiveDeviceModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
-    LiveDeviceModel(OMNetwork* c_net, QObject *parent = 0);
+    explicit LiveDeviceModel(QObject *parent = 0);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
 
 private slots:
-    void _deviceAdded(OMdeviceInfo* p_dev);
 
 public slots:
     void deviceClicked(const QModelIndex & p_item);
+    void deviceAdded(OMdeviceInfo* p_dev);
 
 signals:
     void deviceSelected(unsigned short);
 
 private:
-    OMNetwork* m_net;
+
     QList<OMdeviceInfo*> m_cacheDevs;
 };
 

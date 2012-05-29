@@ -134,6 +134,10 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
         // strange, we have no record of that command!
      if( ! m_cmdLoc.contains(thsId) ) {
          qDebug() << "Odd, I actually know nothing of command id " << thsId;
+
+         // TODO: do this better, elsewhere - need to manage the life of these
+         delete p_buf;
+
          return;
      }
 

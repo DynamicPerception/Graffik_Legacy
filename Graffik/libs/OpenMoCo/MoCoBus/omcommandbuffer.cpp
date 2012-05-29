@@ -47,10 +47,13 @@ OMCommandBuffer::OMCommandBuffer(unsigned short c_addr, int c_devid) : OpenMoCo(
     _retSize = 0;
 
 
-     //  _mutex->lock();
+
+       //_mutex->lock();
+
        _cmdIdTot++;
        _myCmd = _cmdIdTot;
-     //  _mutex->unlock();
+
+      // _mutex->unlock();
 
     _devId = c_devid;
     _execStatus = OMC_NOCMD;

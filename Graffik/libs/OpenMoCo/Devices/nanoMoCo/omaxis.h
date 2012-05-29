@@ -127,6 +127,7 @@ public:
 
     const int changeAddress(uint8_t);
 
+    const int continuous(bool);
     const int move(bool, unsigned short);
     const int move(bool, unsigned long, unsigned long, unsigned long, unsigned long);
     const int plan(bool, unsigned long, unsigned long, unsigned long, unsigned long);
@@ -214,6 +215,8 @@ private:
         const int _slimAddr(QStringList&);
 
         const int _slimMaster(QStringList&);
+        const int _slimContinuous(QStringList&);
+        const int _slimStopMotor(QStringList&);
 
         static const char  progNoop   = 0;
         static const char  progPlay   = 1;

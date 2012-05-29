@@ -86,7 +86,7 @@ private:
     static const int hdrSize = 8;
 
     void   _header(char* &, unsigned short);
-    void    _initBuffer(unsigned char, unsigned char);
+    void   _initBuffer(unsigned char, unsigned char);
 
 };
 

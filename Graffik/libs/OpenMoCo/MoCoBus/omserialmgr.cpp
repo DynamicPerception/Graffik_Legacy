@@ -17,7 +17,7 @@
 
   */
 
-OMSerialMgr::OMSerialMgr(QString port, OMMoCoBus* parent) : QThread(), OpenMoCo() {
+OMSerialMgr::OMSerialMgr(QString port, OMMoCoBus* parent) : QObject(), OpenMoCo() {
 
 
 
@@ -27,11 +27,10 @@ OMSerialMgr::OMSerialMgr(QString port, OMMoCoBus* parent) : QThread(), OpenMoCo(
     _connected = false;
     _serWaiting = false;
 
-    this->start();
+   // this->start();
 
     qDebug() << "SerialMgr initialized in thread " << QThread::currentThreadId();
 
-   // QObject::moveToThread(this);
 
 }
 
@@ -78,13 +77,13 @@ const bool OMSerialMgr::isConnected() {
     return(this->_connected);
 }
 
-void OMSerialMgr::run() {
+/*void OMSerialMgr::run() {
 
     qDebug() << "In Command Thread: " << " " << QThread::currentThreadId();
 
     exec();
 
-}
+}*/
 
 /** Command Entry Slot
 
@@ -97,7 +96,7 @@ void OMSerialMgr::run() {
 
 void OMSerialMgr::commandAdded(OMCommandBuffer* thsCmd) {
 
-    qDebug() << "In Command Thread: " << " " << QThread::currentThreadId();
+    qDebug() << "SERCMDADD: In Command Thread: " << " " << QThread::currentThreadId();
 
     qDebug() << "Cmd Id: " << thsCmd->id();
 

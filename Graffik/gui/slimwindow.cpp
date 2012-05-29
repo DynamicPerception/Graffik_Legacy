@@ -32,8 +32,9 @@ SlimWindow::SlimWindow(OMNetwork* net, SlimCommandParser* parse, QWidget *parent
 
 SlimWindow::~SlimWindow()
 {
-    delete ui;
+
     delete _cmdHist;
+    delete ui;
 }
 
 

@@ -26,6 +26,7 @@ private:
     Ui::OMAxisFilmOptionsDialog *ui;
     unsigned short m_addr;
     OMaxisOptions* m_opts;
+    OMAxisFilmOptions* m_optObj;
 
     void _initInputs();
 

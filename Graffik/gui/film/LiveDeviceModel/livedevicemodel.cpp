@@ -4,15 +4,14 @@
 #include <QString>
 #include <QDebug>
 
-LiveDeviceModel::LiveDeviceModel(OMNetwork* c_net, QObject *parent) : QAbstractTableModel(parent) {
-    m_net = c_net;
-        // listen to signal from network model
-    QObject::connect(m_net, SIGNAL(deviceAdded(OMdeviceInfo*)), this, SLOT(_deviceAdded(OMdeviceInfo*)), Qt::QueuedConnection);
+LiveDeviceModel::LiveDeviceModel(QObject *parent) : QAbstractTableModel(parent) {
+
+
 }
 
 
 /* Gets notification when a new device is added to network */
-void LiveDeviceModel::_deviceAdded(OMdeviceInfo *p_dev) {
+void LiveDeviceModel::deviceAdded(OMdeviceInfo *p_dev) {
     beginInsertRows(QModelIndex(), this->rowCount(), this->rowCount());
     m_cacheDevs.append(p_dev);
     qDebug() << "LDM Got new dev " << p_dev->name;

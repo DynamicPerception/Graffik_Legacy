@@ -47,6 +47,41 @@ void UserData::deviceAdded(OMbusInfo *p_bus, OMdeviceInfo *p_dev) {
 
 }
 
+void UserData::deviceOptionsChanged(OMaxisOptions *p_opts, unsigned short p_addr) {
+
+    qDebug() << "UD:Got request to write axis options for axis" << p_addr;
+
+    QString key = "film/device_options/" + QString::number(p_addr);
+
+        // this really shouldn't happen... but just in case, let's not try to use an invalid pointer
+        // (some spurious agent may get and invalid device option, and then try to save it back
+    if( p_opts == 0 )
+        return;
+
+    m_qset->setValue(key, QVariant::fromValue(*p_opts));
+}
+
+void UserData::recoverAxisOptions(OMAxisFilmOptions *p_opts) {
+
+    qDebug() << "UD: recoverAxisOptions: Started";
+
+    m_qset->beginGroup("film/device_options/");
+
+    QStringList devices = m_qset->childKeys();
+    QString device;
+
+    foreach(device, devices) {
+        qDebug() << "UD: recoverAxisOptions: recovering device" << device;
+        OMaxisOptions thsopts = m_qset->value(device).value< OMaxisOptions >();
+        OMaxisOptions* newopts = new OMaxisOptions(thsopts);
+
+        p_opts->setOptions(device.toUShort(), newopts);
+    }
+
+
+    m_qset->endGroup();
+}
+
 void UserData::recoverBuses(OMNetwork *p_net) {
     m_qset->beginGroup("network/buses");
 
@@ -68,6 +103,8 @@ void UserData::recoverBuses(OMNetwork *p_net) {
             p_net->addBus(bus_port, bus);
         }
         catch (int e) {
+                // Now, it's entirely possible that we can't connect to a given
+                // bus
             QString error = "Could not connect to bus: " + bus;
 
             ok = false;
@@ -85,7 +122,7 @@ void UserData::recoverBuses(OMNetwork *p_net) {
             er.exec();
         }
 
-         // get devices recovered as well
+         // get devices recovered as well (but only if we could connect to the bus)
         if( ok )
             _recoverDevices(p_net, bus, bus_port);
 
@@ -113,6 +150,9 @@ void UserData::_recoverDevices(OMNetwork *p_net, QString p_bus, QString p_busPor
             p_net->addDevice(p_busPort, dev.toUShort(), m_qset->value(this_root + "type").toString(), m_qset->value(this_root + "name").toString());
         }
         catch(int e) {
+                // We really shouldn't get errors trying to add previously-known
+                // devices, but if someone changes their .ini file, all sorts of
+                // bad things can happen!
             QString error = "Unable to add device at address " + dev + ":";
 
             if( e == OM_NET_DUPE )

@@ -1,5 +1,6 @@
 #include "omnetwork.h"
 
+#include <QDebug>
 
 #include "Devices/nanoMoCo/omaxis.h"
 
@@ -52,13 +53,16 @@ OMNetwork::~OMNetwork() {
         // delete all objects we added to the heap
     foreach( QString thsBus, m_busList.keys() ) {
 
-        OMbusInfo* bus = m_busList.value(thsBus);
+        qDebug() << "OMN: Destroying bus " << thsBus;
+        deleteBus(thsBus);
+ /*       OMbusInfo* bus = m_busList.value(thsBus);
         QHash<unsigned short, OMdeviceInfo*>* devices = &bus->devices;
 
             // get rid of any devices we added to the bus
         foreach( unsigned short thsDev, devices->keys() ) {
             deleteDevice(thsBus, thsDev);
         }
+*/
 
         // TODO: fix destructor in ommocobus to properly handle
         // omserialmgr thread, will currently memory leak on destruction of
@@ -166,18 +170,24 @@ void OMNetwork::busColor(QString p_port, QColor p_color) {
 
   @return
   True if a bus was deleted, false if not
+
+  @throws
+  Throws any exception from deleteDevice()
   */
 
 bool OMNetwork::deleteBus(QString p_port) {
+
+    qDebug() << "OMN: Delete Bus Request for " << p_port;
+
     if( ! m_busList.contains(p_port) )
         return false;
-
-    delete m_busList[p_port]->bus;
 
         // eliminate any and all devices attached to this bus
     foreach( unsigned short addr, m_busList[p_port]->devices.keys() ) {
         deleteDevice(p_port, addr);
     }
+
+    delete m_busList[p_port]->bus;
 
     m_busList.remove(p_port);
     return true;
@@ -318,6 +328,7 @@ void OMNetwork::addDevice(QString p_port, unsigned short p_addr, QString p_type,
     newDev->name = p_name;
     newDev->type = p_type;
     newDev->device = this->_createDevice(m_busList[p_port]->bus, p_addr, p_type);
+    newDev->commandHistory = new QHash<int, OMCommandBuffer*>;
 
     devList->insert(p_addr, newDev);
 
@@ -350,6 +361,9 @@ void OMNetwork::addDevice(QString p_port, unsigned short p_addr, QString p_type,
   */
 
 void OMNetwork::deleteDevice(QString p_port, unsigned short p_addr) {
+
+    qDebug() << "OMN: Request to delete device " << p_port << p_addr;
+
         // no such bus?
     if( ! m_busList.contains(p_port) )
         throw OM_NET_BUS;
@@ -368,19 +382,20 @@ void OMNetwork::deleteDevice(QString p_port, unsigned short p_addr) {
 
         // purge any commandbuffer history
 
-    foreach( int key, thsDev->commandHistory.keys() ) {
-        delete thsDev->commandHistory.value(key);
+    foreach( int key, thsDev->commandHistory->keys() ) {
+        delete thsDev->commandHistory->value(key);
     }
 
-    delete &thsDev->commandHistory;
+    delete thsDev->commandHistory;
 
         // remove the device information
 
-    m_busList.remove(p_port);
+    m_busList[p_port]->devices.remove(p_addr);
 
        // get rid of the device information
     delete thsDev;
 
+    qDebug() << "OMN: Deleted device " << p_port << p_addr;
 }
 
 /** Device Information
@@ -487,12 +502,12 @@ void OMNetwork::_complete(OMCommandBuffer *buf) {
         // need to check and make sure that we haven't exceeded
         // the requested history count, if so - purge any
         // command but this one from the history
-        while( dev->commandHistory.count() > m_histCnt ) {
-            int cmdId = dev->commandHistory.keys()[0];
+        while( dev->commandHistory->count() > m_histCnt ) {
+            int cmdId = dev->commandHistory->keys()[0];
             if( cmdId == buf->id() )
                 continue;
-            delete dev->commandHistory.value(cmdId);
-            dev->commandHistory.remove(cmdId);
+            delete dev->commandHistory->value(cmdId);
+            dev->commandHistory->remove(cmdId);
         }
     }
 
@@ -512,7 +527,7 @@ void OMNetwork::_queued(OMCommandBuffer *buf) {
 
         // add the commandbuffer to the command history for the device
     if( m_histCnt > 0 )
-        dev->commandHistory.insert( buf->id(), buf );
+        dev->commandHistory->insert( buf->id(), buf );
 
     emit queued(buf);
 }

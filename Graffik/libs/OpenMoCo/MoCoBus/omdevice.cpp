@@ -25,7 +25,7 @@ OMDevice::OMDevice(OMMoCoBus* c_bus, unsigned short c_addr) : QObject(), OpenMoC
     deviceAddress = c_addr;
     deviceBus = c_bus;
 
-        // lock this!
+        // TODO: lock this!
     m_devId++;
     m_thisDevId = m_devId;
 

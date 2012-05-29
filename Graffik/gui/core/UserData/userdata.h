@@ -8,6 +8,7 @@
 
 
 #include "MoCoBus/omnetwork.h"
+#include "film/OMAxisFilmOptions/omaxisfilmoptions.h"
 
 class UserData : public QObject
 {
@@ -17,10 +18,12 @@ public:
     ~UserData();
 
     void recoverBuses(OMNetwork* p_net);
+    void recoverAxisOptions(OMAxisFilmOptions* p_opts);
 
 public slots:
     void busAdded(OMbusInfo* p_bus);
     void deviceAdded(OMbusInfo* p_bus, OMdeviceInfo* p_dev);
+    void deviceOptionsChanged(OMaxisOptions* p_opts, unsigned short p_addr);
 
 private:
     QSettings* m_qset;

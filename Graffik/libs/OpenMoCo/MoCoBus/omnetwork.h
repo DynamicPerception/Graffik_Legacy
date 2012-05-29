@@ -38,7 +38,7 @@ struct OMdeviceInfo {
     /** Pointer to the actual device object */
     OMDevice* device;
     /** Hash of command history */
-    QHash<int, OMCommandBuffer*> commandHistory;
+    QHash<int, OMCommandBuffer*>* commandHistory;
 };
 
 
