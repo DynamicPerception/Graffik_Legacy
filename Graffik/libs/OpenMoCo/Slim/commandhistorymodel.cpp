@@ -135,9 +135,9 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
 
      int thsId = p_buf->id();
 
-        // strange, we have no record of that command!
+        // strange, we have no record of that command! (Must've come from someone else)
      if( ! m_cmdLoc.contains(thsId) ) {
-         qDebug() << "SCHM: Ignoring command " << thsId;
+         // qDebug() << "SCHM: Ignoring command " << thsId;
          return;
      }
 

@@ -54,12 +54,8 @@ unsigned short OMMoCoBus::id() {
 
 
 void OMMoCoBus::_setupSerial() {
-    qDebug() << "SerCreate";
 
     _serMgr = new OMSerialMgr(m_port, this);
-
-    qDebug() << "SerCreated";
-
     m_serThread = new QThread;
 
 
@@ -122,13 +118,13 @@ QString OMMoCoBus::port() {
   */
 
 void OMMoCoBus::queueCommand(OMCommandBuffer* &cmdBuf) {
-    qDebug() << "Got command : " << _cmdQueue.count() << " " << QThread::currentThreadId();
+  //  qDebug() << "Got command : " << _cmdQueue.count() << " " << QThread::currentThreadId();
 
     emit queued(cmdBuf);
 }
 
 
 void OMMoCoBus::commandCompleted(OMCommandBuffer * buf) {
-    qDebug() << "Command Rcvd Back: " << (unsigned char) buf->id();
+   // qDebug() << "Command Rcvd Back: " << (unsigned char) buf->id();
 }
 

@@ -47,6 +47,8 @@ public:
     void setResolution(unsigned int p_ms);
 
 signals:
+    void motorNotReady(unsigned short p_addr);
+    void motorChangeAccepted(unsigned short p_addr);
 
 public slots:
     void speedPosChange(int p_value);

@@ -35,8 +35,13 @@ JogControlManager::JogControlManager(OMNetwork* c_net, OMAxisFilmOptions* c_opts
         // inform SCP of a new device selected for jog control (via livedevicemodel)
     QObject::connect(m_ldm, SIGNAL(deviceSelected(unsigned short)), m_scp, SLOT(deviceChange(unsigned short)), Qt::QueuedConnection);
 
-        // we need to know when a device is selected so that we can modify the jogspeed and jogdamp spin boxes as needed
-    QObject::connect(m_ldm, SIGNAL(deviceSelected(unsigned short)), this, SLOT(_liveDeviceSelected(unsigned short)), Qt::QueuedConnection);
+        // of course, SCP may not allow the change yet (still moving to target speed)
+        // so we'll need to pass this signal up as needed
+
+    QObject::connect(m_scp, SIGNAL(motorNotReady(unsigned short)), this, SIGNAL(motorChangeDenied(unsigned short)), Qt::QueuedConnection);
+
+        // we need to know when a device is changed so that we can modify the jogspeed and jogdamp spin boxes as needed
+    QObject::connect(m_scp, SIGNAL(motorChangeAccepted(unsigned short)), this, SLOT(_liveDeviceSelected(unsigned short)), Qt::QueuedConnection);
 
 
         // listen to jog spinners
@@ -48,6 +53,7 @@ JogControlManager::JogControlManager(OMNetwork* c_net, OMAxisFilmOptions* c_opts
 
         // tie resolution change to us (we'll pass onto SCP)
     QObject::connect(m_jogCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(_jogResChange(int)), Qt::QueuedConnection);
+
 
 
 

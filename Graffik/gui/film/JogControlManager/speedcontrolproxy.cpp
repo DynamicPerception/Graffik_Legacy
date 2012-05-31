@@ -192,6 +192,19 @@ void SpeedControlProxy::deviceChange(unsigned short p_addr) {
 
     qDebug() << "SCP: Change Device" << p_addr;
 
+    if( m_nextSpd != m_curSpd ) {
+        // oh, hold on a minute there buddy - can't change motors when still
+        // moving to a speed!  This would suck if your first motor was damping
+        // into a stop when you selected the second. (hint: the 2nd would start
+        // moving and the first wouldn't stop)
+        // we could be totally awesome and do BOTH, but for now - we just say
+        // no way jose. Prevent the change from occuring until the move is complete
+
+        qDebug() << "SCP: Still in movement, change denied";
+        emit motorNotReady(m_curDev->address());
+        return;
+    }
+
     if( m_devList.contains(p_addr) ) {
 
         qDebug() << "SCP: Device is known to us, selecting";
@@ -206,6 +219,8 @@ void SpeedControlProxy::deviceChange(unsigned short p_addr) {
     else {
         qDebug() << "SCP: Device is unknown to us, ignoring";
     }
+
+    emit motorChangeAccepted(p_addr);
 }
 
 

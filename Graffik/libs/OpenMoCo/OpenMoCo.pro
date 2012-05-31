@@ -8,6 +8,12 @@ PROJECT                 = openmoco
 TEMPLATE                = lib
 VERSION                 = 1.0.0
 
+DEFINES *= QT_USE_QSTRINGBUILDER
+
+ # enable debugging in OM serial manager?
+ # comment this line out to disable, then make clean and run qmake
+# DEFINES += OM_SER_DBG
+
 win32 {
     DESTDIR             = .
 }

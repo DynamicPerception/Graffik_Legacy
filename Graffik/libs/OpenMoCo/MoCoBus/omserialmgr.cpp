@@ -1,7 +1,15 @@
-#include <QDebug>
 #include <QElapsedTimer>
 
 #include "omserialmgr.h"
+
+#include <QDebug>
+
+#ifdef OM_SER_DBG
+ #define DEBUG(a) qDebug() << a
+#else
+ #define DEBUG(a) (void)0
+#endif
+
 
 /** OpenMoCo Serial Manager
 
@@ -29,7 +37,8 @@ OMSerialMgr::OMSerialMgr(QString port, OMMoCoBus* parent) : QObject(), OpenMoCo(
 
    // this->start();
 
-    qDebug() << "SerialMgr initialized in thread " << QThread::currentThreadId();
+    DEBUG("SerialMgr initialized in thread ");
+    DEBUG(QThread::currentThreadId());
 
 
 }
@@ -44,10 +53,16 @@ OMSerialMgr::OMSerialMgr(QString port, OMMoCoBus* parent) : QObject(), OpenMoCo(
   */
 
 void OMSerialMgr::connect() {
-    qDebug() << "Connect:";
+
+
+    DEBUG("Connect:");
+
 
     if(! _qSer->open(QIODevice::ReadWrite) ) {
-            qDebug() << "Failed connection to serial";
+
+
+            DEBUG("Failed connection to serial");
+
             _connected = false;
             throw(errSerialNotAvailable);
     }
@@ -59,7 +74,8 @@ void OMSerialMgr::connect() {
         // commands may have been queued while disconnected
     this->_processQueuedCommands();
 
-    qDebug() << "   Success";
+
+    DEBUG("Success");
 
 
 }
@@ -77,13 +93,6 @@ const bool OMSerialMgr::isConnected() {
     return(this->_connected);
 }
 
-/*void OMSerialMgr::run() {
-
-    qDebug() << "In Command Thread: " << " " << QThread::currentThreadId();
-
-    exec();
-
-}*/
 
 /** Command Entry Slot
 
@@ -96,13 +105,14 @@ const bool OMSerialMgr::isConnected() {
 
 void OMSerialMgr::commandAdded(OMCommandBuffer* thsCmd) {
 
-    qDebug() << "SERCMDADD: In Command Thread: " << " " << QThread::currentThreadId();
 
-    qDebug() << "Cmd Id: " << thsCmd->id();
+    DEBUG("SERCMDADD: In Command Thread: ");
+    DEBUG(QThread::currentThreadId());
+    DEBUG("Cmd Id: ");
+    DEBUG(thsCmd->id());
+
 
     _cmdQueue.enqueue(thsCmd);
-
-    qDebug() << "count: " << _cmdQueue.count();
 
     this->_processQueuedCommands();
 
@@ -116,7 +126,10 @@ void OMSerialMgr::_processQueuedCommands() {
             // send all waiting commands
         while( ! _cmdQueue.isEmpty() ) {
 
-            qDebug() << "Cmd Processed in " << QThread::currentThreadId();
+
+            DEBUG("Cmd Processed in:");
+            DEBUG(QThread::currentThreadId());
+
 
             OMCommandBuffer* thsCmd = _cmdQueue.dequeue();
             _sendCom(thsCmd);
@@ -130,21 +143,20 @@ void OMSerialMgr::_processQueuedCommands() {
 
 void OMSerialMgr::_sendCom(OMCommandBuffer* &thsCmd) {
 
-    qDebug() << "in sendCom";
-
     unsigned int hdrSz = thsCmd->headerSize();
     unsigned int paySz = thsCmd->payloadSize();
-
-    qDebug() << "serCmd " << paySz;
 
     char* hdr = (char*) calloc(hdrSz, sizeof(char));
     char* pay = (char*) calloc(paySz, sizeof(char));
 
-
-
     thsCmd->header(hdr, hdrSz);
     thsCmd->payload(pay, paySz);
 
+    // big debuggin'
+
+#ifdef OM_SER_DBG
+    qDebug() << "in sendCom";
+    qDebug() << "serCmd " << paySz;
     qDebug() << "Header: ";
 
     for( unsigned int i = 0; i < hdrSz; i++) {
@@ -157,6 +169,7 @@ void OMSerialMgr::_sendCom(OMCommandBuffer* &thsCmd) {
     for( unsigned int i = 0; i < paySz; i++) {
         qDebug() << "   " << (unsigned char) pay[i];
     }
+#endif
 
         // send serial data
 
@@ -183,12 +196,13 @@ int OMSerialMgr::_getSerByte() {
         data = _qSer->read(1);
         if( data.length() < 1 ) {
                 // it wasn't there? start back over at the beginning
-            qDebug() << "Failed to find expected byte?";
+
+            DEBUG("Failed to find expected byte?");
+
             bytesWaiting = 0;
         }
         else {
                 // reduce counter and return byte
-            qDebug() << "Returning byte from buffer w/o wait";
            bytesWaiting--;
 
            return(data[0]);
@@ -219,8 +233,6 @@ int OMSerialMgr::_getSerByte() {
     if( bytesWaiting > 0 ) {
             // told there is data ready to read, in time
 
-        qDebug() << "Bytes avilable in serial buffer: " << bytesWaiting;
-
             // get byte
         data = _qSer->read(1);
 
@@ -228,18 +240,20 @@ int OMSerialMgr::_getSerByte() {
 
         if( data.length() < 1 ) {
                 // now that's odd...
-            qDebug() << "_getSerByte() expected at least a byte, got nothing.";
+
+            DEBUG("_getSerByte() expected at least a byte, got nothing.");
+
             return(-300);
         }
 
-        qDebug() << "Returning byte from buffer w/ wait";
+        DEBUG("Returning byte from buffer w/ wait");
 
         return(data[0]);
     }
     else {
             // didn't get any data, and none was available from a previous
             // check...
-        qDebug() << "_getSerByte() timeout reading byte";
+        DEBUG("_getSerByte() timeout reading byte");
         return(-300);
     }
 
@@ -257,7 +271,7 @@ void OMSerialMgr::_getResponse(OMCommandBuffer* &thsCmd) {
       int curCh = _getSerByte();
 
       if( curCh == -300 ) {
-          qDebug() << "Timeout waiting for serial response";
+          DEBUG("Timeout waiting for serial response");
           _cmdErr(thsCmd);
           return;
       }
@@ -270,15 +284,16 @@ void OMSerialMgr::_getResponse(OMCommandBuffer* &thsCmd) {
 
                if( curCh == 0 ) {
                     leadingZeros++;
-                    qDebug() << "Got " << (unsigned char) leadingZeros << " leading zeroes";
                }
                else if( curCh == -300 ){
-                   qDebug() << "Timeout reading start sequence [1]";
+                   DEBUG("Timeout reading start sequence [1]");
                    _cmdErr(thsCmd);
                    return;
                }
                else {
-                    qDebug() << "Start sequence interrupted or not found, got: " << curCh;
+                    DEBUG("Start sequence interrupted or not found, got: ");
+                    DEBUG(curCh);
+
                     _cmdErr(thsCmd);
                     return;
               }
@@ -291,16 +306,18 @@ void OMSerialMgr::_getResponse(OMCommandBuffer* &thsCmd) {
         curCh = _getSerByte();
 
         if( curCh == -300 ) {
-            qDebug() << "Timeout reading start sequence [2]";
+            DEBUG("Timeout reading start sequence [2]");
             _cmdErr(thsCmd);
             return;
         }
 
         if( (unsigned char) curCh == 255 ) {
-            qDebug() << "Found end code";
+            DEBUG("Found end code");
         }
         else {
-            qDebug() << "Start sequence complete not found, got: " << curCh;
+            DEBUG("Start sequence complete not found, got: ");
+            DEBUG(curCh);
+
             _cmdErr(thsCmd);
             return;
 
@@ -318,7 +335,7 @@ void OMSerialMgr::_getResponse(OMCommandBuffer* &thsCmd) {
             curCh = _getSerByte();
 
             if( curCh == -300 ) {
-                qDebug() << "Timeout reading address";
+                DEBUG("Timeout reading address");
                 _cmdErr(thsCmd);
                 return;
             }
@@ -332,7 +349,7 @@ void OMSerialMgr::_getResponse(OMCommandBuffer* &thsCmd) {
 
 
         if( (unsigned char) addr[0] != (unsigned char) 0 || (unsigned char) addr[1] != (unsigned char) 0 ) {
-            qDebug() << "error: Response Not intended for us";
+            DEBUG("error: Response Not intended for us");
             _cmdErr(thsCmd);
             return;
         }
@@ -344,15 +361,16 @@ void OMSerialMgr::_getResponse(OMCommandBuffer* &thsCmd) {
        curCh = _getSerByte();
 
         if( curCh == -300 ) {
-            qDebug() << "Timeout reading command status";
-           _cmdErr(thsCmd);
+            DEBUG("Timeout reading command status");
+            _cmdErr(thsCmd);
             return;
         }
 
             // set proper status
         if( curCh == 0 ) {
             thsCmd->status(OMC_FAILURE);
-            qDebug() << "Command failed from engine, got: " << (unsigned char) curCh;
+            DEBUG("Command failed from engine, got: ");
+            DEBUG((unsigned char) curCh);
         }
         else {
             thsCmd->status(OMC_SUCCESS);
@@ -364,17 +382,15 @@ void OMSerialMgr::_getResponse(OMCommandBuffer* &thsCmd) {
         curCh = _getSerByte();
 
         if( curCh == -300 ) {
-            qDebug() << "Timeout reading DLB";
+            DEBUG("Timeout reading DLB");
             _cmdErr(thsCmd);
             return;
         }
 
-        qDebug() << "Data Remaining: " << (unsigned char) curCh;
-
             // do we have more data to read?
         if( (unsigned char) curCh > 0 ) {
 
-            qDebug() << "Data: ";
+            DEBUG("Data: ");
 
             int dlb = (unsigned char) curCh;
             char* data = new char[dlb - 1]();
@@ -382,11 +398,11 @@ void OMSerialMgr::_getResponse(OMCommandBuffer* &thsCmd) {
                 // get each response data byte
             for( int i = 0; i < dlb; i++) {
 
-                qDebug() << "Response byte " << i;
+                DEBUG(i);
 
                 curCh = _getSerByte();
                 if( curCh == -300 ) {
-                    qDebug() << "Timeout reading data";
+                    DEBUG("Timeout reading data");
                     _cmdErr(thsCmd);
                     return;
                 }
@@ -394,12 +410,13 @@ void OMSerialMgr::_getResponse(OMCommandBuffer* &thsCmd) {
                 if( i == 0 ) {
                     // data response type
                     thsCmd->setResultType(curCh);
-                    qDebug() << "   " << (unsigned char) curCh << "(res type)";
+                    DEBUG("Res Type: ");
+                    DEBUG((unsigned char) curCh);
                 }
                 else {
                         // actual data of the response
                     data[i - 1] = (unsigned char) curCh;
-                    qDebug() << "   " << (unsigned char) data[i - 1];
+                    DEBUG((unsigned char) data[i - 1]);
                 }
 
             } // end for
@@ -413,7 +430,7 @@ void OMSerialMgr::_getResponse(OMCommandBuffer* &thsCmd) {
 
 
         // inform that command is completed
-     qDebug() << "Command successfully received";
+     DEBUG("Command successfully received");
 
      emit commandComplete(thsCmd);
 

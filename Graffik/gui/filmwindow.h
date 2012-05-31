@@ -21,6 +21,9 @@ public:
     filmWindow(OMNetwork* c_net, OMAxisFilmOptions* c_opts, QWidget *parent = 0);
     ~filmWindow();
 
+private slots:
+    void _jogMotorChangeDenied(unsigned short p_oldAddr);
+
 private:
     Ui::filmWindow *ui;
     LiveDeviceModel* m_ldModel;

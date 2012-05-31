@@ -50,3 +50,13 @@ QVariant LiveDeviceModel::data(const QModelIndex &index, int role) const {
     }
 
 }
+
+int LiveDeviceModel::find(unsigned short p_addr) {
+
+    for(int i = 0; i < m_cacheDevs.size(); ++i) {
+        OMdeviceInfo* dev = m_cacheDevs[i];
+        if( dev->device->address() == p_addr ) {
+            return i;
+        }
+    }
+}

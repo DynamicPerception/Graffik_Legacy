@@ -20,7 +20,7 @@ OMCommandManager::~OMCommandManager() {
     foreach( key, keys ) {
         OMCommandBuffer* ths = m_comList.value(key);
         delete ths;
-       // m_comList.remove(key);
+        m_comList.remove(key);
     }
 
     delete m_cntMutex;
@@ -104,13 +104,13 @@ void OMCommandManager::registerCommand(OMCommandBuffer* p_cmd) {
     if( m_comHoldCnt.contains(cmdId) && m_comHoldCnt.value(cmdId) > 0 ) {
         m_comList.insert(cmdId, p_cmd);
         m_cntMutex->unlock();
-        qDebug() << "OMCM: Retaining command id" << p_cmd->id();
+     //   qDebug() << "OMCM: Retaining command id" << p_cmd->id();
     }
     else {
             // we delete the object if nobody has laid claim to it
             // by the time the command completes.
         m_cntMutex->unlock();
-        qDebug() << "OMCM: NOT Retaining command id" << p_cmd->id();
+      //  qDebug() << "OMCM: NOT Retaining command id" << p_cmd->id();
         delete p_cmd;
     }
 

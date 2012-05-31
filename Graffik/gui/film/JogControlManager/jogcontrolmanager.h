@@ -32,7 +32,10 @@ public:
     ~JogControlManager();
 
 signals:
-    
+        // if the SCP denies a chaneg to motor (usually because a damp is still in progress)
+        // this signal will be emitted, indicating which motor is -still- selected
+    void motorChangeDenied(unsigned short p_keepaddr);
+
 public slots:
     
 private slots:

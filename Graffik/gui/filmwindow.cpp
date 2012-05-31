@@ -27,6 +27,8 @@ filmWindow::filmWindow(OMNetwork* c_net, OMAxisFilmOptions *c_opts, QWidget *par
         // pass a click on to the model via signal
     QObject::connect(ui->devButtonList, SIGNAL(clicked(const QModelIndex &)), m_ldModel, SLOT(deviceClicked(const QModelIndex &)), Qt::QueuedConnection);
 
+    QObject::connect(m_jcm, SIGNAL(motorChangeDenied(unsigned short)), this, SLOT(_jogMotorChangeDenied(unsigned short)), Qt::QueuedConnection);
+
 //    ui->devButtonList->setMovement(QListView::Free);
 //    ui->devButtonList->setDragDropMode(QAbstractItemView::InternalMove);
 }
@@ -38,3 +40,15 @@ filmWindow::~filmWindow()
     delete ui;
 }
 
+void filmWindow::_jogMotorChangeDenied(unsigned short p_oldAddr) {
+    qDebug() << "FW: Motor change was denied, re-setting devButtonList selection" << p_oldAddr;
+
+    int row = m_ldModel->find(p_oldAddr);
+
+    qDebug() << "New Row =" << row;
+
+    QModelIndex tl = m_ldModel->index(row, 0, QModelIndex());
+    QModelIndex tr = m_ldModel->index(row, 0, QModelIndex());
+    QItemSelection sel(tl, tr);
+    ui->devButtonList->selectionModel()->select(sel, QItemSelectionModel::SelectCurrent);
+}
