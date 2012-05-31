@@ -207,3 +207,20 @@ void SpeedControlProxy::deviceChange(unsigned short p_addr) {
         qDebug() << "SCP: Device is unknown to us, ignoring";
     }
 }
+
+
+void SpeedControlProxy::setResolution(unsigned int p_ms) {
+
+    if( m_devSelected == false )
+        return;
+
+    qDebug() << "SCP: Got resolution change: " << p_ms;
+
+    if( p_ms != 1 && p_ms != 2 && p_ms != 4 && p_ms != 8 && p_ms != 16 ) {
+        qDebug() << "SCP: Invalid MS value: " << p_ms;
+        return;
+    }
+
+    m_curDev->microSteps(p_ms);
+
+}

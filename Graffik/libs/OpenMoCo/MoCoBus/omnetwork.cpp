@@ -35,6 +35,11 @@
   behavior.  When history is enabled, always request a new copy of a command from
   the history when accessing.
 
+  If history is not enabled, an OMCommandManager instance is used to manage command
+  lifecycle instead.  You can retrieve he object using the getManager() method, and
+  then use OMCommandManager::hold() and OMCommandManager::release() to manage the lifecycle
+  of the command objects created.
+
   */
 
 OMNetwork::OMNetwork(int c_cmdHist) : QObject(), OpenMoCo()
@@ -45,6 +50,14 @@ OMNetwork::OMNetwork(int c_cmdHist) : QObject(), OpenMoCo()
     m_devTypes.append("OpenMoCo Axis");
 
 
+    m_cmdMgr = new OMCommandManager(this);
+
+    // if we are not storing command history, use the OMCommandManager to manage the lifecycle
+    // of created OMCommandBuffer objects
+
+    if( m_histCnt <= 0 ) {
+        QObject::connect(this, SIGNAL(complete(OMCommandBuffer*)), m_cmdMgr, SLOT(registerCommand(OMCommandBuffer*)), Qt::QueuedConnection);
+    }
 
 }
 
@@ -55,24 +68,31 @@ OMNetwork::~OMNetwork() {
 
         qDebug() << "OMN: Destroying bus " << thsBus;
         deleteBus(thsBus);
- /*       OMbusInfo* bus = m_busList.value(thsBus);
-        QHash<unsigned short, OMdeviceInfo*>* devices = &bus->devices;
 
-            // get rid of any devices we added to the bus
-        foreach( unsigned short thsDev, devices->keys() ) {
-            deleteDevice(thsBus, thsDev);
-        }
-*/
-
-        // TODO: fix destructor in ommocobus to properly handle
-        // omserialmgr thread, will currently memory leak on destruction of
-        // networks and will prevent the re-creation of a
-        // new one
-
- //       bus.bus->~OMMoCoBus();
- //       delete bus.bus;
     }
 
+    delete m_cmdMgr;
+
+}
+
+ /** Retrieve the Command Manager
+
+   If history is not enabled, you must manually manage the lifecycle of OMCommandBuffer using
+   the OMCommandManager object.  Each instance of an OMNetwork gets its own OMCommandManager
+   object.  This method allows you to retrieve a pointer to the OMCommandManager object in
+   use by the network (in which it registers all commands received) so that you may hold()
+   and release() the commands as-needed.
+
+   Note: if history is enabled, any actions you perform with this command manager will be
+   non-operative.
+
+   @return
+   A pointer to the OMCommandManager object in-use
+
+   */
+
+OMCommandManager* OMNetwork::getManager() {
+    return m_cmdMgr;
 }
 
 /** Add Bus to Network

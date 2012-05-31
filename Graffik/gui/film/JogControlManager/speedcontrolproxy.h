@@ -39,9 +39,12 @@ public:
     ~SpeedControlProxy();
     
     void maxSpeed(float p_pct);
+
     void setDamping(float p_secs);
     void startDampTimer();
     void stopDampTimer();
+
+    void setResolution(unsigned int p_ms);
 
 signals:
 

@@ -13,6 +13,8 @@ OMAxisFilmOptions::OMAxisFilmOptions(QObject *parent) :
      qRegisterMetaType<OMaxisOptions>("OMaxisOptions");
      qRegisterMetaTypeStreamOperators<OMaxisOptions>("OMaxisOptions");
 
+     m_optMutex = new QMutex;
+
 }
 
 OMAxisFilmOptions::~OMAxisFilmOptions() {
@@ -24,6 +26,7 @@ OMAxisFilmOptions::~OMAxisFilmOptions() {
 
     m_optList.clear();
 
+    delete m_optMutex;
 }
 
 /** Get Options for a Specific Axis
@@ -35,10 +38,19 @@ OMAxisFilmOptions::~OMAxisFilmOptions() {
   */
 
 OMaxisOptions* OMAxisFilmOptions::getOptions(unsigned short p_addr) {
-    if( m_optList.contains(p_addr) )
-        return m_optList[p_addr];
-    else
+
+    m_optMutex->lock();
+
+    if( ! m_optList.contains(p_addr) ) {
+        m_optMutex->unlock();
         return 0;
+    }
+
+    OMaxisOptions* ret = m_optList.value(p_addr);
+
+    m_optMutex->unlock();
+
+    return ret;
 }
 
 /** Set Options for a Specific Axis
@@ -57,7 +69,9 @@ OMaxisOptions* OMAxisFilmOptions::getOptions(unsigned short p_addr) {
   */
 
 void OMAxisFilmOptions::setOptions(unsigned short p_addr, OMaxisOptions *p_opts) {
+    m_optMutex->lock();
     m_optList[p_addr] = p_opts;
+    m_optMutex->unlock();
     emit deviceOptionsChanged(p_opts, p_addr);
 }
 
@@ -80,6 +94,8 @@ void OMAxisFilmOptions::setMaster(unsigned short p_addr) {
 
     qDebug() << "OAFO: setMaster called for" << p_addr;
 
+    m_optMutex->lock();
+
     QList<unsigned short> addresses = m_optList.keys();
     unsigned short addr;
 
@@ -95,13 +111,20 @@ void OMAxisFilmOptions::setMaster(unsigned short p_addr) {
             emit deviceOptionsChanged(m_optList[addr], addr);
         }
     }
+
+    m_optMutex->unlock();
 }
 
 void OMAxisFilmOptions::deviceAdded(OMbusInfo *p_bus, OMdeviceInfo *p_dev) {
     qDebug() << "OAFO: Added new device" << p_dev->device->address();
         // only create new settings if they do not already exist
+
+    m_optMutex->lock();
+
     if( ! m_optList.contains(p_dev->device->address()) )
         setOptions(p_dev->device->address(), new OMaxisOptions);
+
+    m_optMutex->unlock();
 }
 
 

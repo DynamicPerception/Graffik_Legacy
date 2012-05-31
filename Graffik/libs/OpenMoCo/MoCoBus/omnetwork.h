@@ -11,7 +11,7 @@
 #include "openmoco.h"
 #include "ommocobus.h"
 #include "omdevice.h"
-
+#include "omcommandmanager.h"
 
 #define OM_NET_DUPE 1501
 #define OM_NET_BUS  1502
@@ -131,6 +131,8 @@ public:
     QList<unsigned short> getDevices(QString);
     QStringList deviceTypes();
 
+    OMCommandManager* getManager();
+
 private:
         // "port" points to bus info.
     QHash<QString, OMbusInfo*> m_busList;
@@ -142,6 +144,8 @@ private:
     int m_histCnt;
 
     OMDevice* _createDevice(OMMoCoBus*, unsigned short, QString);
+
+    OMCommandManager* m_cmdMgr;
 
 signals:
 

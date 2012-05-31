@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #include <QDataStream>
+#include <QMutex>
 
 #include "Devices/nanoMoCo/omaxis.h"
 #include "MoCoBus/omnetwork.h"
@@ -136,7 +137,7 @@ public slots:
 private:
     QHash<unsigned short, OMaxisOptions*> m_optList;
 
-
+    QMutex* m_optMutex;
 };
 
 #endif // OMAXISFILMOPTIONS_H

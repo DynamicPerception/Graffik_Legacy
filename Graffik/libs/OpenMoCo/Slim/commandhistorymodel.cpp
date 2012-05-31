@@ -110,7 +110,12 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
      beginInsertRows(QModelIndex(), this->rowCount(), this->rowCount());
      _cmdVec.push_back(p_com);
 
-     qDebug() << "Model: inserted new row for command id " << p_com.id;
+     qDebug() << "SCHM: Model: inserted new row for command id " << p_com.id;
+
+        // register with the command manager, that we want to hold onto this
+        // command buffer
+
+     m_net->getManager()->hold(p_com.id);
 
      endInsertRows();
 
@@ -127,38 +132,30 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
 
  void CommandHistoryModel::_commandCompleted(OMCommandBuffer * p_buf) {
 
-     qDebug() << "In model command slot!";
 
      int thsId = p_buf->id();
 
         // strange, we have no record of that command!
      if( ! m_cmdLoc.contains(thsId) ) {
-         qDebug() << "Odd, I actually know nothing of command id " << thsId;
-
-         // TODO: do this better, elsewhere - need to manage the life of these
-         delete p_buf;
-
+         qDebug() << "SCHM: Ignoring command " << thsId;
          return;
      }
-
-     qDebug() << "Updating Buffer";
 
      // considering that we would've gotten this command with no actual OMCommandBuffer pointer, let's resolve
      // that
 
      int thsRow = m_cmdLoc[thsId];
 
-
      _cmdVec.at(thsRow).buf = p_buf;
 
-     qDebug() << "Command Result Size: " << p_buf->resultSize();
+     qDebug() << "SCHM: Command Result Size: " << p_buf->resultSize();
 
         // let the view(s) know that we changed some data here (perhaps)
      emit dataChanged(createIndex(thsRow, 0), createIndex(thsRow, 4));
 
         // if it's a command with a result value, then emit it for display
      if( p_buf->resultSize() > 0 ) {
-         qDebug() << "Command has result data bytes: " << p_buf->resultSize();
+         qDebug() << "SCHM: Command has result data bytes: " << p_buf->resultSize();
          emit commandResults(_cmdVec.at(thsRow));
      }
 

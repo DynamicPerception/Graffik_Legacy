@@ -36,7 +36,8 @@ HEADERS                 = openmoco.h \
     MoCoBus/omdevice.h \
     Devices/nanoMoCo/omaxis.h \
     MoCoBus/omnetwork.h \
-    Slim/slimscriptdevice.h
+    Slim/slimscriptdevice.h \
+    MoCoBus/omcommandmanager.h
 			  
 SOURCES                 = openmoco.cpp \
 			  MoCoBus/omcommandbuffer.cpp \
@@ -47,7 +48,8 @@ SOURCES                 = openmoco.cpp \
     MoCoBus/omdevice.cpp \
     Devices/nanoMoCo/omaxis.cpp \
     MoCoBus/omnetwork.cpp \
-    Slim/slimscriptdevice.cpp
+    Slim/slimscriptdevice.cpp \
+    MoCoBus/omcommandmanager.cpp
 
 TARGET 			= openmoco
 
