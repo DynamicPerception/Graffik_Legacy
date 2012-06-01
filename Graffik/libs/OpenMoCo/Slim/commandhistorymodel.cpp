@@ -108,6 +108,7 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
 
 
      beginInsertRows(QModelIndex(), this->rowCount(), this->rowCount());
+
      _cmdVec.push_back(p_com);
 
      qDebug() << "SCHM: Model: inserted new row for command id " << p_com.id;
@@ -159,4 +160,8 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
          emit commandResults(_cmdVec.at(thsRow));
      }
 
+ }
+
+ slimCommand CommandHistoryModel::getCommand(int p_row) {
+     return _cmdVec.at(p_row);
  }

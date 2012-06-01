@@ -4,6 +4,7 @@
 #include <QDebug>
 
 #include "core/ErrorDialog/errordialog.h"
+#include "core/ConfirmDialog/confirmdialog.h"
 
 SlimFileHandler::SlimFileHandler(SlimCommandParser *c_parse, CommandHistoryModel *c_hist)
 {
@@ -11,6 +12,60 @@ SlimFileHandler::SlimFileHandler(SlimCommandParser *c_parse, CommandHistoryModel
 
 SlimFileHandler::~SlimFileHandler() {
 
+
+}
+
+void SlimFileHandler::writeFile(QString p_file, OMNetwork* p_net, CommandHistoryModel *p_hist, bool p_showErr) {
+
+    if( p_file.isEmpty() )
+        return;
+
+
+    QFile scriptFile(p_file);
+    QString errors;
+    bool errorOccur = false;
+
+        // not needed, QFileDialog already handles existing files
+
+    /* if( scriptFile.exists() ) {
+
+        QString confTxt = "File " + p_file + " Already Exists, Do You Want to Overwrite It?";
+        ConfirmDialog dia(confTxt);
+        int res = dia.exec();
+        if( res != QDialog::Accepted ) {
+            return;
+        }
+    }*/
+
+    if( scriptFile.open(QIODevice::WriteOnly | QIODevice::Text) ) {
+        QTextStream text( &scriptFile );
+
+        int recs = p_hist->rowCount();
+
+        for(int i = 0; i < recs; i++) {
+            slimCommand cmd = p_hist->getCommand(i);
+            QString name = p_net->deviceInfo(cmd.network, cmd.address)->name;
+            QString com = " " + cmd.command + " " + cmd.arguments.join(" ");
+            text << name << com << endl;
+
+        }
+
+        scriptFile.close();
+
+    } // end if able to open
+    else {
+        errors.append("ERROR: Could not open file ");
+        errors.append(p_file);
+        errors.append(": ");
+        errors.append( scriptFile.error() );
+        errorOccur = true;
+    }
+
+    if( p_showErr && errorOccur ) {
+        ErrorDialog erDlg;
+        erDlg.setError(errors);
+        erDlg.exec();
+    }
 
 }
 
@@ -36,11 +91,15 @@ SlimFileHandler::~SlimFileHandler() {
 
 void SlimFileHandler::readFile(QString p_file, SlimCommandParser *p_parse, CommandHistoryModel *p_hist, bool p_showErr) {
 
+    if( p_file.isEmpty() )
+        return;
+
         // open requested file, read each line, and send to command parser
     QFile scriptFile(p_file);
     QString line;
     QString errors;
     bool errorOccur = false;
+    int lineNum = 0;
 
     slimCommand lineCmd;
 
@@ -48,6 +107,9 @@ void SlimFileHandler::readFile(QString p_file, SlimCommandParser *p_parse, Comma
         QTextStream text( &scriptFile );
 
         while(! text.atEnd() ) {
+
+            lineNum++;
+
             line = text.readLine();
 
             if( line.isEmpty() )
@@ -80,7 +142,11 @@ void SlimFileHandler::readFile(QString p_file, SlimCommandParser *p_parse, Comma
                 else if( e == SLIM_ERR_EMPTY )
                     erMsg = "No command was input";
 
-                errors.append("ERROR: \n\t" + line + "\n\t" + erMsg + "\n");
+                errors.append("ERROR: \n\t");
+                errors.append("Line #");
+                errors.append(QString::number(lineNum));
+                errors.append(": " + line + "\n\t" + erMsg + "\n");
+
                 errorOccur = true;
                 continue;
             }

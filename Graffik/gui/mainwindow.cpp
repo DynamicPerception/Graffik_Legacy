@@ -87,7 +87,8 @@ void MainWindow::on_actionOpen_File_triggered() {
 
 void MainWindow::on_actionSave_File_triggered() {
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save Script"), "", tr("Slim Script (*.slim)"));
-    qDebug() << "Got File: " << fileName;
+    qDebug() << "MW: SlimSave Got File: " << fileName;
+    SlimFileHandler::writeFile(fileName, _net, _cmdHist, true);
 }
 
 
