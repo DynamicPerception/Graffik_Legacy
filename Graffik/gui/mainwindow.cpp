@@ -5,6 +5,8 @@
 #include <QDebug>
 #include <QFileDialog>
 
+#include "Slim/SlimFileHandler/slimfilehandler.h"
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -14,7 +16,8 @@ MainWindow::MainWindow(QWidget *parent) :
     _axisOpts = new OMAxisFilmOptions(this);
     _netModel = new networkModel(_net, this);
     _parser = new SlimCommandParser();
-    _slimWindow =  new SlimWindow(_net, _parser, ui->tabs);
+    _cmdHist = new CommandHistoryModel(_net, this);
+    _slimWindow =  new SlimWindow(_net, _cmdHist, _parser, ui->tabs);
     _filmWindow = new filmWindow(_net, _axisOpts, this);
     _uData = new UserData(this);
 
@@ -57,6 +60,7 @@ MainWindow::~MainWindow()
     delete _filmWindow;
     delete _slimWindow;
     delete _parser;
+    delete _cmdHist;
     delete _netModel;
     delete _axisOpts;
     delete _net;
@@ -77,8 +81,15 @@ void MainWindow::on_actionAdd_Device_triggered() {
 
 void MainWindow::on_actionOpen_File_triggered() {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open Script"), "", tr("Slim Scripts (*.slim)"));
+    qDebug() << "MW: SlimOpen Got File: " << fileName;
+    SlimFileHandler::readFile(fileName, _parser, _cmdHist, true);
+}
+
+void MainWindow::on_actionSave_File_triggered() {
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Script"), "", tr("Slim Script (*.slim)"));
     qDebug() << "Got File: " << fileName;
 }
+
 
 void MainWindow::on_actionManage_Network_triggered() {
     networkManager netMan(_netModel, _axisOpts, this);

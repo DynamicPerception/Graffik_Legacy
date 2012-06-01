@@ -7,7 +7,8 @@
 
 #include "Core/ErrorDialog/errordialog.h"
 
-SlimWindow::SlimWindow(OMNetwork* net, SlimCommandParser* parse, QWidget *parent) :
+
+SlimWindow::SlimWindow(OMNetwork* net, CommandHistoryModel* hist, SlimCommandParser* parse, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::SlimWindow)
 {
@@ -16,31 +17,23 @@ SlimWindow::SlimWindow(OMNetwork* net, SlimCommandParser* parse, QWidget *parent
 
     _parser = parse;
     _net = net;
-    _cmdHist = new CommandHistoryModel(_net, this);
+    _cmdHist = hist;
 
     ui->historyTableView->setModel(_cmdHist);
 
-//    qRegisterMetaType<slimCommand>("slimCommand");
-
     QObject::connect(_cmdHist, SIGNAL(commandResults(slimCommand)), this, SLOT(onCmdResult(slimCommand)), Qt::QueuedConnection);
 
-        // add grid layout to "Network" toolbox (index 1 - TODO: not use fixed index)
-   // _netState = new NetworkStatusGrid(ui->RightToolBox->widget(1));
 
-    // ui->verticalLayout->setMenuBar(ui->menuBar);
 }
 
 SlimWindow::~SlimWindow()
 {
 
-    delete _cmdHist;
     delete ui;
 }
 
 
 void SlimWindow::onCmdEntry() {
-
-     qDebug() << "Enter pressed!";
 
      QString inputStr = ui->commandInputLine->displayText();
 
@@ -52,7 +45,7 @@ void SlimWindow::onCmdEntry() {
          newCmd = _parser->parse(inputStr);
      }
      catch (int e) {
-         qDebug() << "Received exception: " << e;
+         qDebug() << "SlimCmd: Received exception: " << e;
 
        //      throw out error dialog
          ErrorDialog er(this);

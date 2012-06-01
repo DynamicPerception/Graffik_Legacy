@@ -2,7 +2,6 @@
 #include <QDebug>
 
 
-#include "slimwindow.h"
 #include "mainwindow.h"
 
 #include "MoCoBus/ommocobus.h"

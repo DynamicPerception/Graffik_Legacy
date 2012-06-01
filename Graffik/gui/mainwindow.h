@@ -20,10 +20,11 @@
 #include "film/OMAxisFilmOptions/omaxisfilmoptionsdialog.h"
 
 #include "Slim/slimcommandparser.h"
+#include "Slim/commandhistorymodel.h"
 
 
-#include "slimwindow.h"
-#include "filmwindow.h"
+#include "slim/slimwindow.h"
+#include "film/filmwindow.h"
 
 namespace Ui {
     class MainWindow;
@@ -37,7 +38,6 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-   // void setSlimWindow(SlimWindow*);
 
 private:
     Ui::MainWindow *ui;
@@ -50,15 +50,16 @@ private:
     SlimCommandParser* _parser;
     UserData* _uData;
     OMAxisFilmOptions* _axisOpts;
+    CommandHistoryModel* _cmdHist;
 
 public slots:
     void on_actionOpen_File_triggered();
     void on_actionAdd_Bus_triggered();
     void on_actionAdd_Device_triggered();
     void on_actionManage_Network_triggered();
+    void on_actionSave_File_triggered();
 
 private slots:
-   // void on_slimButton_clicked();
 
 };
 

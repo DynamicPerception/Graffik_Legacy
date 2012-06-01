@@ -23,7 +23,7 @@ class SlimWindow : public QWidget
     Q_OBJECT
 
 public:
-    explicit SlimWindow(OMNetwork* net, SlimCommandParser* parse, QWidget *parent = 0);
+    explicit SlimWindow(OMNetwork* net, CommandHistoryModel* hist, SlimCommandParser* parse, QWidget *parent = 0);
     ~SlimWindow();
 
 private slots:
@@ -36,9 +36,8 @@ public slots:
 private:
 
     Ui::SlimWindow *ui;
-
-    OMNetwork* _net;
     CommandHistoryModel* _cmdHist;
+    OMNetwork* _net;
     SlimCommandParser * _parser;
     NetworkStatusGrid* _netState;
 };
