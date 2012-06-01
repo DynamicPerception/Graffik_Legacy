@@ -1,8 +1,8 @@
 DEFINES *= QT_USE_QSTRINGBUILDER
 
 
-HEADERS +=
-SOURCES +=
-FORMS +=
+HEADERS += slimwindow.h
+SOURCES += slimwindow.cpp
+FORMS += slimwindow.ui
 
 
