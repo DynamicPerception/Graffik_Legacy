@@ -210,10 +210,7 @@ void SpeedControlProxy::deviceChange(unsigned short p_addr) {
         qDebug() << "SCP: Device is known to us, selecting";
 
         m_curDev = static_cast<OMAxis*>(m_devList.value(p_addr)->device);
-
-            // TODO: protect multi-threaded call here!
         m_opts = m_optObj->getOptions(p_addr);
-
         m_devSelected = true;
     }
     else {

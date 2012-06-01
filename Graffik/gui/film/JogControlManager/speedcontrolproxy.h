@@ -13,7 +13,7 @@
 
     // timer period mS - changes speed every period during
     // damping
-#define SCP_TIME_PERIOD 100
+#define SCP_TIME_PERIOD 200
 
 /**
 

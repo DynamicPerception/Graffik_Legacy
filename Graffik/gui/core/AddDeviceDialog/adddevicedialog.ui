@@ -19,6 +19,9 @@
   <property name="windowTitle">
    <string>Add Device</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
     <rect>

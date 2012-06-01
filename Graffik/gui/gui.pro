@@ -50,20 +50,15 @@ macx {
 }
 
 SOURCES += main.cpp\
-	   mainwindow.cpp \
-           slimwindow.cpp \ 
-    filmwindow.cpp
+	   mainwindow.cpp 
 
-HEADERS  += mainwindow.h \
-	    slimwindow.h \ 
-    filmwindow.h
+HEADERS  += mainwindow.h 
 
-FORMS    += mainwindow.ui \
-	    slimwindow.ui \ 
-    filmwindow.ui
+FORMS    += mainwindow.ui 
 
  # load core widgets and other items
 include(core/core.pri)
+include(slim/slim.pri)
 include(film/film.pri)
 
 #RESOURCES += \

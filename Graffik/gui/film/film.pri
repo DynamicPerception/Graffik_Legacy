@@ -2,6 +2,7 @@ DEFINES *= QT_USE_QSTRINGBUILDER
 	   
 
 HEADERS += \
+    film/filmwindow.h \
     film/LiveDeviceModel/livedevicemodel.h \
     film/JogControlManager/speedcontrolproxy.h \
     film/OMAxisFilmOptions/omaxisfilmoptionsdialog.h \
@@ -11,6 +12,7 @@ HEADERS += \
     film/FilmParameters/filmparameters.h
 
 SOURCES += \
+    film/filmwindow.cpp \
     film/LiveDeviceModel/livedevicemodel.cpp \
     film/JogControlManager/speedcontrolproxy.cpp \
     film/OMAxisFilmOptions/omaxisfilmoptionsdialog.cpp \
@@ -20,4 +22,5 @@ SOURCES += \
     film/FilmParameters/filmparameters.cpp
 
 FORMS += \
+    film/filmwindow.ui \
     film/OMAxisFilmOptions/omaxisfilmoptionsdialog.ui
