@@ -105,16 +105,18 @@ void UserData::recoverBuses(OMNetwork *p_net) {
         catch (int e) {
                 // Now, it's entirely possible that we can't connect to a given
                 // bus
-            QString error = "Could not connect to bus: " + bus;
+            QString error = "Could not connect to bus: ";
+            error.append(bus);
+            error.append(":\n  ");
 
             ok = false;
 
             qDebug() << "UD:recoverBuses: Got error" << e;
             if( e == OpenMoCo::errSerialNotAvailable ) {
-                error.append(", Serial device not found");
+                error.append("Serial device" + bus_port + " not found");
             }
             else {
-                error.append(", Unknown error: ");
+                error.append("Unknown error #");
                 error.append(e);
             }
             ErrorDialog er(m_parent);
@@ -123,11 +125,12 @@ void UserData::recoverBuses(OMNetwork *p_net) {
         }
 
          // get devices recovered as well (but only if we could connect to the bus)
-        if( ok )
+        if( ok ) {
             _recoverDevices(p_net, bus, bus_port);
 
-            // set bus color
-        p_net->busColor(bus_port, m_qset->value(root_key + "color").value< QColor >());
+                // set bus color
+            p_net->busColor(bus_port, m_qset->value(root_key + "color").value< QColor >());
+        }
     }
 
     m_qset->endGroup();
