@@ -44,11 +44,7 @@ QVariant LiveDeviceModel::data(const QModelIndex &index, int role) const {
 
     OMdeviceInfo* myDev = m_cacheDevs.at(index.row());
 
-    if( index.column() == 0 ) {
-    //    qDebug() << "LDM Dev: " << myDev->name;
-        return QVariant(myDev->name);
-    }
-
+    return QVariant(myDev->name);
 }
 
 int LiveDeviceModel::find(unsigned short p_addr) {
@@ -59,4 +55,7 @@ int LiveDeviceModel::find(unsigned short p_addr) {
             return i;
         }
     }
+
+    return -1;
+
 }
