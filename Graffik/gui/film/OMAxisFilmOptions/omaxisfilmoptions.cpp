@@ -13,7 +13,7 @@ OMAxisFilmOptions::OMAxisFilmOptions(QObject *parent) :
      qRegisterMetaType<OMaxisOptions>("OMaxisOptions");
      qRegisterMetaTypeStreamOperators<OMaxisOptions>("OMaxisOptions");
 
-     m_optMutex = new QMutex;
+     m_optMutex = new QMutex(QMutex::Recursive);
 
 }
 

@@ -58,8 +58,8 @@ FORMS    += mainwindow.ui
 
  # load core widgets and other items
 include(core/core.pri)
-include(slim/slim.pri)
 include(film/film.pri)
+include(slim/slim.pri)
 
 #RESOURCES += \
 #    buttons.qrc

@@ -8,6 +8,12 @@
 #define SLIM_ERR_ARGS   203
 #define SLIM_ERR_NODEV  204
 
+    // bring about the uint8_t under windows due to msvc
+
+#ifdef Q_WS_WIN
+typedef unsigned char     uint8_t;
+#endif
+
 // result data types
 
 enum {
