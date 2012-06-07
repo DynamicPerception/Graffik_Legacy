@@ -6,6 +6,7 @@
 #include <QFileDialog>
 
 #include "Slim/SlimFileHandler/slimfilehandler.h"
+#include "docs/helpwindow.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -18,10 +19,10 @@ MainWindow::MainWindow(QWidget *parent) :
     _parser = new SlimCommandParser();
     _cmdHist = new CommandHistoryModel(_net, this);
     _slimWindow =  new SlimWindow(_net, _cmdHist, _parser, ui->tabs);
-    _filmWindow = new filmWindow(_net, _axisOpts, this);
+  //  _filmWindow = new filmWindow(_net, _axisOpts, this);
     _uData = new UserData(this);
 
-    ui->tabs->addTab(_filmWindow, "Film");
+ //   ui->tabs->addTab(_filmWindow, "Film");
     ui->tabs->addTab(_slimWindow, "Slim");
 
         // make sure that the slim parser can update its alias and registration when a new device is added
@@ -57,7 +58,7 @@ MainWindow::~MainWindow()
 {
 
     delete _uData;
-    delete _filmWindow;
+//    delete _filmWindow;
     delete _slimWindow;
     delete _parser;
     delete _cmdHist;
@@ -95,6 +96,12 @@ void MainWindow::on_actionSave_File_triggered() {
 void MainWindow::on_actionManage_Network_triggered() {
     networkManager netMan(_netModel, _axisOpts, this);
     netMan.exec();
+}
+
+void MainWindow::on_actionHelp_Contents_triggered() {
+    qDebug() << "Help Index triggered";
+    HelpWindow* help = new HelpWindow(this);
+    help->show();
 }
 
 /*void MainWindow::setSlimWindow(SlimWindow * p_slim) {

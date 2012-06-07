@@ -170,6 +170,7 @@ signals:
 
     void queued(OMCommandBuffer*);
 
+
 };
 
 #endif // OMDEVICE_H

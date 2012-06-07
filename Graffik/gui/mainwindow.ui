@@ -55,37 +55,61 @@
     <addaction name="actionAdd_Bus"/>
     <addaction name="actionAdd_Device"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionHelp_Contents"/>
+    <addaction name="actionAbout_Graffik"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuNetwork"/>
+   <addaction name="menuHelp"/>
   </widget>
   <action name="actionExit">
    <property name="text">
-    <string>Exit</string>
+    <string>E&amp;xit</string>
    </property>
   </action>
   <action name="actionOpen_File">
    <property name="text">
-    <string>Open File</string>
+    <string>&amp;Open Slim Script</string>
+   </property>
+   <property name="toolTip">
+    <string>Open Slim Script</string>
    </property>
   </action>
   <action name="actionAdd_Bus">
    <property name="text">
-    <string>Add Bus</string>
+    <string>Add &amp;Bus</string>
    </property>
   </action>
   <action name="actionAdd_Device">
    <property name="text">
-    <string>Add Device</string>
+    <string>Add &amp;Device</string>
    </property>
   </action>
   <action name="actionManage_Network">
    <property name="text">
-    <string>Manage Network</string>
+    <string>Manage &amp;Network</string>
    </property>
   </action>
   <action name="actionSave_File">
    <property name="text">
-    <string>Save File</string>
+    <string>&amp;Save Slim Script</string>
+   </property>
+   <property name="toolTip">
+    <string>Save Slim Script</string>
+   </property>
+  </action>
+  <action name="actionHelp_Contents">
+   <property name="text">
+    <string>Help &amp;Contents</string>
+   </property>
+  </action>
+  <action name="actionAbout_Graffik">
+   <property name="text">
+    <string>&amp;About Graffik</string>
    </property>
   </action>
  </widget>

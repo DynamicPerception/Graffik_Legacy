@@ -58,6 +58,7 @@ public slots:
     void on_actionAdd_Device_triggered();
     void on_actionManage_Network_triggered();
     void on_actionSave_File_triggered();
+    void on_actionHelp_Contents_triggered();
 
 private slots:
 

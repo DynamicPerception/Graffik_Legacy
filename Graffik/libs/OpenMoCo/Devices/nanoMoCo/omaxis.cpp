@@ -308,6 +308,17 @@ const int OMAxis::home() {
    return this->command(COMPROG, progHome);
 }
 
+/** Set Current Position as Home
+
+  Sets current motor position as home.
+
+  @return
+  The ID of the command
+  */
+
+const int OMAxis::setHome() {
+    return this->command(COMDATA, dataMot, motHome);
+}
 
 /** Set Max Stepping Rate
 
@@ -918,11 +929,12 @@ void OMAxis::_initScripting() {
    this->addNamedCommand("stop", static_cast<f_callBack>(&OMAxis::_slimStop));
    this->addNamedCommand("pause", static_cast<f_callBack>(&OMAxis::_slimPause));
    this->addNamedCommand("motor", static_cast<f_callBack>(&OMAxis::_slimMotor));
-   this->addNamedCommand("led", static_cast<f_callBack>(&OMAxis::_slimLed));
+   this->addNamedCommand("debug", static_cast<f_callBack>(&OMAxis::_slimLed));
    this->addNamedCommand("dir", static_cast<f_callBack>(&OMAxis::_slimDir));
    this->addNamedCommand("expose", static_cast<f_callBack>(&OMAxis::_slimExpose));
    this->addNamedCommand("interval", static_cast<f_callBack>(&OMAxis::_slimInterval));
    this->addNamedCommand("max", static_cast<f_callBack>(&OMAxis::_slimMax));
+   this->addNamedCommand("steps", static_cast<f_callBack>(&OMAxis::_slimSteps));
    this->addNamedCommand("camera", static_cast<f_callBack>(&OMAxis::_slimCamera));
    this->addNamedCommand("exposure", static_cast<f_callBack>(&OMAxis::_slimExposure));
    this->addNamedCommand("delay", static_cast<f_callBack>(&OMAxis::_slimExposureDelay));
@@ -937,6 +949,7 @@ void OMAxis::_initScripting() {
    this->addNamedCommand("easing", static_cast<f_callBack>(&OMAxis::_slimEasing) );
    this->addNamedCommand("address", static_cast<f_callBack>(&OMAxis::_slimAddr) );
    this->addNamedCommand("home", static_cast<f_callBack>(&OMAxis::_slimHome) );
+   this->addNamedCommand("sethome", static_cast<f_callBack>(&OMAxis::_slimSetHome) );
    this->addNamedCommand("master", static_cast<f_callBack>(&OMAxis::_slimMaster) );
    this->addNamedCommand("continuous", static_cast<f_callBack>(&OMAxis::_slimContinuous) );
     this->addNamedCommand("stopmotor", static_cast<f_callBack>(&OMAxis::_slimStopMotor) );
@@ -979,7 +992,9 @@ const int OMAxis::_slimHome(QStringList& p_str) {
     return home();
 }
 
-
+const int OMAxis::_slimSetHome(QStringList& p_str) {
+    return setHome();
+}
  // motor on|off slim command
 const int OMAxis::_slimMotor(QStringList& p_str) {
 
@@ -1068,6 +1083,13 @@ const int OMAxis::_slimExpose(QStringList& p_str) {
     return expose(p_str[0].toULong());
 }
 
+const int OMAxis::_slimSteps(QStringList& p_str) {
+    if( p_str.isEmpty() )
+        throw SLIM_ERR_ARGS;
+
+    return steps(p_str[0].toULong());
+}
+
 const int OMAxis::_slimInterval(QStringList& p_str) {
     if( p_str.isEmpty() )
         throw SLIM_ERR_ARGS;
@@ -1115,9 +1137,9 @@ const int OMAxis::_slimTie(QStringList& p_str) {
     if( p_str.isEmpty() )
         throw SLIM_ERR_ARGS;
 
-    if( p_str[0] == "on" )
+    if( p_str[0] == "enable" )
         return focusShutter(true);
-    else if( p_str[0] == "off" )
+    else if( p_str[0] == "disable" )
         return focusShutter(false);
     else
         throw SLIM_ERR_ARG;

@@ -47,6 +47,7 @@ win32 {
 
 macx {
     LIBS += -lqextserialport
+    ICON = graffik.icns
 }
 
 SOURCES += main.cpp\
@@ -60,6 +61,7 @@ FORMS    += mainwindow.ui
 include(core/core.pri)
 include(film/film.pri)
 include(slim/slim.pri)
+include(docs/docs.pri)
 
 #RESOURCES += \
 #    buttons.qrc
@@ -67,4 +69,4 @@ include(slim/slim.pri)
 RESOURCES += \
     icons.qrc
 
-OTHER_FILES +=
+

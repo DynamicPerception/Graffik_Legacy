@@ -119,6 +119,8 @@ public:
     const int pause();
 
     const int home();
+    const int setHome();
+
     const int expose(unsigned long);
     const int sleep(bool);
     const int maxStepRate(unsigned short);
@@ -202,12 +204,14 @@ private:
 
         const int _slimMax(QStringList&);
 
+        const int _slimSteps(QStringList&);
         const int _slimMotor(QStringList&);
         const int _slimDir(QStringList&);
         const int _slimSpeed(QStringList&);
         const int _slimMs(QStringList&);
         const int _slimMove(QStringList&);
         const int _slimHome(QStringList&);
+        const int _slimSetHome(QStringList&);
         const int _slimPlan(QStringList&);
         const int _slimEasing(QStringList&);
 
