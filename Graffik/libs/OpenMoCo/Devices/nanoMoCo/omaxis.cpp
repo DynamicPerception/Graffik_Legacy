@@ -582,7 +582,7 @@ const int OMAxis::exposureDelay(unsigned short ms) {
  */
 
 const int OMAxis::focusShutter(bool foc) {
-   return this->command(COMDATA, dataCam, camExp, (char) foc);
+   return this->command(COMDATA, dataCam, camFWS, (char) foc);
 }
 
 /** Camera Repeat count
@@ -953,6 +953,7 @@ void OMAxis::_initScripting() {
    this->addNamedCommand("master", static_cast<f_callBack>(&OMAxis::_slimMaster) );
    this->addNamedCommand("continuous", static_cast<f_callBack>(&OMAxis::_slimContinuous) );
     this->addNamedCommand("stopmotor", static_cast<f_callBack>(&OMAxis::_slimStopMotor) );
+    this->addNamedCommand("sleep", static_cast<f_callBack>(&OMAxis::_slimSleep) );
 
 }
 
@@ -995,6 +996,23 @@ const int OMAxis::_slimHome(QStringList& p_str) {
 const int OMAxis::_slimSetHome(QStringList& p_str) {
     return setHome();
 }
+
+const int OMAxis::_slimSleep(QStringList & p_str) {
+    if( p_str.isEmpty() )
+        throw SLIM_ERR_ARGS;
+
+    if( p_str[0] == "enable" ) {
+        return sleep(true);
+    }
+    else if( p_str[0] == "disable" ) {
+        return sleep(false);
+    }
+    else {
+        throw SLIM_ERR_ARG;
+    }
+
+}
+
  // motor on|off slim command
 const int OMAxis::_slimMotor(QStringList& p_str) {
 

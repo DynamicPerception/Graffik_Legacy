@@ -7,7 +7,7 @@
 #include <QByteArray>
 
 
-#include <openmoco.h>
+#include "openmoco.h"
 #include "MoCoBus/omcommandbuffer.h"
 #include "MoCoBus/ommocobus.h"
 

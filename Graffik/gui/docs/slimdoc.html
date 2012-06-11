@@ -134,19 +134,13 @@
     <h3 id="Changing"><a name="changeaddr">Changing Device Addresses</a></h3>
     <p>When connecting a brand new device to the bus for the first time, it will
       have an automatically assigned address, usually '2'. As each device must
-      have a
-      unique address on the network, it is important to first give this device a
-      new
-      address. All MoCoBus compatible devices support the core address change
-      command
-      (see Slim Scripting, below). After connecting the device and adding it as
-      a new
-      device using its default address, you should then submit an address change
+      have a unique address on the network, it is important to first give this device a
+      new address. All MoCoBus compatible devices support the core address change
+      command (see Slim Scripting, below). After connecting the device and adding it as
+      a new device using its default address, you should then submit an address change
       command to the device using the core scripting command, with a new and
-      unique
-      address. The device's address will now be changed and Slim will continue
-      to
-      talk to it using the new address.</p>
+      unique address. Afterwards, using the Network Manager, delete the old device
+      address and add a new device with the new address</p>
     <p></p>
     <h1><a id="Slim2" name="scripting">Slim Scripting</a></h1>
     <p>Slim is designed as a scripting environment, and can be done

@@ -218,6 +218,7 @@ private:
         const int _slimStatus(QStringList&);
         const int _slimAddr(QStringList&);
 
+        const int _slimSleep(QStringList&);
         const int _slimMaster(QStringList&);
         const int _slimContinuous(QStringList&);
         const int _slimStopMotor(QStringList&);

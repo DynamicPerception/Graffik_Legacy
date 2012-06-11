@@ -79,7 +79,6 @@ struct OMbusInfo {
   devices:
 
   @code
-  #include <QDebug>
   #include "MoCoBus/omnetwork.h"
 
   ...
@@ -177,6 +176,8 @@ signals:
     void deviceAdded(QString, unsigned short);
     void deviceAdded(OMbusInfo*, OMdeviceInfo*);
     void deviceAdded(OMdeviceInfo*);
+
+    void deviceDeleted(QString, unsigned short);
 
 private slots:
     void _queued(OMCommandBuffer*);

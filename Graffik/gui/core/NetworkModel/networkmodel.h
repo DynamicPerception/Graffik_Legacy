@@ -24,6 +24,7 @@ public slots:
 
     void addBus(QString);
     void addDevice(QString, unsigned short);
+    void deviceDeleted(QString, unsigned short);
 
 private:
     OMNetwork* m_net;

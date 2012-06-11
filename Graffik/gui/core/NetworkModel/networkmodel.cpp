@@ -40,7 +40,7 @@ void networkModel::addBus(QString p_port) {
 
         // prevent editing
     newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
-        // three child columns
+        // four child columns
     newItem->setColumnCount(4);
 
     parent->appendRow(newItem);
@@ -78,4 +78,29 @@ void networkModel::addDevice(QString p_port, unsigned short p_addr) {
 
     parentList[0]->appendRow(display);
 
+}
+
+void networkModel::deviceDeleted(QString p_port, unsigned short p_addr) {
+
+    QString busName = m_net->busInfo(p_port)->name;
+    QList<QStandardItem*> parentList = findItems(busName);
+
+    if( parentList.length() < 1 )
+        return;
+
+    int delRow = -1;
+
+    for(int i = 0; i < parentList[0]->rowCount(); i++) {
+        QStandardItem* addr = parentList[0]->child(i,1);
+        if( addr->data().toUInt() == p_addr ) {
+            delRow = i;
+            break;
+        }
+    }
+
+    if( delRow != -1 ) {
+        parentList[0]->removeRow(delRow);
+    }
+
+    qDebug() << "NWM: Removed Device" << p_addr;
 }

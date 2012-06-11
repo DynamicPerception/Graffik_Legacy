@@ -416,6 +416,8 @@ void OMNetwork::deleteDevice(QString p_port, unsigned short p_addr) {
     delete thsDev;
 
     qDebug() << "OMN: Deleted device " << p_port << p_addr;
+
+    emit deviceDeleted(p_port, p_addr);
 }
 
 /** Device Information
