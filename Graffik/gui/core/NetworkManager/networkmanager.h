@@ -9,6 +9,7 @@
 #include "core/NetworkModel/networkmodel.h"
 #include "core/AddNetDialog/addnetdialog.h"
 #include "core/AddDeviceDialog/adddevicedialog.h"
+#include "core/DeleteDeviceDialog/deletedevicedialog.h"
 
 #include "film/OMAxisFilmOptions/omaxisfilmoptions.h"
 
@@ -32,6 +33,7 @@ private:
 private slots:
     void on_addBusButton_clicked();
     void on_addDevButton_clicked();
+    void on_delDevButton_clicked();
     void onRowClick(QModelIndex);
 };
 

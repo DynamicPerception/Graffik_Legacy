@@ -38,6 +38,11 @@ void networkManager::on_addDevButton_clicked() {
     addDev.exec();
 }
 
+void networkManager::on_delDevButton_clicked() {
+    DeleteDeviceDialog delDev(_netMod->net(), this);
+    delDev.exec();
+}
+
 void networkManager::onRowClick(QModelIndex p_idx) {
     qDebug() << "NM: Got click on" << p_idx.row() << p_idx.column();
 
