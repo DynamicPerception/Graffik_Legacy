@@ -1,11 +1,11 @@
 #include <QDebug>
 
-#include "omaxisfilmoptionsdialog.h"
-#include "ui_omaxisfilmoptionsdialog.h"
+#include "axisoptionsdialog.h"
+#include "ui_axisoptionsdialog.h"
 
 #include "core/ConfirmDialog/confirmdialog.h"
 
-OMAxisFilmOptionsDialog::OMAxisFilmOptionsDialog(OMAxisFilmOptions* c_opts, unsigned short c_addr, QWidget *parent) :
+AxisOptionsDialog::AxisOptionsDialog(AxisOptions* c_opts, unsigned short c_addr, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::OMAxisFilmOptionsDialog)
 {
@@ -24,13 +24,13 @@ OMAxisFilmOptionsDialog::OMAxisFilmOptionsDialog(OMAxisFilmOptions* c_opts, unsi
 
 }
 
-OMAxisFilmOptionsDialog::~OMAxisFilmOptionsDialog()
+AxisOptionsDialog::~AxisOptionsDialog()
 {
     delete ui;
 }
 
 
-void OMAxisFilmOptionsDialog::_initInputs() {
+void AxisOptionsDialog::_initInputs() {
 
         // populate "defaults" combo box
     ui->defaultCombo->addItem("VX1 Pan", AXIS_VX1_PAN);
@@ -66,7 +66,7 @@ void OMAxisFilmOptionsDialog::_initInputs() {
 
     // when the selection is changed on the default combo box..
 
-void OMAxisFilmOptionsDialog::_defaultComboChange(int p_idx) {
+void AxisOptionsDialog::_defaultComboChange(int p_idx) {
 
     bool enable = false;
     unsigned int sel = ui->defaultCombo->itemData(p_idx).toUInt();
@@ -108,7 +108,7 @@ void OMAxisFilmOptionsDialog::_defaultComboChange(int p_idx) {
     // slot connected to accept signal from buttonbox
     // save dialog values
 
-void OMAxisFilmOptionsDialog::_accept() {
+void AxisOptionsDialog::_accept() {
 
     qDebug() << "AFODia: User Saved Values";
 
