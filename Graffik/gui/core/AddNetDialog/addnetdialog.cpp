@@ -98,7 +98,7 @@ void addNetDialog::accept() {
                 errString = "The communication port selected is already in-use";
             }
             else {
-                errString = "An unknown error occured, please try again.";
+                errString = "An unknown error occured, please try again. Error Code: " + e;
             }
         }
     }
@@ -113,7 +113,8 @@ void addNetDialog::accept() {
     else {
             // set color
         _net->busColor(port, _thsColor);
-        this->done(1);
+        setResult(QDialog::Accepted);
+        QDialog::accept();
     }
 
 }

@@ -17,7 +17,7 @@
    <string notr="true"/>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0" colspan="4">
+   <item row="1" column="0" colspan="2">
     <spacer name="horizontalSpacer_3">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -25,22 +25,6 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="2" column="2">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
        <height>20</height>
       </size>
      </property>
@@ -70,7 +54,7 @@
       </size>
      </property>
      <property name="headerHidden">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <attribute name="headerVisible">
       <bool>false</bool>
@@ -142,7 +126,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="5">
+   <item row="1" column="4">
     <widget class="QPushButton" name="addDevButton">
      <property name="styleSheet">
       <string notr="true"/>
@@ -152,13 +136,20 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="4">
+   <item row="1" column="3">
     <widget class="QPushButton" name="addBusButton">
      <property name="styleSheet">
       <string notr="true"/>
      </property>
      <property name="text">
       <string>Add Bus</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="5">
+    <widget class="QPushButton" name="delBusButton">
+     <property name="text">
+      <string>Delete Bus</string>
      </property>
     </widget>
    </item>

@@ -155,6 +155,15 @@ void SlimWindow::registerNewDevice(OMbusInfo *p_bus, OMdeviceInfo *p_dev) {
 
 }
 
+void SlimWindow::removeDevice(OMbusInfo *p_bus, unsigned short p_addr) {
+    QString port = p_bus->bus->port();
+
+    if( _parser != 0 ) {
+        qDebug() << "Remove from Slim Parser" << p_addr;
+        _parser->removeDevice(port, p_addr);
+    }
+}
+
 /*void SlimWindow::onSlide(int value) {
     qDebug() << value;
 

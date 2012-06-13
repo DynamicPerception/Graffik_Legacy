@@ -59,3 +59,16 @@ int LiveDeviceModel::find(unsigned short p_addr) {
     return -1;
 
 }
+
+void LiveDeviceModel::deviceDeleted(QString p_bus, unsigned short p_addr) {
+    int pos = find(p_addr);
+
+    if( pos == -1 )
+        return;
+
+    beginRemoveRows(QModelIndex(), pos, pos);
+
+    m_cacheDevs.removeAt(pos);
+
+    endRemoveRows();
+}

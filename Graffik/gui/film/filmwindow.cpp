@@ -3,7 +3,7 @@
 
 #include <QDebug>
 
-filmWindow::filmWindow(OMNetwork* c_net, OMAxisFilmOptions *c_opts, QWidget *parent) :
+filmWindow::filmWindow(OMNetwork* c_net, AxisOptions *c_opts, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::filmWindow)
 {
@@ -20,14 +20,16 @@ filmWindow::filmWindow(OMNetwork* c_net, OMAxisFilmOptions *c_opts, QWidget *par
         // connect the device list display to the live device model
     ui->devButtonList->setModel(m_ldModel);
 
-        // allow these film-specific objects to know when a new device has been added
+        // allow these film-specific objects to know when a new device has been added or removed
 
     QObject::connect(m_net, SIGNAL(deviceAdded(OMdeviceInfo*)), m_ldModel, SLOT(deviceAdded(OMdeviceInfo*)), Qt::QueuedConnection);
+    QObject::connect(m_net, SIGNAL(deviceDeleted(QString,unsigned short)), m_ldModel, SLOT(deviceDeleted(QString,unsigned short)), Qt::QueuedConnection);
 
         // pass a click on to the model via signal
     QObject::connect(ui->devButtonList, SIGNAL(clicked(const QModelIndex &)), m_ldModel, SLOT(deviceClicked(const QModelIndex &)), Qt::QueuedConnection);
 
     QObject::connect(m_jcm, SIGNAL(motorChangeDenied(unsigned short)), this, SLOT(_jogMotorChangeDenied(unsigned short)), Qt::QueuedConnection);
+
 
 //    ui->devButtonList->setMovement(QListView::Free);
 //    ui->devButtonList->setDragDropMode(QAbstractItemView::InternalMove);

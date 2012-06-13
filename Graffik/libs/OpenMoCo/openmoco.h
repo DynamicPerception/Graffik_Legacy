@@ -8,11 +8,17 @@
 #define SLIM_ERR_ARGS   203
 #define SLIM_ERR_NODEV  204
 
-    // bring about the uint8_t under windows due to msvc
+/** Base OpenMoCo Class
 
-#ifdef Q_WS_WIN
-typedef unsigned char     uint8_t;
-#endif
+  Defines some core data elements for use in MoCoBus libraries
+
+  @author
+  C. A. Church
+
+  (c) 2011-2012 Dynamic Perception LLC
+  Licensed under the terms of the GNU LGPL version 3.
+  */
+
 
 // result data types
 

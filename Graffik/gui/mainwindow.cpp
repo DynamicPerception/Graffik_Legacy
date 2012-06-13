@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     _net = new OMNetwork();
-    _axisOpts = new OMAxisFilmOptions(this);
+    _axisOpts = new AxisOptions(this);
     _netModel = new networkModel(_net, this);
     _parser = new SlimCommandParser();
     _cmdHist = new CommandHistoryModel(_net, this);
@@ -25,18 +25,21 @@ MainWindow::MainWindow(QWidget *parent) :
  //   ui->tabs->addTab(_filmWindow, "Film");
     ui->tabs->addTab(_slimWindow, "Slim");
 
-        // make sure that the slim parser can update its alias and registration when a new device is added
+        // make sure that the slim parser can update its alias and registration when a new device is added/deleted
         // (must be done before recoverBuses)
-    QObject::connect(_net, SIGNAL(deviceAdded(OMbusInfo*,OMdeviceInfo*)), _slimWindow, SLOT(registerNewDevice(OMbusInfo*,OMdeviceInfo*)), Qt::QueuedConnection);
+    QObject::connect(_net, SIGNAL(deviceAdded(OMbusInfo*,OMdeviceInfo*)), _slimWindow, SLOT(registerNewDevice(OMbusInfo*,OMdeviceInfo*)));
+    QObject::connect(_net, SIGNAL(deviceDeleted(OMbusInfo*,unsigned short)), _slimWindow, SLOT(removeDevice(OMbusInfo*,unsigned short)));
 
-        // create new options for devices as they are added
-    QObject::connect(_net, SIGNAL(deviceAdded(OMbusInfo*,OMdeviceInfo*)), _axisOpts, SLOT(deviceAdded(OMbusInfo*,OMdeviceInfo*)), Qt::QueuedConnection);
+        // create new options for devices as they are added/deleted
+    QObject::connect(_net, SIGNAL(deviceAdded(OMbusInfo*,OMdeviceInfo*)), _axisOpts, SLOT(deviceAdded(OMbusInfo*,OMdeviceInfo*)));
+    QObject::connect(_net, SIGNAL(deviceDeleted(OMbusInfo*,unsigned short)), _axisOpts, SLOT(deviceDeleted(OMbusInfo*,unsigned short)));
 
         // recover stored bus data back to network manager
         // Do this BEFORE connecting up the signals and slots in uData to
         // avoid wasting time writing back the same data to the
         // ini file.  This recovers all buses and devices
     _uData->recoverBuses(_net);
+
         // always recover axis options after recovering buses (so devices will have been created already)
         // doing this in the reverse order will result in all devices getting created and then their options
         // overwritten with the default values
@@ -44,12 +47,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
         // connect network manager to userdata handlers (to save input information automatically)
     QObject::connect(_net, SIGNAL(busAdded(OMbusInfo*)), _uData, SLOT(busAdded(OMbusInfo*)));
+    QObject::connect(_net, SIGNAL(busDeleted(QString,QString)), _uData, SLOT(busDeleted(QString,QString)));
     QObject::connect(_net, SIGNAL(deviceAdded(OMbusInfo*,OMdeviceInfo*)), _uData, SLOT(deviceAdded(OMbusInfo*,OMdeviceInfo*)));
+    QObject::connect(_net, SIGNAL(deviceDeleted(OMbusInfo*,unsigned short)), _uData, SLOT(deviceDeleted(OMbusInfo*,unsigned short)));
 
         // again, we connect the userdata to the OMAxisFilmOptions object -after- recoverBuses to prevent the loading
         // of stored axis options to trigger a re-write back to the ini file.  We do not use a queued connection here.
     QObject::connect(_axisOpts, SIGNAL(deviceOptionsChanged(OMaxisOptions*,unsigned short)), _uData, SLOT(deviceOptionsChanged(OMaxisOptions*,unsigned short)));
-
+    QObject::connect(_axisOpts, SIGNAL(deviceOptionsRemoved(unsigned short)), _uData, SLOT(deviceOptionsRemoved(unsigned short)));
 
 
 }
@@ -57,7 +62,12 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
 
+        // ALWAYS delete userdata first to prevent it catching
+        // signals as other classes are destroyed
+
     delete _uData;
+
+
 //    delete _filmWindow;
     delete _slimWindow;
     delete _parser;

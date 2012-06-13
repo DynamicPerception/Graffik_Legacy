@@ -9,6 +9,12 @@
  */
 
 
+/** Constructor
+
+  You must pass an OMMoCoBus object and the address of this device instance
+
+  */
+
 OMAxis::OMAxis(OMMoCoBus* c_bus, unsigned short c_adr) : OMDevice(c_bus, c_adr), SlimScriptDevice() {
 
    deviceVersion = 1;
@@ -604,72 +610,7 @@ const int OMAxis::exposureRepeat(unsigned char count) {
    return this->command(COMDATA, dataCam, camRpt, (char) count);
 }
 
-/** Camera Repeat action
 
- Sets an action id to call between each repeated exposure
- in an interval cycle.  In this fashion, you may move motors
- within a cycle, rather than just between cycles.  This feature
- is especially important in gigapanoramic shots because you may
- use it to quickly code in movements for grid-like coverage.
-
- @param slot [0..3]
- Which action slot (there are four) to add this action
-
- @param action
- Which action ID to execute
-
- @return
- The ID of the command
- */
-
-const int OMAxis::exposureRepeatAction(unsigned char slot, unsigned char action) {
-   char cmdData[2] = { (char) slot, (char) action };
-
-   return this->command(COMDATA, dataCam, camExp, (unsigned short) *cmdData);
-}
-
-
-/** Status: Firmware Version
-
- Retrieves the firmware version of the given axis.
-
-
- @return
- The ID of the command
- */
-
-const int OMAxis::getVersion() {
-
-   return this->command(COMCORE, coreVersion);
-}
-
-/** Status: Device Identifier
-
- Retrieves the device identifier of the given axis.
-
-
- @return
- The ID of the command
- */
-
-const int OMAxis::getId() {
-
-   return this->command(COMCORE, coreId);
-}
-
-/** Status: Bus Protocol Version
-
- Retrieves the bus protocol version of the given axis.
-
-
- @return
- The ID of the command
- */
-
-const int OMAxis::getBusVer() {
-
-   return this->command(COMCORE, coreBus);
-}
 
 /** Status: Interval
 
@@ -891,18 +832,6 @@ const int OMAxis::motorDisable() {
     return this->command(COMDATA, dataMot, motDisable);
 }
 
-/** Change Node Address
-
-  Immediately changes the address of the node, you must use
-  the new address for this device after calling this command.
-
-  @return
-  The ID of the command
-  */
-
-const int OMAxis::changeAddress(uint8_t p_addr) {
-    return this->command(COMCORE, coreAddr, (char) p_addr);
-}
 
 /** Set Timing Node
 

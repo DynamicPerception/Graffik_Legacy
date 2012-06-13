@@ -9,7 +9,7 @@
 
 #include "speedcontrolproxy.h"
 #include "MoCoBus/omnetwork.h"
-#include "film/OMAxisFilmOptions/omaxisfilmoptions.h"
+#include "core/AxisOptions/axisoptions.h"
 #include "film/LiveDeviceModel/livedevicemodel.h"
 
 #define OM_JOGRES_RAPID 1
@@ -28,7 +28,7 @@ class JogControlManager : public QObject
 {
     Q_OBJECT
 public:
-    JogControlManager(OMNetwork* c_net, OMAxisFilmOptions* c_opts, LiveDeviceModel* c_ldm, QComboBox* c_jogCombo, QDial* c_jogDial, QDoubleSpinBox* c_jogSpd, QDoubleSpinBox* c_jogDmp, QObject *parent = 0);
+    JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, LiveDeviceModel* c_ldm, QComboBox* c_jogCombo, QDial* c_jogDial, QDoubleSpinBox* c_jogSpd, QDoubleSpinBox* c_jogDmp, QObject *parent = 0);
     ~JogControlManager();
 
 signals:
@@ -54,7 +54,7 @@ private:
     QComboBox* m_jogCombo;
 
     OMNetwork* m_net;
-    OMAxisFilmOptions* m_opts;
+    AxisOptions* m_opts;
     LiveDeviceModel* m_ldm;
     SpeedControlProxy* m_scp;
 

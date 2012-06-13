@@ -98,6 +98,64 @@ QString OMDevice::type() {
     return deviceType;
 }
 
+
+
+/** Change Node Address
+
+  Immediately changes the address of the node, you must use
+  the new address for this device after calling this command.
+
+  @return
+  The ID of the command
+  */
+
+const int OMDevice::changeAddress(uint8_t p_addr) {
+    return this->command(COMCORE, coreAddr, (char) p_addr);
+    deviceAddress = p_addr;
+}
+
+/** Retrieve Firmware Version from Node
+
+ Retrieves the firmware version of the node.
+
+
+ @return
+ The ID of the command
+ */
+
+const int OMDevice::getVersion() {
+
+   return this->command(COMCORE, coreVersion);
+}
+
+/** Retrieve Device Identifier
+
+ Retrieves the device identifier of the given node.
+
+
+ @return
+ The ID of the command
+ */
+
+const int OMDevice::getId() {
+
+   return this->command(COMCORE, coreId);
+}
+
+/** Retrieve Bus Protocol Version
+
+ Retrieves the bus protocol version of the given node.
+
+
+ @return
+ The ID of the command
+ */
+
+const int OMDevice::getBusVer() {
+
+   return this->command(COMCORE, coreBus);
+}
+
 /** Get Associated Bus Object
 
   @return

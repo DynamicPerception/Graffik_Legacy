@@ -61,7 +61,7 @@ void UserData::deviceOptionsChanged(OMaxisOptions *p_opts, unsigned short p_addr
     m_qset->setValue(key, QVariant::fromValue(*p_opts));
 }
 
-void UserData::recoverAxisOptions(OMAxisFilmOptions *p_opts) {
+void UserData::recoverAxisOptions(AxisOptions *p_opts) {
 
     qDebug() << "UD: recoverAxisOptions: Started";
 
@@ -173,4 +173,27 @@ void UserData::_recoverDevices(OMNetwork *p_net, QString p_bus, QString p_busPor
     } // end foreach(dev...
 
     m_qset->endGroup(); // clear out the jump down into the devices
+}
+
+
+void UserData::deviceDeleted(OMbusInfo *p_bus, unsigned short p_addr) {
+    qDebug() << "UD:deviceDeleted: Got Device" << p_bus->name << p_addr;
+
+    QString key = "network/buses/" + p_bus->name + "/devices/" + QString::number(p_addr);
+    m_qset->remove(key);
+}
+
+
+void UserData::busDeleted(QString p_port, QString p_name) {
+    qDebug() << "UD:busDeleted: Got Bus" << p_port << p_name;
+
+    QString key = "network/buses/" + p_name;
+    m_qset->remove(key);
+}
+
+void UserData::deviceOptionsRemoved(unsigned short p_addr) {
+    qDebug() << "UD:Got request to remove device options for" << p_addr;
+
+    QString key = "film/device_options/" + QString::number(p_addr);
+    m_qset->remove(key);
 }

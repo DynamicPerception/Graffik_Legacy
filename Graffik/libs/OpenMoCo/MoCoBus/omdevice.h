@@ -76,7 +76,7 @@
 
     @author
     C. A. Church
-    (c) Copyright 2011 Dynamic Perception LLC
+    (c) Copyright 2011-2012 Dynamic Perception LLC
 
     Licensed under the terms of the GNU LGPL version 3.
 
@@ -95,6 +95,11 @@ public:
    unsigned short version();
    QString type();
    int id();   
+
+   const int getVersion();
+   const int getBusVer();
+   const int getId();
+   const int changeAddress(uint8_t);
 
 protected:
 
@@ -116,6 +121,13 @@ protected:
    char* nwo(unsigned short);
    char* nwo(unsigned long);
    char* nwo(float);
+
+   static const char    COMCORE = 1;
+
+   static const char coreBus       = 1;
+   static const char coreVersion   = 3;
+   static const char coreId        = 2;
+   static const char coreAddr      = 4;
 
 private:
 

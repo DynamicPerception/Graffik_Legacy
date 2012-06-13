@@ -9,7 +9,7 @@
 #include "MoCoBus/omnetwork.h"
 #include "Devices/nanoMoCo/omaxis.h"
 #include "film/LiveDeviceModel/livedevicemodel.h"
-#include "film/OMAxisFilmOptions/omaxisfilmoptions.h"
+#include "core/AxisOptions/axisoptions.h"
 
     // timer period mS - changes speed every period during
     // damping
@@ -35,7 +35,7 @@ class SpeedControlProxy : public QObject
 {
     Q_OBJECT
 public:
-    explicit SpeedControlProxy(OMAxisFilmOptions *c_opts);
+    explicit SpeedControlProxy(AxisOptions *c_opts);
     ~SpeedControlProxy();
     
     void maxSpeed(float p_pct);
@@ -65,7 +65,7 @@ private:
     QHash<unsigned short, OMdeviceInfo*> m_devList;
     OMAxis* m_curDev;
     OMaxisOptions* m_opts;
-    OMAxisFilmOptions* m_optObj;
+    AxisOptions* m_optObj;
     float m_maxpct;
     bool m_curDir;
     float m_curSpd;

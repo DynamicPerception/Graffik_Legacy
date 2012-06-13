@@ -60,7 +60,7 @@ void DeleteDeviceDialog::on_okButton_clicked() {
 
     qDebug() << "DDD: selected device for deletion:" << bus << addr;
 
-//    m_net->deleteDevice(bus, addr);
+    m_net->deleteDevice(bus, addr);
 
     QDialog::accept();
 

@@ -33,6 +33,7 @@ private slots:
 
 public slots:
         void registerNewDevice(OMbusInfo* p_bus, OMdeviceInfo* p_dev);
+        void removeDevice(OMbusInfo* p_bus, unsigned short p_addr);
 private:
 
     Ui::SlimWindow *ui;

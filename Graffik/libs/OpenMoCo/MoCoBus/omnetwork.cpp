@@ -118,9 +118,13 @@ OMCommandManager* OMNetwork::getManager() {
 
 void OMNetwork::addBus(QString p_port, QString p_name) {
 
+    qDebug() << "OMN: Bus add request for" << p_port << p_name;
+
         // throw an error on duplicate
-    if( m_busList.contains(p_port) )
+    if( m_busList.contains(p_port) ) {
+        qDebug() << "OMN: Bus" << p_port << "is already in use.";
         throw OM_NET_DUPE;
+    }
 
     OMMoCoBus* bus = new OMMoCoBus(p_port);
 
@@ -199,17 +203,24 @@ bool OMNetwork::deleteBus(QString p_port) {
 
     qDebug() << "OMN: Delete Bus Request for " << p_port;
 
-    if( ! m_busList.contains(p_port) )
+    if( ! m_busList.contains(p_port) ) {
+        qDebug() << "OMN: Strangely, the bus does not exist?";
         return false;
+    }
 
         // eliminate any and all devices attached to this bus
     foreach( unsigned short addr, m_busList[p_port]->devices.keys() ) {
         deleteDevice(p_port, addr);
     }
 
+    QString name = m_busList[p_port]->name;
+
     delete m_busList[p_port]->bus;
 
     m_busList.remove(p_port);
+
+    emit busDeleted(p_port, name);
+
     return true;
 }
 
@@ -418,6 +429,7 @@ void OMNetwork::deleteDevice(QString p_port, unsigned short p_addr) {
     qDebug() << "OMN: Deleted device " << p_port << p_addr;
 
     emit deviceDeleted(p_port, p_addr);
+    emit deviceDeleted(m_busList.value(p_port), p_addr);
 }
 
 /** Device Information

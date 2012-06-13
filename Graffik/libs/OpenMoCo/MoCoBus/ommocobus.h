@@ -73,6 +73,8 @@ class OMCommandBuffer;
   @author
   C. A. Church
 
+  (c) 2011-2012 Dynamic Perception LLC
+  Licensed under the terms of the GNU LGPL version 3.
  */
 
 

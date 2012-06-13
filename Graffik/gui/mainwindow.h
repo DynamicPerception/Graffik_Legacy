@@ -12,12 +12,8 @@
 
 #include "core/NetworkModel/networkmodel.h"
 #include "core/NetworkManager/networkmanager.h"
-
-    // TODO: this stuff needs to either move to Film
-    // or be changed to core
-
-#include "film/OMAxisFilmOptions/omaxisfilmoptions.h"
-#include "film/OMAxisFilmOptions/omaxisfilmoptionsdialog.h"
+#include "core/AxisOptions/axisoptions.h"
+#include "core/AxisOptions/axisoptionsdialog.h"
 
 #include "Slim/slimcommandparser.h"
 #include "Slim/commandhistorymodel.h"
@@ -49,7 +45,7 @@ private:
     networkModel* _netModel;
     SlimCommandParser* _parser;
     UserData* _uData;
-    OMAxisFilmOptions* _axisOpts;
+    AxisOptions* _axisOpts;
     CommandHistoryModel* _cmdHist;
 
 public slots:

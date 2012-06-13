@@ -23,7 +23,7 @@ private slots:
     void _accept();
 
 private:
-    Ui::OMAxisFilmOptionsDialog *ui;
+    Ui::AxisOptionsDialog* ui;
     unsigned short m_addr;
     OMaxisOptions* m_opts;
     AxisOptions* m_optObj;

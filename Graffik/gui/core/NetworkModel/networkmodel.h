@@ -23,6 +23,7 @@ signals:
 public slots:
 
     void addBus(QString);
+    void busDeleted(QString, QString);
     void addDevice(QString, unsigned short);
     void deviceDeleted(QString, unsigned short);
 

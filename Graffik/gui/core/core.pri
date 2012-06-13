@@ -13,7 +13,11 @@ HEADERS                 += core/SpeedDial/dialspeed.h \
  #   core/AxisTimeline/axistimeline.h
     core/UserData/userdata.h \
     core/ConfirmDialog/confirmdialog.h \
-    core/DeleteDeviceDialog/deletedevicedialog.h
+    core/DeleteDeviceDialog/deletedevicedialog.h \
+    core/AxisOptions/axisoptionsdialog.h \
+    core/AxisOptions/axisoptions.h \
+    core/DeleteBusDialog/deletebusdialog.h
+
 			   
 SOURCES                 += core/SpeedDial/dialspeed.cpp \
                            core/ErrorDialog/errordialog.cpp \
@@ -27,7 +31,11 @@ SOURCES                 += core/SpeedDial/dialspeed.cpp \
  #   core/AxisTimeline/axistimeline.cpp
     core/UserData/userdata.cpp \
     core/ConfirmDialog/confirmdialog.cpp \
-    core/DeleteDeviceDialog/deletedevicedialog.cpp
+    core/DeleteDeviceDialog/deletedevicedialog.cpp \
+    core/AxisOptions/axisoptionsdialog.cpp \
+    core/AxisOptions/axisoptions.cpp \
+    core/DeleteBusDialog/deletebusdialog.cpp
+
 			   
 FORMS 			+= core/SpeedDial/dialspeed.ui \
 			   core/ErrorDialog/errordialog.ui \
@@ -38,6 +46,8 @@ FORMS 			+= core/SpeedDial/dialspeed.ui \
     core/NetworkManager/networkmanager.ui \
   #  core/AxisTimeline/axistimeline.ui
     core/ConfirmDialog/confirmdialog.ui \
-    core/DeleteDeviceDialog/deletedevicedialog.ui
+    core/DeleteDeviceDialog/deletedevicedialog.ui \
+    core/AxisOptions/axisoptionsdialog.ui \
+    core/DeleteBusDialog/deletebusdialog.ui
 	   
 	   

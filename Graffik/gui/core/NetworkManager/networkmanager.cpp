@@ -3,10 +3,10 @@
 #include "networkmanager.h"
 #include "ui_networkmanager.h"
 
-#include "film/OMAxisFilmOptions/omaxisfilmoptionsdialog.h"
+#include "core/AxisOptions/axisoptionsdialog.h"
 
 
-networkManager::networkManager(networkModel *c_net, OMAxisFilmOptions* c_opts, QWidget *parent) :
+networkManager::networkManager(networkModel *c_net, AxisOptions* c_opts, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::networkManager)
 {
@@ -43,6 +43,11 @@ void networkManager::on_delDevButton_clicked() {
     delDev.exec();
 }
 
+void networkManager::on_delBusButton_clicked() {
+    DeleteBusDialog delBus(_netMod->net(), this);
+    delBus.exec();
+}
+
 void networkManager::onRowClick(QModelIndex p_idx) {
     qDebug() << "NM: Got click on" << p_idx.row() << p_idx.column();
 
@@ -59,7 +64,7 @@ void networkManager::onRowClick(QModelIndex p_idx) {
         unsigned short addr = itm->text().toUShort();
         qDebug() << "NM: Spawn Config for address" << addr;
 
-        OMAxisFilmOptionsDialog opts(_opts, addr, this);
+        AxisOptionsDialog opts(_opts, addr, this);
         opts.exec();
     }
 }

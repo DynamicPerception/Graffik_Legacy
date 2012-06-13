@@ -130,9 +130,11 @@ public:
 
 signals:
     void deviceOptionsChanged(OMaxisOptions* p_opts, unsigned short p_addr);
+    void deviceOptionsRemoved(unsigned short p_addr);
 
 public slots:
     void deviceAdded(OMbusInfo* p_bus, OMdeviceInfo* p_dev);
+    void deviceDeleted(OMbusInfo* p_bus, unsigned short p_addr);
 
 private:
     QHash<unsigned short, OMaxisOptions*> m_optList;

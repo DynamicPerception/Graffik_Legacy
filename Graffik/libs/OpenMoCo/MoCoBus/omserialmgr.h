@@ -13,6 +13,8 @@
 
 #define OM_SER_TIMEOUT  100
 
+ // forward declaration
+
 class OMMoCoBus;
 
 
@@ -24,10 +26,13 @@ class OMMoCoBus;
   with a MoCoBus device using QThread.
 
   This class should not be used directly, instead the OMNetwork class
-  should be used to manage busses and devices easily.
+  should be used to manage buses and devices easily.
 
   @author
   C. A. Church
+
+  (c) 2011-2012 Dynamic Perception LLC
+  Licensed under the terms of the GNU LGPL version 3.
 
   */
 
@@ -41,8 +46,6 @@ public:
     void connect();
 
     const bool isConnected();
-
-   // void run();
 
 signals:
     void commandComplete(OMCommandBuffer*);

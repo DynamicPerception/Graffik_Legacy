@@ -2,7 +2,7 @@
 
 #include <QDebug>
 
-SpeedControlProxy::SpeedControlProxy(OMAxisFilmOptions *c_opts) :
+SpeedControlProxy::SpeedControlProxy(AxisOptions *c_opts) :
     QObject()
 {
     m_optObj = c_opts;

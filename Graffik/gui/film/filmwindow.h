@@ -6,7 +6,7 @@
 
 #include "MoCoBus/omnetwork.h"
 #include "film/LiveDeviceModel/livedevicemodel.h"
-#include "film/OMAxisFilmOptions/omaxisfilmoptions.h"
+#include "core/AxisOptions/axisoptions.h"
 #include "film/JogControlManager/jogcontrolmanager.h"
 
 namespace Ui {
@@ -18,7 +18,7 @@ class filmWindow : public QWidget
     Q_OBJECT
     
 public:
-    filmWindow(OMNetwork* c_net, OMAxisFilmOptions* c_opts, QWidget *parent = 0);
+    filmWindow(OMNetwork* c_net, AxisOptions* c_opts, QWidget *parent = 0);
     ~filmWindow();
 
 private slots:
@@ -28,7 +28,7 @@ private:
     Ui::filmWindow *ui;
     LiveDeviceModel* m_ldModel;
     OMNetwork* m_net;
-    OMAxisFilmOptions* m_opts;
+    AxisOptions* m_opts;
     JogControlManager* m_jcm;
 
     bool m_threadStarted;

@@ -150,3 +150,14 @@ void SlimCommandParser::addAlias(QString p_alias, QString p_port, unsigned short
     QString devKey = p_port + ":" + QString::number(p_addr);
     m_aliases.insert(p_alias, devKey);
 }
+
+/** Remove a Device
+
+  */
+
+void SlimCommandParser::removeDevice(QString p_port, unsigned short p_addr) {
+    QString devKey = p_port + ":" + QString::number(p_addr);
+    QString alias = m_aliases.key(devKey);
+    m_aliases.remove(alias);
+    m_regDevs.remove(devKey);
+}

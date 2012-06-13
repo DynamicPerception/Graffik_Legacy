@@ -44,10 +44,21 @@ struct OMdeviceInfo {
 
  // port is not a member, see m_busList vector.
 
+ /** Information about a specific bus
+
+    Stores information related to a specific bus.  Note that
+    the devices member contains a QHash with a pointer to the
+    OMdeviceInfo structure for each device on this bus.
+    */
+
 struct OMbusInfo {
+    /** bus name */
     QString name;
+    /** bus color */
     QColor color;
+    /** OMMoCoBus object pointer */
     OMMoCoBus* bus;
+    /** Hash of devices - device address is key */
     QHash<unsigned short, OMdeviceInfo*> devices;
 };
 
@@ -106,7 +117,8 @@ struct OMbusInfo {
 
   @author C. A. Church
 
-  (c) 2011 Dynamic Perception LLC
+  (c) 2011-2012 Dynamic Perception LLC
+  Licensed under the terms of the GNU LGPL version 3.
   */
 
 class OMNetwork : public QObject, public OpenMoCo
@@ -161,23 +173,40 @@ signals:
       history -at the time the signal is sent-.
       */
 
-    void complete(OMCommandBuffer*);
+    void complete(OMCommandBuffer* p_cmd);
 
     /** Command Queued Signal
 
       See complete() for more info.
       */
 
-    void queued(OMCommandBuffer*);
+    void queued(OMCommandBuffer* p_cmd);
 
-    void busAdded(QString);
-    void busAdded(OMbusInfo*);
+    /** Bus Added Signal
 
+      */
+
+    void busAdded(QString p_port);
+    void busAdded(OMbusInfo* p_bus);
+
+    /** Bus deleted signal
+      */
+
+    void busDeleted(QString p_port, QString p_name);
+
+    /** Device Added Signal
+
+      */
     void deviceAdded(QString, unsigned short);
     void deviceAdded(OMbusInfo*, OMdeviceInfo*);
     void deviceAdded(OMdeviceInfo*);
 
+    /** Device Deleted Signal
+
+      */
+
     void deviceDeleted(QString, unsigned short);
+    void deviceDeleted(OMbusInfo*, unsigned short);
 
 private slots:
     void _queued(OMCommandBuffer*);

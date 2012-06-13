@@ -2,7 +2,7 @@
 
 #include <QDebug>
 
-JogControlManager::JogControlManager(OMNetwork* c_net, OMAxisFilmOptions* c_opts, LiveDeviceModel* c_ldm, QComboBox* c_jogCombo, QDial* c_jogDial, QDoubleSpinBox* c_jogSpd, QDoubleSpinBox *c_jogDmp, QObject *parent) :
+JogControlManager::JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, LiveDeviceModel* c_ldm, QComboBox* c_jogCombo, QDial* c_jogDial, QDoubleSpinBox* c_jogSpd, QDoubleSpinBox *c_jogDmp, QObject *parent) :
     QObject(parent)
 {
     m_curAxis = 0;

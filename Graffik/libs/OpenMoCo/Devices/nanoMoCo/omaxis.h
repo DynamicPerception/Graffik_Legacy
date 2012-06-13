@@ -127,8 +127,6 @@ public:
     const int maxStepSpeed(unsigned short);
     const int debug(bool);
 
-    const int changeAddress(uint8_t);
-
     const int continuous(bool);
     const int move(bool, unsigned short);
     const int move(bool, unsigned long, unsigned long, unsigned long, unsigned long);
@@ -172,9 +170,7 @@ public:
 
 
 
-    const int getVersion();
-    const int getBusVer();
-    const int getId();
+
 
 
 
@@ -276,14 +272,10 @@ private:
         static const char   camCMHome   = 10;
         static const char   camCExpDv   = 11;
 
-        static const char    COMCORE = 1;
+
         static const char    COMPROG = 2;
         static const char    COMDATA = 3;
 
-        static const char coreBus       = 1;
-        static const char coreVersion   = 3;
-        static const char coreId        = 2;
-        static const char coreAddr      = 4;
 
         static const char statVersion   = 0;
         static const char statRunning   = 1;

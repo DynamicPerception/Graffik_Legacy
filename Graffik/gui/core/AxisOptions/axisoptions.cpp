@@ -127,4 +127,19 @@ void AxisOptions::deviceAdded(OMbusInfo *p_bus, OMdeviceInfo *p_dev) {
     m_optMutex->unlock();
 }
 
+void AxisOptions::deviceDeleted(OMbusInfo *p_bus, unsigned short p_addr) {
+    qDebug() << "OAFO: Deleted device" << p_addr;
+
+    m_optMutex->lock();
+
+    if( m_optList.contains(p_addr) ) {
+        OMaxisOptions* ptr = m_optList[p_addr];
+        delete ptr;
+        m_optList.remove(p_addr);
+    }
+
+    m_optMutex->unlock();
+
+    emit deviceOptionsRemoved(p_addr);
+}
 

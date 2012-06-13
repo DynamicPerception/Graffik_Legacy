@@ -7,7 +7,7 @@
 
 AxisOptionsDialog::AxisOptionsDialog(AxisOptions* c_opts, unsigned short c_addr, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::OMAxisFilmOptionsDialog)
+    ui(new Ui::AxisOptionsDialog)
 {
     ui->setupUi(this);
     m_opts = c_opts->getOptions(c_addr);
