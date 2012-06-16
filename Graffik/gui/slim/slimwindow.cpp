@@ -133,12 +133,7 @@ void SlimWindow::onCmdResult(slimCommand p_cmd) {
 
 }
 
-void SlimWindow::onDialActivate() {
-    qDebug() << "Dial-a-speed";
-    DialSpeed * _dialSpd = new DialSpeed(this);
 
-    _dialSpd->show();
-}
 
 void SlimWindow::registerNewDevice(OMbusInfo *p_bus, OMdeviceInfo *p_dev) {
     if( _parser != 0 ) {
@@ -163,75 +158,4 @@ void SlimWindow::removeDevice(OMbusInfo *p_bus, unsigned short p_addr) {
         _parser->removeDevice(port, p_addr);
     }
 }
-
-/*void SlimWindow::onSlide(int value) {
-    qDebug() << value;
-
-   unsigned short dispSpeed = 1.0;
-   QString dir = "L";
-   boolean adir = true;
-   static DWORD ticks = 0;
-
-   if( value < 500 ) {
-       dispSpeed = (unsigned short) (((500.0 - (double) value) / 500.00) * 1000.0);
-       dir = "L";
-       adir = false;
-   }
-   else if(value > 500) {
-       dispSpeed = (unsigned short) ((((double) value - 500.0) / 500.0) * 1000.0);
-       dir = "R";
-   }
-   else {
-       dispSpeed = 0.0;
-       dir = "";
-   }
-
-   qDebug() << "Sending value: " << (unsigned short) dispSpeed;
-   qDebug() << "Tick count:" << (DWORD) ticks;
-
-   if( _axis != 0 && (ticks == 0 || GetTickCount() - ticks > 500) ) {
-       try {
-           int cmdId = _axis->direction(adir);
-           qDebug() << "DIRID: " << cmdId;
-           cmdId = _axis->speed(dispSpeed);
-           qDebug() << "SPDID: " << cmdId;
-           ticks = GetTickCount();
-       }
-       catch( int e ) {
-           qDebug()<< "Caught Exception: " << e;
-       }
-   }
-   emit(updateMotorDisp((int) dispSpeed));
-   emit(updateMotorDir(dir));
-}
-
-void SlimWindow::on_serialPortButton_clicked() {
-    QString thsText = ui->serInput->text();
-
-
-    try {
-            // convert to char*
-        QByteArray ba = thsText.toLocal8Bit();
-        char* thsPort = ba.data();
-        _ctrl->setPort(thsPort);
-
-        _ctrl->connect();
-
-        int cmdId = _axis->stopMotor();
-
-        cmdId = _axis->sleep(true);
-
-        cmdId = _axis->speed(1);
-
-        cmdId = _axis->move(true, 0);
-
-
-    }
-    catch (int e) {
-        qDebug()<< "Caught Exception: " << e;
-    }
-
-
-}
-*/
 

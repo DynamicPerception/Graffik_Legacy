@@ -15,6 +15,7 @@
 					<section title="Creating a Slim Script" ref="slimdoc.html#createscript" />
 					<section title="Loading a Slim Script" ref="slimdoc.html#loadscript" />
 					<section title="Core Slim Scripting Commands" ref="slimdoc.html#corescript" />
+                                        <section title="Broadcast Commands" ref="slimdoc.html#bcast" />
 				</section>
 				<section title="Supported Node Devices" ref="slimdoc.html#supdev">
 					<section title="nanoMoCo" ref="slimdoc.html#nanomoco">

@@ -20,7 +20,7 @@ networkModel::networkModel(OMNetwork* c_net, QObject *parent) :
         // listen in for buses or devices being added to the network, so that we
         // may automatically add them to the model
 
-    QObject::connect(m_net, SIGNAL(busAdded(QString)), this, SLOT(addBus(QString)), Qt::QueuedConnection);
+    QObject::connect(m_net, SIGNAL(busAdded(QString)), this, SLOT(addBus(QString)));
     QObject::connect(m_net, SIGNAL(busDeleted(QString,QString)), this, SLOT(busDeleted(QString,QString)));
 
     QObject::connect(m_net, SIGNAL(deviceAdded(QString, unsigned short)), this, SLOT(addDevice(QString, unsigned short)));
@@ -38,6 +38,8 @@ OMNetwork* networkModel::net() {
 }
 
 void networkModel::addBus(QString p_port) {
+
+    qDebug() << "NWM: Adding Bus" << p_port;
     QStandardItem* parent = invisibleRootItem();
 
     OMbusInfo* bus = m_net->busInfo(p_port);
@@ -58,7 +60,7 @@ void networkModel::addDevice(QString p_port, unsigned short p_addr) {
     QList<QStandardItem*> parentList = findItems(name);
 
     if( parentList.length() < 1 || parentList.length() > 1 ) {
-        qDebug() << "Very odd, too few or too many entries found for " << p_port;
+        qDebug() << "NWM: Very odd, too few or too many entries found for " << p_port;
         return;
     }
 

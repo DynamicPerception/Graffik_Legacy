@@ -13,9 +13,13 @@ class CommandHistoryModel : public QAbstractTableModel
     Q_OBJECT
 public:
     CommandHistoryModel(OMNetwork*, QObject *parent);
+    ~CommandHistoryModel();
+
+
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
     slimCommand getCommand(int p_row);
 
@@ -34,6 +38,8 @@ private:
     QVector<slimCommand> _cmdVec;
     QHash<int, int> m_cmdLoc;
     OMNetwork* m_net;
+    QColor* m_bcCol;
+    QString m_headers;
 };
 
 #endif // COMMANDHISTORYMODEL_H

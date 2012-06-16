@@ -58,6 +58,8 @@ OMCommandBuffer::OMCommandBuffer(unsigned short c_addr, int c_devid) : OpenMoCo(
     _devId = c_devid;
     _execStatus = OMC_NOCMD;
 
+    _isBCast = false;
+
 }
 
 OMCommandBuffer::~OMCommandBuffer() {
@@ -80,6 +82,30 @@ const int OMCommandBuffer::status() {
     return this->_execStatus;
 }
 
+
+/** Broadcast Command?
+
+   Is this command a broadcast command?
+
+   @return
+   True if command is a broadcast command, false otherwise
+   */
+
+bool OMCommandBuffer::broadcast() {
+    return _isBCast;
+}
+
+/** Set Broadcast
+
+   Sets whether or not this command is a broadcast command.
+
+   @param p_bcast
+   True if command is a broadcast command, false if not
+   */
+
+void OMCommandBuffer::broadcast(bool p_bcast) {
+    _isBCast = p_bcast;
+}
 
 /** Command ID
 

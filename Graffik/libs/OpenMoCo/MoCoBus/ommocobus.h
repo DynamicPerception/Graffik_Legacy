@@ -1,16 +1,27 @@
 #ifndef OMMOCOBUS_H
 #define OMMOCOBUS_H
 
-#include <QQueue>
-#include <QThread>
+
 #include <QObject>
 #include <QMetaType>
-#include <QColor>
+#include <QThread>
 #include <QString>
 
 #include "openmoco.h"
 #include "omserialmgr.h"
 
+
+ /**
+
+   Defines common MoCoBus packet data values
+   */
+
+namespace OMBus {
+    const uint8_t OM_SER_BCAST_ADDR = 1;
+    const uint8_t OM_BCAST_START = 1;
+    const uint8_t OM_BCAST_STOP = 2;
+    const uint8_t OM_BCAST_PAUSE = 3;
+}
 
 class OMCommandBuffer;
 
@@ -91,6 +102,8 @@ public:
     OMMoCoBus(const OMMoCoBus&) : QObject() {};
     void queueCommand(OMCommandBuffer* &cmdBuf);
 
+    const int broadcast(uint8_t p_bcmd);
+
     unsigned short id();
 
     void connect();
@@ -111,9 +124,6 @@ private:
     unsigned short _id;
 
     OMSerialMgr* _serMgr;
-
-        // we use the QT QQueue for its thread-safe FIFO
-    QQueue<OMCommandBuffer*> _cmdQueue;
 
     bool _connected;
 

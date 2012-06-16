@@ -8,11 +8,17 @@ CommandHistoryModel::CommandHistoryModel(OMNetwork *c_net, QObject *parent) :
     QAbstractTableModel(parent)
 {
     m_net = c_net;
+    m_bcCol = new QColor("white");
+
 
     qRegisterMetaType<slimCommand>("slimCommand");
 
         // we want the results of each command
     QObject::connect(m_net, SIGNAL(complete(OMCommandBuffer*)), this, SLOT(_commandCompleted(OMCommandBuffer*)), Qt::QueuedConnection);
+}
+
+CommandHistoryModel::~CommandHistoryModel() {
+    delete m_bcCol;
 }
 
 int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
@@ -21,6 +27,31 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
 
  int CommandHistoryModel::columnCount(const QModelIndex & parent) const {
      return 4; // 4 columns in slimCommand for display
+ }
+
+ QVariant CommandHistoryModel::headerData(int section, Qt::Orientation orientation, int role) const {
+
+     if( role == Qt::DisplayRole ) {
+         if( orientation == Qt::Horizontal ) {
+             switch(section) {
+                case 0:
+                 return QVariant("Bus");
+                case 1:
+                 return QVariant("Stat");
+                case 2:
+                 return QVariant("Device");
+                case 3:
+                 return QVariant("Command");
+                default:
+                 return QVariant();
+             }
+         }
+         else if( orientation == Qt::Vertical ) {
+             return QVariant(section);
+         }
+     }
+
+     return QVariant();
  }
 
  // overridden data selector
@@ -34,23 +65,36 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
      if( index.column() > this->columnCount() - 1)
          return QVariant();
 
+         // check, and then access command buffer for information
+     OMCommandBuffer* buf = _cmdVec.at(index.row()).buf;
+
+
      if (role == Qt::DisplayRole) {
 
         if( index.column() == 0 ) {
             // get network name
-            QString name = _cmdVec.at(index.row()).network;
-            name = m_net->busInfo(name)->name;
-            return QVariant(name);
+            if( _cmdVec.at(index.row()).broadcast ) {
+                    // handle broadcast packets
+                QString name = "Broadcast";
+                return QVariant(name);
+            }
+            else {
+                QString name = _cmdVec.at(index.row()).network;
+                name = m_net->busInfo(name)->name;
+                return QVariant(name);
+            }
         }
         else if( index.column() == 1 ) {
                 // result/status
 
-                // check, and then access command buffer for information
-            OMCommandBuffer* buf = _cmdVec.at(index.row()).buf;
 
                 // we MUST check that the buffer has been initialized (it likely is
                 // not if the command was just added)
             if( buf != 0 ) {
+
+                if( _cmdVec.at(index.row()).broadcast )
+                    return QVariant(1);
+
                 return QVariant(buf->status());
             }
             else {
@@ -59,6 +103,9 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
         }
         else if( index.column() == 2 ) {
             // get device name
+            if( _cmdVec.at(index.row()).broadcast )
+                return QVariant("Broadcast");
+
             QString name = m_net->deviceInfo(_cmdVec.at(index.row()).network, _cmdVec.at(index.row()).address)->name;
             return QVariant(name);
         }
@@ -70,17 +117,20 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
 
      }
      else if( role == Qt::BackgroundRole ) {
+
          if( index.column() == 0 ) {
              // color background of network area by user-specified color
-             QColor bgCol = m_net->busInfo(_cmdVec.at(index.row()).network)->color;
+
+             QColor bgCol = *m_bcCol;
+
+             if( ! _cmdVec.at(index.row()).broadcast )
+                 bgCol = m_net->busInfo(_cmdVec.at(index.row()).network)->color;
+
              QBrush netBackground(bgCol);
              return(netBackground);
          }
          else if( index.column() == 1 ) {
              // change background color of status column
-
-             OMCommandBuffer* buf = _cmdVec.at(index.row()).buf;
-
 
              if( buf == 0 || buf->status() == OMC_QUEUED ) {
                  // buffer may not be initialized yet
@@ -133,12 +183,13 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
 
  void CommandHistoryModel::_commandCompleted(OMCommandBuffer * p_buf) {
 
+     qDebug() << "SCHM: Received complete signal";
 
      int thsId = p_buf->id();
 
         // strange, we have no record of that command! (Must've come from someone else)
      if( ! m_cmdLoc.contains(thsId) ) {
-         // qDebug() << "SCHM: Ignoring command " << thsId;
+         qDebug() << "SCHM: Ignoring command " << thsId;
          return;
      }
 

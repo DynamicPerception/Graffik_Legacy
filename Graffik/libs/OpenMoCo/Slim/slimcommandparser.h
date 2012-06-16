@@ -10,6 +10,7 @@
 #include "openmoco.h"
 #include "slimscriptdevice.h"
 #include "MoCoBus/omcommandbuffer.h"
+#include "MoCoBus/omnetwork.h"
 
 /** Slim Command Parser Class
 
@@ -31,6 +32,7 @@
 struct slimCommand {
     int id;
     unsigned short address;
+    bool broadcast;
     QString network;
     QString command;
     QStringList arguments;
@@ -42,7 +44,7 @@ struct slimCommand {
 class SlimCommandParser : public OpenMoCo
 {
 public:
-    SlimCommandParser();
+    SlimCommandParser(OMNetwork* c_net);
 
     slimCommand parse(QString &);
     void registerDevice(SlimScriptDevice*, QString, unsigned short);
@@ -54,11 +56,15 @@ public:
 
 private:
 
+    const int _sendBroadcast(QString);
+
     QHash<QString, SlimScriptDevice*> m_regDevs;
     QHash<QString, QString> m_aliases;
 
     QString m_dNet;
     unsigned short m_dAddr;
+    OMNetwork* m_net;
+
 };
 
 #endif // SLIMCOMMANDPARSER_H

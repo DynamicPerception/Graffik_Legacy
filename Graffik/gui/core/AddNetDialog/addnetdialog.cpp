@@ -16,6 +16,7 @@ addNetDialog::addNetDialog(OMNetwork *c_net, QWidget *c_parent) :
 {
     ui->setupUi(this);
 
+    _parent = c_parent;
     _net = c_net;
 
     _thsColor = QColor("blue");
@@ -35,13 +36,24 @@ addNetDialog::~addNetDialog()
 void addNetDialog::_setNetBackground(QColor p_color) {
     // unfortunately, we cannot use a palette on windows, so
     // we need to use a stylesheet instead
+    _thsColor = p_color;
     QString myStyle = "background-color: rgb(%1,%2,%3);";
     ui->colorSetButton->setStyleSheet(myStyle.arg(_thsColor.red()).arg(_thsColor.green()).arg(_thsColor.blue()));
 }
 
+void addNetDialog::_colorChange(const QColor &color) {
+    qDebug() << "AND: Got color change";
+    _setNetBackground(color);
+}
+
 void addNetDialog::on_colorSetButton_clicked() {
-    _thsColor = QColorDialog::getColor(_thsColor, this, "Bus Color");
-    _setNetBackground(_thsColor);
+    QColorDialog* qc = new QColorDialog;
+
+    QObject::connect(qc, SIGNAL(currentColorChanged(const QColor &)), this, SLOT(_colorChange(const QColor &)));
+
+    qc->show();
+//    _thsColor = qc.getColor(_thsColor, _parent, "Bus Color");
+//    _setNetBackground(_thsColor);
 }
 
 void addNetDialog::updateSerialPorts() {
@@ -113,7 +125,10 @@ void addNetDialog::accept() {
     else {
             // set color
         _net->busColor(port, _thsColor);
+
+        // qDebug() << "Accepting dialog";
         setResult(QDialog::Accepted);
+        QDialog::done(QDialog::Accepted);
         QDialog::accept();
     }
 

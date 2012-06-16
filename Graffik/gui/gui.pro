@@ -33,7 +33,7 @@ win32 {
 
 macx {
     LIBS += -L../libs/OpenMoCo/build
-    LIBS += -L/Users/church/lib
+    LIBS += -L$$(HOME)/lib
 }
 
 

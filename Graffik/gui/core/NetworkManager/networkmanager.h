@@ -22,7 +22,7 @@ class networkManager : public QDialog
     Q_OBJECT
     
 public:
-    explicit networkManager(networkModel* c_net, AxisOptions* c_opts, QWidget *parent = 0);
+    networkManager(networkModel* c_net, AxisOptions* c_opts, QWidget *parent = 0);
     ~networkManager();
     
 private:

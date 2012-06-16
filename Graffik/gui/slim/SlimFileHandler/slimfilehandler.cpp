@@ -44,7 +44,13 @@ void SlimFileHandler::writeFile(QString p_file, OMNetwork* p_net, CommandHistory
 
         for(int i = 0; i < recs; i++) {
             slimCommand cmd = p_hist->getCommand(i);
-            QString name = p_net->deviceInfo(cmd.network, cmd.address)->name;
+            QString name;
+
+            if( cmd.broadcast )
+                name = "broadcast";
+            else
+                name = p_net->deviceInfo(cmd.network, cmd.address)->name;
+
             QString com = " " + cmd.command + " " + cmd.arguments.join(" ");
             text << name << com << endl;
 

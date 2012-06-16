@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     _net = new OMNetwork();
     _axisOpts = new AxisOptions(this);
     _netModel = new networkModel(_net, this);
-    _parser = new SlimCommandParser();
+    _parser = new SlimCommandParser(_net);
     _cmdHist = new CommandHistoryModel(_net, this);
     _slimWindow =  new SlimWindow(_net, _cmdHist, _parser, ui->tabs);
   //  _filmWindow = new filmWindow(_net, _axisOpts, this);

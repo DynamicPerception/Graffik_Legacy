@@ -108,6 +108,36 @@ QString OMMoCoBus::port() {
     return(m_port);
 }
 
+/** Send Broadcast Command
+
+   Send a broadcast command to all devices on this bus
+
+   @param p_bcmd
+   The command to send to the bus
+
+   @return
+   The ID of the command issued
+
+   The following pre-defined broadcast commands are available:
+
+   OMBus::OM_BCAST_START
+   OMBus::OM_BCAST_STOP
+   OMBus::OM_BCAST_PAUSE
+
+
+*/
+
+const int OMMoCoBus::broadcast(uint8_t p_bcmd) {
+
+    OMCommandBuffer* cmdBuf = new OMCommandBuffer(OMBus::OM_SER_BCAST_ADDR, 0);
+    char* data = new char[0]();
+    cmdBuf->setPayload(data, p_bcmd, 0);
+    delete[] data;
+    cmdBuf->broadcast(true);
+    queueCommand(cmdBuf);
+    return(cmdBuf->id());
+}
+
 /** Adds a command to the command queue
 
   @param cmdBuf
@@ -118,13 +148,12 @@ QString OMMoCoBus::port() {
   */
 
 void OMMoCoBus::queueCommand(OMCommandBuffer* &cmdBuf) {
-  //  qDebug() << "Got command : " << _cmdQueue.count() << " " << QThread::currentThreadId();
-
+    qDebug() << "OMB: Queued command : " << QThread::currentThreadId();
     emit queued(cmdBuf);
 }
 
 
 void OMMoCoBus::commandCompleted(OMCommandBuffer * buf) {
-   // qDebug() << "Command Rcvd Back: " << (unsigned char) buf->id();
+    qDebug() << "OMB: Command Rcvd Back: " << (unsigned char) buf->id();
 }
 

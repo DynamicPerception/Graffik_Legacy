@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>SlimWindow</class>
- <widget class="SlimWindow" name="SlimWindow">
+ <widget class="QWidget" name="SlimWindow">
   <property name="enabled">
    <bool>true</bool>
   </property>
@@ -132,7 +132,7 @@
           <bool>false</bool>
          </property>
          <attribute name="horizontalHeaderVisible">
-          <bool>false</bool>
+          <bool>true</bool>
          </attribute>
          <attribute name="horizontalHeaderDefaultSectionSize">
           <number>40</number>
@@ -183,14 +183,6 @@
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <customwidgets>
-  <customwidget>
-   <class>SlimWindow</class>
-   <extends>QWidget</extends>
-   <header>slimwindow.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections>
   <connection>

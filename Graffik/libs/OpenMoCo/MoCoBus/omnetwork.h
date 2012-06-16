@@ -144,6 +144,8 @@ public:
 
     OMCommandManager* getManager();
 
+    const int broadcast(uint8_t p_bcmd);
+
 private:
         // "port" points to bus info.
     QHash<QString, OMbusInfo*> m_busList;

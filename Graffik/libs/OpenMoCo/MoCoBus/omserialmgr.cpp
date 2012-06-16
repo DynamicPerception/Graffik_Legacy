@@ -268,6 +268,15 @@ void OMSerialMgr::_cmdErr(OMCommandBuffer* &thsCmd) {
 
 void OMSerialMgr::_getResponse(OMCommandBuffer* &thsCmd) {
 
+        // no response for broadcast commands!
+    if( thsCmd->broadcast() == true ) {
+        DEBUG("No responses required for broadcast commands");
+        thsCmd->status(OMC_SUCCESS);
+        emit commandComplete(thsCmd);
+        return;
+    }
+
+
       int curCh = _getSerByte();
 
       if( curCh == -300 ) {

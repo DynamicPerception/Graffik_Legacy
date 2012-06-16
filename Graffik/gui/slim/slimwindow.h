@@ -3,11 +3,6 @@
 
 #include <QWidget>
 #include <QString>
-#include <QCloseEvent>
-
-
-#include "Core/SpeedDial/dialspeed.h"
-#include "Core/NetworkStatusDisplay/networkstatusgrid.h"
 
 #include "MoCoBus/omcommandbuffer.h"
 #include "MoCoBus/omnetwork.h"
@@ -23,12 +18,11 @@ class SlimWindow : public QWidget
     Q_OBJECT
 
 public:
-    explicit SlimWindow(OMNetwork* net, CommandHistoryModel* hist, SlimCommandParser* parse, QWidget *parent = 0);
+    SlimWindow(OMNetwork* net, CommandHistoryModel* hist, SlimCommandParser* parse, QWidget *parent = 0);
     ~SlimWindow();
 
 private slots:
     void onCmdEntry();
-    void onDialActivate();
     void onCmdResult(slimCommand);
 
 public slots:
@@ -40,8 +34,7 @@ private:
     CommandHistoryModel* _cmdHist;
     OMNetwork* _net;
     SlimCommandParser * _parser;
-    NetworkStatusGrid* _netState;
 };
 
 
-#endif // MAINWINDOW_H
+#endif // SLIMWINDOW_H

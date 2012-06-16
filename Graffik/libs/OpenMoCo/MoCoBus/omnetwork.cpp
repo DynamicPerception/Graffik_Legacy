@@ -95,6 +95,34 @@ OMCommandManager* OMNetwork::getManager() {
     return m_cmdMgr;
 }
 
+
+/** Broadcast a command to all nodes on all buses
+
+  Send a broadcast command to all nodes on all buses.
+
+   The following pre-defined broadcast commands are available:
+
+   OMBus::OM_BCAST_START
+   OMBus::OM_BCAST_STOP
+   OMBus::OM_BCAST_PAUSE
+
+   @param p_bcmd
+   The broadcast command to send
+
+   @return
+   The command ID of the last broadcast command sent
+  */
+
+const int OMNetwork::broadcast(uint8_t p_bcmd) {
+    qDebug() << "OMN: Request to broadcast command" << p_bcmd;
+    int i;
+
+    foreach(QString thsBus, m_busList.keys() )
+        i = m_busList[thsBus]->bus->broadcast(p_bcmd);
+
+    return i;
+}
+
 /** Add Bus to Network
 
   Creates a new bus in the network, connected to the specified port.
@@ -135,8 +163,7 @@ void OMNetwork::addBus(QString p_port, QString p_name) {
     }
     catch (int e) {
             // better not leak memory due to an error
-            // TODO: fix destructor (see comments in this destructor above)
-       // delete bus;
+        delete bus;
         throw e;
     }
 
@@ -523,7 +550,16 @@ OMDevice* OMNetwork::_createDevice(OMMoCoBus *p_bus, unsigned short p_addr, QStr
 
 
 void OMNetwork::_complete(OMCommandBuffer *buf) {
-        // odd, we don't have any such device known to us...
+
+        // if a broadcast command, don't store in history,
+        // but do reflect signal
+    if( buf->broadcast() ) {
+        emit complete(buf);
+        return;
+    }
+
+    // odd, we don't have any such device known to us...
+
     if( ! m_devIds.contains(buf->device()) )
         return;
 

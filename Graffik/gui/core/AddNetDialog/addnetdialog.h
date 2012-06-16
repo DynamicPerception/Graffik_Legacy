@@ -25,6 +25,7 @@ private:
     Ui::addNetDialog *ui;
     QColor _thsColor;
     OMNetwork *_net;
+    QWidget* _parent;
 
     void _setNetBackground(QColor);
 
@@ -36,6 +37,7 @@ private slots:
     void on_colorSetButton_clicked();
     void on_rescanButton_clicked();
     void on_portCombo_currentIndexChanged(int);
+    void _colorChange(const QColor & color);
 
 };
 

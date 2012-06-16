@@ -62,6 +62,9 @@ public:
 
     const int device();
 
+    bool broadcast();
+    void broadcast(bool p_bcast);
+
 
 
 
@@ -84,6 +87,7 @@ private:
     int     _execStatus;
     int     _id;
     int     _retType;
+    bool    _isBCast;
 
         // header is fixed size
     static const int hdrSize = 8;
