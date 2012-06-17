@@ -44,10 +44,13 @@ LIBS += -lopenmoco
 
 win32 {
     LIBS += -lqextserialport1
+        # set icon
+    RC_FILE = Graffik.rc
 }
 
 macx {
     LIBS += -lqextserialport
+        # set icon
     ICON = graffik.icns
 }
 
@@ -117,7 +120,7 @@ DEP_FILES = \
     $$[QT_INSTALL_BINS]\\QtNetwork4.dll \
     $$[QT_INSTALL_BINS]\\mingwm10.dll \
     $$[QT_INSTALL_BINS]\\libgcc_s_dw2-1.dll \
-    $$OUT_PWD\\..\\libs\\qextserialport\src\build\qextserialport1.dll
+    $$OUT_PWD\\..\\libs\\qextserialport\\src\\build\\qextserialport1.dll
 
 
     deployFiles($$DEP_FILES)
