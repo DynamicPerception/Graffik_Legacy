@@ -121,7 +121,7 @@ void JogControlManager::_prepJogInputs(unsigned short p_addr) {
 
     unsigned int jog_limit = opts->jogLimit;
     unsigned int max_jog = opts->maxSteps;
-    float ratio = opts->ratio;
+    // float ratio = opts->ratio;
     unsigned int type = opts->axisType;
     float setMove = 360.0;
 

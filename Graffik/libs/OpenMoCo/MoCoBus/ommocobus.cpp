@@ -16,7 +16,7 @@
   */
 
 
-OMMoCoBus::OMMoCoBus(QString p_port) : OpenMoCo(), QObject()
+OMMoCoBus::OMMoCoBus(QString p_port) : QObject(), OpenMoCo()
 {
 
 

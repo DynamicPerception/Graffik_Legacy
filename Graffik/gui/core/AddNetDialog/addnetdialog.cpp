@@ -18,7 +18,6 @@ addNetDialog::addNetDialog(OMNetwork *c_net, QWidget *c_parent) :
 
     _parent = c_parent;
     _net = c_net;
-
     _thsColor = QColor("blue");
 
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -26,10 +25,21 @@ addNetDialog::addNetDialog(OMNetwork *c_net, QWidget *c_parent) :
     _setNetBackground(_thsColor);
 
     updateSerialPorts();
+
+#ifdef Q_OS_MACX
+    _colorDia = new QColorDialog;
+#endif
+
 }
 
 addNetDialog::~addNetDialog()
 {
+
+#ifdef Q_OS_MACX
+    delete _colorDia;
+#endif
+
+
     delete ui;
 }
 
@@ -47,13 +57,20 @@ void addNetDialog::_colorChange(const QColor &color) {
 }
 
 void addNetDialog::on_colorSetButton_clicked() {
-    QColorDialog* qc = new QColorDialog;
 
-    QObject::connect(qc, SIGNAL(currentColorChanged(const QColor &)), this, SLOT(_colorChange(const QColor &)));
+    // an issue on OSX, the nested modal dialogs do not play well
+    // when attempting to exit this dialog after having called the
+    // static getColor
 
-    qc->show();
-//    _thsColor = qc.getColor(_thsColor, _parent, "Bus Color");
-//    _setNetBackground(_thsColor);
+#ifdef Q_OS_MACX
+
+    QObject::connect(_colorDia, SIGNAL(currentColorChanged(const QColor &)), this, SLOT(_colorChange(const QColor &)));
+
+    _colorDia->show();
+#else
+    _thsColor = QColorDialog::getColor(_thsColor, _parent, "Bus Color");
+    _setNetBackground(_thsColor);
+#endif
 }
 
 void addNetDialog::updateSerialPorts() {
@@ -110,7 +127,7 @@ void addNetDialog::accept() {
                 errString = "The communication port selected is already in-use";
             }
             else {
-                errString = "An unknown error occured, please try again. Error Code: " + e;
+                errString = "An unknown error occured, please try again. Error Code: " + QString::number(e);
             }
         }
     }

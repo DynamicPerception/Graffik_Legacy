@@ -26,7 +26,7 @@ private:
     QColor _thsColor;
     OMNetwork *_net;
     QWidget* _parent;
-
+    QColorDialog* _colorDia;
     void _setNetBackground(QColor);
 
 public slots:

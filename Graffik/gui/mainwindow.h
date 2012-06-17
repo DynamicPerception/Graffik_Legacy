@@ -19,8 +19,8 @@
 #include "Slim/commandhistorymodel.h"
 
 
-#include "slim/slimwindow.h"
 #include "film/filmwindow.h"
+#include "slim/slimwindow.h"
 
 namespace Ui {
     class MainWindow;
