@@ -34,6 +34,11 @@ defineTest(copyHelpFiles) {
 OTHER_FILES += \
     docs/slimdoc.html \
     docs/slim-ovr.png \
+    docs/chart_miqpos.png \
+    docs/chart_miqspeed.png \
+    docs/chart_mposprofile.png \
+    docs/chart_mqs.png \
+    docs/chart_mspeedprofile.png \
     docs/docs.qhp \
     docs/docs.qhcp
 

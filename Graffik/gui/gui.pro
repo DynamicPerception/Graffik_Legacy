@@ -111,6 +111,8 @@ DEP_FILES = \
     $$[QT_INSTALL_BINS]\\QtCLucene4.dll \
     $$[QT_INSTALL_BINS]\\QtSql4.dll \
     $$[QT_INSTALL_BINS]\\QtNetwork4.dll \
+    $$[QT_INSTALL_BINS]\\mingwm10.dll \
+    $$[QT_INSTALL_BINS]\\libgcc_s_dw2-1.dll \
     $$OUT_PWD\\..\\libs\\qextserialport\src\build\qextserialport1.dll
 
 
