@@ -137,25 +137,6 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
              QBrush netBackground(bgCol);
              return(netBackground);
          }
-        /*  else if( index.column() == 1 ) {
-             // change background color of status column
-
-             if( buf == 0 || buf->status() == OMC_QUEUED ) {
-                 // buffer may not be initialized yet
-                 // or the command may only be queued at this point
-                 QBrush grayBackground(Qt::gray);
-                 return(grayBackground);
-             }
-
-             else if( buf->status() == OMC_FAILURE ) {
-                QBrush redBackground(Qt::red);
-                return(redBackground);
-             }
-             else {
-                 QBrush greenBackground(Qt::green);
-                 return(greenBackground);
-             }
-         } */
 
      }
 
