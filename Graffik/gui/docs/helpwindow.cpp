@@ -14,25 +14,18 @@ HelpWindow::HelpWindow(QWidget *parent) :
 
     m_help->setupData();
 
-    qDebug() << "Error: " << m_help->error();
+    if( m_help->error().length() > 0 ) {
+        qDebug() << "Error: " << m_help->error();
+    }
 
-
-    QHelpContentModel* content_m = m_help->contentModel();
     QHelpContentWidget* content_w = m_help->contentWidget();
-
-
 
     ui->splitter->addWidget((QWidget*)content_w);
     ui->splitter->addWidget(m_browse);
 
     QObject::connect((QObject*)content_w, SIGNAL(linkActivated(const QUrl&)), m_browse, SLOT(setSource(const QUrl&)));
 
-/*    QObject::connect(index_w, SIGNAL(linkActivated(const QUrl &)),
-    connect(helpEngine->contentWidget(),
-                SIGNAL(linkActivated(const QUrl &)),
-                helpBrowser, SLOT(setSource(const QUrl &))); */
-    //index_w->setModel(index_m);
-    //content_w->setModel(content_m);
+
 }
 
 HelpWindow::~HelpWindow()
@@ -41,5 +34,9 @@ HelpWindow::~HelpWindow()
     delete m_help;
     delete ui;
 
+}
+
+void HelpWindow::on_closeButton_clicked() {
+    this->close();
 }
 

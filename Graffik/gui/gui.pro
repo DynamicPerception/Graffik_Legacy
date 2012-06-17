@@ -1,5 +1,5 @@
-# Graffik 
-# (c) 2011 Dynamic Perception LLC
+# Graffik GUI
+# (c) 2011-2012 Dynamic Perception LLC
 # Author: c. a. church
 
 
@@ -40,6 +40,7 @@ macx {
 
 LIBS += -lopenmoco
 
+ # link to serialport lib, add icons
 
 win32 {
     LIBS += -lqextserialport1
@@ -63,12 +64,15 @@ include(film/film.pri)
 include(slim/slim.pri)
 include(docs/docs.pri)
 
-#RESOURCES += \
-#    buttons.qrc
+
+
+# load resources
 
 RESOURCES += \
     icons.qrc
 
+
+# WIN32-Specific Build Instructions
 
 win32 {
     CONFIG(debug, debug|release) {
@@ -78,7 +82,7 @@ win32 {
         DEPDIR = $$OUT_PWD/release
     }
     DEPDIR ~= s,/,\\,g
-}
+
 
 
 defineTest(deployFiles) {
@@ -99,7 +103,7 @@ defineTest(deployFiles) {
 
 
 
-win32 {
+
 
     # only copy dlls and destroy source files for release versions
  CONFIG(release, debug|release) {
@@ -123,8 +127,6 @@ DEP_FILES = \
     deploy_copy.target = windep
     deploy_copy.commands = @echo "GRPRO: Copying Required DLL files for Windows" $$escape_expand(\\n\\t)
     deploy_copy.commands += $$DEPFILECOPY
-#    deploy_copy.commands += del /F /Q $$DEPDIR\\*.o $$escape_expand(\\n\\t)
-#    deploy_copy.commands += del /F /Q $$DEPDIR\\*.cpp $$escape_expand(\\n\\t)
 
     QMAKE_EXTRA_TARGETS += deploy_copy
     POST_TARGETDEPS += windep
@@ -133,4 +135,24 @@ DEP_FILES = \
 
 }
 
+# END WIN32-Specific Build Instructions
 
+# OSX-Specific Build Instructions
+
+macx {
+
+ CONFIG(release, debug|release) {
+
+    QMAKE_POST_LINK += @echo "GRPRO: Deploying Mac app" $$escape_expand(\\n\\t)
+    QMAKE_POST_LINK += $$[QT_INSTALL_BINS]/macdeployqt $$OUT_PWD/Graffik.app $$escape_expand(\\n\\t)
+    QMAKE_POST_LINK += @echo "GRPRO: Copying qextserialport" $$escape_expand(\\n\\t)
+    QMAKE_POST_LINK += cp -R $$(HOME)/lib/libqextserialport* $$OUT_PWD/Graffik.app/Contents/Frameworks/ $$escape_expand(\\n\\t)
+    QMAKE_POST_LINK += @echo "GRPRO: Correcting paths inside of libqextserialport" $$escape_expand(\\n\\t)
+    QMAKE_POST_LINK += install_name_tool -change $$[QT_INSTALL_LIBS]/QtCore.framework/Versions/4/QtCore @executable_path/../Frameworks/QtCore.framework/Versions/4/QtCore $$OUT_PWD/Graffik.app/Contents/Frameworks/libqextserialport.1.2.0.dylib $$escape_expand(\\n\\t)
+#    QMAKE_POST_LINK += @echo "GRPRO: Cleaning Ojbect and Source files" $$escape_expand(\\n\\t)
+#    QMAKE_POST_LINK += rm -rf $$OUT_PWD/*.o $$escape_expand(\\n\\t)
+#    QMAKE_POST_LINK += rm -rf $$OUT_PWD/*.cpp $$escape_expand(\\n\\t)
+ }
+}
+
+# END OSX-Specific Build Instructions

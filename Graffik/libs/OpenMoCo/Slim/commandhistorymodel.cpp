@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QBrush>
 #include <QMetaType>
+#include <QIcon>
 
 
 CommandHistoryModel::CommandHistoryModel(OMNetwork *c_net, QObject *parent) :
@@ -84,23 +85,7 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
                 return QVariant(name);
             }
         }
-        else if( index.column() == 1 ) {
-                // result/status
 
-
-                // we MUST check that the buffer has been initialized (it likely is
-                // not if the command was just added)
-            if( buf != 0 ) {
-
-                if( _cmdVec.at(index.row()).broadcast )
-                    return QVariant(1);
-
-                return QVariant(buf->status());
-            }
-            else {
-                return QVariant("Q");
-            }
-        }
         else if( index.column() == 2 ) {
             // get device name
             if( _cmdVec.at(index.row()).broadcast )
@@ -116,6 +101,29 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
         }
 
      }
+     else if( role == Qt::DecorationRole ) {
+         if( index.column() == 1 ) {
+                 // result/status
+
+
+                 // we MUST check that the buffer has been initialized (it likely is
+                 // not if the command was just added)
+             if( buf != 0 ) {
+
+                 if( buf->status() == OMC_QUEUED )
+                     return QVariant(QIcon(":/icons/img/blueled.png"));
+                 else if( buf->status() == OMC_FAILURE )
+                     return QVariant(QIcon(":/icons/img/redled.png"));
+                 else if( buf->status() == OMC_SUCCESS )
+                     return QVariant(QIcon(":/icons/img/greenled.png"));
+                 else
+                     return QVariant(QIcon(":/icons/img/redled.png"));
+             }
+             else {
+                 return QVariant(QIcon(":/icons/img/blueled.png"));
+             }
+         }
+     }
      else if( role == Qt::BackgroundRole ) {
 
          if( index.column() == 0 ) {
@@ -129,7 +137,7 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
              QBrush netBackground(bgCol);
              return(netBackground);
          }
-         else if( index.column() == 1 ) {
+        /*  else if( index.column() == 1 ) {
              // change background color of status column
 
              if( buf == 0 || buf->status() == OMC_QUEUED ) {
@@ -147,7 +155,7 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
                  QBrush greenBackground(Qt::green);
                  return(greenBackground);
              }
-         }
+         } */
 
      }
 

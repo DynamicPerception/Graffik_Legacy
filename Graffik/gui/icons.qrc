@@ -3,5 +3,8 @@
         <file>img/failed.png</file>
         <file>img/success.png</file>
         <file>img/configure.png</file>
+        <file>img/greenled.png</file>
+        <file>img/redled.png</file>
+        <file>img/blueled.png</file>
     </qresource>
 </RCC>

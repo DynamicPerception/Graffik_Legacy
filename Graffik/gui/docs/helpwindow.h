@@ -17,6 +17,9 @@ public:
     explicit HelpWindow(QWidget *parent = 0);
     ~HelpWindow();
     
+public slots:
+    void on_closeButton_clicked();
+
 private:
     Ui::HelpWindow *ui;
     QHelpEngine* m_help;

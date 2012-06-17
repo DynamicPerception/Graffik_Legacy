@@ -12,6 +12,9 @@ win32 {
     DDIR ~= s,/,\\,g
 }
 
+macx {
+    DDIR = $$OUT_PWD/Graffik.app/Contents/MacOS/docs
+}
 
 defineTest(copyHelpFiles) {
     files = $$1
@@ -79,12 +82,12 @@ win32 {
 macx {
     LIBS += -framework QtHelp
 
-  exists($$DDIR) {
-    help_copy.commands += rd /s /q $$DDIR $$escape_expand(\\n\\t)
+
+ !exists($$DDIR) {
+    help_copy.commands += @echo "Creating Docs Directory: $$DDIR" $$escape_expand(\\n\\t)
+    help_copy.commands += mkdir -p $$DDIR $$escape_expand(\\n\\t)
   }
 
-  help_copy.commands += @echo "Creating Docs Directory: $$DDIR" $$escape_expand(\\n\\t)
-  help_copy.commands += md $$DDIR $$escape_expand(\\n\\t)
   help_copy.commands += $$MYFILECOPY
   help_copy.commands += @echo "Running qhelpgenerator" $$escape_expand(\\n\\t)
   help_copy.commands += $$[QT_INSTALL_BINS]/qhelpgenerator $$DDIR/docs.qhp -o $$DDIR/docs.qch $$escape_expand(\\n\\t)
