@@ -111,6 +111,7 @@ void networkModel::deviceDeleted(QString p_port, unsigned short p_addr) {
 
 
     if( delRow != -1 ) {
+        qDebug() << "NWM: Got row" << delRow;
         beginRemoveRows(parentList[0]->index(), delRow, delRow);
         parentList[0]->removeRow(delRow);
         endRemoveRows();

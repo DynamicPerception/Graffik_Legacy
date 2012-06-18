@@ -67,7 +67,11 @@ help_copy.commands = @echo "Building Help Files in $$DDIR"  $$escape_expand(\\n\
 win32 {
    CONFIG += help
 
-  !exists($$DDIR) {
+    # exists does not like backslashes
+  EDIR = $$DDIR
+  EDIR ~= s,\\,/,g
+
+  !exists($$EDIR) {
     help_copy.commands += @echo "Creating Docs Directory: $$DDIR" $$escape_expand(\\n\\t)
     help_copy.commands += md $$DDIR $$escape_expand(\\n\\t)
   }

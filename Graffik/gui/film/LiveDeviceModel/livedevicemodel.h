@@ -5,6 +5,7 @@
 #include <QModelIndex>
 #include <QVariant>
 #include <QList>
+#include <QHash>
 
 #include "MoCoBus/omnetwork.h"
 
@@ -34,6 +35,7 @@ signals:
 private:
 
     QList<OMdeviceInfo*> m_cacheDevs;
+    QHash<unsigned short, int> m_devCacheLookup;
 };
 
 #endif // LIVEDEVICEMODEL_H

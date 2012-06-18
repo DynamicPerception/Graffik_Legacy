@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>580</height>
+    <width>829</width>
+    <height>614</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -282,19 +282,19 @@
       </layout>
      </item>
      <item row="5" column="1" colspan="3">
-      <widget class="QScrollArea" name="scrollArea">
+      <widget class="QScrollArea" name="visualSA">
        <property name="widgetResizable">
         <bool>true</bool>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
        </property>
-       <widget class="QWidget" name="scrollAreaWidgetContents">
+       <widget class="QWidget" name="visualSAContents">
         <property name="geometry">
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>783</width>
+          <width>812</width>
           <height>76</height>
          </rect>
         </property>
