@@ -7,11 +7,11 @@
 #include "adddevicedialog.h"
 #include "ui_adddevicedialog.h"
 
-#include "Core/ErrorDialog/errordialog.h"
+#include "core/Dialogs/errordialog.h"
 
-addDeviceDialog::addDeviceDialog(OMNetwork *c_net, QWidget *parent) :
+AddDeviceDialog::AddDeviceDialog(OMNetwork *c_net, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::addDeviceDialog)
+    ui(new Ui::AddDeviceDialog)
 {
     ui->setupUi(this);
     _net = c_net;
@@ -20,13 +20,13 @@ addDeviceDialog::addDeviceDialog(OMNetwork *c_net, QWidget *parent) :
 }
 
 
-addDeviceDialog::~addDeviceDialog()
+AddDeviceDialog::~AddDeviceDialog()
 {
     delete ui;
  }
 
 
-void addDeviceDialog::_initInputs() {
+void AddDeviceDialog::_initInputs() {
     QStringList validDevices = _net->deviceTypes();
 
     foreach( QString type, validDevices ) {
@@ -40,7 +40,7 @@ void addDeviceDialog::_initInputs() {
 }
 
 
-void addDeviceDialog::updateBuses() {
+void AddDeviceDialog::updateBuses() {
     QList<QString> usedPorts = _net->getBuses();
 
         // clear out the combo box
@@ -56,7 +56,7 @@ void addDeviceDialog::updateBuses() {
 
 }
 
-void addDeviceDialog::accept() {
+void AddDeviceDialog::accept() {
     QString port = ui->busList->itemData(ui->busList->currentIndex()).toString();
     QString type = ui->deviceTypeList->itemText(ui->deviceTypeList->currentIndex());
     QString name = ui->devName->text();

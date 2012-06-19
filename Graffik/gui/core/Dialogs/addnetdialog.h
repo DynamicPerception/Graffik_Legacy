@@ -8,21 +8,21 @@
 #include "MoCoBus/omnetwork.h"
 
 namespace Ui {
-    class addNetDialog;
+    class AddNetDialog;
 }
 
-class addNetDialog : public QDialog
+class AddNetDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit addNetDialog(OMNetwork*, QWidget *parent = 0);
-    ~addNetDialog();
+    explicit AddNetDialog(OMNetwork*, QWidget *parent = 0);
+    ~AddNetDialog();
 
     void updateSerialPorts();
 
 private:
-    Ui::addNetDialog *ui;
+    Ui::AddNetDialog *ui;
     QColor _thsColor;
     OMNetwork *_net;
     QWidget* _parent;

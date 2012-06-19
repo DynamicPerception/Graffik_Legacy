@@ -15,7 +15,7 @@ class LiveDeviceModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
-    explicit LiveDeviceModel(QObject *parent = 0);
+    LiveDeviceModel(OMNetwork* c_net, QObject *parent = 0);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
@@ -35,7 +35,13 @@ signals:
 private:
 
     QList<OMdeviceInfo*> m_cacheDevs;
+
+    QHash<unsigned short, OMdeviceInfo*> m_cacheNet;
+    QList<unsigned short> m_devPos;
+
     QHash<unsigned short, int> m_devCacheLookup;
+
+    OMNetwork* m_net;
 };
 
 #endif // LIVEDEVICEMODEL_H

@@ -4,18 +4,13 @@
 
 #include "networkmodel.h"
 
-networkModel::networkModel(OMNetwork* c_net, QObject *parent) :
+NetworkModel::NetworkModel(OMNetwork* c_net, QObject *parent) :
     QStandardItemModel(parent)
 {
     m_net = c_net;
 
-    QStringList headerLabels;
-    headerLabels << "Name";
-    headerLabels << "Address";
-    headerLabels << "Type";
-    headerLabels << "Actions";
 
-    this->setHorizontalHeaderLabels(headerLabels);
+    _setHeaders();
 
         // listen in for buses or devices being added to the network, so that we
         // may automatically add them to the model
@@ -29,15 +24,26 @@ networkModel::networkModel(OMNetwork* c_net, QObject *parent) :
 
 }
 
-networkModel::~networkModel() {
+NetworkModel::~NetworkModel() {
 
 }
 
-OMNetwork* networkModel::net() {
+void NetworkModel::_setHeaders() {
+    QStringList headerLabels;
+    headerLabels << "Name";
+    headerLabels << "Address";
+    headerLabels << "Type";
+    headerLabels << "Actions";
+
+    this->setHorizontalHeaderLabels(headerLabels);
+
+}
+
+OMNetwork* NetworkModel::net() {
     return m_net;
 }
 
-void networkModel::addBus(QString p_port) {
+void NetworkModel::addBus(QString p_port) {
 
     qDebug() << "NWM: Adding Bus" << p_port;
     QStandardItem* parent = invisibleRootItem();
@@ -54,7 +60,7 @@ void networkModel::addBus(QString p_port) {
 
 }
 
-void networkModel::addDevice(QString p_port, unsigned short p_addr) {
+void NetworkModel::addDevice(QString p_port, unsigned short p_addr) {
 
     QString name = m_net->busInfo(p_port)->name;
     QList<QStandardItem*> parentList = findItems(name);
@@ -87,7 +93,7 @@ void networkModel::addDevice(QString p_port, unsigned short p_addr) {
 
 }
 
-void networkModel::deviceDeleted(QString p_port, unsigned short p_addr) {
+void NetworkModel::deviceDeleted(QString p_port, unsigned short p_addr) {
 
     QString busName = m_net->busInfo(p_port)->name;
     QList<QStandardItem*> parentList = findItems(busName);
@@ -121,7 +127,7 @@ void networkModel::deviceDeleted(QString p_port, unsigned short p_addr) {
 
 }
 
-void networkModel::busDeleted(QString p_port, QString p_name) {
+void NetworkModel::busDeleted(QString p_port, QString p_name) {
     qDebug() << "NWM: Got Remove Bus" << p_port << p_name;
     QList<QStandardItem*> parentList = findItems(p_name);
     QStandardItem* parent = invisibleRootItem();

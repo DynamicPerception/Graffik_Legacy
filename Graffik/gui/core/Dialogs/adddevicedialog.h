@@ -8,16 +8,16 @@
 
 
 namespace Ui {
-    class addDeviceDialog;
+    class AddDeviceDialog;
 }
 
-class addDeviceDialog : public QDialog
+class AddDeviceDialog : public QDialog
 {
     Q_OBJECT
     
 public:
-    addDeviceDialog(OMNetwork*, QWidget *parent = 0);
-    ~addDeviceDialog();
+    AddDeviceDialog(OMNetwork*, QWidget *parent = 0);
+    ~AddDeviceDialog();
     
     void updateBuses();
 
@@ -25,7 +25,7 @@ public slots:
     void accept();
 
 private:
-    Ui::addDeviceDialog *ui;
+    Ui::AddDeviceDialog *ui;
     OMNetwork *_net;
 
     void _initInputs();

@@ -7,8 +7,8 @@
 
 #include "core/UserData/userdata.h"
 
-#include "core/AddNetDialog/addnetdialog.h"
-#include "core/AddDeviceDialog/adddevicedialog.h"
+#include "core/Dialogs/addnetdialog.h"
+#include "core/Dialogs/adddevicedialog.h"
 
 #include "core/NetworkModel/networkmodel.h"
 #include "core/NetworkManager/networkmanager.h"
@@ -39,10 +39,10 @@ private:
     Ui::MainWindow *ui;
     SlimWindow* _slimWindow;
     filmWindow* _filmWindow;
-    addNetDialog* _addNet;
-    addDeviceDialog* _addDev;
+    AddNetDialog* _addNet;
+    AddDeviceDialog* _addDev;
     OMNetwork* _net;
-    networkModel* _netModel;
+    NetworkModel* _netModel;
     SlimCommandParser* _parser;
     UserData* _uData;
     AxisOptions* _axisOpts;

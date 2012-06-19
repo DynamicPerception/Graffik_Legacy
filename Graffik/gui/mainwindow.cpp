@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     _net = new OMNetwork();
     _axisOpts = new AxisOptions(this);
-    _netModel = new networkModel(_net, this);
+    _netModel = new NetworkModel(_net, this);
     _parser = new SlimCommandParser(_net);
     _cmdHist = new CommandHistoryModel(_net, this);
     _filmWindow = new filmWindow(_net, _axisOpts, this);
@@ -80,12 +80,12 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::on_actionAdd_Bus_triggered() {
-    addNetDialog addNet(_net, this);
+    AddNetDialog addNet(_net, this);
     addNet.exec();
 }
 
 void MainWindow::on_actionAdd_Device_triggered() {
-    addDeviceDialog addDev(_net, this);
+    AddDeviceDialog addDev(_net, this);
     addDev.exec();
 }
 
@@ -104,7 +104,7 @@ void MainWindow::on_actionSave_File_triggered() {
 
 
 void MainWindow::on_actionManage_Network_triggered() {
-    networkManager netMan(_netModel, _axisOpts, this);
+    NetworkManager netMan(_netModel, _axisOpts, this);
     netMan.exec();
 }
 

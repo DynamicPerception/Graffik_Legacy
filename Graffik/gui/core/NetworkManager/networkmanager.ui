@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>networkManager</class>
- <widget class="QDialog" name="networkManager">
+ <class>NetworkManager</class>
+ <widget class="QDialog" name="NetworkManager">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>522</width>
+    <width>536</width>
     <height>339</height>
    </rect>
   </property>
@@ -160,7 +160,7 @@
   <connection>
    <sender>pushButton</sender>
    <signal>clicked()</signal>
-   <receiver>networkManager</receiver>
+   <receiver>NetworkManager</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">

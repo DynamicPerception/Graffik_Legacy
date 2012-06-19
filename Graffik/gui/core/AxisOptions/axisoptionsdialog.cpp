@@ -3,7 +3,7 @@
 #include "axisoptionsdialog.h"
 #include "ui_axisoptionsdialog.h"
 
-#include "core/ConfirmDialog/confirmdialog.h"
+#include "core/Dialogs/confirmdialog.h"
 
 AxisOptionsDialog::AxisOptionsDialog(AxisOptions* c_opts, unsigned short c_addr, QWidget *parent) :
     QDialog(parent),

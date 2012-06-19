@@ -8,11 +8,11 @@
 
 #include "qextserialenumerator.h"
 
-#include "Core/ErrorDialog/errordialog.h"
+#include "core/Dialogs/errordialog.h"
 
-addNetDialog::addNetDialog(OMNetwork *c_net, QWidget *c_parent) :
+AddNetDialog::AddNetDialog(OMNetwork *c_net, QWidget *c_parent) :
     QDialog(c_parent),
-    ui(new Ui::addNetDialog)
+    ui(new Ui::AddNetDialog)
 {
     ui->setupUi(this);
 
@@ -32,7 +32,7 @@ addNetDialog::addNetDialog(OMNetwork *c_net, QWidget *c_parent) :
 
 }
 
-addNetDialog::~addNetDialog()
+AddNetDialog::~AddNetDialog()
 {
 
 #ifdef Q_OS_MACX
@@ -43,7 +43,7 @@ addNetDialog::~addNetDialog()
     delete ui;
 }
 
-void addNetDialog::_setNetBackground(QColor p_color) {
+void AddNetDialog::_setNetBackground(QColor p_color) {
     // unfortunately, we cannot use a palette on windows, so
     // we need to use a stylesheet instead
     _thsColor = p_color;
@@ -51,12 +51,12 @@ void addNetDialog::_setNetBackground(QColor p_color) {
     ui->colorSetButton->setStyleSheet(myStyle.arg(_thsColor.red()).arg(_thsColor.green()).arg(_thsColor.blue()));
 }
 
-void addNetDialog::_colorChange(const QColor &color) {
+void AddNetDialog::_colorChange(const QColor &color) {
     qDebug() << "AND: Got color change";
     _setNetBackground(color);
 }
 
-void addNetDialog::on_colorSetButton_clicked() {
+void AddNetDialog::on_colorSetButton_clicked() {
 
     // an issue on OSX, the nested modal dialogs do not play well
     // when attempting to exit this dialog after having called the
@@ -73,7 +73,7 @@ void addNetDialog::on_colorSetButton_clicked() {
 #endif
 }
 
-void addNetDialog::updateSerialPorts() {
+void AddNetDialog::updateSerialPorts() {
     QList<QextPortInfo> ports = QextSerialEnumerator::getPorts();
     QList<QString> usedPorts = _net->getBuses();
 
@@ -95,17 +95,17 @@ void addNetDialog::updateSerialPorts() {
     ui->portHintLabel->setText(ports[0].friendName);
 }
 
-void addNetDialog::on_rescanButton_clicked() {
+void AddNetDialog::on_rescanButton_clicked() {
     this->updateSerialPorts();
 }
 
-void addNetDialog::on_portCombo_currentIndexChanged(int p_idx) {
+void AddNetDialog::on_portCombo_currentIndexChanged(int p_idx) {
     ui->portHintLabel->setText(ui->portCombo->itemData(p_idx).toString());
 
 }
 
 
-void addNetDialog::accept() {
+void AddNetDialog::accept() {
     QString port = ui->portCombo->itemText(ui->portCombo->currentIndex());
     QString name = ui->netName->text();
 

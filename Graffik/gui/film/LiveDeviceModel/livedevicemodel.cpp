@@ -4,32 +4,34 @@
 #include <QString>
 #include <QDebug>
 
-LiveDeviceModel::LiveDeviceModel(QObject *parent) : QAbstractTableModel(parent) {
+LiveDeviceModel::LiveDeviceModel(OMNetwork *c_net, QObject *parent) : QAbstractTableModel(parent) {
 
-
+    m_net = c_net;
 }
 
 
 /* Gets notification when a new device is added to network */
 void LiveDeviceModel::deviceAdded(OMdeviceInfo *p_dev) {
-    beginInsertRows(QModelIndex(), this->rowCount(), this->rowCount());
-    m_cacheDevs.append(p_dev);
-    m_devCacheLookup.insert(p_dev->device->address(), m_cacheDevs.size() - 1);
-    qDebug() << "LDM Got new dev " << p_dev->name;
-    endInsertRows();
+    beginResetModel();
+
+    m_cacheNet = m_net->getDevices();
+    m_devPos = m_cacheNet.keys();
+
+    qDebug() << "LDM: Rebuilt model because device was added:" << p_dev->name;
+    endResetModel();
 }
 
 void LiveDeviceModel::deviceClicked(const QModelIndex &p_item) {
     if( p_item.row() > rowCount() || p_item.column() > 0 )
         return;
 
-    OMdeviceInfo* myDev = m_cacheDevs.at(p_item.row());
-    emit deviceSelected(myDev->device->address());
+    unsigned short addr = m_devPos.at(p_item.row());
+    emit deviceSelected(addr);
 }
 
 int LiveDeviceModel::rowCount(const QModelIndex & parent) const {
 
-    return m_cacheDevs.count();
+    return m_cacheNet.count();
 }
 
 int LiveDeviceModel::columnCount(const QModelIndex &parent) const {
@@ -38,42 +40,28 @@ int LiveDeviceModel::columnCount(const QModelIndex &parent) const {
 
 QVariant LiveDeviceModel::data(const QModelIndex &index, int role) const {
 
-  //  qDebug() << "LDM Request for row" << index.row() << " Column " << index.column();
-
     if( index.row() > rowCount() || index.column() > 0 || role != Qt::DisplayRole )
         return QVariant();
 
-    OMdeviceInfo* myDev = m_cacheDevs.at(index.row());
+    unsigned short addr = m_devPos.at(index.row());
 
-    return QVariant(myDev->name);
+    return QVariant(m_cacheNet.value(addr)->name);
+
 }
 
 int LiveDeviceModel::find(unsigned short p_addr) {
-    if( ! m_devCacheLookup.contains(p_addr) )
-        return -1;
 
-    return m_devCacheLookup.value(p_addr);
+    return m_devPos.indexOf(p_addr);
 }
 
 void LiveDeviceModel::deviceDeleted(QString p_bus, unsigned short p_addr) {
 
 
-    int pos = find(p_addr);
+    beginResetModel();
 
-    qDebug() << "LDM: Removing device" << p_addr << pos;
+    m_cacheNet = m_net->getDevices();
+    m_devPos = m_cacheNet.keys();
 
-    if( pos == -1 )
-        return;
-
-    beginRemoveRows(QModelIndex(), pos, pos);
-    m_cacheDevs.removeAt(pos);
-    endRemoveRows();
-
-    m_devCacheLookup.remove(p_addr);
-
-        // update index, move all rows above this one down one row
-    foreach(unsigned short key, m_devCacheLookup.keys()) {
-        if( m_devCacheLookup.value(key) > pos)
-            m_devCacheLookup[key]--;
-    }
+    endResetModel();
+    qDebug() << "LDM: Rebuilt model because device was removed:" << p_bus << p_addr;
 }

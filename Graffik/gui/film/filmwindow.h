@@ -7,10 +7,10 @@
 
 
 #include "MoCoBus/omnetwork.h"
-#include "film/LiveDeviceModel/livedevicemodel.h"
 #include "core/AxisOptions/axisoptions.h"
 #include "film/JogControlManager/jogcontrolmanager.h"
-#include "core/MotionArea/motionarea.h"
+#include "film/LiveDeviceModel/livedevicemodel.h"
+#include "film/MotionArea/motionbase.h"
 
 namespace Ui {
 class filmWindow;
@@ -40,7 +40,7 @@ private:
 
     bool m_threadStarted;
 
-    QHash<unsigned short, MotionArea*> m_areaBlocks;
+    QHash<unsigned short, MotionBase*> m_areaBlocks;
 
 
 };

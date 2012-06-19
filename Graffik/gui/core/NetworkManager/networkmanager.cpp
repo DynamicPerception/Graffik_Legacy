@@ -6,9 +6,9 @@
 #include "core/AxisOptions/axisoptionsdialog.h"
 
 
-networkManager::networkManager(networkModel *c_net, AxisOptions* c_opts, QWidget *parent) :
+NetworkManager::NetworkManager(NetworkModel *c_net, AxisOptions* c_opts, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::networkManager)
+    ui(new Ui::NetworkManager)
 {
     ui->setupUi(this);
 
@@ -23,32 +23,32 @@ networkManager::networkManager(networkModel *c_net, AxisOptions* c_opts, QWidget
 
 }
 
-networkManager::~networkManager()
+NetworkManager::~NetworkManager()
 {
     delete ui;
 }
 
-void networkManager::on_addBusButton_clicked() {
-    addNetDialog addNet(_netMod->net(), this);
+void NetworkManager::on_addBusButton_clicked() {
+    AddNetDialog addNet(_netMod->net(), this);
     addNet.exec();
 }
 
-void networkManager::on_addDevButton_clicked() {
-    addDeviceDialog addDev(_netMod->net(), this);
+void NetworkManager::on_addDevButton_clicked() {
+    AddDeviceDialog addDev(_netMod->net(), this);
     addDev.exec();
 }
 
-void networkManager::on_delDevButton_clicked() {
+void NetworkManager::on_delDevButton_clicked() {
     DeleteDeviceDialog delDev(_netMod->net(), this);
     delDev.exec();
 }
 
-void networkManager::on_delBusButton_clicked() {
+void NetworkManager::on_delBusButton_clicked() {
     DeleteBusDialog delBus(_netMod->net(), this);
     delBus.exec();
 }
 
-void networkManager::onRowClick(QModelIndex p_idx) {
+void NetworkManager::onRowClick(QModelIndex p_idx) {
     qDebug() << "NM: Got click on" << p_idx.row() << p_idx.column();
 
         // if they clicked the config button, retrieve address for item

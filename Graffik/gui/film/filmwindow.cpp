@@ -13,7 +13,7 @@ filmWindow::filmWindow(OMNetwork* c_net, AxisOptions *c_opts, QWidget *parent) :
     m_net = c_net;
     m_opts = c_opts;
 
-    m_ldModel = new LiveDeviceModel(this);
+    m_ldModel = new LiveDeviceModel(m_net, this);
     m_jcm = new JogControlManager(m_net, m_opts, m_ldModel, ui->jogResCombo, ui->jogDial, ui->jogSpeedSpin, ui->jogDampSpin, this);
 
 
@@ -81,7 +81,7 @@ void filmWindow::_drawNewAxis(OMdeviceInfo *p_dev) {
 
     qDebug() << "FW: Got new axis, spawning motion area" << p_dev->type;
 
-    MotionArea* area = new MotionArea(this);
+    MotionBase* area = new MotionBase(p_dev, this);
     m_areaBlocks.insert(p_dev->device->address(), area);
     m_areaLayout->addWidget(area);
 }

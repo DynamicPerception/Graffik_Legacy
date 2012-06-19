@@ -1,56 +1,47 @@
 DEFINES += QT_USE_QSTRINGBUILDER
 
 
-HEADERS                 += core/SpeedDial/dialspeed.h \
-			   core/ErrorDialog/errordialog.h \
-			   core/AddNetDialog/addnetdialog.h \ 
+HEADERS                 +=  \
+			   core/Dialogs/errordialog.h \
+			   core/Dialogs/addnetdialog.h \ 
     core/NetworkStatusDisplay/networkstatusdisplay.h \
     core/NetworkStatusDisplay/networkstatusgrid.h \
-    core/AddDeviceDialog/adddevicedialog.h \
+    core/Dialogs/adddevicedialog.h \
     core/NetworkManager/networkmanager.h \
     core/NetworkModel/networkmodel.h \
- #   core/AxisTimeline/axistimeline.h
     core/UserData/userdata.h \
-    core/ConfirmDialog/confirmdialog.h \
-    core/DeleteDeviceDialog/deletedevicedialog.h \
+    core/Dialogs/confirmdialog.h \
+    core/Dialogs/deletedevicedialog.h \
     core/AxisOptions/axisoptionsdialog.h \
     core/AxisOptions/axisoptions.h \
-    core/DeleteBusDialog/deletebusdialog.h \
-    core/MotionArea/motionarea.h \
-    core/MotionArea/motionbase.h
+    core/Dialogs/deletebusdialog.h 
 
 			   
-SOURCES                 += core/SpeedDial/dialspeed.cpp \
-                           core/ErrorDialog/errordialog.cpp \
-                           core/AddNetDialog/addnetdialog.cpp \
+SOURCES                 +=  \
+                           core/Dialogs/errordialog.cpp \
+                           core/Dialogs/addnetdialog.cpp \
     core/NetworkStatusDisplay/networkstatusdisplay.cpp \
     core/NetworkStatusDisplay/networkstatusgrid.cpp \
-    core/AddDeviceDialog/adddevicedialog.cpp \
+    core/Dialogs/adddevicedialog.cpp \
     core/NetworkManager/networkmanager.cpp \
     core/NetworkModel/networkmodel.cpp \
- #   core/AxisTimeline/axistimeline.cpp
     core/UserData/userdata.cpp \
-    core/ConfirmDialog/confirmdialog.cpp \
-    core/DeleteDeviceDialog/deletedevicedialog.cpp \
+    core/Dialogs/confirmdialog.cpp \
+    core/Dialogs/deletedevicedialog.cpp \
     core/AxisOptions/axisoptionsdialog.cpp \
     core/AxisOptions/axisoptions.cpp \
-    core/DeleteBusDialog/deletebusdialog.cpp \
-    core/MotionArea/motionarea.cpp \
-    core/MotionArea/motionbase.cpp
+    core/Dialogs/deletebusdialog.cpp 
 
 			   
-FORMS 			+= core/SpeedDial/dialspeed.ui \
-			   core/ErrorDialog/errordialog.ui \
-			   core/AddNetDialog/addnetdialog.ui \
+FORMS 			+=  \
     core/NetworkStatusDisplay/networkstatusdisplay.ui \
-    core/AddDeviceDialog/adddevicedialog.ui \
     core/NetworkManager/networkmanager.ui \
-  #  core/AxisTimeline/axistimeline.ui
-    core/ConfirmDialog/confirmdialog.ui \
-    core/DeleteDeviceDialog/deletedevicedialog.ui \
     core/AxisOptions/axisoptionsdialog.ui \
-    core/DeleteBusDialog/deletebusdialog.ui \
-    core/MotionArea/motionarea.ui \
-    core/MotionArea/motionbase.ui
+    core/Dialogs/adddevicedialog.ui \
+    core/Dialogs/confirmdialog.ui \
+    core/Dialogs/deletedevicedialog.ui \
+    core/Dialogs/deletebusdialog.ui \
+	core/Dialogs/errordialog.ui \
+   core/Dialogs/addnetdialog.ui 
 	   
 	   

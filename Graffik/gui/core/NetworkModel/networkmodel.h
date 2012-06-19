@@ -9,12 +9,12 @@
 #define NETMODEL_CONFIG_COL 3
 #define NETMODEL_ADDR_COL 1
 
-class networkModel : public QStandardItemModel
+class NetworkModel : public QStandardItemModel
 {
     Q_OBJECT
 public:
-    explicit networkModel(OMNetwork* c_net, QObject *parent = 0);
-    ~networkModel();
+    NetworkModel(OMNetwork* c_net, QObject *parent = 0);
+    ~NetworkModel();
 
     OMNetwork* net();
 
@@ -29,6 +29,8 @@ public slots:
 
 private:
     OMNetwork* m_net;
+
+    void _setHeaders();
 };
 
 #endif // NETWORKMODEL_H

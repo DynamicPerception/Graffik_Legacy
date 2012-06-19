@@ -7,27 +7,27 @@
 
 
 #include "core/NetworkModel/networkmodel.h"
-#include "core/AddNetDialog/addnetdialog.h"
-#include "core/AddDeviceDialog/adddevicedialog.h"
-#include "core/DeleteDeviceDialog/deletedevicedialog.h"
-#include "core/DeleteBusDialog/deletebusdialog.h"
+#include "core/Dialogs/addnetdialog.h"
+#include "core/Dialogs/adddevicedialog.h"
+#include "core/Dialogs/deletedevicedialog.h"
+#include "core/Dialogs/deletebusdialog.h"
 #include "core/AxisOptions/axisoptions.h"
 
 namespace Ui {
-class networkManager;
+class NetworkManager;
 }
 
-class networkManager : public QDialog
+class NetworkManager : public QDialog
 {
     Q_OBJECT
     
 public:
-    networkManager(networkModel* c_net, AxisOptions* c_opts, QWidget *parent = 0);
-    ~networkManager();
+    NetworkManager(NetworkModel* c_net, AxisOptions* c_opts, QWidget *parent = 0);
+    ~NetworkManager();
     
 private:
-    Ui::networkManager *ui;
-    networkModel* _netMod;
+    Ui::NetworkManager *ui;
+    NetworkModel* _netMod;
     AxisOptions* _opts;
 
 private slots:
