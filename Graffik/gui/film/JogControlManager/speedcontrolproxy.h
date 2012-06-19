@@ -54,6 +54,7 @@ public slots:
     void speedPosChange(int p_value);
     void deviceChange(unsigned short p_addr);
     void deviceAdded(OMdeviceInfo* p_dev);
+    void deviceRemoved(QString p_bus, unsigned short p_addr);
 
 
 private slots:

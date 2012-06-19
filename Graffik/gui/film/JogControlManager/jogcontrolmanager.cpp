@@ -30,7 +30,8 @@ JogControlManager::JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, Live
     m_scpThread = new QThread;
 
         // ensure the SCP knows when a new device has been added
-    QObject::connect(m_net, SIGNAL(deviceAdded(OMdeviceInfo*)), m_scp, SLOT(deviceAdded(OMdeviceInfo*)), Qt::QueuedConnection);
+    QObject::connect(m_net, SIGNAL(deviceAdded(OMdeviceInfo*)), m_scp, SLOT(deviceAdded(OMdeviceInfo*)));
+    QObject::connect(m_net, SIGNAL(deviceDeleted(QString,unsigned short)), m_scp, SLOT(deviceRemoved(QString,unsigned short)));
 
         // inform SCP of a new device selected for jog control (via livedevicemodel)
     QObject::connect(m_ldm, SIGNAL(deviceSelected(unsigned short)), m_scp, SLOT(deviceChange(unsigned short)), Qt::QueuedConnection);

@@ -14,11 +14,6 @@ SpeedControlProxy::SpeedControlProxy(AxisOptions *c_opts) :
     m_dampPeriods = 50;
     m_curPeriod = 1;
     m_devSelected = false;
-
-
-
-
-
 }
 
 SpeedControlProxy::~SpeedControlProxy() {
@@ -186,6 +181,12 @@ void SpeedControlProxy::deviceAdded(OMdeviceInfo *p_dev) {
         qDebug() << "SCP: Is NOT nanoMoCo device. Ignoring.";
     }
 
+}
+
+void SpeedControlProxy::deviceRemoved(QString p_bus, unsigned short p_addr) {
+    if( m_devList.contains(p_addr) ) {
+        m_devList.remove(p_addr);
+    }
 }
 
 void SpeedControlProxy::deviceChange(unsigned short p_addr) {
