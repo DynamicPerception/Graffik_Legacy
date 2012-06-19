@@ -4,7 +4,7 @@
 #include <QDebug>
 #include <QColor>
 
-#include "Core/ErrorDialog/errordialog.h"
+#include "core/Dialogs/errordialog.h"
 
 UserData::UserData(QWidget* parent) : QObject()
 {

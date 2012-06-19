@@ -140,17 +140,22 @@ public:
     void deleteDevice(QString, unsigned short);
     OMdeviceInfo* deviceInfo(QString, unsigned short);
     QList<unsigned short> getDevices(QString);
+    QHash<unsigned short, OMdeviceInfo*> getDevices();
     QStringList deviceTypes();
 
     OMCommandManager* getManager();
 
     const int broadcast(uint8_t p_bcmd);
 
+    int busCount();
+    int deviceCount();
+
+
 private:
         // "port" points to bus info.
     QHash<QString, OMbusInfo*> m_busList;
         // device ids to devices...
-    QHash<int, OMdeviceInfo*> m_devIds;
+    QHash<unsigned short, OMdeviceInfo*> m_devIds;
         // list of valid device type names
     QStringList m_devTypes;
 

@@ -5,7 +5,7 @@
 #include <QDebug>
 #include <QtEndian>
 
-#include "Core/ErrorDialog/errordialog.h"
+#include "core/Dialogs/errordialog.h"
 
 
 SlimWindow::SlimWindow(OMNetwork* net, CommandHistoryModel* hist, SlimCommandParser* parse, QWidget *parent) :

@@ -11,18 +11,19 @@
 #include "film/JogControlManager/jogcontrolmanager.h"
 #include "film/LiveDeviceModel/livedevicemodel.h"
 #include "film/MotionArea/motionbase.h"
+#include "film/FilmParameters/filmparameters.h"
 
 namespace Ui {
-class filmWindow;
+    class FilmWindow;
 }
 
-class filmWindow : public QWidget
+class FilmWindow : public QWidget
 {
     Q_OBJECT
     
 public:
-    filmWindow(OMNetwork* c_net, AxisOptions* c_opts, QWidget *parent = 0);
-    ~filmWindow();
+    FilmWindow(OMNetwork* c_net, AxisOptions* c_opts, QWidget *parent = 0);
+    ~FilmWindow();
 
 private slots:
     void _jogMotorChangeDenied(unsigned short p_oldAddr);
@@ -30,11 +31,12 @@ private slots:
     void _eraseAxis(QString p_bus, unsigned short p_addr);
 
 private:
-    Ui::filmWindow *ui;
+    Ui::FilmWindow *ui;
     LiveDeviceModel* m_ldModel;
     OMNetwork* m_net;
     AxisOptions* m_opts;
     JogControlManager* m_jcm;
+    FilmParameters* m_params;
 
     QVBoxLayout* m_areaLayout;
 

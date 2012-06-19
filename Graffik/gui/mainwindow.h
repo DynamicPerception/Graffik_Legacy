@@ -38,7 +38,7 @@ public:
 private:
     Ui::MainWindow *ui;
     SlimWindow* _slimWindow;
-    filmWindow* _filmWindow;
+    FilmWindow* _filmWindow;
     AddNetDialog* _addNet;
     AddDeviceDialog* _addDev;
     OMNetwork* _net;

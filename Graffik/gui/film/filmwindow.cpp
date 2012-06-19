@@ -4,9 +4,9 @@
 #include <QDebug>
 
 
-filmWindow::filmWindow(OMNetwork* c_net, AxisOptions *c_opts, QWidget *parent) :
+FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::filmWindow)
+    ui(new Ui::FilmWindow)
 {
     ui->setupUi(this);
 
@@ -15,7 +15,7 @@ filmWindow::filmWindow(OMNetwork* c_net, AxisOptions *c_opts, QWidget *parent) :
 
     m_ldModel = new LiveDeviceModel(m_net, this);
     m_jcm = new JogControlManager(m_net, m_opts, m_ldModel, ui->jogResCombo, ui->jogDial, ui->jogSpeedSpin, ui->jogDampSpin, this);
-
+    m_params = new FilmParameters(m_net, this);
 
 
         // connect the device list display to the live device model
@@ -25,26 +25,21 @@ filmWindow::filmWindow(OMNetwork* c_net, AxisOptions *c_opts, QWidget *parent) :
     m_areaLayout = new QVBoxLayout;
     ui->visualSAContents->setLayout(m_areaLayout);
 
-        // allow these film-specific objects to know when a new device has been added or removed
-
-    QObject::connect(m_net, SIGNAL(deviceAdded(OMdeviceInfo*)), m_ldModel, SLOT(deviceAdded(OMdeviceInfo*)), Qt::QueuedConnection);
-    QObject::connect(m_net, SIGNAL(deviceDeleted(QString,unsigned short)), m_ldModel, SLOT(deviceDeleted(QString,unsigned short)), Qt::QueuedConnection);
-
         // we need to populate motion area displays
     QObject::connect(m_net, SIGNAL(deviceAdded(OMdeviceInfo*)), this, SLOT(_drawNewAxis(OMdeviceInfo*)));
     QObject::connect(m_net, SIGNAL(deviceDeleted(QString,unsigned short)), this, SLOT(_eraseAxis(QString,unsigned short)));
 
         // pass a click on to the model via signal
-    QObject::connect(ui->devButtonList, SIGNAL(clicked(const QModelIndex &)), m_ldModel, SLOT(deviceClicked(const QModelIndex &)), Qt::QueuedConnection);
+    QObject::connect(ui->devButtonList, SIGNAL(clicked(const QModelIndex &)), m_ldModel, SLOT(deviceClicked(const QModelIndex &)));
 
-    QObject::connect(m_jcm, SIGNAL(motorChangeDenied(unsigned short)), this, SLOT(_jogMotorChangeDenied(unsigned short)), Qt::QueuedConnection);
+    QObject::connect(m_jcm, SIGNAL(motorChangeDenied(unsigned short)), this, SLOT(_jogMotorChangeDenied(unsigned short)));
 
 
 //    ui->devButtonList->setMovement(QListView::Free);
 //    ui->devButtonList->setDragDropMode(QAbstractItemView::InternalMove);
 }
 
-filmWindow::~filmWindow()
+FilmWindow::~FilmWindow()
 {
     foreach(unsigned short addr, m_areaBlocks.keys()) {
         delete m_areaBlocks.value(addr);
@@ -53,12 +48,13 @@ filmWindow::~filmWindow()
 
     delete m_areaLayout;
 
+    delete m_params;
     delete m_jcm;
     delete m_ldModel;
     delete ui;
 }
 
-void filmWindow::_jogMotorChangeDenied(unsigned short p_oldAddr) {
+void FilmWindow::_jogMotorChangeDenied(unsigned short p_oldAddr) {
     qDebug() << "FW: Motor change was denied, re-setting devButtonList selection" << p_oldAddr;
 
     int row = m_ldModel->find(p_oldAddr);
@@ -71,7 +67,7 @@ void filmWindow::_jogMotorChangeDenied(unsigned short p_oldAddr) {
     ui->devButtonList->selectionModel()->select(sel, QItemSelectionModel::SelectCurrent);
 }
 
-void filmWindow::_drawNewAxis(OMdeviceInfo *p_dev) {
+void FilmWindow::_drawNewAxis(OMdeviceInfo *p_dev) {
 
         // don't show a motion area for device types that
         // do not support it
@@ -86,7 +82,7 @@ void filmWindow::_drawNewAxis(OMdeviceInfo *p_dev) {
     m_areaLayout->addWidget(area);
 }
 
-void filmWindow::_eraseAxis(QString p_bus, unsigned short p_addr) {
+void FilmWindow::_eraseAxis(QString p_bus, unsigned short p_addr) {
     qDebug() << "FW: Got erase axis" << p_bus << p_addr;
     if( m_areaBlocks.contains(p_addr) ) {
         m_areaLayout->removeWidget(m_areaBlocks.value(p_addr));

@@ -495,6 +495,33 @@ OMdeviceInfo* OMNetwork::deviceInfo(QString p_port, unsigned short p_addr) {
 }
 
 
+/** Get the Count of Total Buses
+
+  Primarily intended for use by models backed by an OMNetwork,
+  returns the total count of buses in the network.
+
+  @return
+  Count of buses
+  */
+
+int OMNetwork::busCount() {
+    return m_busList.count();
+}
+
+/** Get the Count of Total Devices
+
+  Primarily intended for use by models back by an OMNetwork,
+  return the total count of devices in the network - across
+  all buses
+
+  @return
+  Count of devices
+  */
+
+int OMNetwork::deviceCount() {
+    return m_devIds.count();
+}
+
 /** Get List of all Supported Device Types
 
   @return
@@ -533,6 +560,18 @@ QList<unsigned short> OMNetwork::getDevices(QString p_port) {
     return devList->keys();
 }
 
+/** Get List of all Devices on Network
+
+  Returns a list of all devices on the network
+
+  @return
+  A QHash<unsigned short, OMdeviceInfo*> with every device known in the network.
+  */
+
+QHash<unsigned short, OMdeviceInfo*> OMNetwork::getDevices() {
+
+    return m_devIds;
+}
 
  // Create a new device object - returns a pointer to the object of the specified
  // type, cast as a pointer to OMDevice base class

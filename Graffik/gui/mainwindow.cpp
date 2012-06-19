@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     _netModel = new NetworkModel(_net, this);
     _parser = new SlimCommandParser(_net);
     _cmdHist = new CommandHistoryModel(_net, this);
-    _filmWindow = new filmWindow(_net, _axisOpts, this);
+    _filmWindow = new FilmWindow(_net, _axisOpts, this);
     _slimWindow =  new SlimWindow(_net, _cmdHist, _parser, ui->tabs);
     _uData = new UserData(this);
 

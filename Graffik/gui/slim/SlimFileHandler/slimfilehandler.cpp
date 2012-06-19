@@ -3,8 +3,8 @@
 #include <QTextStream>
 #include <QDebug>
 
-#include "core/ErrorDialog/errordialog.h"
-#include "core/ConfirmDialog/confirmdialog.h"
+#include "core/Dialogs/errordialog.h"
+#include "core/Dialogs/confirmdialog.h"
 
 SlimFileHandler::SlimFileHandler(SlimCommandParser *c_parse, CommandHistoryModel *c_hist)
 {

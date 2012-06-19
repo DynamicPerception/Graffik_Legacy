@@ -7,6 +7,10 @@
 LiveDeviceModel::LiveDeviceModel(OMNetwork *c_net, QObject *parent) : QAbstractTableModel(parent) {
 
     m_net = c_net;
+
+    QObject::connect(m_net, SIGNAL(deviceAdded(OMdeviceInfo*)), this, SLOT(deviceAdded(OMdeviceInfo*)));
+    QObject::connect(m_net, SIGNAL(deviceDeleted(QString,unsigned short)), this, SLOT(deviceDeleted(QString,unsigned short)));
+
 }
 
 
