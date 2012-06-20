@@ -14,7 +14,9 @@ HEADERS                 +=  \
     core/Dialogs/deletedevicedialog.h \
     core/AxisOptions/axisoptionsdialog.h \
     core/AxisOptions/axisoptions.h \
-    core/Dialogs/deletebusdialog.h 
+    core/Dialogs/deletebusdialog.h \ 
+    core/DeviceInitialize/deviceinitialize.h \
+    core/DeviceInitialize/deviceinitializedialog.h
 
 			   
 SOURCES                 +=  \
@@ -30,7 +32,9 @@ SOURCES                 +=  \
     core/Dialogs/deletedevicedialog.cpp \
     core/AxisOptions/axisoptionsdialog.cpp \
     core/AxisOptions/axisoptions.cpp \
-    core/Dialogs/deletebusdialog.cpp 
+    core/Dialogs/deletebusdialog.cpp \ 
+    core/DeviceInitialize/deviceinitialize.cpp \
+    core/DeviceInitialize/deviceinitializedialog.cpp
 
 			   
 FORMS 			+=  \
@@ -42,6 +46,7 @@ FORMS 			+=  \
     core/Dialogs/deletedevicedialog.ui \
     core/Dialogs/deletebusdialog.ui \
 	core/Dialogs/errordialog.ui \
-   core/Dialogs/addnetdialog.ui 
+   core/Dialogs/addnetdialog.ui \ 
+    core/DeviceInitialize/deviceinitializedialog.ui
 	   
 	   
