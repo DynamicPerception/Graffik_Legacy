@@ -10,9 +10,9 @@ MotionBase::MotionBase(OMdeviceInfo* c_dev, QWidget *parent) :
 
     m_area = new MotionArea(c_dev, this);
     ui->horizontalLayout->addWidget(m_area);
-    ui->gridLayout_2->setContentsMargins(0,0,0,0);
-    ui->gridLayout_2->setMargin(0);
-    ui->gridLayout_2->setSpacing(0);
+    ui->horizontalLayout->setContentsMargins(0,0,0,0);
+    ui->horizontalLayout->setMargin(0);
+    ui->horizontalLayout->setSpacing(0);
 }
 
 MotionBase::~MotionBase()

@@ -72,7 +72,7 @@ win32 {
   EDIR ~= s,\\,/,g
 
   !exists($$EDIR) {
-    help_copy.commands += @echo "Creating Docs Directory: $$DDIR" $$escape_expand(\\n\\t)
+    help_copy.commands += @echo "Creating Docs Directory: $$DDIR ($$EDIR)" $$escape_expand(\\n\\t)
     help_copy.commands += md $$DDIR $$escape_expand(\\n\\t)
   }
 

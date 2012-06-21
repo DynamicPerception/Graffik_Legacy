@@ -8,6 +8,7 @@
 #include "Slim/SlimFileHandler/slimfilehandler.h"
 #include "docs/helpwindow.h"
 
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)

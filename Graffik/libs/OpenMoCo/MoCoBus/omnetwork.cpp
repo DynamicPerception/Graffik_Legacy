@@ -570,7 +570,13 @@ QList<unsigned short> OMNetwork::getDevices(QString p_port) {
 
 QHash<unsigned short, OMdeviceInfo*> OMNetwork::getDevices() {
 
-    return m_devIds;
+    QHash<unsigned short, OMdeviceInfo*> deviceList;
+
+        // create a hash address -> device info
+    foreach( unsigned short devId, m_devIds.keys() )
+        deviceList.insert( m_devIds.value(devId)->device->address(), m_devIds.value(devId) );
+
+    return deviceList;
 }
 
  // Create a new device object - returns a pointer to the object of the specified
