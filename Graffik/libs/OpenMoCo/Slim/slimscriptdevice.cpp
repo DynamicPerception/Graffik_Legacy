@@ -186,5 +186,7 @@ const int SlimScriptDevice::runNamedCommand(QString p_cmd, QStringList* p_args) 
             throw e;
         }
     } // end if
+
+    return id;
 }
 

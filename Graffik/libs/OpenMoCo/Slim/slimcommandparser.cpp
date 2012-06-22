@@ -4,7 +4,7 @@
 #include <QDebug>
 
 
-SlimCommandParser::SlimCommandParser(OMNetwork *c_net) : OpenMoCo()
+SlimCommandParser::SlimCommandParser(OMNetwork *c_net)
 {
     m_net = c_net;
     m_dNet = "COM1";
@@ -162,7 +162,7 @@ const int SlimCommandParser::_sendBroadcast(QString p_cmd) {
 
 }
 
-/** Register A New Device
+/** Register A New Device with the Parser
 
   */
 

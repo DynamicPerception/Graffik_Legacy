@@ -36,7 +36,7 @@ class OMMoCoBus;
 
   */
 
-class OMSerialMgr : public QObject, public OpenMoCo
+class OMSerialMgr : public QObject
 {
     Q_OBJECT
 

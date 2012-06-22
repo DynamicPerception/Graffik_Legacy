@@ -42,7 +42,7 @@
 
   */
 
-OMNetwork::OMNetwork(int c_cmdHist) : QObject(), OpenMoCo()
+OMNetwork::OMNetwork(int c_cmdHist) : QObject()
 {
     m_histCnt = c_cmdHist;
 

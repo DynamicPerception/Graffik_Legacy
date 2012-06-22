@@ -45,7 +45,7 @@ HEADERS                 = openmoco.h \
     Slim/slimscriptdevice.h \
     MoCoBus/omcommandmanager.h
 			  
-SOURCES                 = openmoco.cpp \
+SOURCES                 = \
 			  MoCoBus/omcommandbuffer.cpp \
                           MoCoBus/omserialmgr.cpp \
                           Slim/commandhistorymodel.cpp \

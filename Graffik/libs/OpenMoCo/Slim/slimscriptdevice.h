@@ -5,6 +5,12 @@
 #include <QMap>
 #include <QString>
 
+#define SLIM_ERR_EMPTY  200
+#define SLIM_ERR_NOCMD   201
+#define SLIM_ERR_ARG   202
+#define SLIM_ERR_ARGS   203
+#define SLIM_ERR_NODEV  204
+
 /** Associate a Slim Scripting Language with an OMDevice
 
    The SlimScriptDevice class allows one to associate a set of

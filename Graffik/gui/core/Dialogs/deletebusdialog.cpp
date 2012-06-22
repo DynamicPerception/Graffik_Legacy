@@ -52,6 +52,7 @@ void DeleteBusDialog::on_okButton_clicked() {
     qDebug() << "DBD: Sent Delete for bus" << bus;
 
     QDialog::accept();
+    //QDialog::done(1);
 
 }
 

@@ -10,7 +10,10 @@ int OMDevice::m_devId = 0;
 
   Constructs an instance of the device, given an address for the device.
 
-  You may not change the device address after construction.
+  You may not change the local device address after construction.
+
+  (However, the core MoCoBus change address command does work, but you will
+   need to remove and re-create the device with the new address afterwards.)
 
   @param c_bus
   An OMMoCoBus object that this device will communicate through
@@ -19,7 +22,7 @@ int OMDevice::m_devId = 0;
   The address of the device.
   */
 
-OMDevice::OMDevice(OMMoCoBus* c_bus, unsigned short c_addr) : QObject(), OpenMoCo()
+OMDevice::OMDevice(OMMoCoBus* c_bus, unsigned short c_addr) : QObject()
 {
 
     deviceAddress = c_addr;
@@ -225,7 +228,7 @@ const int OMDevice::command(int maincom, char type) {
 
    if( data == NULL )
        // could not re-allocate memory
-       throw(errOutOfMemory);
+       throw(OM_ERR_MEM);
 
 
 
@@ -250,7 +253,7 @@ const int OMDevice::command(int maincom, char type, char val) {
 
    if( data == NULL )
        // could not allocate memory
-       throw(errOutOfMemory);
+       throw(OM_ERR_MEM);
 
    // data
 
@@ -276,7 +279,7 @@ const int OMDevice::command(int maincom, char type, unsigned short val) {
 
    if( data == NULL )
        // could not re-allocate memory
-       throw(errOutOfMemory);
+       throw(OM_ERR_MEM);
 
 
    data[0] = type;
@@ -308,7 +311,7 @@ const int OMDevice::command(int maincom, char type, unsigned long val) {
 
    if( data == NULL )
        // could not re-allocate memory
-       throw(errOutOfMemory);
+       throw(OM_ERR_MEM);
 
 
    data[0] = type;
@@ -340,7 +343,7 @@ const int OMDevice::command(int maincom, char type, char subtype, char val) {
 
    if( data == NULL )
        // could not allocate memory
-       throw(errOutOfMemory);
+       throw(OM_ERR_MEM);
 
    // data
 
@@ -367,7 +370,7 @@ const int OMDevice::command(int maincom, char type, char subtype, unsigned short
 
    if( data == NULL )
        // could not re-allocate memory
-       throw(errOutOfMemory);
+       throw(OM_ERR_MEM);
 
 
    data[0] = type;
@@ -400,7 +403,7 @@ const int OMDevice::command(int maincom, char type, char subtype, unsigned long 
 
    if( data == NULL )
        // could not re-allocate memory
-       throw(errOutOfMemory);
+       throw(OM_ERR_MEM);
 
 
    data[0] = type;
@@ -433,7 +436,7 @@ const int OMDevice::command(int maincom, char type, char subtype, float val) {
 
    if( data == NULL )
        // could not re-allocate memory
-       throw(errOutOfMemory);
+       throw(OM_ERR_MEM);
 
 
    data[0] = type;
@@ -466,7 +469,7 @@ const int OMDevice::command(int maincom, char type, char* p_data, int dlen) {
 
    if( data == NULL )
        // could not re-allocate memory
-       throw(errOutOfMemory);
+       throw(OM_ERR_MEM);
 
    data[0] = type;
 

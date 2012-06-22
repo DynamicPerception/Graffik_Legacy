@@ -11,6 +11,15 @@
 #include "omserialmgr.h"
 
 
+/** Data Types as returned by MoCoBus Commands
+  */
+
+enum {
+   R_BYTE, R_UINT, R_INT, R_LONG, R_ULONG, R_FLOAT, R_STRING
+};
+
+
+
  /**
 
    Defines common MoCoBus packet data values
@@ -89,7 +98,7 @@ class OMCommandBuffer;
  */
 
 
-class OMMoCoBus :  public QObject, public OpenMoCo
+class OMMoCoBus :  public QObject
 {
 
 

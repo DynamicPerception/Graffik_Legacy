@@ -82,7 +82,7 @@
 
   */
 
-class OMDevice : public QObject, public OpenMoCo
+class OMDevice : public QObject
 {
     Q_OBJECT
 public:

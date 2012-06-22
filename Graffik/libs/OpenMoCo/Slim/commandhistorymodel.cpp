@@ -16,6 +16,10 @@ CommandHistoryModel::CommandHistoryModel(OMNetwork *c_net, QObject *parent) :
 
         // we want the results of each command
     QObject::connect(m_net, SIGNAL(complete(int, OMCommandBuffer*)), this, SLOT(_commandCompleted(int, OMCommandBuffer*)), Qt::QueuedConnection);
+
+        // we need to purge commands from our history when a device is removed, to prevent trying to access its device object
+    QObject::connect(m_net, SIGNAL(deviceDeleted(QString,unsigned short)), this, SLOT(_deviceRemoved(QString,unsigned short)));
+
 }
 
 CommandHistoryModel::~CommandHistoryModel() {
@@ -150,6 +154,8 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
 
      _cmdVec.push_back(p_com);
 
+
+
      qDebug() << "SCHM: Model: inserted new row for command id " << p_com.id;
 
         // register with the command manager, that we want to hold onto this
@@ -167,6 +173,12 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
 
      m_cmdLoc[p_com.id] = newRow - 1;
 
+        // keep track of all commands issued by a particular
+        // address, so we can remove those commands when the
+        // device at that address is removed, to avoid crashing
+        // when attempting to update the display
+
+     m_devCmdLookup[p_com.address].append(newRow - 1);
      return(true);
  }
 
@@ -202,4 +214,21 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
 
  slimCommand CommandHistoryModel::getCommand(int p_row) {
      return _cmdVec.at(p_row);
+ }
+
+ void CommandHistoryModel::_deviceRemoved(QString p_bus, unsigned short p_addr) {
+
+     if( ! m_devCmdLookup.contains(p_addr) )
+         return;
+
+     beginResetModel();
+
+     foreach(int idx, m_devCmdLookup.value(p_addr) ) {
+         _cmdVec.remove(idx, 1);
+     }
+
+     m_devCmdLookup.remove(p_addr);
+
+     endResetModel();
+
  }

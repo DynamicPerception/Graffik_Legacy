@@ -21,6 +21,7 @@ public:
     void addNote(QString p_note);
     void totalNodes(int p_nodes);
     void scannedNodes(int p_nodes);
+    void nodesFound(bool p_found);
 
 public slots:
     void on_doneButton_clicked();

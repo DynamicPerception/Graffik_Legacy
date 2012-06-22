@@ -25,7 +25,7 @@
 
   */
 
-OMSerialMgr::OMSerialMgr(QString port, OMMoCoBus* parent) : QObject(), OpenMoCo() {
+OMSerialMgr::OMSerialMgr(QString port, OMMoCoBus* parent) : QObject() {
 
 
 
@@ -64,7 +64,7 @@ void OMSerialMgr::connect() {
             DEBUG("Failed connection to serial");
 
             _connected = false;
-            throw(errSerialNotAvailable);
+            throw(OM_ERR_SERAVAIL);
     }
 
    // _qSer->setCommTimeouts(QSerialPort::CtScheme_NonBlockingRead);

@@ -4,8 +4,6 @@
 #include "ommocobus.h"
 
 
- // initialize static members
-
 /** Constructs a new Controller
 
   Create a new controller, attached to a particular com port.
@@ -16,7 +14,7 @@
   */
 
 
-OMMoCoBus::OMMoCoBus(QString p_port) : QObject(), OpenMoCo()
+OMMoCoBus::OMMoCoBus(QString p_port) : QObject()
 {
 
 

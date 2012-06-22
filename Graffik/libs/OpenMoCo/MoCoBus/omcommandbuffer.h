@@ -5,11 +5,6 @@
 
 #include "openmoco.h"
 
-#define OMC_FAILURE  0
-#define OMC_SUCCESS  1
-#define OMC_NOCMD    2
-#define OMC_QUEUED   3
-
 
 
 /** Create an object representing a MoCoBus command
@@ -35,7 +30,7 @@
 
   */
 
-class OMCommandBuffer : public OpenMoCo
+class OMCommandBuffer
 {
 public:
     OMCommandBuffer(unsigned short, int);

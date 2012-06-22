@@ -28,7 +28,7 @@ int OMCommandBuffer::_cmdIdTot = 0;
 
   */
 
-OMCommandBuffer::OMCommandBuffer(unsigned short c_addr, int c_devid) : OpenMoCo() {
+OMCommandBuffer::OMCommandBuffer(unsigned short c_addr, int c_devid) {
         // initialize buffer for header
     cmdHead = (char*) calloc(8, sizeof(char));
 
@@ -154,7 +154,7 @@ void OMCommandBuffer::header(char* &rdBuf, int len) {
     void* ptr = memcpy(rdBuf, cmdHead, len);
 
     if( ptr == NULL )
-        throw(errOutOfMemory);
+        throw(OM_ERR_MEM);
 
 }
 
@@ -185,7 +185,7 @@ void OMCommandBuffer::payload(char* &rdBuf, int len) {
     void* ptr = memcpy(rdBuf, cmdBuf, len);
 
     if( ptr == NULL )
-        throw(errOutOfMemory);
+        throw(OM_ERR_MEM);
 
 
 }
@@ -216,7 +216,7 @@ void OMCommandBuffer::result(char* &rdBuf, int len) {
     void* ptr = memcpy(rdBuf, _returnDat, len);
 
     if( ptr == NULL )
-        throw(errOutOfMemory);
+        throw(OM_ERR_MEM);
 
 }
 
@@ -300,7 +300,7 @@ void OMCommandBuffer::setPayload(char* &buf, unsigned char cmd, unsigned char le
     void* ptr = memcpy((void*) cPtr, buf, len * sizeof(char));
 
     if( ptr == NULL )
-        throw(errOutOfMemory);
+        throw(OM_ERR_MEM);
 
 
 }
@@ -336,7 +336,7 @@ void OMCommandBuffer::setResult(char* &buf, unsigned char len) {
     void* ptr = memcpy((void*) cPtr, buf, len * sizeof(char));
 
     if( ptr == NULL )
-        throw(errOutOfMemory);
+        throw(OM_ERR_MEM);
 
 }
 
@@ -358,7 +358,7 @@ void OMCommandBuffer::_initBuffer(unsigned char cmd, unsigned char size) {
 
     if( cmdBuf == NULL )
         // could not re-allocate memory
-        throw(errOutOfMemory);
+        throw(OM_ERR_MEM);
 
     memset(cmdBuf,0,size);
 

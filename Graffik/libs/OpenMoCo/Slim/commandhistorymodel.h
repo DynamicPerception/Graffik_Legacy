@@ -33,10 +33,13 @@ public slots:
 
 private slots:
     void _commandCompleted(int p_id, OMCommandBuffer* p_buf);
+    void _deviceRemoved(QString p_bus, unsigned short p_addr);
 
 private:
     QVector<slimCommand> _cmdVec;
     QHash<int, int> m_cmdLoc;
+    QHash<unsigned short, QList<int> > m_devCmdLookup;
+
     OMNetwork* m_net;
     QColor* m_bcCol;
     QString m_headers;

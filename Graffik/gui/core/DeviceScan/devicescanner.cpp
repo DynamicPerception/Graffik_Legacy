@@ -194,6 +194,7 @@ void DeviceScanner::_commandCompleted(int p_id, OMCommandBuffer *p_com) {
 
     m_foundCount++;
 
+
         // get result of command (id string)
     int resSize = p_com->resultSize();
     char* res = new char[resSize];
@@ -203,12 +204,15 @@ void DeviceScanner::_commandCompleted(int p_id, OMCommandBuffer *p_com) {
 
     QString foundMsg("Found new device on bus " + bus + " at address " + QString::number(addr) + "\t\tType = " + idStr + "\n");
 
-    devInfo thsDevice(bus, idStr, addr);
 
+        // update the scan dialog
+    m_scanDialog->addNote(foundMsg);
+    m_scanDialog->nodesFound(true);
+
+    devInfo thsDevice(bus, idStr, addr);
     m_foundDevs.append(thsDevice);
 
-    m_scanDialog->addNote(foundMsg);
-
+        // release the command buffer object to be deleted
     m_cmd->release(p_id);
 
     _checkDone();

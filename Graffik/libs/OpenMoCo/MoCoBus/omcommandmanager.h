@@ -5,6 +5,7 @@
 #include <QHash>
 #include <QMutex>
 
+#include "openmoco.h"
 #include "omcommandbuffer.h"
 
 /**

@@ -112,7 +112,7 @@ void UserData::recoverBuses(OMNetwork *p_net) {
             ok = false;
 
             qDebug() << "UD:recoverBuses: Got error" << e;
-            if( e == OpenMoCo::errSerialNotAvailable ) {
+            if( OM_ERR_SERAVAIL ) {
                 error.append("Serial device" + bus_port + " not found");
             }
             else {

@@ -12,9 +12,10 @@
 #include "MoCoBus/omcommandbuffer.h"
 #include "MoCoBus/omnetwork.h"
 
+
 /** Slim Command Parser Class
 
-   Provides the ability to parse textual commands
+   Provides the ability to parse textual commands for MoCoBus devices
 
    @author
    C. A. Church
@@ -23,11 +24,6 @@
   Licensed under the terms of the GNU LGPL version 3.
   */
 
-#define SLIM_ERR_EMPTY  200
-#define SLIM_ERR_NOCMD   201
-#define SLIM_ERR_ARG   202
-#define SLIM_ERR_ARGS   203
-#define SLIM_ERR_NODEV  204
 
 struct slimCommand {
     int id;
@@ -41,7 +37,7 @@ struct slimCommand {
 };
 
 
-class SlimCommandParser : public OpenMoCo
+class SlimCommandParser
 {
 public:
     SlimCommandParser(OMNetwork* c_net);

@@ -2,15 +2,10 @@
 #define OPENMOCO_H
 
 
-#define SLIM_ERR_EMPTY  200
-#define SLIM_ERR_NOCMD   201
-#define SLIM_ERR_ARG   202
-#define SLIM_ERR_ARGS   203
-#define SLIM_ERR_NODEV  204
 
 /** Base OpenMoCo Class
 
-  Defines some core data elements for use in MoCoBus libraries
+  Defines core values for use in MoCoBus libraries
 
   @author
   C. A. Church
@@ -20,23 +15,17 @@
   */
 
 
-// result data types
+#define OMC_FAILURE  0
+#define OMC_SUCCESS  1
+#define OMC_NOCMD    2
+#define OMC_QUEUED   3
 
-enum {
-   R_BYTE, R_UINT, R_INT, R_LONG, R_ULONG, R_FLOAT, R_STRING
-};
+#define OM_ERR_ARG     2
+#define OM_ERR_MEM     3
+#define OM_ERR_QUEUE   4
+#define OM_ERR_SERAVAIL 5
+#define OM_ERR_NOCMD   6
 
-class OpenMoCo
-{
-public:
-    OpenMoCo();
 
-    static const int errInvalidArgument = 2;
-    static const int errOutOfMemory     = 3;
-    static const int notQueued      = 4;
-    static const int errSerialNotAvailable = 5;
-    static const int errCommandNotFound = 6;
-
-};
 
 #endif // OPENMOCO_H

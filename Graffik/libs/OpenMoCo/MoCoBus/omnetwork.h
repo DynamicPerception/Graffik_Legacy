@@ -122,7 +122,7 @@ struct OMbusInfo {
   Licensed under the terms of the GNU LGPL version 3.
   */
 
-class OMNetwork : public QObject, public OpenMoCo
+class OMNetwork : public QObject
 {
     Q_OBJECT
 
