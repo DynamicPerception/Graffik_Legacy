@@ -7,6 +7,7 @@
 #include <QColor>
 #include <QObject>
 #include <QByteArray>
+#include <QString>
 
 #include "openmoco.h"
 #include "ommocobus.h"
@@ -136,12 +137,13 @@ public:
     OMbusInfo* busInfo(QString);
     QList<QString> getBuses();
 
-    void addDevice(QString, unsigned short, QString, QString);
-    void deleteDevice(QString, unsigned short);
+    void addDevice(QString p_port, unsigned short p_addr, QString p_type, QString p_name, bool p_bcast = true);
+    void deleteDevice(QString, unsigned short, bool p_bcast = true);
     OMdeviceInfo* deviceInfo(QString, unsigned short);
     QList<unsigned short> getDevices(QString);
     QHash<unsigned short, OMdeviceInfo*> getDevices();
     QStringList deviceTypes();
+    QString deviceIDtoType(QString p_id);
 
     OMCommandManager* getManager();
 
@@ -158,7 +160,8 @@ private:
     QHash<unsigned short, OMdeviceInfo*> m_devIds;
         // list of valid device type names
     QStringList m_devTypes;
-
+        // a mapping of device identifiers (as returned by bus id command), to device type names
+    QHash<QString, QString> m_devTypeMap;
     int m_histCnt;
 
     OMDevice* _createDevice(OMMoCoBus*, unsigned short, QString);
@@ -181,6 +184,11 @@ signals:
       */
 
     void complete(OMCommandBuffer* p_cmd);
+
+    /** This version of the complete signal also includes the command ID
+      */
+
+    void complete(int p_id, OMCommandBuffer* p_cmd);
 
     /** Command Queued Signal
 

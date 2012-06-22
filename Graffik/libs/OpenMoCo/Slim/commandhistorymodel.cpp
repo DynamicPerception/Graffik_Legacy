@@ -15,7 +15,7 @@ CommandHistoryModel::CommandHistoryModel(OMNetwork *c_net, QObject *parent) :
     qRegisterMetaType<slimCommand>("slimCommand");
 
         // we want the results of each command
-    QObject::connect(m_net, SIGNAL(complete(OMCommandBuffer*)), this, SLOT(_commandCompleted(OMCommandBuffer*)), Qt::QueuedConnection);
+    QObject::connect(m_net, SIGNAL(complete(int, OMCommandBuffer*)), this, SLOT(_commandCompleted(int, OMCommandBuffer*)), Qt::QueuedConnection);
 }
 
 CommandHistoryModel::~CommandHistoryModel() {
@@ -170,22 +170,20 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
      return(true);
  }
 
- void CommandHistoryModel::_commandCompleted(OMCommandBuffer * p_buf) {
+ void CommandHistoryModel::_commandCompleted(int p_id, OMCommandBuffer * p_buf) {
 
      qDebug() << "SCHM: Received complete signal";
 
-     int thsId = p_buf->id();
-
         // strange, we have no record of that command! (Must've come from someone else)
-     if( ! m_cmdLoc.contains(thsId) ) {
-         qDebug() << "SCHM: Ignoring command " << thsId;
+     if( ! m_cmdLoc.contains(p_id) ) {
+         qDebug() << "SCHM: Ignoring command " << p_id;
          return;
      }
 
      // considering that we would've gotten this command with no actual OMCommandBuffer pointer, let's resolve
      // that
 
-     int thsRow = m_cmdLoc[thsId];
+     int thsRow = m_cmdLoc[p_id];
 
      _cmdVec.at(thsRow).buf = p_buf;
 

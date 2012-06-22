@@ -52,8 +52,8 @@
      <string>Network</string>
     </property>
     <addaction name="actionManage_Network"/>
-    <addaction name="actionAdd_Bus"/>
-    <addaction name="actionAdd_Device"/>
+    <addaction name="actionInitialize_New_Device"/>
+    <addaction name="actionScan_for_Devices"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -93,6 +93,9 @@
    <property name="text">
     <string>Manage &amp;Network</string>
    </property>
+   <property name="toolTip">
+    <string>Manage the Network</string>
+   </property>
   </action>
   <action name="actionSave_File">
    <property name="text">
@@ -110,6 +113,22 @@
   <action name="actionAbout_Graffik">
    <property name="text">
     <string>&amp;About Graffik</string>
+   </property>
+  </action>
+  <action name="actionInitialize_New_Device">
+   <property name="text">
+    <string>&amp;Initialize New Device</string>
+   </property>
+   <property name="toolTip">
+    <string>Set up a new device for the first time</string>
+   </property>
+  </action>
+  <action name="actionScan_for_Devices">
+   <property name="text">
+    <string>&amp;Scan for Devices</string>
+   </property>
+   <property name="toolTip">
+    <string>Scan network for devices to add</string>
    </property>
   </action>
  </widget>

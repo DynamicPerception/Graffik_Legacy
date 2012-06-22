@@ -3,6 +3,9 @@
 
 
 win32 {
+
+    CONFIG += help
+
     CONFIG(debug, debug|release) {
         DDIR = $$OUT_PWD/debug/docs
     }
@@ -13,6 +16,8 @@ win32 {
 }
 
 macx {
+    LIBS += -framework QtHelp
+
     DDIR = $$OUT_PWD/Graffik.app/Contents/MacOS/docs
 }
 
@@ -65,7 +70,6 @@ help_copy.target = dox
 help_copy.commands = @echo "Building Help Files in $$DDIR"  $$escape_expand(\\n\\t)
 
 win32 {
-   CONFIG += help
 
     # exists does not like backslashes
   EDIR = $$DDIR
@@ -84,8 +88,6 @@ win32 {
 }
 
 macx {
-    LIBS += -framework QtHelp
-
 
  !exists($$DDIR) {
     help_copy.commands += @echo "Creating Docs Directory: $$DDIR" $$escape_expand(\\n\\t)

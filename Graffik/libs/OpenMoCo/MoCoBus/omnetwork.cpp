@@ -48,6 +48,8 @@ OMNetwork::OMNetwork(int c_cmdHist) : QObject(), OpenMoCo()
 
         // add nanoMoCo to the device types
     m_devTypes.append("OpenMoCo Axis");
+        // map nanoMoCo id return value to device type name
+    m_devTypeMap.insert("OMAXISVX", "OpenMoCo Axis");
 
 
     m_cmdMgr = new OMCommandManager(this);
@@ -341,6 +343,10 @@ OMbusInfo* OMNetwork::busInfo(QString p_port) {
   }
   @endcode
 
+  This method, by default, will emit the deviceAdded() signals after the device
+  has been added.  In some cases this may be undesireable. To prevent this from
+  happening, provide the additional optional argument with a value of false.
+
   @param p_port
   A QString containing the port name of the bus this device resides on
 
@@ -353,6 +359,10 @@ OMbusInfo* OMNetwork::busInfo(QString p_port) {
   @param p_name
   The human-readable name used to identify the device
 
+  @param p_bcast
+  Whether or not to broadcast the addition with the deviceAdded signals.  This
+  is an optional argument, and defaults to true.
+
   @throws OM_NET_BUS
   The bus port has not been added to the network
 
@@ -364,7 +374,7 @@ OMbusInfo* OMNetwork::busInfo(QString p_port) {
 
   */
 
-void OMNetwork::addDevice(QString p_port, unsigned short p_addr, QString p_type, QString p_name) {
+void OMNetwork::addDevice(QString p_port, unsigned short p_addr, QString p_type, QString p_name, bool p_bcast) {
         // no such bus?
     if( ! m_busList.contains(p_port) )
         throw OM_NET_BUS;
@@ -393,9 +403,12 @@ void OMNetwork::addDevice(QString p_port, unsigned short p_addr, QString p_type,
     // quick lookup for this device by id
     m_devIds[newDev->device->id()] = newDev;
 
-    emit deviceAdded(p_port, p_addr);
-    emit deviceAdded(m_busList[p_port], newDev);
-    emit deviceAdded(newDev);
+        // only broadcast the new device if broadcast is enabled
+    if( p_bcast == true ) {
+        emit deviceAdded(p_port, p_addr);
+        emit deviceAdded(m_busList[p_port], newDev);
+        emit deviceAdded(newDev);
+    }
 }
 
 
@@ -418,7 +431,7 @@ void OMNetwork::addDevice(QString p_port, unsigned short p_addr, QString p_type,
   Address does not exist on bus
   */
 
-void OMNetwork::deleteDevice(QString p_port, unsigned short p_addr) {
+void OMNetwork::deleteDevice(QString p_port, unsigned short p_addr, bool p_bcast) {
 
     qDebug() << "OMN: Request to delete device " << p_port << p_addr;
 
@@ -455,8 +468,11 @@ void OMNetwork::deleteDevice(QString p_port, unsigned short p_addr) {
 
     qDebug() << "OMN: Deleted device " << p_port << p_addr;
 
-    emit deviceDeleted(p_port, p_addr);
-    emit deviceDeleted(m_busList.value(p_port), p_addr);
+    if( p_bcast == true ) {
+        emit deviceDeleted(p_port, p_addr);
+        emit deviceDeleted(m_busList.value(p_port), p_addr);
+    }
+
 }
 
 /** Device Information
@@ -532,6 +548,25 @@ QStringList OMNetwork::deviceTypes() {
     return m_devTypes;
 }
 
+/** Map a Device ID String to a Supported Device Type
+
+  Given a device ID string as returned by OMDevice::getId() to a device type
+  name as accepted by OMNetwork.
+
+  @param p_id
+  A QString with the device ID
+
+  @returns
+  A QString with the valid device type name, or an empty QString if one is not found.
+  */
+
+QString OMNetwork::deviceIDtoType(QString p_id) {
+    if( m_devTypeMap.contains(p_id) )
+        return m_devTypeMap.value(p_id);
+    else
+        return QString();
+}
+
 /** Get List of Bus Ports in Network
 
   @return
@@ -570,13 +605,15 @@ QList<unsigned short> OMNetwork::getDevices(QString p_port) {
 
 QHash<unsigned short, OMdeviceInfo*> OMNetwork::getDevices() {
 
-    QHash<unsigned short, OMdeviceInfo*> deviceList;
+    QHash<unsigned short, OMdeviceInfo*> retHash;
 
-        // create a hash address -> device info
-    foreach( unsigned short devId, m_devIds.keys() )
-        deviceList.insert( m_devIds.value(devId)->device->address(), m_devIds.value(devId) );
+    foreach(QString bus, m_busList.keys() ) {
+        QHash<unsigned short, OMdeviceInfo*>* devList = &m_busList[bus]->devices;
+        foreach(unsigned short addr, devList->keys() )
+            retHash.insert(addr, devList->value(addr));
+    }
 
-    return deviceList;
+    return retHash;
 }
 
  // Create a new device object - returns a pointer to the object of the specified
@@ -626,6 +663,7 @@ void OMNetwork::_complete(OMCommandBuffer *buf) {
         }
     }
 
+    emit complete(buf->id(), buf);
     emit complete(buf);
 
 }

@@ -7,6 +7,7 @@
 
 #include "Slim/SlimFileHandler/slimfilehandler.h"
 #include "docs/helpwindow.h"
+#include "core/DeviceScan/devicescanner.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -109,10 +110,22 @@ void MainWindow::on_actionManage_Network_triggered() {
     netMan.exec();
 }
 
+ // TODO: Fix leak
 void MainWindow::on_actionHelp_Contents_triggered() {
-    qDebug() << "Help Index triggered";
+    qDebug() << "MW: Help Index triggered";
     HelpWindow* help = new HelpWindow(this);
     help->show();
+}
+
+ // TODO: Fix leak
+void MainWindow::on_actionScan_for_Devices_triggered() {
+    qDebug() << "MW: Scan for Devices Triggered";
+    DeviceScanner* scan = new DeviceScanner(_net);
+}
+
+void MainWindow::on_actionInitialize_New_Device_triggered() {
+    qDebug() << "MW: Initialize New Device Triggered";
+    DeviceScanner* scan = new DeviceScanner(_net, 2);
 }
 
 /*void MainWindow::setSlimWindow(SlimWindow * p_slim) {

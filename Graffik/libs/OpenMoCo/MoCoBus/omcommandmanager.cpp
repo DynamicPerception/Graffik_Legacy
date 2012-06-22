@@ -75,6 +75,7 @@ void OMCommandManager::release(const int p_cmdID) {
                 delete ths;
             }
             m_comHoldCnt.remove(p_cmdID);
+            m_comList.remove(p_cmdID);
 
         } // end if( .. count <= 0
     } // end if contains command id

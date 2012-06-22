@@ -32,7 +32,7 @@ signals:
 public slots:
 
 private slots:
-    void _commandCompleted(OMCommandBuffer*);
+    void _commandCompleted(int p_id, OMCommandBuffer* p_buf);
 
 private:
     QVector<slimCommand> _cmdVec;
