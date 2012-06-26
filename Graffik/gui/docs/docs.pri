@@ -47,6 +47,10 @@ OTHER_FILES += \
     docs/chart_mposprofile.png \
     docs/chart_mqs.png \
     docs/chart_mspeedprofile.png \
+    docs/slim-mn.png \
+    docs/slim-scan1.png \
+    docs/slim-scan2.png \
+    docs/slim-scan3.png \
     docs/docs.qhp \
     docs/docs.qhcp
 

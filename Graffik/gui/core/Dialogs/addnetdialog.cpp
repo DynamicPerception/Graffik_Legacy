@@ -18,7 +18,7 @@ AddNetDialog::AddNetDialog(OMNetwork *c_net, QWidget *c_parent) :
 
     _parent = c_parent;
     _net = c_net;
-    _thsColor = QColor("blue");
+    _thsColor = QColor("white");
 
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
@@ -30,6 +30,8 @@ AddNetDialog::AddNetDialog(OMNetwork *c_net, QWidget *c_parent) :
     _colorDia = new QColorDialog;
 #endif
 
+    QWidget::setTabOrder(ui->portCombo, ui->netName);
+    QWidget::setTabOrder(ui->netName, ui->colorSetButton);
 }
 
 AddNetDialog::~AddNetDialog()

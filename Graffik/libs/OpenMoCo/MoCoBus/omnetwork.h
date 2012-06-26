@@ -97,11 +97,11 @@ struct OMbusInfo {
 
   OMNetwork* net = new OMNetwork();
 
-  net.addBus("COM5", "My Bus");
+  net->addBus("COM5", "My Bus");
 
-  net.addDevice("COM5", 2, "OpenMoCo Axis", "pan");
-  net.addDevice("COM5", 3, "OpenMoCo Axis", "tilt");
-  net.addDevice("COM5", 4, "OpenMoCo Axis", "dolly");
+  net->addDevice("COM5", 2, "OpenMoCo Axis", "pan");
+  net->addDevice("COM5", 3, "OpenMoCo Axis", "tilt");
+  net->addDevice("COM5", 4, "OpenMoCo Axis", "dolly");
 
   @endcode
 
