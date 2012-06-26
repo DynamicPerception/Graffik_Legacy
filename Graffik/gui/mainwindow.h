@@ -16,7 +16,8 @@
 #include "core/AxisOptions/axisoptionsdialog.h"
 
 #include "Slim/slimcommandparser.h"
-#include "Slim/commandhistorymodel.h"
+
+#include "slim/CommandHistoryModel/commandhistorymodel.h"
 
 
 #include "film/filmwindow.h"

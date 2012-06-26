@@ -116,6 +116,16 @@ struct OMbusInfo {
   and queued() signals from all of the buses, allowing one to route all command queued
   and complete signals from all buses through a single channel.
 
+  Note 1: All commands to the bus are asynchronous, and are sent via the specific OMDevice
+  instance for each device.  To determine if a command was successfully received, you must
+  connect a slot to one of the complete() signals provided by this class.  If wish to check
+  the status of commands sent, you must either use the history function of this library,
+  or, preferrably, use the OMCommandManager instance provided by getManager() to hold
+  each command that you wish to check the status of, and release it when done.
+
+  Note 2: See addDevice() for how to cast the dynamically created OMDevice object for
+  each device back to its derived class for device-specific commands.
+
   @author C. A. Church
 
   (c) 2011-2012 Dynamic Perception LLC
@@ -130,17 +140,17 @@ public:
     explicit OMNetwork(int c_cmdHist = 0);
     ~OMNetwork();
 
-    void addBus(QString, QString);
-    bool deleteBus(QString);
-    bool busExists(QString);
-    void busColor(QString, QColor);
-    OMbusInfo* busInfo(QString);
+    void addBus(QString p_port, QString p_name);
+    bool deleteBus(QString p_port);
+    bool busExists(QString p_port);
+    void busColor(QString p_port, QColor p_color);
+    OMbusInfo* busInfo(QString p_port);
     QList<QString> getBuses();
 
     void addDevice(QString p_port, unsigned short p_addr, QString p_type, QString p_name, bool p_bcast = true);
-    void deleteDevice(QString, unsigned short, bool p_bcast = true);
-    OMdeviceInfo* deviceInfo(QString, unsigned short);
-    QList<unsigned short> getDevices(QString);
+    void deleteDevice(QString p_port, unsigned short p_addr, bool p_bcast = true);
+    OMdeviceInfo* deviceInfo(QString p_port, unsigned short p_addr);
+    QList<unsigned short> getDevices(QString p_port);
     QHash<unsigned short, OMdeviceInfo*> getDevices();
     QStringList deviceTypes();
     QString deviceIDtoType(QString p_id);
@@ -212,16 +222,16 @@ signals:
     /** Device Added Signal
 
       */
-    void deviceAdded(QString, unsigned short);
-    void deviceAdded(OMbusInfo*, OMdeviceInfo*);
-    void deviceAdded(OMdeviceInfo*);
+    void deviceAdded(QString p_port, unsigned short p_addr);
+    void deviceAdded(OMbusInfo* p_businfo, OMdeviceInfo* p_devinfo);
+    void deviceAdded(OMdeviceInfo* p_devinfo);
 
     /** Device Deleted Signal
 
       */
 
-    void deviceDeleted(QString, unsigned short);
-    void deviceDeleted(OMbusInfo*, unsigned short);
+    void deviceDeleted(QString p_port, unsigned short p_addr);
+    void deviceDeleted(OMbusInfo* p_businfo, unsigned short p_addr);
 
 private slots:
     void _queued(OMCommandBuffer*);

@@ -10,6 +10,7 @@
 #define SLIM_ERR_ARG   202
 #define SLIM_ERR_ARGS   203
 #define SLIM_ERR_NODEV  204
+#define SLIM_ERR_NOBUS  205
 
 /** Associate a Slim Scripting Language with an OMDevice
 

@@ -6,8 +6,9 @@
 
 #include "MoCoBus/omcommandbuffer.h"
 #include "MoCoBus/omnetwork.h"
-#include "Slim/commandhistorymodel.h"
 #include "Slim/slimcommandparser.h"
+
+#include "slim/CommandHistoryModel/commandhistorymodel.h"
 
 namespace Ui {
 class SlimWindow;
@@ -23,7 +24,7 @@ public:
 
 private slots:
     void onCmdEntry();
-    void onCmdResult(slimCommand);
+    void onCmdResult(slimHistoryEntry);
 
 public slots:
         void registerNewDevice(OMbusInfo* p_bus, OMdeviceInfo* p_dev);

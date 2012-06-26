@@ -73,7 +73,7 @@ class OMCommandBuffer;
         bus->connect();
     }
     catch (int e) {
-        if( e == OpenMoCo::errSerialNotAvailable ) {
+        if( e == OM_ERR_SERAVAIL ) {
             qDebug() << "ERROR: Could not connect to serial port";
         }
         else {
@@ -119,8 +119,8 @@ public:
     QString port();
 
 signals:
-    void queued(OMCommandBuffer*);
-    void complete(OMCommandBuffer*);
+    void queued(OMCommandBuffer* p_buf);
+    void complete(OMCommandBuffer* p_buf);
 
 public slots:
     void commandCompleted(OMCommandBuffer*);

@@ -78,7 +78,7 @@ void OMMoCoBus::_setupSerial() {
 
   Opens the configured serial device
 
-  @throws errSerialNotAvailable
+  @throws OM_ERR_SERAVAIL
   Serial connection was unavailable.
 
   */

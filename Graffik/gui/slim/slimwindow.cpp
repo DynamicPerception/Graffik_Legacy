@@ -21,7 +21,7 @@ SlimWindow::SlimWindow(OMNetwork* net, CommandHistoryModel* hist, SlimCommandPar
 
     ui->historyTableView->setModel(_cmdHist);
 
-    QObject::connect(_cmdHist, SIGNAL(commandResults(slimCommand)), this, SLOT(onCmdResult(slimCommand)), Qt::QueuedConnection);
+    QObject::connect(_cmdHist, SIGNAL(commandResults(slimHistoryEntry)), this, SLOT(onCmdResult(slimHistoryEntry)));
 
 
 }
@@ -62,6 +62,10 @@ void SlimWindow::onCmdEntry() {
              erMsg = "The specified device was not found";
          else if( e == SLIM_ERR_EMPTY )
              erMsg = "No command was input";
+         else if( e == SLIM_ERR_NOBUS )
+             erMsg = "No bus was found, you must add a bus first";
+         else
+             erMsg = "An Unknown Error Occurred: " + QString::number(e);
 
          er.setError(erMsg);
          er.exec();
@@ -76,20 +80,21 @@ void SlimWindow::onCmdEntry() {
 
 }
 
-void SlimWindow::onCmdResult(slimCommand p_cmd) {
-    QString com = p_cmd.command + " " + p_cmd.arguments.join(" ") + ":";
+void SlimWindow::onCmdResult(slimHistoryEntry p_cmd) {
+    QString com = p_cmd.command;
 
-    unsigned int resSize = p_cmd.buf->resultSize();
+    OMCommandBuffer* buf = p_cmd.cmdObject.buf;
+    unsigned int resSize = buf->resultSize();
 
     QString resStr;
 
     if( resSize > 0 ) {
 
         char* res = new char[resSize];
-        p_cmd.buf->result(res, resSize);
+        buf->result(res, resSize);
 
 
-        int resType = p_cmd.buf->resultType();
+        int resType = buf->resultType();
 
             // convert response data type
 
@@ -129,7 +134,7 @@ void SlimWindow::onCmdResult(slimCommand p_cmd) {
     ui->commandResults->append("    " + resStr);
 
 
-    qDebug() << "Response Data from command " << com;
+    qDebug() << "SW: Response Data from command " << com;
 
 }
 
@@ -137,7 +142,7 @@ void SlimWindow::onCmdResult(slimCommand p_cmd) {
 
 void SlimWindow::registerNewDevice(OMbusInfo *p_bus, OMdeviceInfo *p_dev) {
     if( _parser != 0 ) {
-        qDebug() << "Add to Slim Parser";
+        qDebug() << "SW: Add to Slim Parser";
             // register device with slim command parser
         SlimScriptDevice* sdev = dynamic_cast<SlimScriptDevice*>(p_dev->device);
         if( sdev != 0 ) {
@@ -154,7 +159,7 @@ void SlimWindow::removeDevice(OMbusInfo *p_bus, unsigned short p_addr) {
     QString port = p_bus->bus->port();
 
     if( _parser != 0 ) {
-        qDebug() << "Remove from Slim Parser" << p_addr;
+        qDebug() << "SW: Remove from Slim Parser" << p_addr;
         _parser->removeDevice(port, p_addr);
     }
 }

@@ -3,8 +3,9 @@
 
 
 #include "Slim/slimcommandparser.h"
-#include "Slim/commandhistorymodel.h"
 #include "MoCoBus/omnetwork.h"
+
+#include "slim/CommandHistoryModel/commandhistorymodel.h"
 
 /** This class handles reading and writing Slim script files
   */

@@ -36,7 +36,6 @@ LIBS 			+= -L../qextserialport/src/build \
 HEADERS                 = openmoco.h \
 			  MoCoBus/omcommandbuffer.h \
                           MoCoBus/omserialmgr.h \
-                          Slim/commandhistorymodel.h \
                           Slim/slimcommandparser.h \
     MoCoBus/ommocobus.h \
     MoCoBus/omdevice.h \
@@ -48,7 +47,6 @@ HEADERS                 = openmoco.h \
 SOURCES                 = \
 			  MoCoBus/omcommandbuffer.cpp \
                           MoCoBus/omserialmgr.cpp \
-                          Slim/commandhistorymodel.cpp \
                           Slim/slimcommandparser.cpp \
     MoCoBus/ommocobus.cpp \
     MoCoBus/omdevice.cpp \

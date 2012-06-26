@@ -120,6 +120,10 @@ slimCommand SlimCommandParser::parse(QString & p_String)
     }
     else {
         newCom.broadcast = true;
+
+        if( m_net->busCount() < 1 )
+            throw SLIM_ERR_NOBUS;
+
             // attempt to send a broadcast command
         try {
             id = _sendBroadcast(cmd);

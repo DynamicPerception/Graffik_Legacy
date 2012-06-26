@@ -17,9 +17,6 @@ CommandHistoryModel::CommandHistoryModel(OMNetwork *c_net, QObject *parent) :
         // we want the results of each command
     QObject::connect(m_net, SIGNAL(complete(int, OMCommandBuffer*)), this, SLOT(_commandCompleted(int, OMCommandBuffer*)), Qt::QueuedConnection);
 
-        // we need to purge commands from our history when a device is removed, to prevent trying to access its device object
-    QObject::connect(m_net, SIGNAL(deviceDeleted(QString,unsigned short)), this, SLOT(_deviceRemoved(QString,unsigned short)));
-
 }
 
 CommandHistoryModel::~CommandHistoryModel() {
@@ -27,7 +24,7 @@ CommandHistoryModel::~CommandHistoryModel() {
 }
 
 int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
-        return _cmdVec.size();
+        return _cmdHist.size();
  }
 
  int CommandHistoryModel::columnCount(const QModelIndex & parent) const {
@@ -70,37 +67,31 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
      if( index.column() > this->columnCount() - 1)
          return QVariant();
 
-         // check, and then access command buffer for information
-     OMCommandBuffer* buf = _cmdVec.at(index.row()).buf;
-
 
      if (role == Qt::DisplayRole) {
 
         if( index.column() == 0 ) {
             // get network name
-            if( _cmdVec.at(index.row()).broadcast ) {
+            if( _cmdHist.at(index.row()).broadcast ) {
                     // handle broadcast packets
-                QString name = "Broadcast";
+                QString name = "broadcast";
                 return QVariant(name);
             }
             else {
-                QString name = _cmdVec.at(index.row()).network;
-                name = m_net->busInfo(name)->name;
-                return QVariant(name);
+                return QVariant(_cmdHist.at(index.row()).bus);
             }
         }
 
         else if( index.column() == 2 ) {
             // get device name
-            if( _cmdVec.at(index.row()).broadcast )
-                return QVariant("Broadcast");
+            if( _cmdHist.at(index.row()).broadcast )
+                return QVariant("broadcast");
 
-            QString name = m_net->deviceInfo(_cmdVec.at(index.row()).network, _cmdVec.at(index.row()).address)->name;
-            return QVariant(name);
+            return QVariant(_cmdHist.at(index.row()).deviceName);
         }
         else if( index.column() == 3 ) {
             // command issued
-            QString allCmd = _cmdVec.at(index.row()).command + " " + _cmdVec.at(index.row()).arguments.join(" ");
+            QString allCmd = _cmdHist.at(index.row()).command;
             return QVariant(allCmd);
         }
 
@@ -109,23 +100,23 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
          if( index.column() == 1 ) {
                  // result/status
 
+            if( _cmdHist.at(index.row()).broadcast ) {
+                return QVariant(QIcon(":/icons/img/greenled.png"));
 
-                 // we MUST check that the buffer has been initialized (it likely is
-                 // not if the command was just added)
-             if( buf != 0 ) {
-
-                 if( buf->status() == OMC_QUEUED )
+             }
+             else {
+                    // we MUST check that the buffer has been initialized (it likely is
+                    // not if the command was just added)
+                 if( _cmdHist.at(index.row()).status == OMC_QUEUED )
                      return QVariant(QIcon(":/icons/img/blueled.png"));
-                 else if( buf->status() == OMC_FAILURE )
+                 else if( _cmdHist.at(index.row()).status == OMC_FAILURE )
                      return QVariant(QIcon(":/icons/img/redled.png"));
-                 else if( buf->status() == OMC_SUCCESS )
+                 else if( _cmdHist.at(index.row()).status == OMC_SUCCESS )
                      return QVariant(QIcon(":/icons/img/greenled.png"));
                  else
                      return QVariant(QIcon(":/icons/img/redled.png"));
              }
-             else {
-                 return QVariant(QIcon(":/icons/img/blueled.png"));
-             }
+
          }
      }
      else if( role == Qt::BackgroundRole ) {
@@ -135,8 +126,8 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
 
              QColor bgCol = *m_bcCol;
 
-             if( ! _cmdVec.at(index.row()).broadcast )
-                 bgCol = m_net->busInfo(_cmdVec.at(index.row()).network)->color;
+             if( ! _cmdHist.at(index.row()).broadcast )
+                 bgCol = _cmdHist.at(index.row()).color;
 
              QBrush netBackground(bgCol);
              return(netBackground);
@@ -152,7 +143,14 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
 
      beginInsertRows(QModelIndex(), this->rowCount(), this->rowCount());
 
-     _cmdVec.push_back(p_com);
+     QString bName = m_net->busInfo(p_com.network)->name;
+     QColor bCol = m_net->busInfo(p_com.network)->color;
+     QString dName = m_net->deviceInfo(p_com.network, p_com.address)->name;
+     QString cmd = p_com.command + " " + p_com.arguments.join(" ");
+
+     slimHistoryEntry ent(p_com, bName, bCol, dName, p_com.address, OMC_QUEUED, cmd, p_com.broadcast);
+
+     _cmdHist.append(ent);
 
 
 
@@ -173,12 +171,7 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
 
      m_cmdLoc[p_com.id] = newRow - 1;
 
-        // keep track of all commands issued by a particular
-        // address, so we can remove those commands when the
-        // device at that address is removed, to avoid crashing
-        // when attempting to update the display
 
-     m_devCmdLookup[p_com.address].append(newRow - 1);
      return(true);
  }
 
@@ -197,7 +190,9 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
 
      int thsRow = m_cmdLoc[p_id];
 
-     _cmdVec.at(thsRow).buf = p_buf;
+     _cmdHist.at(thsRow).cmdObject.buf = p_buf;
+
+     _cmdHist.at(thsRow).status = p_buf->status();
 
      qDebug() << "SCHM: Command Result Size: " << p_buf->resultSize();
 
@@ -207,28 +202,17 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
         // if it's a command with a result value, then emit it for display
      if( p_buf->resultSize() > 0 ) {
          qDebug() << "SCHM: Command has result data bytes: " << p_buf->resultSize();
-         emit commandResults(_cmdVec.at(thsRow));
+         emit commandResults(_cmdHist.at(thsRow));
      }
 
  }
 
- slimCommand CommandHistoryModel::getCommand(int p_row) {
-     return _cmdVec.at(p_row);
+ slimHistoryEntry CommandHistoryModel::getCommand(int p_row) {
+     return _cmdHist.at(p_row);
  }
 
  void CommandHistoryModel::_deviceRemoved(QString p_bus, unsigned short p_addr) {
 
-     if( ! m_devCmdLookup.contains(p_addr) )
-         return;
-
-     beginResetModel();
-
-     foreach(int idx, m_devCmdLookup.value(p_addr) ) {
-         _cmdVec.remove(idx, 1);
-     }
-
-     m_devCmdLookup.remove(p_addr);
-
-     endResetModel();
+    // deprecated
 
  }
