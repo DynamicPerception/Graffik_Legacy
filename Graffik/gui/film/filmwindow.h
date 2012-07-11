@@ -25,6 +25,10 @@ public:
     FilmWindow(OMNetwork* c_net, AxisOptions* c_opts, QWidget *parent = 0);
     ~FilmWindow();
 
+public slots:
+
+    void on_camControlCheckBox_stateChanged(int p_state);
+
 private slots:
     void _jogMotorChangeDenied(unsigned short p_oldAddr);
     void _drawNewAxis(OMdeviceInfo* p_dev);
@@ -39,10 +43,9 @@ private:
     FilmParameters* m_params;
 
     QVBoxLayout* m_areaLayout;
-
-    bool m_threadStarted;
-
     QHash<unsigned short, MotionBase*> m_areaBlocks;
+
+    void _enableCamControl(bool p_en = true);
 
 
 };

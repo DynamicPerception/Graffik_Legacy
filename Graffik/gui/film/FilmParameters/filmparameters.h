@@ -4,6 +4,7 @@
 #include <QHash>
 #include <QWidget>
 #include <QString>
+#include <QMutex>
 
 #include "MoCoBus/omnetwork.h"
 
@@ -45,8 +46,8 @@ struct OMfilmCamParams {
 
  /** Film Parameters for a Specific Axis */
 struct OMfilmAxisParams {
-        /** Ending position for movement */
-    unsigned long endPos;
+        /** Ending distance for movement */
+    unsigned long endDist;
         /** Type of easing */
     int easing;
         /** Acceleration time (ms) */
@@ -55,13 +56,19 @@ struct OMfilmAxisParams {
     unsigned long decelTm;
         /** Microstep setting for axis */
     unsigned int ms;
+        /** Start Running Time */
+    unsigned long startTm;
+        /** end Running Time */
+    unsigned long endTm;
 
     OMfilmAxisParams() {
-        endPos = 0;
+        endDist = 0;
         easing = AXIS_CURVE_QUAD;
         accelTm = 0;
         decelTm = 0;
         ms = 1;
+        startTm = 0;
+        endTm = 0;
     }
 
 };
@@ -86,14 +93,30 @@ struct OMfilmParams {
     }
 };
 
+
+/** Film Parameters
+
+  This class manages the parameters for any given film.  It provides
+  methods to access and set the film parameters, including those for
+  each axis.  All accessor/settor methods are thread-safe.
+
+  @author C. A. Church
+  Copyright &copy; 2012 Dynamic Perception LLC
+  This software is licensed under the GPLv3 Software License
+  */
+
 class FilmParameters : public QWidget
 {
     Q_OBJECT
 public:
 
     explicit FilmParameters(OMNetwork* c_net, QWidget* parent = 0);
- //   ~FilmParameters();
+    ~FilmParameters();
 
+    OMfilmParams* getParams();
+    OMfilmParams getParamsCopy();
+
+    void releaseParams();
 
 private slots:
 
@@ -106,6 +129,8 @@ private:
 
     OMNetwork* m_net;
     OMfilmParams* m_filmParams;
+    QMutex* m_mutex;
+    bool m_isLocked;
 };
 
 #endif // FILMPARAMETERS_H

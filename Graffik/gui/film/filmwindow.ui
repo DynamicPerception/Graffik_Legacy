@@ -410,14 +410,14 @@
           </spacer>
          </item>
          <item>
-          <widget class="QCheckBox" name="checkBox">
+          <widget class="QCheckBox" name="camControlCheckBox">
            <property name="text">
             <string>Camera Control</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="toolButton">
+          <widget class="QToolButton" name="camSetBut">
            <property name="text">
             <string>...</string>
            </property>
@@ -435,13 +435,13 @@
        <item>
         <layout class="QGridLayout" name="FilmLenGrid">
          <item row="1" column="0">
-          <widget class="QSpinBox" name="spinBox_4"/>
+          <widget class="QSpinBox" name="filmHHSpin"/>
          </item>
          <item row="1" column="1">
-          <widget class="QSpinBox" name="spinBox_5"/>
+          <widget class="QSpinBox" name="filmMMSpin"/>
          </item>
          <item row="1" column="2">
-          <widget class="QSpinBox" name="spinBox_6"/>
+          <widget class="QSpinBox" name="filmSSSpin"/>
          </item>
          <item row="0" column="0">
           <widget class="QLabel" name="label_5">

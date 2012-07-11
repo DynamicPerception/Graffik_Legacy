@@ -16,7 +16,6 @@ INCLUDEPATH  += ../libs/qextserialport/src/ \
                 ../libs/OpenMoCo/OpenMoCo \
                 .
 
-
  # link to openmoco libraries
 
 

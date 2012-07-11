@@ -9,7 +9,8 @@ HEADERS += \
     film/JogControlManager/jogcontrolmanager.h \
     film/FilmParameters/filmparameters.h \
     film/MotionArea/motionarea.h \
-    film/MotionArea/motionbase.h
+    film/MotionArea/motionbase.h \
+    film/Dialogs/cameracontroldialog.h
 
 
 SOURCES += \
@@ -20,9 +21,11 @@ SOURCES += \
     film/JogControlManager/jogcontrolmanager.cpp \
     film/FilmParameters/filmparameters.cpp \
     film/MotionArea/motionarea.cpp \
-    film/MotionArea/motionbase.cpp
+    film/MotionArea/motionbase.cpp \
+    film/Dialogs/cameracontroldialog.cpp
 
 FORMS += \
     film/filmwindow.ui \
     film/MotionArea/motionarea.ui \
-    film/MotionArea/motionbase.ui
+    film/MotionArea/motionbase.ui \
+    film/Dialogs/cameracontroldialog.ui

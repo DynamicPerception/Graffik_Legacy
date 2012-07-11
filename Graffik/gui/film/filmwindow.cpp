@@ -34,6 +34,8 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, QWidget *parent) :
 
     QObject::connect(m_jcm, SIGNAL(motorChangeDenied(unsigned short)), this, SLOT(_jogMotorChangeDenied(unsigned short)));
 
+        // default is no camera control
+    _enableCamControl(false);
 
 //    ui->devButtonList->setMovement(QListView::Free);
 //    ui->devButtonList->setDragDropMode(QAbstractItemView::InternalMove);
@@ -89,4 +91,30 @@ void FilmWindow::_eraseAxis(QString p_bus, unsigned short p_addr) {
         delete m_areaBlocks.value(p_addr);
         m_areaBlocks.remove(p_addr);
     }
+}
+
+void FilmWindow::on_camControlCheckBox_stateChanged(int p_state) {
+
+    bool camControl = false;
+
+    if( p_state == Qt::Checked )
+        camControl = true;
+
+    qDebug() << "FW: Cam Control Set to: " << camControl;
+
+    _enableCamControl(camControl);
+
+}
+
+void FilmWindow::_enableCamControl(bool p_en) {
+
+    OMfilmParams* params = m_params->getParams();
+    params->camParams->camControl = p_en;
+    m_params->releaseParams();
+
+    ui->filmHHSpin->setEnabled(p_en);
+    ui->filmMMSpin->setEnabled(p_en);
+    ui->filmSSSpin->setEnabled(p_en);
+
+    ui->camSetBut->setEnabled(p_en);
 }

@@ -1,5 +1,8 @@
-DEFINES += QT_USE_QSTRINGBUILDER
+DEFINES *= QT_USE_QSTRINGBUILDER
 
+# un-comment to disable all debugging output from libraries
+
+# DEFINES += QT_NO_DEBUG_OUTPUT
 
 HEADERS                 +=  \
 			   core/Dialogs/errordialog.h \
@@ -17,7 +20,8 @@ HEADERS                 +=  \
     core/Dialogs/deletebusdialog.h \ 
     core/DeviceScan/devicescandialog.h \
     core/DeviceScan/devicescanner.h \
-    core/DeviceScan/deviceassigndialog.h
+    core/DeviceScan/deviceassigndialog.h \
+    core/Dialogs/aboutdialog.h
 
 			   
 SOURCES                 +=  \
@@ -36,7 +40,8 @@ SOURCES                 +=  \
     core/Dialogs/deletebusdialog.cpp \ 
     core/DeviceScan/devicescandialog.cpp \
     core/DeviceScan/devicescanner.cpp \
-    core/DeviceScan/deviceassigndialog.cpp
+    core/DeviceScan/deviceassigndialog.cpp \
+    core/Dialogs/aboutdialog.cpp
 
 			   
 FORMS 			+=  \
@@ -50,6 +55,7 @@ FORMS 			+=  \
 	core/Dialogs/errordialog.ui \
    core/Dialogs/addnetdialog.ui \ 
     core/DeviceScan/devicescandialog.ui \
-    core/DeviceScan/deviceassigndialog.ui
+    core/DeviceScan/deviceassigndialog.ui \
+    core/Dialogs/aboutdialog.ui
 	   
 	   

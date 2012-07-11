@@ -5,11 +5,11 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 
+# un-comment this line to disable all debugging output from all subdirs on all build types (e.g. debug)
+
+# DEFINES += QT_NO_DEBUG_OUTPUT
+
+
 SUBDIRS += libs \
             gui
-
-# un-comment this line to disable all debugging output from all subdirs
-
-#DEFINES += QT_NO_DEBUG_OUTPUT
-
 

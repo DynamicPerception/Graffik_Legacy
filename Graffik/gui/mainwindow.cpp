@@ -20,11 +20,11 @@ MainWindow::MainWindow(QWidget *parent) :
     _netModel = new NetworkModel(_net, this);
     _parser = new SlimCommandParser(_net);
     _cmdHist = new CommandHistoryModel(_net, this);
-  //  _filmWindow = new FilmWindow(_net, _axisOpts, this);
+    _filmWindow = new FilmWindow(_net, _axisOpts, this);
     _slimWindow =  new SlimWindow(_net, _cmdHist, _parser, ui->tabs);
     _uData = new UserData(this);
 
-  //  ui->tabs->addTab(_filmWindow, "Film");
+    ui->tabs->addTab(_filmWindow, "Film");
     ui->tabs->addTab(_slimWindow, "Slim");
 
         // make sure that the slim parser can update its alias and registration when a new device is added/deleted
@@ -70,7 +70,7 @@ MainWindow::~MainWindow()
     delete _uData;
 
 
- //   delete _filmWindow;
+    delete _filmWindow;
     delete _slimWindow;
     delete _parser;
     delete _cmdHist;

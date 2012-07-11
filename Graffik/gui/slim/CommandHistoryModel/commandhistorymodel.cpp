@@ -71,28 +71,17 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
      if (role == Qt::DisplayRole) {
 
         if( index.column() == 0 ) {
-            // get network name
-            if( _cmdHist.at(index.row()).broadcast ) {
-                    // handle broadcast packets
-                QString name = "broadcast";
-                return QVariant(name);
-            }
-            else {
-                return QVariant(_cmdHist.at(index.row()).bus);
-            }
+            // get bus name
+            return QVariant(_cmdHist.at(index.row()).bus);
         }
 
         else if( index.column() == 2 ) {
             // get device name
-            if( _cmdHist.at(index.row()).broadcast )
-                return QVariant("broadcast");
-
             return QVariant(_cmdHist.at(index.row()).deviceName);
         }
         else if( index.column() == 3 ) {
             // command issued
-            QString allCmd = _cmdHist.at(index.row()).command;
-            return QVariant(allCmd);
+            return QVariant(_cmdHist.at(index.row()).command);
         }
 
      }
@@ -100,13 +89,12 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
          if( index.column() == 1 ) {
                  // result/status
 
+                    // broadcast always succeeds...
             if( _cmdHist.at(index.row()).broadcast ) {
                 return QVariant(QIcon(":/icons/img/greenled.png"));
 
              }
              else {
-                    // we MUST check that the buffer has been initialized (it likely is
-                    // not if the command was just added)
                  if( _cmdHist.at(index.row()).status == OMC_QUEUED )
                      return QVariant(QIcon(":/icons/img/blueled.png"));
                  else if( _cmdHist.at(index.row()).status == OMC_FAILURE )
@@ -124,12 +112,7 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
          if( index.column() == 0 ) {
              // color background of network area by user-specified color
 
-             QColor bgCol = *m_bcCol;
-
-             if( ! _cmdHist.at(index.row()).broadcast )
-                 bgCol = _cmdHist.at(index.row()).color;
-
-             QBrush netBackground(bgCol);
+             QBrush netBackground(_cmdHist.at(index.row()).color);
              return(netBackground);
          }
 
@@ -140,15 +123,33 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
 
  bool CommandHistoryModel::insertRow(slimCommand p_com) {
 
+        // populate rows in the model with interpreted data
+     qDebug() << "SCHM: Inserting command history row for command" << p_com.id;
 
      beginInsertRows(QModelIndex(), this->rowCount(), this->rowCount());
 
-     QString bName = m_net->busInfo(p_com.network)->name;
-     QColor bCol = m_net->busInfo(p_com.network)->color;
-     QString dName = m_net->deviceInfo(p_com.network, p_com.address)->name;
+     QString bName;
+     QColor bCol = *m_bcCol;
+     QString dName;
+     unsigned short dAddr;
+
+        // use default strings and values for broadcast commands
+     if(p_com.broadcast) {
+         bName = "broadcast";
+         dName = "broadcast";
+         dAddr = 0;
+     }
+     else {
+         bName = m_net->busInfo(p_com.network)->name;
+         bCol  = m_net->busInfo(p_com.network)->color;
+         dName = m_net->deviceInfo(p_com.network, p_com.address)->name;
+         dAddr = p_com.address;
+     }
+
      QString cmd = p_com.command + " " + p_com.arguments.join(" ");
 
-     slimHistoryEntry ent(p_com, bName, bCol, dName, p_com.address, OMC_QUEUED, cmd, p_com.broadcast);
+
+     slimHistoryEntry ent(p_com, bName, bCol, dName, dAddr, OMC_QUEUED, cmd, p_com.broadcast);
 
      _cmdHist.append(ent);
 
@@ -177,13 +178,12 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
 
  void CommandHistoryModel::_commandCompleted(int p_id, OMCommandBuffer * p_buf) {
 
-     qDebug() << "SCHM: Received complete signal";
 
         // strange, we have no record of that command! (Must've come from someone else)
-     if( ! m_cmdLoc.contains(p_id) ) {
-         qDebug() << "SCHM: Ignoring command " << p_id;
+     if( ! m_cmdLoc.contains(p_id) )
          return;
-     }
+
+     qDebug() << "SCHM: Received complete signal for command we issued";
 
      // considering that we would've gotten this command with no actual OMCommandBuffer pointer, let's resolve
      // that
@@ -209,10 +209,4 @@ int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
 
  slimHistoryEntry CommandHistoryModel::getCommand(int p_row) {
      return _cmdHist.at(p_row);
- }
-
- void CommandHistoryModel::_deviceRemoved(QString p_bus, unsigned short p_addr) {
-
-    // deprecated
-
  }

@@ -66,7 +66,6 @@ public slots:
 
 private slots:
     void _commandCompleted(int p_id, OMCommandBuffer* p_buf);
-    void _deviceRemoved(QString p_bus, unsigned short p_addr);
 
 private:
     QList<slimHistoryEntry> _cmdHist;
