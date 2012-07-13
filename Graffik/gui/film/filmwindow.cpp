@@ -118,3 +118,8 @@ void FilmWindow::_enableCamControl(bool p_en) {
 
     ui->camSetBut->setEnabled(p_en);
 }
+
+void FilmWindow::on_camSetBut_clicked() {
+    CameraControlDialog control(m_params);
+    control.exec();
+}

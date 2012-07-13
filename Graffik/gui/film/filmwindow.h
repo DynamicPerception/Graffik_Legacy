@@ -12,6 +12,7 @@
 #include "film/LiveDeviceModel/livedevicemodel.h"
 #include "film/MotionArea/motionbase.h"
 #include "film/FilmParameters/filmparameters.h"
+#include "film/Dialogs/cameracontroldialog.h"
 
 namespace Ui {
     class FilmWindow;
@@ -28,6 +29,7 @@ public:
 public slots:
 
     void on_camControlCheckBox_stateChanged(int p_state);
+    void on_camSetBut_clicked();
 
 private slots:
     void _jogMotorChangeDenied(unsigned short p_oldAddr);

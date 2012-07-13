@@ -32,6 +32,10 @@ struct OMfilmCamParams {
     unsigned long delayMS;
         /** Focus Time */
     unsigned long focusMS;
+        /** Bulb exposure control */
+    bool bulb;
+        /** Focus enabled */
+    bool focus;
 
         /** Default Constructor */
     OMfilmCamParams() {
@@ -40,6 +44,8 @@ struct OMfilmCamParams {
         shutterMS = 100;
         delayMS = 0;
         focusMS = 0;
+        bulb = false;
+        focus = false;
     }
 
 };
