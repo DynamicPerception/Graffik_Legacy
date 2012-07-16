@@ -17,9 +17,16 @@ public:
     CameraControlDialog(FilmParameters* c_params, QWidget *parent = 0);
     ~CameraControlDialog();
 
+signals:
+    void intervalControlChanged(bool p_state);
+    void fpsChanged(unsigned short p_fps);
+
 public slots:
     void on_bulbCheck_stateChanged(int p_state);
     void on_focusCheck_stateChanged(int p_state);
+    void on_intervalCheck_stateChanged(int p_state);
+
+    void accept();
 
 private:
     Ui::CameraControlDialog *ui;

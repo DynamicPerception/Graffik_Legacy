@@ -8,6 +8,17 @@
 
 #include "MoCoBus/omnetwork.h"
 
+ // some defaults and maximum values
+
+#define CAM_DEF_EXPOSURE    200
+#define CAM_DEF_DELAY       1000
+#define CAM_DEF_FOCUS       0
+#define CAM_DEF_INTERVAL    1
+
+#define CAM_MAX_EXPOSURE    4294967296
+#define CAM_MAX_DELAY       4294967296
+#define CAM_MAX_FOCUS       4294967296
+
  /** Axis Easing Type */
 
 enum {
@@ -36,16 +47,22 @@ struct OMfilmCamParams {
     bool bulb;
         /** Focus enabled */
     bool focus;
+        /** Manual Interval Control */
+    bool manInterval;
+        /** Interval time (seconds) */
+    unsigned long interval;
 
         /** Default Constructor */
     OMfilmCamParams() {
         camControl = false;
         focLock = true;
-        shutterMS = 100;
-        delayMS = 0;
-        focusMS = 0;
+        shutterMS = CAM_DEF_EXPOSURE;
+        delayMS = CAM_DEF_DELAY;
+        focusMS = CAM_DEF_FOCUS;
         bulb = false;
         focus = false;
+        manInterval = false;
+        interval = CAM_DEF_INTERVAL;
     }
 
 };
@@ -81,7 +98,7 @@ struct OMfilmAxisParams {
 
  /** Parameters for the Film Program */
 struct OMfilmParams {
-        /** Film (output) length */
+        /** Film length (output film) */
     unsigned long length;
         /** Film execution (wall clock) time */
     unsigned long realLength;
@@ -91,11 +108,14 @@ struct OMfilmParams {
     QHash<unsigned short, OMfilmAxisParams*> axes;
         /** Film Motion Type */
     int filmMode;
+        /** Frames per second */
+    unsigned short fps;
 
     OMfilmParams() {
         length = 1000 * 60 * 42;
         realLength = 1000 * 60 * 42;
         camParams = new OMfilmCamParams;
+        fps = 24;
     }
 };
 

@@ -31,10 +31,21 @@ public slots:
     void on_camControlCheckBox_stateChanged(int p_state);
     void on_camSetBut_clicked();
 
+    // spinbox handlers
+
+    void on_filmHHSpin_valueChanged(int p_val);
+    void on_filmMMSpin_valueChanged(int p_val);
+    void on_filmSSSpin_valueChanged(int p_val);
+    void on_realHHSpin_valueChanged(int p_val);
+    void on_realMMSpin_valueChanged(int p_val);
+    void on_realSSSpin_valueChanged(int p_val);
+
+
 private slots:
     void _jogMotorChangeDenied(unsigned short p_oldAddr);
     void _drawNewAxis(OMdeviceInfo* p_dev);
     void _eraseAxis(QString p_bus, unsigned short p_addr);
+    void _manIntervalChange(bool p_en);
 
 private:
     Ui::FilmWindow *ui;
@@ -48,7 +59,11 @@ private:
     QHash<unsigned short, MotionBase*> m_areaBlocks;
 
     void _enableCamControl(bool p_en = true);
+    void _showFilmTime();
+    void _prepInputs();
 
+    void _changeTime(int p_which, int p_pos, int p_val);
+    void _checkFilmTimeConstraint();
 
 };
 
