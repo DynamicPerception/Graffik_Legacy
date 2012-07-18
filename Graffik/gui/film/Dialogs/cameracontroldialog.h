@@ -25,6 +25,7 @@ public slots:
     void on_bulbCheck_stateChanged(int p_state);
     void on_focusCheck_stateChanged(int p_state);
     void on_intervalCheck_stateChanged(int p_state);
+    void on_autoCheck_stateChanged(int p_state);
 
     void accept();
 

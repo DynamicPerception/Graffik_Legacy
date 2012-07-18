@@ -51,6 +51,8 @@ struct OMfilmCamParams {
     bool manInterval;
         /** Interval time (seconds) */
     unsigned long interval;
+        /** Auto-calculate FPS */
+    bool autoFPS;
 
         /** Default Constructor */
     OMfilmCamParams() {
@@ -63,6 +65,7 @@ struct OMfilmCamParams {
         focus = false;
         manInterval = false;
         interval = CAM_DEF_INTERVAL;
+        autoFPS = true;
     }
 
 };

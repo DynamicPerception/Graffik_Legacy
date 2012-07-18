@@ -10,7 +10,8 @@ HEADERS += \
     film/FilmParameters/filmparameters.h \
     film/MotionArea/motionarea.h \
     film/MotionArea/motionbase.h \
-    film/Dialogs/cameracontroldialog.h
+    film/Dialogs/cameracontroldialog.h \
+    film/FilmExec/filmexec.h
 
 
 SOURCES += \
@@ -22,7 +23,8 @@ SOURCES += \
     film/FilmParameters/filmparameters.cpp \
     film/MotionArea/motionarea.cpp \
     film/MotionArea/motionbase.cpp \
-    film/Dialogs/cameracontroldialog.cpp
+    film/Dialogs/cameracontroldialog.cpp \
+    film/FilmExec/filmexec.cpp
 
 FORMS += \
     film/filmwindow.ui \

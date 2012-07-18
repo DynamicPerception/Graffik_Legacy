@@ -4,10 +4,8 @@
 #include <QDebug>
 
 
-FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::FilmWindow)
-{
+FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, QWidget *parent) : QWidget(parent), ui(new Ui::FilmWindow) {
+
     ui->setupUi(this);
 
     m_net = c_net;
@@ -37,12 +35,10 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, QWidget *parent) :
 
     _prepInputs();
 
-//    ui->devButtonList->setMovement(QListView::Free);
-//    ui->devButtonList->setDragDropMode(QAbstractItemView::InternalMove);
 }
 
-FilmWindow::~FilmWindow()
-{
+FilmWindow::~FilmWindow() {
+
     foreach(unsigned short addr, m_areaBlocks.keys()) {
         delete m_areaBlocks.value(addr);
         m_areaBlocks.remove(addr);
@@ -110,15 +106,15 @@ void FilmWindow::_enableCamControl(bool p_en) {
 
     OMfilmParams* params = m_params->getParams();
     params->camParams->camControl = p_en;
-    bool manInt = params->camParams->manInterval;
+    bool autoFPS = params->camParams->autoFPS;
     m_params->releaseParams();
 
     ui->camSetBut->setEnabled(p_en);
 
-        // do not enable "Film time" controls if manual interval is
-        // enabled
-
-    if( manInt )
+        // disable film time spinners unless auto fps is enabled
+    if( autoFPS && p_en )
+        p_en = true;
+    else
         p_en = false;
 
     ui->filmHHSpin->setEnabled(p_en);
@@ -129,17 +125,35 @@ void FilmWindow::_enableCamControl(bool p_en) {
 
 }
 
+// handle clicking the camera settings button
+
 void FilmWindow::on_camSetBut_clicked() {
     CameraControlDialog* control = new CameraControlDialog(m_params);
-    QObject::connect(control, SIGNAL(intervalControlChanged(bool)), this, SLOT(_manIntervalChange(bool)));
     control->exec();
-    delete control;
-}
 
-void FilmWindow::_manIntervalChange(bool p_en) {
-   /* ui->filmHHSpin->setEnabled(!p_en);
-    ui->filmMMSpin->setEnabled(!p_en);
-    ui->filmSSSpin->setEnabled(!p_en);*/
+    OMfilmParams* params = m_params->getParams();
+    bool autoFPS = params->camParams->autoFPS;
+    m_params->releaseParams();
+
+        // do we need to enable film control spinners?
+    bool en = false;
+
+        // if not using auto fps, show what film time will be
+        // based on FPS or manual interval
+    if( ! autoFPS )
+        _calcAutoFilmTime();
+    else
+        en = true;
+
+    qDebug() << "FW: Auto Time: " << autoFPS << en;
+
+    ui->filmHHSpin->setEnabled(en);
+    ui->filmMMSpin->setEnabled(en);
+    ui->filmSSSpin->setEnabled(en);
+
+
+
+    delete control;
 }
 
 void FilmWindow::_showFilmTime() {
@@ -147,6 +161,8 @@ void FilmWindow::_showFilmTime() {
     unsigned long wallTM = params->realLength;
     unsigned long filmTM = params->length;
     m_params->releaseParams();
+
+        // convert from mS to hours, minutes, and seconds
 
     unsigned long whh = wallTM / 1000 / 60 / 60;
     unsigned long wmm = (wallTM - (whh * 1000 * 60 * 60)) / 1000 / 60;
@@ -223,6 +239,12 @@ void FilmWindow::_checkFilmTimeConstraint() {
     OMfilmParams* params = m_params->getParams();
     bool do_adjust = false;
 
+        // TODO: Calculate maximum film time when FPS is used
+        // instead of intervalometer
+
+        // TODO: Add UI indicator that limitation has
+        // been placed...
+
     if( params->length > params->realLength ) {
         params->length = params->realLength;
         do_adjust = true;
@@ -260,4 +282,61 @@ void FilmWindow::on_realMMSpin_valueChanged(int p_val) {
 
 void FilmWindow::on_realSSSpin_valueChanged(int p_val) {
     _changeTime(2, 3, p_val);
+}
+
+void FilmWindow::_calcAutoFilmTime() {
+    OMfilmParams* params = m_params->getParams();
+
+
+    bool manInt = params->camParams->manInterval;
+    bool focus = params->camParams->focus;
+    unsigned short fps = params->fps;
+    unsigned long interval = params->camParams->interval;
+    unsigned long shutter = params->camParams->shutterMS;
+    unsigned long delay   = params->camParams->delayMS;
+    unsigned long focusTm = params->camParams->focusMS;
+    unsigned long filmTm = params->length;
+    unsigned long wallTm = params->realLength;
+
+        // determine minimum amount of interval
+        // time based on input values...
+
+    float minInterval = shutter + delay;
+
+    if( focus )
+        minInterval += focusTm;
+
+        // get back to seconds
+    minInterval /= 1000.0;
+
+    // for manual interval setting, ensure that interval
+    // exceeds minimum required interval
+
+    qDebug() << "FW: CalcTm: Interval " << interval << minInterval;
+
+    if( manInt && interval < minInterval )
+        params->camParams->interval = minInterval;
+    else if(manInt)
+        minInterval = interval;
+
+    qDebug() << "FW: CalcTm: Interval (post)" << interval << minInterval;
+
+    // calculate # of shots
+
+    unsigned long shots = ((float) wallTm / 1000.00) / minInterval;
+
+    // determine output film time in mS
+    filmTm = (shots / fps) * 1000;
+
+    // store film length
+    params->length = filmTm;
+    m_params->releaseParams();
+
+        // update display
+    _showFilmTime();
+    qDebug() << "FW: New Film Time: " << filmTm;
+
+    return;
+
+
 }

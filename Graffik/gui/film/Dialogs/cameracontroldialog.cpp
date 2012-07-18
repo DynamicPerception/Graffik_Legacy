@@ -48,6 +48,32 @@ void CameraControlDialog::on_intervalCheck_stateChanged(int p_state) {
     ui->fpsSpin->setEnabled(! state);
 }
 
+void CameraControlDialog::on_autoCheck_stateChanged(int p_state) {
+    bool state = false;
+
+    if( p_state == Qt::Unchecked )
+        state = true;
+
+    ui->intervalCheck->setEnabled(state);
+
+    if( state == true && ui->intervalCheck->isChecked() ) {
+        ui->hhSpinBox->setEnabled(true);
+        ui->mmSpinBox->setEnabled(true);
+        ui->ssSpinBox->setEnabled(true);
+    }
+    else {
+        ui->hhSpinBox->setEnabled(false);
+        ui->mmSpinBox->setEnabled(false);
+        ui->ssSpinBox->setEnabled(false);
+    }
+
+    if( state == false || ui->intervalCheck->isChecked() )
+        ui->fpsSpin->setEnabled(false);
+    else if( state == true && ! ui->intervalCheck->isChecked() )
+        ui->fpsSpin->setEnabled(true);
+
+}
+
 void CameraControlDialog::_setupInputs() {
 
     OMfilmParams params = m_params->getParamsCopy();
@@ -58,24 +84,31 @@ void CameraControlDialog::_setupInputs() {
     bool foc  = cam->focus;
     bool lck  = cam->focLock;
     bool man  = cam->manInterval;
+    bool aFPS = cam->autoFPS;
 
     bool sms  = params.filmMode == FILM_MODE_SMS ? true : false;
+
+
+    ui->autoCheck->setChecked(aFPS);
+
+    bool enManControls = aFPS ? false : man ? true : false;
+    bool enFPS = enManControls ? false : aFPS ? false : true;
 
         // set interval inputs
     unsigned long ihh = cam->interval / 60 / 60;
     unsigned long imm = (cam->interval - (ihh * 60 * 60)) / 60;
-    unsigned long iss = cam->interval - ihh - imm;
+    unsigned long iss = cam->interval - (ihh * 60 * 60) - (imm * 60);
 
-    ui->intervalCheck->setChecked(man);
-    ui->hhSpinBox->setEnabled(man);
+    ui->intervalCheck->setChecked(enManControls);
+    ui->hhSpinBox->setEnabled(enManControls);
     ui->hhSpinBox->setValue(ihh);
     ui->hhSpinBox->setMaximum(999);
 
-    ui->mmSpinBox->setEnabled(man);
+    ui->mmSpinBox->setEnabled(enManControls);
     ui->mmSpinBox->setValue(imm);
     ui->mmSpinBox->setMaximum(59);
 
-    ui->ssSpinBox->setEnabled(man);
+    ui->ssSpinBox->setEnabled(enManControls);
     ui->ssSpinBox->setValue(iss);
     ui->ssSpinBox->setMaximum(59);
 
@@ -83,7 +116,7 @@ void CameraControlDialog::_setupInputs() {
     // can't do both
 
     ui->fpsSpin->setValue( params.fps );
-    ui->fpsSpin->setEnabled( ! man );
+    ui->fpsSpin->setEnabled( enFPS );
 
     // set other inputs
 
@@ -116,6 +149,7 @@ void CameraControlDialog::accept() {
     cam->bulb = ui->bulbCheck->isChecked();
     cam->focus = ui->focusCheck->isChecked();
     cam->focLock = ui->lockCheck->isChecked();
+    cam->autoFPS = ui->autoCheck->isChecked();
 
     if( cam->bulb )
         cam->shutterMS = ui->bulbSpin->value() * 1000.0;
@@ -132,32 +166,23 @@ void CameraControlDialog::accept() {
 
     parmRef->filmMode = ui->smsCheck->isChecked() == true ? FILM_MODE_SMS : FILM_MODE_CONT;
 
-    bool wasInterval = cam->manInterval;
 
     cam->manInterval = ui->intervalCheck->isChecked();
 
+        // set new interval time, if manual interval selected
     if( cam->manInterval ) {
         unsigned long iv = ui->ssSpinBox->value();
         iv += ui->mmSpinBox->value() * 60;
-        iv += ui->mmSpinBox->value() * 60 * 60;
+        iv += ui->hhSpinBox->value() * 60 * 60;
         cam->interval = iv;
+
+        qDebug() << "CCD: Interval: " << iv;
     }
 
-    unsigned short wasFPS = parmRef->fps;
 
     parmRef->fps = ui->fpsSpin->value();
 
     m_params->releaseParams();
-
-  /*      // film window changes display based on how this option is selected...
-        // we emit that a change has occurred, if the
-    if( wasInterval != ui->intervalCheck->isChecked() || ui->intervalCheck->isChecked() )
-        emit intervalControlChanged(ui->intervalCheck->isChecked());
-
-        // .. same with FPS
-    if( wasFPS != ui->fpsSpin->value() )
-        emit fpsChanged(ui->fpsSpin->value() );
- */
 
     this->done(1);
 
