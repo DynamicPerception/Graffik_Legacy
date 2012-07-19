@@ -72,6 +72,8 @@ struct OMfilmCamParams {
 
  /** Film Parameters for a Specific Axis */
 struct OMfilmAxisParams {
+        /** Bus of device */
+    QString bus;
         /** Ending distance for movement */
     unsigned long endDist;
         /** Type of easing */
@@ -88,6 +90,7 @@ struct OMfilmAxisParams {
     unsigned long endTm;
 
     OMfilmAxisParams() {
+        bus = "";
         endDist = 0;
         easing = AXIS_CURVE_QUAD;
         accelTm = 0;
@@ -149,7 +152,7 @@ public:
 
 private slots:
 
-    void _addDevice(OMdeviceInfo* p_dev);
+    void _addDevice(OMbusInfo *p_bus, OMdeviceInfo *p_dev);
     void _removeDevice(QString p_bus, unsigned short p_addr);
 
 public slots:

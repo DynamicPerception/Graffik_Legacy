@@ -9,7 +9,7 @@ FilmParameters::FilmParameters(OMNetwork *c_net, QWidget *parent) :
 
     m_mutex = new QMutex(QMutex::NonRecursive);
 
-    QObject::connect(m_net, SIGNAL(deviceAdded(OMdeviceInfo*)), this, SLOT(_addDevice(OMdeviceInfo*)));
+    QObject::connect(m_net, SIGNAL(deviceAdded(OMbusInfo*, OMdeviceInfo*)), this, SLOT(_addDevice(OMbusInfo*, OMdeviceInfo*)));
     QObject::connect(m_net, SIGNAL(deviceDeleted(QString,unsigned short)), this, SLOT(_removeDevice(QString,unsigned short)));
 
 }
@@ -31,13 +31,18 @@ FilmParameters::FilmParameters(OMNetwork *c_net, QWidget *parent) :
     delete m_mutex;
 }
 
-void FilmParameters::_addDevice(OMdeviceInfo *p_dev) {
+ /** Add information about a new device to the film structure */
+
+void FilmParameters::_addDevice(OMbusInfo *p_bus, OMdeviceInfo *p_dev) {
 
     qDebug() << "FP: Got new axis" << p_dev->name;
 
     m_mutex->lock();
 
     OMfilmAxisParams* axis = new OMfilmAxisParams;
+        // record bus name of device
+    axis->bus = p_bus->name;
+
     m_filmParams->axes.insert(p_dev->device->address(), axis);
 
     m_mutex->unlock();

@@ -2,7 +2,11 @@
 #define FILMEXEC_H
 
 #include <QObject>
+#include <QList>
+
 #include "MoCoBus/omnetwork.h"
+#include "Devices/nanoMoCo/omaxis.h"
+
 #include "film/FilmParameters/filmparameters.h"
 
 enum {
@@ -31,7 +35,7 @@ class FilmExec : public QObject
     Q_OBJECT
 
 public:
-    FilmExec(OMNetwork* c_net, FilmParameters* c_film);
+    FilmExec(OMNetwork* c_net, FilmParameters* c_params);
     ~FilmExec();
 
     void start();
@@ -45,11 +49,16 @@ public:
 private:
     OMNetwork* m_net;
     FilmParameters* m_params;
+    OMfilmParams m_film;
 
     int m_stat;
 
-    void _sendStart();
     void _sendAllHome();
+    void _sendTiming();
+    void _sendConfig();
+    void _sendNodeMovements();
+
+    QList<OMAxis*> _getDevices(OMfilmParams *p_params);
 
 };
 
