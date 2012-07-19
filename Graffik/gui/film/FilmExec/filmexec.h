@@ -9,7 +9,7 @@
 
 #include "film/FilmParameters/filmparameters.h"
 
-enum {
+enum OMFilm {
  FILM_STARTED, FILM_STOPPED, FILM_PAUSED
 };
 
@@ -53,12 +53,12 @@ private:
 
     int m_stat;
 
-    void _sendAllHome();
+    void _sendHome(OMAxis* p_axis);
     void _sendTiming();
     void _sendConfig();
     void _sendNodeMovements();
 
-    QList<OMAxis*> _getDevices(OMfilmParams *p_params);
+    QList<OMAxis*> _getAxes(OMfilmParams *p_film);
 
 };
 

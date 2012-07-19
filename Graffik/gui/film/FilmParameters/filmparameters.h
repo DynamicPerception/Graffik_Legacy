@@ -15,9 +15,9 @@
 #define CAM_DEF_FOCUS       0
 #define CAM_DEF_INTERVAL    1
 
-#define CAM_MAX_EXPOSURE    4294967296
-#define CAM_MAX_DELAY       4294967296
-#define CAM_MAX_FOCUS       4294967296
+#define CAM_MAX_EXPOSURE    ULONG_MAX
+#define CAM_MAX_DELAY       ULONG_MAX
+#define CAM_MAX_FOCUS       ULONG_MAX
 
  /** Axis Easing Type */
 

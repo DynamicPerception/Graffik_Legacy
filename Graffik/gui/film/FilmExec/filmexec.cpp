@@ -33,9 +33,6 @@ void FilmExec::start() {
     if( m_stat == FILM_STARTED )
         return;
 
-
-    QList<OMAxis*> axes = _getDevices(&params);
-
         // If stopped, we have to do several things before
         // starting - but if paused, we can just broadcast
         // a start command.
@@ -47,11 +44,12 @@ void FilmExec::start() {
             // refresh film parameters for a fresh start
         m_film = m_params->getParamsCopy();
 
+        QList<OMAxis*> axes = _getAxes(&m_film);
 
             // send all axes home
         foreach(OMAxis* axis, axes) {
             unsigned short addr = axis->address();
-            unsigned long distanceToMove = abs(params.axes.value(addr)->endDist);
+            unsigned long distanceToMove = abs(m_film.axes.value(addr)->endDist);
             if( distanceToMove > 0 )
                 _sendHome(axis);
         }
@@ -63,11 +61,11 @@ void FilmExec::start() {
 
         _sendTiming();
         _sendConfig();
-        _sendMovements();
+        _sendNodeMovements();
     }
 
     // send broadcast command
-    int cmdId = m_net->broadcast(OM_BCAST_START);
+    int cmdId = m_net->broadcast(OMBus::OM_BCAST_START);
 
     m_stat = FILM_STARTED;
 }
@@ -78,7 +76,7 @@ void FilmExec::stop() {
     if( m_stat == FILM_STOPPED )
         return;
 
-    int cmdId = m_net->broadcast(OM_BCAST_STOP);
+    int cmdId = m_net->broadcast(OMBus::OM_BCAST_STOP);
 
     m_stat = FILM_STOPPED;
 
@@ -89,21 +87,21 @@ void FilmExec::pause() {
     if( m_stat == FILM_PAUSED )
         return;
 
-    int cmdId = m_net->broadcast(OM_BCAST_PAUSE);
+    int cmdId = m_net->broadcast(OMBus::OM_BCAST_PAUSE);
 
     m_stat = FILM_PAUSED;
 }
 
-void FilmExec::status() {
+int FilmExec::status() {
 
     return m_stat;
 }
 
-void FilmExec::runTime() {
+unsigned long FilmExec::runTime() {
 
 }
 
-void FilmExec::filmTime() {
+unsigned long FilmExec::filmTime() {
 
 }
 
@@ -111,9 +109,8 @@ void FilmExec::filmTime() {
 
  /* Transmit Functions */
 
-void FilmExec::_sendAllHome() {
-
-
+void FilmExec::_sendHome(OMAxis* p_axis) {
+    int cmdId = p_axis->home();
 }
 
 void FilmExec::_sendConfig() {
@@ -132,12 +129,23 @@ void FilmExec::_sendNodeMovements() {
 
 
 
-QList<OMAxis*> FilmExec::_getDevices(OMfilmParams* p_params) {
+QList<OMAxis*> FilmExec::_getAxes(OMfilmParams* p_film) {
     QList<OMAxis*> ret;
 
 
-    foreach(unsigned short addr, params->axes)
-        ret.append( m_net->deviceInfo(params->axes.value(addr)->bus, addr) );
+        // go through list of axes
+    foreach( unsigned short addr, p_film->axes.keys() ) {
+        OMDevice* axis = m_net->deviceInfo(p_film->axes.value(addr)->bus, addr)->device;
+
+        if( axis->type() == "OpenMoCo Axis" ) {
+                // ensure that we have the right type, and cast to
+                // OMAxis
+            OMAxis* omaxis = dynamic_cast<OMAxis*>(axis);
+
+            if ( omaxis != 0 )
+                ret.append(omaxis);
+        }
+    }
 
     m_params->releaseParams();
 
