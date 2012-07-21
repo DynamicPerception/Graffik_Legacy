@@ -2,16 +2,17 @@
 #define FILMEXEC_H
 
 #include <QObject>
+#include <QString>
 #include <QList>
 
 #include "MoCoBus/omnetwork.h"
 #include "Devices/nanoMoCo/omaxis.h"
 
 #include "film/FilmParameters/filmparameters.h"
+#include "core/AxisOptions/axisoptions.h"
 
-enum OMFilm {
- FILM_STARTED, FILM_STOPPED, FILM_PAUSED
-};
+
+enum { FILM_STOPPED, FILM_STARTED, FILM_PAUSED };
 
 
 /** Film Execution Handler
@@ -35,7 +36,7 @@ class FilmExec : public QObject
     Q_OBJECT
 
 public:
-    FilmExec(OMNetwork* c_net, FilmParameters* c_params);
+    FilmExec(OMNetwork* c_net, FilmParameters* c_params, AxisOptions* c_opts);
     ~FilmExec();
 
     void start();
@@ -46,19 +47,29 @@ public:
     unsigned long runTime();
     unsigned long filmTime();
 
+    unsigned long interval(OMfilmParams* p_film);
+
+
+signals:
+    void filmStart(bool p_stat);
+    void filmError(QString p_err);
+
 private:
     OMNetwork* m_net;
     FilmParameters* m_params;
     OMfilmParams m_film;
+    AxisOptions* m_opts;
 
     int m_stat;
 
     void _sendHome(OMAxis* p_axis);
-    void _sendTiming();
+    void _sendCamera(OMAxis *p_master);
     void _sendConfig();
     void _sendNodeMovements();
 
     QList<OMAxis*> _getAxes(OMfilmParams *p_film);
+    OMAxis* _getTimingMaster(QList<OMAxis*>* p_axes);
+
 
 };
 

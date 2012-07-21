@@ -1,9 +1,12 @@
 #include "filmexec.h"
 
-FilmExec::FilmExec(OMNetwork* c_net, FilmParameters* c_params) : QObject() {
+
+FilmExec::FilmExec(OMNetwork* c_net, FilmParameters* c_params, AxisOptions* c_opts) : QObject() {
     m_net = c_net;
     m_params = c_params;
+    m_opts = c_opts;
 
+        // get an initial copy of film parameters
     m_film = m_params->getParamsCopy();
 
     m_stat = FILM_STOPPED;
@@ -59,7 +62,9 @@ void FilmExec::start() {
 
             // TODO: Check for failure
 
-        _sendTiming();
+        OMAxis* timingMaster = _getTimingMaster(&axes);
+
+        _sendCamera(timingMaster);
         _sendConfig();
         _sendNodeMovements();
     }
@@ -92,6 +97,18 @@ void FilmExec::pause() {
     m_stat = FILM_PAUSED;
 }
 
+/** Return Current Execution Status
+
+  Returns one of the following:
+
+  FILM_STOPPED
+  FILM_PAUSED
+  FILM_STARTED
+
+  @return
+  Current status code
+  */
+
 int FilmExec::status() {
 
     return m_stat;
@@ -106,6 +123,68 @@ unsigned long FilmExec::filmTime() {
 }
 
 
+/** Return the Actual Interval for the Supplied Film Parameters
+
+  Given a reference to a film parameters structure, returns the
+  actual interval time that will be used - based on the
+  minimum achievable interval, user-supplied interval, or automatically-
+  determined interval.  The source of the interval is based on the
+  configured parameters, this method automatically determines the
+  best interval based on these parameters.
+
+  @param p_film
+  A pointer to the OMfilmParams to analyze
+
+  */
+
+unsigned long FilmExec::interval(OMfilmParams* p_film) {
+    bool autoFPS    = p_film->camParams->autoFPS;
+    bool manInt     = p_film->camParams->manInterval;
+    bool focus      = p_film->camParams->focus;
+
+    int fps         = p_film->fps;
+
+    unsigned long shutMs = p_film->camParams->shutterMS;
+    unsigned long delayMs = p_film->camParams->delayMS;
+    unsigned long focMs   = p_film->camParams->focusMS;
+
+    unsigned long iv      = p_film->camParams->interval;
+
+    unsigned long filmTm   = p_film->length;
+    unsigned long realTm   = p_film->realLength;
+
+    // determine minimum amount of interval
+    // time based on input values...
+
+    float minInterval = shutMs + delayMs;
+
+    if( focus )
+        minInterval += focMs;
+
+        // get back to seconds
+    minInterval /= 1000.0;
+
+    if( manInt && iv < minInterval ) {
+            // manual interval, lock to minimum achievable interval
+        iv = minInterval;
+    }
+    else if( autoFPS ) {
+            // auto fps - determine interval from
+            // film length
+        iv = ((float) realTm / 1000.0) / ((float) filmTm / 1000.0) / fps;
+
+        if( iv < minInterval )
+            iv = minInterval;
+    }
+    else if( ! manInt ) {
+            // only FPS specified, interval is minimum interval
+        iv = minInterval;
+    }
+
+
+    return iv;
+
+}
 
  /* Transmit Functions */
 
@@ -117,16 +196,44 @@ void FilmExec::_sendConfig() {
 
 }
 
-void FilmExec::_sendTiming() {
+void FilmExec::_sendCamera(OMAxis* p_master) {
+
+    bool autoFPS    = m_film.camParams->autoFPS;
+    bool camControl = m_film.camParams->camControl;
+
+    if( ! camControl ) {
+        int cmdId = p_master->cameraDisable();
+        return;
+    }
+
+    unsigned long iv = interval(&m_film);
+
+    p_master->interval(iv);
+    p_master->exposure(m_film.camParams->shutterMS);
+    p_master->exposureDelay(m_film.camParams->delayMS);
+
+    if( m_film.camParams->focus )
+        p_master->focus(m_film.camParams->focusMS);
+    else
+        p_master->focus(0);
+
 
 }
+
+
 
 void FilmExec::_sendNodeMovements() {
 
 }
 
 
-
+OMAxis* FilmExec::_getTimingMaster(QList<OMAxis *> *p_axes) {
+    foreach(OMAxis* axis, *p_axes) {
+        OMaxisOptions* aopts = m_opts->getOptions(axis->address());
+        if( aopts->master == true )
+            return axis;
+    }
+}
 
 
 QList<OMAxis*> FilmExec::_getAxes(OMfilmParams* p_film) {
@@ -146,8 +253,6 @@ QList<OMAxis*> FilmExec::_getAxes(OMfilmParams* p_film) {
                 ret.append(omaxis);
         }
     }
-
-    m_params->releaseParams();
 
     return ret;
 }
