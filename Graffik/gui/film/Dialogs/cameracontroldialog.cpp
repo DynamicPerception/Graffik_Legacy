@@ -44,8 +44,6 @@ void CameraControlDialog::on_intervalCheck_stateChanged(int p_state) {
     ui->mmSpinBox->setEnabled(state);
     ui->ssSpinBox->setEnabled(state);
 
-        // fps is only used if manual intervalometer isn't set
-    ui->fpsSpin->setEnabled(! state);
 }
 
 void CameraControlDialog::on_autoCheck_stateChanged(int p_state) {
@@ -66,11 +64,6 @@ void CameraControlDialog::on_autoCheck_stateChanged(int p_state) {
         ui->mmSpinBox->setEnabled(false);
         ui->ssSpinBox->setEnabled(false);
     }
-
-    if( state == false || ui->intervalCheck->isChecked() )
-        ui->fpsSpin->setEnabled(false);
-    else if( state == true && ! ui->intervalCheck->isChecked() )
-        ui->fpsSpin->setEnabled(true);
 
 }
 
@@ -95,9 +88,9 @@ void CameraControlDialog::_setupInputs() {
     bool enFPS = enManControls ? false : aFPS ? false : true;
 
         // set interval inputs
-    unsigned long ihh = cam->interval / 60 / 60;
-    unsigned long imm = (cam->interval - (ihh * 60 * 60)) / 60;
-    unsigned long iss = cam->interval - (ihh * 60 * 60) - (imm * 60);
+    unsigned long ihh = cam->interval / 1000 / 60 / 60;
+    unsigned long imm = (cam->interval / 1000 - (ihh * 60 * 60)) / 60;
+    unsigned long iss = cam->interval / 1000 - (ihh * 60 * 60) - (imm * 60);
 
     ui->intervalCheck->setChecked(enManControls);
     ui->hhSpinBox->setEnabled(enManControls);
@@ -112,11 +105,8 @@ void CameraControlDialog::_setupInputs() {
     ui->ssSpinBox->setValue(iss);
     ui->ssSpinBox->setMaximum(59);
 
-    // one can either set the interval, or set the FPs for the film
-    // can't do both
-
     ui->fpsSpin->setValue( params.fps );
-    ui->fpsSpin->setEnabled( enFPS );
+
 
     // set other inputs
 
@@ -174,7 +164,10 @@ void CameraControlDialog::accept() {
         unsigned long iv = ui->ssSpinBox->value();
         iv += ui->mmSpinBox->value() * 60;
         iv += ui->hhSpinBox->value() * 60 * 60;
+
+        iv *= 1000; // convert back to mS
         cam->interval = iv;
+
 
         qDebug() << "CCD: Interval: " << iv;
     }

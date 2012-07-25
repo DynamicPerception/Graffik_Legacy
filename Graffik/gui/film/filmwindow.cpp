@@ -14,6 +14,7 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, QWidget *parent) :
     m_ldModel = new LiveDeviceModel(m_net, this);
     m_jcm = new JogControlManager(m_net, m_opts, m_ldModel, ui->jogResCombo, ui->jogDial, ui->jogSpeedSpin, ui->jogDampSpin, this);
     m_params = new FilmParameters(m_net, this);
+    m_exec = new FilmExec(m_net, m_params, m_opts);
 
 
         // connect the device list display to the live device model
@@ -46,6 +47,7 @@ FilmWindow::~FilmWindow() {
 
     delete m_areaLayout;
 
+    delete m_exec;
     delete m_params;
     delete m_jcm;
     delete m_ldModel;
@@ -287,43 +289,18 @@ void FilmWindow::on_realSSSpin_valueChanged(int p_val) {
 void FilmWindow::_calcAutoFilmTime() {
     OMfilmParams* params = m_params->getParams();
 
+    unsigned long interval = m_exec->interval(params);
 
-    bool manInt = params->camParams->manInterval;
-    bool focus = params->camParams->focus;
     unsigned short fps = params->fps;
-    unsigned long interval = params->camParams->interval;
-    unsigned long shutter = params->camParams->shutterMS;
-    unsigned long delay   = params->camParams->delayMS;
-    unsigned long focusTm = params->camParams->focusMS;
     unsigned long filmTm = params->length;
     unsigned long wallTm = params->realLength;
 
-        // determine minimum amount of interval
-        // time based on input values...
 
-    float minInterval = shutter + delay;
-
-    if( focus )
-        minInterval += focusTm;
-
-        // get back to seconds
-    minInterval /= 1000.0;
-
-    // for manual interval setting, ensure that interval
-    // exceeds minimum required interval
-
-    qDebug() << "FW: CalcTm: Interval " << interval << minInterval;
-
-    if( manInt && interval < minInterval )
-        params->camParams->interval = minInterval;
-    else if(manInt)
-        minInterval = interval;
-
-    qDebug() << "FW: CalcTm: Interval (post)" << interval << minInterval;
+    qDebug() << "FW: CalcTm: Interval:" << interval;
 
     // calculate # of shots
 
-    unsigned long shots = ((float) wallTm / 1000.00) / minInterval;
+    unsigned long shots = wallTm / interval;
 
     // determine output film time in mS
     filmTm = (shots / fps) * 1000;

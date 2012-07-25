@@ -13,6 +13,7 @@
 #include "film/MotionArea/motionbase.h"
 #include "film/FilmParameters/filmparameters.h"
 #include "film/Dialogs/cameracontroldialog.h"
+#include "film/FilmExec/filmexec.h"
 
 namespace Ui {
     class FilmWindow;
@@ -57,6 +58,7 @@ private:
     AxisOptions* m_opts;
     JogControlManager* m_jcm;
     FilmParameters* m_params;
+    FilmExec* m_exec;
 
     QVBoxLayout* m_areaLayout;
     QHash<unsigned short, MotionBase*> m_areaBlocks;

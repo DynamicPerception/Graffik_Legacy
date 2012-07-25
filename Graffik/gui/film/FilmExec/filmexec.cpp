@@ -1,5 +1,6 @@
 #include "filmexec.h"
 
+#include <QDebug>
 
 FilmExec::FilmExec(OMNetwork* c_net, FilmParameters* c_params, AxisOptions* c_opts) : QObject() {
     m_net = c_net;
@@ -49,12 +50,18 @@ void FilmExec::start() {
 
         QList<OMAxis*> axes = _getAxes(&m_film);
 
-            // send all axes home
+            // send all axes home and prep their movements, if they are configured for movement
         foreach(OMAxis* axis, axes) {
             unsigned short addr = axis->address();
-            unsigned long distanceToMove = abs(m_film.axes.value(addr)->endDist);
-            if( distanceToMove > 0 )
+            long distanceToMove = abs(m_film.axes.value(addr)->endDist);
+
+            if( distanceToMove != 0 ) {
+                    // only do this if moving
                 _sendHome(axis);
+                _sendNodeMovements(&m_film, axis);
+            }
+            else
+                _disableMotor(axis);
         }
 
             // when starting from a stopped state, we transmit timing,
@@ -65,8 +72,7 @@ void FilmExec::start() {
         OMAxis* timingMaster = _getTimingMaster(&axes);
 
         _sendCamera(timingMaster);
-        _sendConfig();
-        _sendNodeMovements();
+        _sendMaster(timingMaster, axes);
     }
 
     // send broadcast command
@@ -161,8 +167,8 @@ unsigned long FilmExec::interval(OMfilmParams* p_film) {
     if( focus )
         minInterval += focMs;
 
-        // get back to seconds
-    minInterval /= 1000.0;
+
+    qDebug() << "FEX: IV:" << iv << "MIV:" << minInterval;
 
     if( manInt && iv < minInterval ) {
             // manual interval, lock to minimum achievable interval
@@ -171,7 +177,7 @@ unsigned long FilmExec::interval(OMfilmParams* p_film) {
     else if( autoFPS ) {
             // auto fps - determine interval from
             // film length
-        iv = ((float) realTm / 1000.0) / ((float) filmTm / 1000.0) / fps;
+        iv = (float) realTm / (float) filmTm / (float) fps;
 
         if( iv < minInterval )
             iv = minInterval;
@@ -192,23 +198,30 @@ void FilmExec::_sendHome(OMAxis* p_axis) {
     int cmdId = p_axis->home();
 }
 
-void FilmExec::_sendConfig() {
 
+void FilmExec::_sendMaster(OMAxis *p_master, QList<OMAxis *> p_axes) {
+        // I choose you!
+    p_master->timing(true);
+        // inform all of the slaves that they, well, are slaves.
+    foreach(OMAxis* axis, p_axes) {
+        if(axis != p_master)
+            axis->timing(false);
+    }
 }
 
 void FilmExec::_sendCamera(OMAxis* p_master) {
 
-    bool autoFPS    = m_film.camParams->autoFPS;
     bool camControl = m_film.camParams->camControl;
+
+    unsigned long iv = interval(&m_film);
+    p_master->interval(iv);
 
     if( ! camControl ) {
         int cmdId = p_master->cameraDisable();
         return;
     }
 
-    unsigned long iv = interval(&m_film);
-
-    p_master->interval(iv);
+    p_master->cameraEnable();
     p_master->exposure(m_film.camParams->shutterMS);
     p_master->exposureDelay(m_film.camParams->delayMS);
 
@@ -221,9 +234,27 @@ void FilmExec::_sendCamera(OMAxis* p_master) {
 }
 
 
+void FilmExec::_disableMotor(OMAxis *p_axis) {
+    p_axis->motorDisable();
+}
 
-void FilmExec::_sendNodeMovements() {
+void FilmExec::_sendNodeMovements(OMfilmParams *p_film, OMAxis *p_axis) {
 
+        // send movement parameters to axis node
+
+    unsigned short addr = p_axis->address();
+    OMfilmAxisParams* parms = p_film->axes.value(addr);
+    bool which = p_film->filmMode == FILM_MODE_SMS ? true : false;
+
+    long end   = parms->endDist;
+    bool dir   = end < 0 ? false : true;
+    end = abs(end);
+
+    p_axis->motorEnable();
+    p_axis->delayMove(parms->startTm);
+    p_axis->easing(parms->easing);
+    p_axis->microSteps(parms->ms);
+    p_axis->plan(which, dir, end, parms->endTm, parms->accelTm, parms->decelTm);
 }
 
 

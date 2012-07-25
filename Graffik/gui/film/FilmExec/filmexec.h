@@ -21,7 +21,7 @@ enum { FILM_STOPPED, FILM_STARTED, FILM_PAUSED };
 
     This class is designed as an execution handler, translating the contents
     of a FilmParameters structure into a series of requested bus actions that
-    will result in the control of devices on the bus, towards the creation of
+    will result in the control of devices on the bus, and execute the creation of
     a film.
 
     @author C. A. Church
@@ -63,11 +63,12 @@ private:
     int m_stat;
 
     void _sendHome(OMAxis* p_axis);
-    void _sendCamera(OMAxis *p_master);
-    void _sendConfig();
-    void _sendNodeMovements();
+    void _sendCamera(OMAxis* p_master);
+    void _sendMaster(OMAxis* p_master, QList<OMAxis*> p_axes);
+    void _sendNodeMovements(OMfilmParams* p_film, OMAxis* p_axis);
+    void _disableMotor(OMAxis* p_axis);
 
-    QList<OMAxis*> _getAxes(OMfilmParams *p_film);
+    QList<OMAxis*> _getAxes(OMfilmParams* p_film);
     OMAxis* _getTimingMaster(QList<OMAxis*>* p_axes);
 
 

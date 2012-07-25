@@ -7,13 +7,14 @@
 #include <QMutex>
 
 #include "MoCoBus/omnetwork.h"
+#include "Devices/nanoMoCo/omaxis.h"
 
  // some defaults and maximum values
 
 #define CAM_DEF_EXPOSURE    200
 #define CAM_DEF_DELAY       1000
 #define CAM_DEF_FOCUS       0
-#define CAM_DEF_INTERVAL    1
+#define CAM_DEF_INTERVAL    1000
 
 #define CAM_MAX_EXPOSURE    ULONG_MAX
 #define CAM_MAX_DELAY       ULONG_MAX
@@ -21,9 +22,7 @@
 
  /** Axis Easing Type */
 
-enum {
-    AXIS_CURVE_LIN, AXIS_CURVE_QUAD, AXIS_CURVE_INVQUAD
-};
+
 
  /** Film Motion type */
 
@@ -49,7 +48,7 @@ struct OMfilmCamParams {
     bool focus;
         /** Manual Interval Control */
     bool manInterval;
-        /** Interval time (seconds) */
+        /** Interval time (milliseconds) */
     unsigned long interval;
         /** Auto-calculate FPS */
     bool autoFPS;
@@ -74,8 +73,8 @@ struct OMfilmCamParams {
 struct OMfilmAxisParams {
         /** Bus of device */
     QString bus;
-        /** Ending distance for movement */
-    unsigned long endDist;
+        /** Ending distance for movement + direction */
+    long endDist;
         /** Type of easing */
     int easing;
         /** Acceleration time (ms) */
@@ -92,7 +91,7 @@ struct OMfilmAxisParams {
     OMfilmAxisParams() {
         bus = "";
         endDist = 0;
-        easing = AXIS_CURVE_QUAD;
+        easing = OM_MOT_QUAD;
         accelTm = 0;
         decelTm = 0;
         ms = 1;

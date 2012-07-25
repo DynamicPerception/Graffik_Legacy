@@ -130,7 +130,8 @@ public:
     const int continuous(bool);
     const int move(bool, unsigned short);
     const int move(bool, unsigned long, unsigned long, unsigned long, unsigned long);
-    const int plan(bool, unsigned long, unsigned long, unsigned long, unsigned long);
+    const int plan(bool which, bool dir, unsigned long step, unsigned long shots, unsigned long accel, unsigned long decel);
+    const int delayMove(unsigned long ms);
 
     const int easing(unsigned char);
 
@@ -144,7 +145,7 @@ public:
     const int direction(bool);
     const int maxSteps(unsigned long);
     const int microSteps(unsigned char);
-    const int interval(unsigned short);
+    const int interval(unsigned long ms);
     const int exposure(unsigned long);
     const int focus(unsigned short);
     const int maxShots(unsigned short);
@@ -219,6 +220,8 @@ private:
         const int _slimContinuous(QStringList&);
         const int _slimStopMotor(QStringList&);
 
+        const int _slimDelay(QStringList&);
+
         static const char  progNoop   = 0;
         static const char  progPlay   = 1;
         static const char  progPause = 2;
@@ -259,6 +262,7 @@ private:
         static const char   motCont     = 9;
         static const char   motEase     = 10;
         static const char   motContEn   = 11;
+        static const char   motDelay    = 12;
 
         static const char   camInt      = 1;
         static const char   camExp      = 2;

@@ -205,12 +205,16 @@ const int OMAxis::move(bool dir, unsigned long step, unsigned long arrive, unsig
 
 /** Plan Motion
 
-   Plans a complex, eased move across a shot cycle (for automated
-   shoot-move-shoot cycles).
+   Plans a complex, eased move across an SMS shot cycle (for automated
+   shoot-move-shoot cycles), or a complex, eased move to be executed
+   once automatic operation begins
 
    You must specify the direction to move, the number of steps to move,
    the number of shots to take, the count of shots over which acceleration
    occurs, and the count of shots over which deceleration occurs.
+
+   @param which
+   Continuous (false) or SMS (true)
 
    @param dir
    Direction
@@ -219,7 +223,7 @@ const int OMAxis::move(bool dir, unsigned long step, unsigned long arrive, unsig
    Total steps
 
    @param shots
-   Total shot cycles
+   Total shot cycles (SMS), or milliseconds (continuous)
 
    @param accel
    Acceleration shot cycles
@@ -231,19 +235,21 @@ const int OMAxis::move(bool dir, unsigned long step, unsigned long arrive, unsig
    The ID of the command
    */
 
-const int OMAxis::plan(bool dir, unsigned long step, unsigned long shots, unsigned long accel, unsigned long decel) {
+const int OMAxis::plan(bool which, bool dir, unsigned long step, unsigned long shots, unsigned long accel, unsigned long decel) {
 
-    char* data = new char[20]();
+    char* data = new char[22]();
 
         // place in direction and spacer bytes
     data[0] = dir;
-    data[5] = 32;
-    data[10] = 32;
-    data[15] = 32;
+    data[1] = which;
+    data[2] = 32;
+    data[7] = 32;
+    data[12] = 32;
+    data[17] = 32;
 
 
     char* dPtr = data;
-    dPtr += 1;
+    dPtr += 3;
 
         // copy steps into place
     char* cD = nwo(step);
@@ -268,7 +274,7 @@ const int OMAxis::plan(bool dir, unsigned long step, unsigned long shots, unsign
     memcpy((void*) dPtr, cD, 4);
     delete[] cD;
 
-   return this->command(COMPROG, progPlan, data, 20);
+   return this->command(COMPROG, progPlan, data, 22);
    delete[] data;
 }
 
@@ -286,6 +292,23 @@ const int OMAxis::plan(bool dir, unsigned long step, unsigned long shots, unsign
 const int OMAxis::easing(unsigned char p_ease) {
    return this->command(COMDATA, dataMot, motEase, (char) p_ease);
 
+}
+
+/** Delay a Planned Move
+
+  Sets the delay time (in mS) for a planned move.  The motor will not
+  start moving until automatic operation has been running for at least
+  this long.
+
+  @param ms
+  Move initial delay (milliseconds)
+
+  @return
+  The ID of the command
+  */
+
+const int OMAxis::delayMove(unsigned long ms) {
+    return this->command(COMDATA, dataMot, motDelay, (unsigned long) ms);
 }
 
 /** Stop Motor Movement
@@ -509,8 +532,8 @@ const int OMAxis::speed(float p_Steps) {
  The ID of the command
  */
 
-const int OMAxis::interval(unsigned short seconds) {
-   return this->command(COMDATA, dataCam, camInt, seconds);
+const int OMAxis::interval(unsigned long ms) {
+   return this->command(COMDATA, dataCam, camInt, (unsigned long) ms);
 }
 
 /** Exposure Time
@@ -883,6 +906,7 @@ void OMAxis::_initScripting() {
    this->addNamedCommand("continuous", static_cast<f_callBack>(&OMAxis::_slimContinuous) );
     this->addNamedCommand("stopmotor", static_cast<f_callBack>(&OMAxis::_slimStopMotor) );
     this->addNamedCommand("sleep", static_cast<f_callBack>(&OMAxis::_slimSleep) );
+    this->addNamedCommand("leadin", static_cast<f_callBack>(&OMAxis::_slimDelay) );
 
 }
 
@@ -1030,6 +1054,13 @@ const int OMAxis::_slimExpose(QStringList& p_str) {
     return expose(p_str[0].toULong());
 }
 
+const int OMAxis::_slimDelay(QStringList& p_str) {
+    if( p_str.isEmpty() )
+        throw SLIM_ERR_ARGS;
+
+    return delayMove(p_str[0].toULong());
+}
+
 const int OMAxis::_slimSteps(QStringList& p_str) {
     if( p_str.isEmpty() )
         throw SLIM_ERR_ARGS;
@@ -1041,7 +1072,7 @@ const int OMAxis::_slimInterval(QStringList& p_str) {
     if( p_str.isEmpty() )
         throw SLIM_ERR_ARGS;
 
-    return interval(p_str[0].toUShort());
+    return interval(p_str[0].toULong());
 }
 
 const int OMAxis::_slimCamera(QStringList& p_str) {
@@ -1114,8 +1145,8 @@ const int OMAxis::_slimMs(QStringList& p_str) {
     unsigned char arg = p_str[0].toUShort();
 
         // only allowed values
-//    if( arg != 1 || arg != 2 || arg != 4 || arg != 8 || arg != 16 )
-//        throw SLIM_ERR_ARG;
+    if( arg != 1 && arg != 2 && arg != 4 && arg != 8 && arg != 16 )
+        throw SLIM_ERR_ARG;
 
     return microSteps(arg);
 }
@@ -1148,15 +1179,22 @@ const int OMAxis::_slimPlan(QStringList& p_str) {
 
     int argCnt = p_str.count();
 
-    if( argCnt != 5 )
+    if( argCnt != 6 )
         throw SLIM_ERR_ARGS;
 
-    bool dir = false;
+    bool dir    = false;
+    bool which  = false;
+
+    if( p_str[0] != "cont" && p_str[0] != "sms" )
+        throw SLIM_ERR_ARG;
+
+    if( p_str[0] == "sms" )
+        which = true;
 
     if( p_str[0] == "true" || p_str[0] == "1" )
         dir = true;
 
-        return plan( dir, p_str[1].toULong(), p_str[2].toULong(), p_str[3].toULong(), p_str[4].toULong() );
+        return plan( which, dir, p_str[2].toULong(), p_str[3].toULong(), p_str[4].toULong(), p_str[5].toULong() );
 
     throw SLIM_ERR_ARG;
 }
