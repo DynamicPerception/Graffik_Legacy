@@ -592,35 +592,42 @@
        <item>
         <layout class="QHBoxLayout" name="seekbuttonhoriztonallayout">
          <item>
-          <widget class="QPushButton" name="pushButton_7">
+          <widget class="QPushButton" name="rewindButton">
            <property name="text">
             <string>|&lt;&lt;</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_8">
+          <widget class="QPushButton" name="frameRwdButton">
            <property name="text">
             <string>&lt;</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_11">
+          <widget class="QPushButton" name="playButton">
            <property name="text">
-            <string>||</string>
+            <string>Play</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_10">
+          <widget class="QPushButton" name="stopButton">
+           <property name="text">
+            <string>Stop</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="frameFwdButton">
            <property name="text">
             <string>&gt;</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_9">
+          <widget class="QPushButton" name="forwardButton">
            <property name="text">
             <string>&gt;&gt;|</string>
            </property>

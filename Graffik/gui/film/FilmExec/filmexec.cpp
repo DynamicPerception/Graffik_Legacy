@@ -45,6 +45,8 @@ void FilmExec::start() {
 
             // if we're starting from a stopped state:
 
+        qDebug() << "FEx: Start";
+
             // refresh film parameters for a fresh start
         m_film = m_params->getParamsCopy();
 
@@ -52,16 +54,26 @@ void FilmExec::start() {
 
             // send all axes home and prep their movements, if they are configured for movement
         foreach(OMAxis* axis, axes) {
+            qDebug() << "FEx: Checking Device";
             unsigned short addr = axis->address();
+
+            qDebug() << "FEx: Rawdist:" << m_film.axes.value(addr)->endDist;
+
             long distanceToMove = abs(m_film.axes.value(addr)->endDist);
+
+            qDebug() << "FEx: DTM:" << distanceToMove << "ADDR:" << addr;
 
             if( distanceToMove != 0 ) {
                     // only do this if moving
+                qDebug() << "FEx: Sending Device Home" << addr;
                 _sendHome(axis);
+                qDebug() << "FEx: Sending Node Movements";
                 _sendNodeMovements(&m_film, axis);
             }
-            else
-                _disableMotor(axis);
+            else {
+               // qDebug() << "FEx: Disabling Motor";
+               // _disableMotor(axis);
+            }
         }
 
             // when starting from a stopped state, we transmit timing,
@@ -70,6 +82,8 @@ void FilmExec::start() {
             // TODO: Check for failure
 
         OMAxis* timingMaster = _getTimingMaster(&axes);
+
+        qDebug() << "FEx: Got Master: " << timingMaster;
 
         _sendCamera(timingMaster);
         _sendMaster(timingMaster, axes);
@@ -120,12 +134,18 @@ int FilmExec::status() {
     return m_stat;
 }
 
-unsigned long FilmExec::runTime() {
+ /** Get run (wallclock) time
+   */
 
+unsigned long FilmExec::runTime() {
+    return m_film.realLength;
 }
 
-unsigned long FilmExec::filmTime() {
+ /** Get film length
+   */
 
+unsigned long FilmExec::filmTime() {
+    return m_film.length;
 }
 
 
@@ -195,7 +215,8 @@ unsigned long FilmExec::interval(OMfilmParams* p_film) {
  /* Transmit Functions */
 
 void FilmExec::_sendHome(OMAxis* p_axis) {
-    int cmdId = p_axis->home();
+    p_axis->motorEnable();
+    p_axis->home();
 }
 
 
@@ -210,6 +231,8 @@ void FilmExec::_sendMaster(OMAxis *p_master, QList<OMAxis *> p_axes) {
 }
 
 void FilmExec::_sendCamera(OMAxis* p_master) {
+
+    qDebug() << "FEx: Send Camera Params" << p_master;
 
     bool camControl = m_film.camParams->camControl;
 
@@ -250,19 +273,29 @@ void FilmExec::_sendNodeMovements(OMfilmParams *p_film, OMAxis *p_axis) {
     bool dir   = end < 0 ? false : true;
     end = abs(end);
 
+        // if no end time specified, arrive at end of film
+    unsigned long arrive = parms->endTm > 0 ? parms->endTm : p_film->realLength;
+
     p_axis->motorEnable();
+    p_axis->continuous(false);
     p_axis->delayMove(parms->startTm);
     p_axis->easing(parms->easing);
     p_axis->microSteps(parms->ms);
-    p_axis->plan(which, dir, end, parms->endTm, parms->accelTm, parms->decelTm);
+    p_axis->plan(which, dir, end, arrive, parms->accelTm, parms->decelTm);
+
 }
 
 
 OMAxis* FilmExec::_getTimingMaster(QList<OMAxis *> *p_axes) {
     foreach(OMAxis* axis, *p_axes) {
         OMaxisOptions* aopts = m_opts->getOptions(axis->address());
-        if( aopts->master == true )
+        qDebug() << "FEx: AD/AXTYPE: " << axis->address() << aopts->axisType;
+        qDebug() << "FEx: MAX: " << aopts->maxSteps;
+
+        if( aopts->master == true ) {
+            qDebug() << "FEx: Found Master: " << axis;
             return axis;
+        }
     }
 }
 
@@ -271,13 +304,29 @@ QList<OMAxis*> FilmExec::_getAxes(OMfilmParams* p_film) {
     QList<OMAxis*> ret;
 
 
+    qDebug() << "FEx: GA: Get Axes";
+
         // go through list of axes
     foreach( unsigned short addr, p_film->axes.keys() ) {
-        OMDevice* axis = m_net->deviceInfo(p_film->axes.value(addr)->bus, addr)->device;
 
-        if( axis->type() == "OpenMoCo Axis" ) {
+        OMDevice* axis;
+
+        qDebug() << "FEx: Bus: " << p_film->axes.value(addr)->bus;
+
+        try {
+            axis = m_net->deviceInfo(p_film->axes.value(addr)->bus, addr)->device;
+        }
+        catch (int e) {
+            qDebug() << "FEx: Got exception: " << e;
+            return ret;
+        }
+
+        qDebug() << "FEx: GA: Checking Axis type: " << axis->type();
+
+        if( axis->type() == "nanoMoCo" ) {
                 // ensure that we have the right type, and cast to
                 // OMAxis
+            qDebug() << "FEx: Found Axis";
             OMAxis* omaxis = dynamic_cast<OMAxis*>(axis);
 
             if ( omaxis != 0 )

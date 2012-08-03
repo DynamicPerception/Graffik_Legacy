@@ -6,6 +6,7 @@
 #include <QThread>
 #include <QDial>
 #include <QComboBox>
+#include <QPushButton>
 
 #include "speedcontrolproxy.h"
 #include "MoCoBus/omnetwork.h"
@@ -28,13 +29,15 @@ class JogControlManager : public QObject
 {
     Q_OBJECT
 public:
-    JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, LiveDeviceModel* c_ldm, QComboBox* c_jogCombo, QDial* c_jogDial, QDoubleSpinBox* c_jogSpd, QDoubleSpinBox* c_jogDmp, QObject *parent = 0);
+    JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, LiveDeviceModel* c_ldm, QComboBox* c_jogCombo, QDial* c_jogDial, QDoubleSpinBox* c_jogSpd, QDoubleSpinBox* c_jogDmp, QPushButton* c_homeBut, QPushButton* c_endBut, QObject *parent = 0);
     ~JogControlManager();
 
 signals:
         // if the SCP denies a chaneg to motor (usually because a damp is still in progress)
         // this signal will be emitted, indicating which motor is -still- selected
     void motorChangeDenied(unsigned short p_keepaddr);
+        // end position determined via button click
+    void endPosition(unsigned short p_addr, long p_end);
 
 public slots:
     
@@ -43,6 +46,10 @@ private slots:
     void _jogMaxSpeedChange(double p_spd);
     void _jogDampChange(double p_damp);
     void _jogResChange(int p_idx);
+    void _homeClicked();
+    void _endClicked();
+
+    void _cmdComplete(int p_id, OMCommandBuffer* p_cmd);
 
 private:
     unsigned short m_curAxis;
@@ -52,6 +59,8 @@ private:
     QDoubleSpinBox* m_jogDmp;
     QDial* m_jogDial;
     QComboBox* m_jogCombo;
+    QPushButton* m_homeBut;
+    QPushButton* m_endBut;
 
     OMNetwork* m_net;
     AxisOptions* m_opts;
@@ -59,6 +68,11 @@ private:
     SpeedControlProxy* m_scp;
 
     QThread* m_scpThread;
+
+    int m_wantId;
+    int m_wantType;
+
+    static const int s_typeEnd = 1;
 
     double _stepsToJogSpeed(OMaxisOptions* p_opts, unsigned int p_steps);
     unsigned int _jogSpeedToSteps(OMaxisOptions* p_opts, double p_speed);

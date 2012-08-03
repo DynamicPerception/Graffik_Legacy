@@ -40,8 +40,8 @@ void FilmParameters::_addDevice(OMbusInfo *p_bus, OMdeviceInfo *p_dev) {
     m_mutex->lock();
 
     OMfilmAxisParams* axis = new OMfilmAxisParams;
-        // record bus name of device
-    axis->bus = p_bus->name;
+        // record bus (port) name of device
+    axis->bus = p_bus->bus->port();
 
     m_filmParams->axes.insert(p_dev->device->address(), axis);
 

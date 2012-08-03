@@ -1,8 +1,10 @@
 #include "jogcontrolmanager.h"
 
+#include <QtEndian>
+
 #include <QDebug>
 
-JogControlManager::JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, LiveDeviceModel* c_ldm, QComboBox* c_jogCombo, QDial* c_jogDial, QDoubleSpinBox* c_jogSpd, QDoubleSpinBox *c_jogDmp, QObject *parent) :
+JogControlManager::JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, LiveDeviceModel* c_ldm, QComboBox* c_jogCombo, QDial* c_jogDial, QDoubleSpinBox* c_jogSpd, QDoubleSpinBox *c_jogDmp, QPushButton* c_homeBut, QPushButton* c_endBut, QObject *parent) :
     QObject(parent)
 {
     m_curAxis = 0;
@@ -12,9 +14,15 @@ JogControlManager::JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, Live
     m_jogSpd = c_jogSpd;
     m_jogDmp = c_jogDmp;
     m_jogDial = c_jogDial;
+    m_homeBut = c_homeBut;
+    m_endBut = c_endBut;
+
     m_net = c_net;
     m_opts = c_opts;
     m_ldm = c_ldm;
+
+    m_wantId = 0;
+    m_wantType = 0;
 
         // populate resolution combo
 
@@ -33,29 +41,34 @@ JogControlManager::JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, Live
     QObject::connect(m_net, SIGNAL(deviceAdded(OMdeviceInfo*)), m_scp, SLOT(deviceAdded(OMdeviceInfo*)));
     QObject::connect(m_net, SIGNAL(deviceDeleted(QString,unsigned short)), m_scp, SLOT(deviceRemoved(QString,unsigned short)));
 
+        // we need to listen to some commands we issue
+    QObject::connect(m_net, SIGNAL(complete(int,OMCommandBuffer*)), this, SLOT(_cmdComplete(int,OMCommandBuffer*)), Qt::QueuedConnection);
+
         // inform SCP of a new device selected for jog control (via livedevicemodel)
-    QObject::connect(m_ldm, SIGNAL(deviceSelected(unsigned short)), m_scp, SLOT(deviceChange(unsigned short)), Qt::QueuedConnection);
+    QObject::connect(m_ldm, SIGNAL(deviceSelected(unsigned short)), m_scp, SLOT(deviceChange(unsigned short)));
 
         // of course, SCP may not allow the change yet (still moving to target speed)
         // so we'll need to pass this signal up as needed
 
-    QObject::connect(m_scp, SIGNAL(motorNotReady(unsigned short)), this, SIGNAL(motorChangeDenied(unsigned short)), Qt::QueuedConnection);
+    QObject::connect(m_scp, SIGNAL(motorNotReady(unsigned short)), this, SIGNAL(motorChangeDenied(unsigned short)));
 
         // we need to know when a device is changed so that we can modify the jogspeed and jogdamp spin boxes as needed
-    QObject::connect(m_scp, SIGNAL(motorChangeAccepted(unsigned short)), this, SLOT(_liveDeviceSelected(unsigned short)), Qt::QueuedConnection);
+    QObject::connect(m_scp, SIGNAL(motorChangeAccepted(unsigned short)), this, SLOT(_liveDeviceSelected(unsigned short)));
 
 
         // listen to jog spinners
-    QObject::connect(m_jogSpd, SIGNAL(valueChanged(double)), this, SLOT(_jogMaxSpeedChange(double)), Qt::QueuedConnection);
-    QObject::connect(m_jogDmp, SIGNAL(valueChanged(double)), this, SLOT(_jogDampChange(double)), Qt::QueuedConnection);
+    QObject::connect(m_jogSpd, SIGNAL(valueChanged(double)), this, SLOT(_jogMaxSpeedChange(double)));
+    QObject::connect(m_jogDmp, SIGNAL(valueChanged(double)), this, SLOT(_jogDampChange(double)));
 
         // tie the jog dial into the speed control proxy
-    QObject::connect(m_jogDial, SIGNAL(sliderMoved(int)), m_scp, SLOT(speedPosChange(int)), Qt::QueuedConnection);
+    QObject::connect(m_jogDial, SIGNAL(sliderMoved(int)), m_scp, SLOT(speedPosChange(int)));
 
         // tie resolution change to us (we'll pass onto SCP)
-    QObject::connect(m_jogCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(_jogResChange(int)), Qt::QueuedConnection);
+    QObject::connect(m_jogCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(_jogResChange(int)));
 
-
+        // tie home and end buttons
+    QObject::connect(m_homeBut, SIGNAL(clicked()), this, SLOT(_homeClicked()));
+    QObject::connect(m_endBut, SIGNAL(clicked()), this, SLOT(_endClicked()));
 
 
         // move speedcontrolproxy to thread and start it
@@ -84,9 +97,10 @@ void JogControlManager::_liveDeviceSelected(unsigned short p_addr) {
 
     qDebug() << "JCM: Received selection for device addr" << p_addr;
     _prepJogInputs(p_addr);
+
         // revert to rapid
     m_jogCombo->setCurrentIndex(0);
-
+    m_scp->setResolution(1);
 
 }
 
@@ -202,6 +216,87 @@ void JogControlManager::_jogResChange(int p_idx) {
     m_jogSpd->setMaximum(dispMax);
     m_jogSpd->setValue(newDisp);
 
+}
 
 
+void JogControlManager::_homeClicked() {
+    if( m_curAxis == 0 )
+        return;
+
+    OMdeviceInfo* devInfo = m_net->getDevices().value(m_curAxis);
+    OMDevice* dev = devInfo->device;
+
+    OMAxis* omaxis = dynamic_cast<OMAxis*>(dev);
+
+    if( omaxis == 0 ) {
+        qDebug() << "JCM: Error Casting Device!";
+        return;
+    }
+
+    qDebug() << "JCM: Sending SetHome";
+
+        // TODO: Validate That this succeeds!
+    omaxis->setHome();
+}
+
+void JogControlManager::_endClicked() {
+    if( m_curAxis == 0 )
+        return;
+
+    OMdeviceInfo* devInfo = m_net->getDevices().value(m_curAxis);
+    OMDevice* dev = devInfo->device;
+
+    OMAxis* omaxis = dynamic_cast<OMAxis*>(dev);
+
+    if( omaxis == 0 ) {
+        qDebug() << "JCM: Error Casting Device!";
+        return;
+    }
+
+    qDebug() << "JCM: Requesting Current Position";
+
+    int cmdId = omaxis->getHomeDist();
+    m_net->getManager()->hold(cmdId);
+
+    m_wantId = cmdId;
+    m_wantType = s_typeEnd;
+}
+
+
+ // This slot handles reading the results of commands we need to access
+void JogControlManager::_cmdComplete(int p_id, OMCommandBuffer *p_cmd) {
+
+    if( m_wantId == 0 || m_wantId != p_id )
+        return;
+
+    if( m_wantType == s_typeEnd ) {
+        if( p_cmd->status() != OMC_SUCCESS ) {
+            qDebug() << "JCM: ERROR! Did Not Get Success for cmd id" << p_id << "Got" << p_cmd->status();
+            m_net->getManager()->release(p_id);
+            return;
+        }
+        else {
+            long distance = 0;
+            unsigned int resSize = p_cmd->resultSize();
+
+            if( resSize > 0 ) {
+
+                char* res = new char[resSize];
+                p_cmd->result(res, resSize);
+
+                distance = qFromBigEndian<qint32>((uchar*)res);
+                delete res;
+
+                qDebug() << "JCM: Got End Position" << QString::number(distance);
+
+                emit endPosition(m_curAxis, distance);
+            }
+        }
+
+    }
+
+    m_wantId = 0;
+    m_wantType = 0;
+
+    m_net->getManager()->release(p_id);
 }

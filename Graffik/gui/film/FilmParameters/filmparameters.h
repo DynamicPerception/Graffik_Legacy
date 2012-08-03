@@ -92,8 +92,8 @@ struct OMfilmAxisParams {
         bus = "";
         endDist = 0;
         easing = OM_MOT_QUAD;
-        accelTm = 0;
-        decelTm = 0;
+        accelTm = 5000;
+        decelTm = 5000;
         ms = 1;
         startTm = 0;
         endTm = 0;

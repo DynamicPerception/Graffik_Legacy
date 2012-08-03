@@ -12,7 +12,7 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, QWidget *parent) :
     m_opts = c_opts;
 
     m_ldModel = new LiveDeviceModel(m_net, this);
-    m_jcm = new JogControlManager(m_net, m_opts, m_ldModel, ui->jogResCombo, ui->jogDial, ui->jogSpeedSpin, ui->jogDampSpin, this);
+    m_jcm = new JogControlManager(m_net, m_opts, m_ldModel, ui->jogResCombo, ui->jogDial, ui->jogSpeedSpin, ui->jogDampSpin, ui->jogHomeButton, ui->jogEndButton, this);
     m_params = new FilmParameters(m_net, this);
     m_exec = new FilmExec(m_net, m_params, m_opts);
 
@@ -32,6 +32,7 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, QWidget *parent) :
     QObject::connect(ui->devButtonList, SIGNAL(clicked(const QModelIndex &)), m_ldModel, SLOT(deviceClicked(const QModelIndex &)));
 
     QObject::connect(m_jcm, SIGNAL(motorChangeDenied(unsigned short)), this, SLOT(_jogMotorChangeDenied(unsigned short)));
+    QObject::connect(m_jcm, SIGNAL(endPosition(unsigned short,long)), this, SLOT(_endSet(unsigned short,long)));
 
 
     _prepInputs();
@@ -316,4 +317,94 @@ void FilmWindow::_calcAutoFilmTime() {
     return;
 
 
+}
+
+ /*
+
+   Shuttle Controls
+
+   */
+
+void FilmWindow::on_playButton_clicked() {
+
+    OMfilmParams* params = m_params->getParams();
+    int mode = params->filmMode;
+    m_params->releaseParams();
+
+    int bstat = 0;
+    int fstat = m_exec->status();
+
+    if( fstat != FILM_STARTED ) {
+        qDebug() << "FW: Send Start";
+        m_exec->start();
+        bstat = 1;
+    }
+    else if( mode == FILM_MODE_SMS && fstat == FILM_STARTED ) {
+        qDebug() << "FW: Send Pause";
+        m_exec->pause();
+        bstat = 2;
+    }
+
+    if( bstat == 1 ) {
+        if( mode == FILM_MODE_SMS )
+            _setPlayButtonStatus(s_Pause);
+        else
+            _setPlayButtonStatus(s_Disable);
+    }
+    else if( bstat == 2 ) {
+        _setPlayButtonStatus(s_Play);
+    }
+
+    _setStopButtonStatus(s_Enable);
+}
+
+void FilmWindow::on_stopButton_clicked() {
+
+    int fstat = m_exec->status();
+
+    if( fstat == FILM_STOPPED )
+        return;
+
+    qDebug() << "FW: Sending Stop";
+
+    m_exec->stop();
+
+    _setStopButtonStatus(s_Disable);
+    _setPlayButtonStatus(s_Play);
+
+}
+
+void FilmWindow::_setPlayButtonStatus(int p_stat) {
+    if( p_stat == s_Disable ) {
+        ui->playButton->setEnabled(false);
+        return;
+    }
+    else {
+        ui->playButton->setEnabled(true);
+    }
+
+    if( p_stat == s_Play ) {
+        ui->playButton->setText("Play");
+    }
+    else if( p_stat == s_Pause ) {
+        ui->playButton->setText("Pause");
+    }
+}
+
+void FilmWindow::_setStopButtonStatus(int p_stat) {
+    if( p_stat == s_Disable )
+        ui->stopButton->setEnabled(false);
+    else
+        ui->stopButton->setEnabled(true);
+}
+
+
+void FilmWindow::_endSet(unsigned short p_addr, long p_dist) {
+    qDebug() << "FW: Got EndSet Signal" << p_addr << p_dist;
+
+    OMfilmParams* parms = m_params->getParams();
+
+    parms->axes.value(p_addr)->endDist = p_dist;
+
+    m_params->releaseParams();
 }

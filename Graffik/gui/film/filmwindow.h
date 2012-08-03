@@ -31,6 +31,11 @@ public slots:
 
   // set automatic connections
 
+    // shuttle controls
+
+    void on_playButton_clicked();
+    void on_stopButton_clicked();
+
     // cam control
 
     void on_camControlCheckBox_stateChanged(int p_state);
@@ -50,6 +55,7 @@ private slots:
     void _jogMotorChangeDenied(unsigned short p_oldAddr);
     void _drawNewAxis(OMdeviceInfo* p_dev);
     void _eraseAxis(QString p_bus, unsigned short p_addr);
+    void _endSet(unsigned short p_addr, long p_dist);
 
 private:
     Ui::FilmWindow *ui;
@@ -63,6 +69,12 @@ private:
     QVBoxLayout* m_areaLayout;
     QHash<unsigned short, MotionBase*> m_areaBlocks;
 
+        // internal status registers
+    static const int s_Enable   = 1;
+    static const int s_Disable  = 2;
+    static const int s_Pause    = 3;
+    static const int s_Play     = 4;
+
     void _enableCamControl(bool p_en = true);
     void _showFilmTime();
     void _prepInputs();
@@ -71,6 +83,8 @@ private:
     void _calcAutoFilmTime();
     void _checkFilmTimeConstraint();
 
+    void _setPlayButtonStatus(int p_stat);
+    void _setStopButtonStatus(int p_stat);
 };
 
 #endif // FILMWINDOW_H

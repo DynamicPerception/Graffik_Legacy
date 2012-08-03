@@ -872,7 +872,7 @@ const int OMAxis::motorDisable() {
   */
 
 const int OMAxis::timing(bool p_mast) {
-    return this->command(COMDATA, dataMot, motDisable);
+    return this->command(COMPROG, progMast, (char) p_mast);
 }
 
 void OMAxis::_initScripting() {
