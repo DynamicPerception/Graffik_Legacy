@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #include <QList>
+#include <QThread>
 
 #include "MoCoBus/omnetwork.h"
 #include "Devices/nanoMoCo/omaxis.h"
@@ -11,6 +12,7 @@
 #include "film/FilmParameters/filmparameters.h"
 #include "core/AxisOptions/axisoptions.h"
 
+#include "homemonitor.h"
 
 enum { FILM_STOPPED, FILM_STARTED, FILM_PAUSED };
 
@@ -54,11 +56,17 @@ signals:
     void filmStart(bool p_stat);
     void filmError(QString p_err);
 
+private slots:
+    void _nodesHome();
+
 private:
     OMNetwork* m_net;
     FilmParameters* m_params;
     OMfilmParams m_film;
     AxisOptions* m_opts;
+
+    HomeMonitor* m_home;
+    QThread* m_homeThread;
 
     int m_stat;
 
@@ -67,6 +75,8 @@ private:
     void _sendMaster(OMAxis* p_master, QList<OMAxis*> p_axes);
     void _sendNodeMovements(OMfilmParams* p_film, OMAxis* p_axis);
     void _disableMotor(OMAxis* p_axis);
+
+    float _round(float p_val);
 
     QList<OMAxis*> _getAxes(OMfilmParams* p_film);
     OMAxis* _getTimingMaster(QList<OMAxis*>* p_axes);

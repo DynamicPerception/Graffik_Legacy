@@ -8,11 +8,12 @@
 
 
 
-MotionArea::MotionArea(OMdeviceInfo *c_dev, QWidget *parent) :
+MotionArea::MotionArea(FilmParameters *c_film, OMdeviceInfo *c_dev, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MotionArea)
 {
     m_dev = c_dev;
+    m_film = c_film;
     ui->setupUi(this);
 
     ui->gridLayout->setContentsMargins(0,0,0,0);
@@ -32,6 +33,7 @@ void MotionArea::paintEvent(QPaintEvent *e) {
     QRect thisRect = this->geometry();
 
     painter.fillRect(eventRect, QColor(MA_BG_COLOR));
+
 
  //   _drawCenterLine(&painter, &eventRect);
 

@@ -11,10 +11,28 @@ FilmExec::FilmExec(OMNetwork* c_net, FilmParameters* c_params, AxisOptions* c_op
     m_film = m_params->getParamsCopy();
 
     m_stat = FILM_STOPPED;
+
+        // initialize our home position monitor (we'll need this later)
+    m_home = new HomeMonitor(m_net, this);
+    m_homeThread = new QThread();
+
+    m_home->moveToThread(m_homeThread);
+    m_homeThread->start();
+    m_home->start();
+
+    connect(m_home, SIGNAL(allAtHome()), this, SLOT(_nodesHome()), Qt::QueuedConnection);
+
 }
 
 
 FilmExec::~FilmExec() {
+
+    m_home->stop();
+    m_homeThread->quit();
+    m_homeThread->wait();
+
+    delete m_home;
+    delete m_homeThread;
 
 }
 
@@ -37,6 +55,10 @@ void FilmExec::start() {
     if( m_stat == FILM_STARTED )
         return;
 
+
+    bool sentHome = false;
+    QList<OMAxis*> axesHome;
+
         // If stopped, we have to do several things before
         // starting - but if paused, we can just broadcast
         // a start command.
@@ -44,6 +66,9 @@ void FilmExec::start() {
     if( m_stat == FILM_STOPPED ) {
 
             // if we're starting from a stopped state:
+            // we always send a stop, just in case..
+
+        stop();
 
         qDebug() << "FEx: Start";
 
@@ -54,25 +79,30 @@ void FilmExec::start() {
 
             // send all axes home and prep their movements, if they are configured for movement
         foreach(OMAxis* axis, axes) {
-            qDebug() << "FEx: Checking Device";
+
             unsigned short addr = axis->address();
-
-            qDebug() << "FEx: Rawdist:" << m_film.axes.value(addr)->endDist;
-
             long distanceToMove = abs(m_film.axes.value(addr)->endDist);
-
-            qDebug() << "FEx: DTM:" << distanceToMove << "ADDR:" << addr;
 
             if( distanceToMove != 0 ) {
                     // only do this if moving
-                qDebug() << "FEx: Sending Device Home" << addr;
+                qDebug() << "FEx: Sending Device Home: " << addr;
                 _sendHome(axis);
+
+                    // record that we sent axes home
+                axesHome.append(axis);
+                sentHome = true;
+
+                    // when nodes have to go Home, we need to wait for them
+                    // to arrive home before starting the film, but we can send any
+                    // necessary movement data!
+
                 qDebug() << "FEx: Sending Node Movements";
                 _sendNodeMovements(&m_film, axis);
+
             }
             else {
-               // qDebug() << "FEx: Disabling Motor";
-               // _disableMotor(axis);
+                qDebug() << "FEx: Disabling Motor";
+                _disableMotor(axis);
             }
         }
 
@@ -89,20 +119,25 @@ void FilmExec::start() {
         _sendMaster(timingMaster, axes);
     }
 
-    // send broadcast command
-    int cmdId = m_net->broadcast(OMBus::OM_BCAST_START);
+    // send broadcast command if we didn't send nodes
+    // home.
 
-    m_stat = FILM_STARTED;
+    if( ! sentHome ) {
+        m_net->broadcast(OMBus::OM_BCAST_START);
+        m_stat = FILM_STARTED;
+    }
+    else {
+            // if we sent nodes home, update HomeMonitor with
+            // list of axes sent home
+       m_home->checkAxes(axesHome);
+    //   m_home->start();
+    }
 }
 
 
 void FilmExec::stop() {
 
-    if( m_stat == FILM_STOPPED )
-        return;
-
-    int cmdId = m_net->broadcast(OMBus::OM_BCAST_STOP);
-
+    m_net->broadcast(OMBus::OM_BCAST_STOP);
     m_stat = FILM_STOPPED;
 
 }
@@ -215,6 +250,7 @@ unsigned long FilmExec::interval(OMfilmParams* p_film) {
  /* Transmit Functions */
 
 void FilmExec::_sendHome(OMAxis* p_axis) {
+    qDebug() << "FEx: Sending node home" << p_axis->address();
     p_axis->motorEnable();
     p_axis->home();
 }
@@ -225,14 +261,16 @@ void FilmExec::_sendMaster(OMAxis *p_master, QList<OMAxis *> p_axes) {
     p_master->timing(true);
         // inform all of the slaves that they, well, are slaves.
     foreach(OMAxis* axis, p_axes) {
-        if(axis != p_master)
+        if(axis != p_master) {
+            qDebug() << "Sending slave state to node" << axis->address();
             axis->timing(false);
+        }
     }
 }
 
 void FilmExec::_sendCamera(OMAxis* p_master) {
 
-    qDebug() << "FEx: Send Camera Params" << p_master;
+    qDebug() << "FEx: Send Camera Params" << p_master->address();
 
     bool camControl = m_film.camParams->camControl;
 
@@ -240,13 +278,17 @@ void FilmExec::_sendCamera(OMAxis* p_master) {
     p_master->interval(iv);
 
     if( ! camControl ) {
-        int cmdId = p_master->cameraDisable();
+        p_master->cameraDisable();
         return;
     }
+
+    float total_shots = m_film.realLength / iv;
+    total_shots = _round(total_shots);
 
     p_master->cameraEnable();
     p_master->exposure(m_film.camParams->shutterMS);
     p_master->exposureDelay(m_film.camParams->delayMS);
+    p_master->maxShots(total_shots);
 
     if( m_film.camParams->focus )
         p_master->focus(m_film.camParams->focusMS);
@@ -275,13 +317,32 @@ void FilmExec::_sendNodeMovements(OMfilmParams *p_film, OMAxis *p_axis) {
 
         // if no end time specified, arrive at end of film
     unsigned long arrive = parms->endTm > 0 ? parms->endTm : p_film->realLength;
+    unsigned long accel = parms->accelTm;
+    unsigned long decel = parms->decelTm;
+
+    if( which ) {
+        // in sms mode, we go by shots - not walltime
+        unsigned long iv = interval(&m_film);
+
+        float total_shots = m_film.realLength / iv;
+        total_shots = _round(total_shots);
+        arrive = total_shots;
+
+        float ac_shots = accel / iv;
+        ac_shots = _round(ac_shots);
+        accel = ac_shots;
+
+        float dc_shots = decel / iv;
+        dc_shots = _round(dc_shots);
+        decel = dc_shots;
+    }
 
     p_axis->motorEnable();
     p_axis->continuous(false);
     p_axis->delayMove(parms->startTm);
     p_axis->easing(parms->easing);
     p_axis->microSteps(parms->ms);
-    p_axis->plan(which, dir, end, arrive, parms->accelTm, parms->decelTm);
+    p_axis->plan(which, dir, end, arrive, accel, decel);
 
 }
 
@@ -326,7 +387,6 @@ QList<OMAxis*> FilmExec::_getAxes(OMfilmParams* p_film) {
         if( axis->type() == "nanoMoCo" ) {
                 // ensure that we have the right type, and cast to
                 // OMAxis
-            qDebug() << "FEx: Found Axis";
             OMAxis* omaxis = dynamic_cast<OMAxis*>(axis);
 
             if ( omaxis != 0 )
@@ -335,4 +395,20 @@ QList<OMAxis*> FilmExec::_getAxes(OMfilmParams* p_film) {
     }
 
     return ret;
+}
+
+    // this slot is called by HomeManager when
+    // all nodes arrive at home.  We broadcast a
+    // start when all nodes are found to be at home
+
+void FilmExec::_nodesHome() {
+    qDebug() << "FEx: Nodes are all home, starting";
+
+    m_net->broadcast(OMBus::OM_BCAST_START);
+    m_stat = FILM_STARTED;
+  //  m_home->stop();
+}
+
+float FilmExec::_round(float p_val) {
+    p_val = p_val > int(p_val) ? int(p_val) + 1 : int(p_val);
 }
