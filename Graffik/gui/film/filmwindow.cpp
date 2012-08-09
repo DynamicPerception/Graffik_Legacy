@@ -78,7 +78,7 @@ void FilmWindow::_drawNewAxis(OMdeviceInfo *p_dev) {
 
     qDebug() << "FW: Got new axis, spawning motion area" << p_dev->type;
 
-    MotionBase* area = new MotionBase(p_dev, this);
+    MotionBase* area = new MotionBase(m_params, p_dev, m_opts, this);
     m_areaBlocks.insert(p_dev->device->address(), area);
     m_areaLayout->addWidget(area);
 }
@@ -134,9 +134,9 @@ void FilmWindow::on_camSetBut_clicked() {
     CameraControlDialog* control = new CameraControlDialog(m_params);
     control->exec();
 
-    OMfilmParams* params = m_params->getParams();
-    bool autoFPS = params->camParams->autoFPS;
-    m_params->releaseParams();
+    OMfilmParams params = m_params->getParamsCopy();
+    bool autoFPS = params.camParams->autoFPS;
+
 
         // do we need to enable film control spinners?
     bool en = false;
@@ -160,10 +160,9 @@ void FilmWindow::on_camSetBut_clicked() {
 }
 
 void FilmWindow::_showFilmTime() {
-    OMfilmParams* params = m_params->getParams();
-    unsigned long wallTM = params->realLength;
-    unsigned long filmTM = params->length;
-    m_params->releaseParams();
+    OMfilmParams params = m_params->getParamsCopy();
+    unsigned long wallTM = params.realLength;
+    unsigned long filmTM = params.length;
 
         // convert from mS to hours, minutes, and seconds
 
@@ -239,7 +238,7 @@ void FilmWindow::_changeTime(int p_which, int p_pos, int p_val) {
 
  // apply constraints to film length, and update display as needed
 void FilmWindow::_checkFilmTimeConstraint() {
-    OMfilmParams* params = m_params->getParams();
+    OMfilmParams params = m_params->getParamsCopy();
     bool do_adjust = false;
 
         // TODO: Calculate maximum film time when FPS is used
@@ -248,12 +247,14 @@ void FilmWindow::_checkFilmTimeConstraint() {
         // TODO: Add UI indicator that limitation has
         // been placed...
 
-    if( params->length > params->realLength ) {
-        params->length = params->realLength;
+    if( params.length > params.realLength ) {
+        OMfilmParams* realParms = m_params->getParams();
+        realParms->length = params.realLength;
+        m_params->releaseParams();
         do_adjust = true;
     }
 
-    m_params->releaseParams();
+
 
     if( do_adjust ) {
         _showFilmTime();

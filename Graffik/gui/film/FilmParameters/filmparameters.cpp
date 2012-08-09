@@ -1,9 +1,7 @@
 #include "filmparameters.h"
 #include <QDebug>
 
-FilmParameters::FilmParameters(OMNetwork *c_net, QWidget *parent) :
-    QWidget(parent)
-{
+FilmParameters::FilmParameters(OMNetwork *c_net, QWidget *parent) : QWidget(parent) {
     m_net = c_net;
     m_filmParams = new OMfilmParams;
 
@@ -14,7 +12,7 @@ FilmParameters::FilmParameters(OMNetwork *c_net, QWidget *parent) :
 
 }
 
- FilmParameters::~FilmParameters() {
+FilmParameters::~FilmParameters() {
 
      if( m_isLocked )
          m_mutex->unlock();
@@ -102,4 +100,6 @@ OMfilmParams FilmParameters::getParamsCopy() {
   */
 void FilmParameters::releaseParams() {
     m_mutex->unlock();
+    qDebug() << "FP: Releasing Params";
+    emit paramsReleased();
 }

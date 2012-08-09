@@ -156,6 +156,9 @@ private slots:
 
 public slots:
 
+signals:
+    void paramsReleased();
+
 private:
 
     OMNetwork* m_net;

@@ -10,6 +10,9 @@
 #include "MoCoBus/omnetwork.h"
 
 #include "film/FilmParameters/filmparameters.h"
+#include "core/AxisOptions/axisoptions.h"
+
+#include "motionpathpainter.h"
 
 #define MA_BG_COLOR "#5999BC"
 #define MA_CL_COLOR "#FFFFFF"
@@ -23,15 +26,24 @@ class MotionArea : public QWidget
     Q_OBJECT
     
 public:
-    MotionArea(FilmParameters* c_film, OMdeviceInfo* c_dev, QWidget *parent);
+    MotionArea(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions* c_aopt, QWidget *parent);
     ~MotionArea();
 
     void paintEvent(QPaintEvent * e);
     
+public slots:
+    void filmUpdated();
+    void scaleChange();
+
+signals:
+    void scaleChanged(bool p_scale);
+
 private:
     Ui::MotionArea *ui;
     OMdeviceInfo* m_dev;
     FilmParameters* m_film;
+    MotionPathPainter* m_path;
+    AxisOptions* m_aopt;
 
     void _drawCenterLine(QPainter* p_paint, QRect* p_rect);
     QList<QPoint> _getVerticalCenterPoints(QRect* p_rect);

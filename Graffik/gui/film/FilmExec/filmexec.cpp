@@ -13,7 +13,7 @@ FilmExec::FilmExec(OMNetwork* c_net, FilmParameters* c_params, AxisOptions* c_op
     m_stat = FILM_STOPPED;
 
         // initialize our home position monitor (we'll need this later)
-    m_home = new HomeMonitor(m_net, this);
+    m_home = new HomeMonitor(m_net);
     m_homeThread = new QThread();
 
     m_home->moveToThread(m_homeThread);
