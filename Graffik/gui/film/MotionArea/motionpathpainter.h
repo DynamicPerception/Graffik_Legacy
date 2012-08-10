@@ -31,8 +31,19 @@ public:
     void maxSplinePoints(unsigned long p_points);
     unsigned long maxSplinePoints();
 
+    int getStartPx();
+    int getEndPx();
+    int getAcEndPx();
+    int getDcStartPx();
+    int getMaxHeight();
+
     void scaling(bool p_scale);
     bool scaling();
+
+    bool isDrawn();
+    bool hasChanged();
+
+    unsigned long getFilmTime(int p_x);
 
 signals:
     
@@ -69,6 +80,7 @@ private:
     unsigned long m_wasDist;
     unsigned long m_wasAcc;
     unsigned long m_wasDcc;
+    unsigned long m_wasMax;
     int m_wasEase;
     unsigned long m_wasLength;
 
@@ -77,7 +89,14 @@ private:
     unsigned long m_maxPoints;
     bool m_new;
     bool m_relativeScale;
+    bool m_curveAvail;
+    bool m_hasChanged;
 
+    int m_startPx;
+    int m_endPx;
+    int m_dcStartPx;
+    int m_acEndPx;
+    int m_maxHeight;
 
     void _initSpline(unsigned long p_Steps, unsigned long p_Time, unsigned long p_Accel, unsigned long p_Decel, unsigned long p_totalSplines);
     float _qInvCalc(float p_tmPos);

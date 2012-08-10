@@ -2,7 +2,7 @@ DEFINES *= QT_USE_QSTRINGBUILDER
 
 # un-comment to disable all debugging output from libraries
 
-# DEFINES += QT_NO_DEBUG_OUTPUT
+# DEFINES *= QT_NO_DEBUG_OUTPUT
 
 HEADERS                 +=  \
 			   core/Dialogs/errordialog.h \

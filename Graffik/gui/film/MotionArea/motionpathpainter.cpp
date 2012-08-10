@@ -19,9 +19,17 @@ MotionPathPainter::MotionPathPainter(unsigned short c_addr, FilmParameters *c_pa
     m_wasDcc    = 0;
     m_wasEase   = 0;
     m_wasLength = 0;
+    m_wasMax    = 0;
+    m_startPx   = 0;
+    m_endPx     = 0;
+    m_acEndPx   = 0;
+    m_dcStartPx = 0;
+    m_maxHeight = 0;
 
+    m_curveAvail    = false;
     m_new           = false;
     m_relativeScale = false;
+
 
     connect(m_film, SIGNAL(paramsReleased()), this, SLOT(paramsChanged()));
 
@@ -31,6 +39,70 @@ MotionPathPainter::~MotionPathPainter() {
     delete m_path;
 }
 
+
+/** Get Film (Wall) Time at pixel
+
+  Returns the time, in milliseconds, of the film's real length (wall time)
+  at the specific point represented by x point p_x.
+
+  */
+
+unsigned long MotionPathPainter::getFilmTime(int p_x) {
+
+    OMfilmParams parms = m_film->getParamsCopy();
+    unsigned long filmTm = (parms.realLength / m_wasWidth) * p_x;
+    filmTm = filmTm > parms.realLength ? parms.realLength : filmTm;
+    return filmTm;
+}
+
+/**
+    Return whether or not the PainterPath contents changed in the last
+    call to getPath().  This will automatically reset after calling this
+    method.
+
+    */
+
+bool MotionPathPainter::hasChanged() {
+    bool ret = m_hasChanged;
+    m_hasChanged = false;
+    return ret;
+}
+
+/** Return whether or not any curve is actually drawn */
+
+bool MotionPathPainter::isDrawn() {
+    return m_curveAvail;
+}
+
+/** Get the maximum height of the drawn motion curve */
+
+int MotionPathPainter::getMaxHeight() {
+    return m_maxHeight;
+}
+
+/** Get the pixel point at which acceleration ends */
+
+int MotionPathPainter::getAcEndPx() {
+    return m_acEndPx;
+}
+
+/** Get the pixel point at which deceleration begins */
+
+int MotionPathPainter::getDcStartPx() {
+    return m_dcStartPx;
+}
+
+/** Get the pixel point at which the move starts */
+
+int MotionPathPainter::getStartPx() {
+    return m_startPx;
+}
+
+/** Get the pixel point at which the move ends */
+
+int MotionPathPainter::getEndPx() {
+    return m_endPx;
+}
 
 /** Set Display Scaling
 
@@ -111,11 +183,6 @@ unsigned long MotionPathPainter::maxSplinePoints() {
 
 
 void MotionPathPainter::setMotionCurve() {
-
-    qDebug() << "MPP: setting motion curve for" << m_addr;
-
-
-
     OMfilmParams filmParams    = m_film->getParamsCopy();
     OMfilmAxisParams*  axParms = filmParams.axes.value(m_addr);
 
@@ -123,41 +190,62 @@ void MotionPathPainter::setMotionCurve() {
 
         // do nothing more if no movement data has changed
     if ( axParms->endDist == m_wasDist &&
-         axParms->endTm == m_wasEnd &&
-         axParms->startTm == m_wasStart &&
-         axParms->accelTm == m_wasAcc &&
-         axParms->decelTm == m_wasDcc &&
-         axParms->easing == m_wasEase &&
-         filmParams.realLength == m_wasLength) {
-
-        qDebug() << "MPP: Curve: No Change";
+            axParms->endTm == m_wasEnd &&
+            axParms->startTm == m_wasStart &&
+            axParms->accelTm == m_wasAcc &&
+            axParms->decelTm == m_wasDcc &&
+            axParms->easing == m_wasEase &&
+            filmParams.realLength == m_wasLength)
         return;
-    }
+
 
         // wipe out all saved points
 
     m_renderPoints.clear();
 
+    m_wasDist   = axParms->endDist;
+    m_wasEnd    = axParms->endTm;
+    m_wasStart  = axParms->startTm;
+    m_wasAcc    = axParms->accelTm;
+    m_wasDcc    = axParms->decelTm;
+    m_wasEase   = axParms->easing;
 
-    if( axParms->endDist < 1 ) {
-        qDebug() << "MPP: Curve: No Distance";
+    m_new        = true;
+    m_curveAvail = false;
+
+        // no movement, so just walk away now
+    if( axParms->endDist < 1 )
         return;
-    }
 
-    unsigned long endTm = m_axis->endTm;
-    unsigned long begTm = m_axis->startTm;
-    unsigned long walTm = filmParams.realLength;
+    m_curveAvail = true;
 
         // if no end time is specified, then the move ends when the film does
-    if( endTm == 0 )
-        endTm = walTm;
+    unsigned long endTm = m_axis->endTm > 0 ? m_axis->endTm : filmParams.realLength;
+
+        // determine padding to add before and after move
+
+    unsigned long ms_per_xpt = filmParams.realLength / m_maxPoints;
+    unsigned long jmpAhead = m_axis->startTm / ms_per_xpt;
+    unsigned long endPt    = m_axis->endTm / ms_per_xpt;
+    unsigned long leave = endPt > 0 ? m_maxPoints - endPt : 0;
+
+
+    unsigned long plotPts = m_maxPoints - jmpAhead - leave;
+
+    qDebug() << "MPP: Prepend" << this << ms_per_xpt << jmpAhead << leave << plotPts << endPt << m_axis->endTm;
+
+        // pad array prior to move
+    for( unsigned long i = 0; i < jmpAhead; i++)
+        m_renderPoints.append(0);
 
     _initSpline(axParms->endDist, endTm, axParms->accelTm, axParms->decelTm, m_maxPoints);
 
-    for(unsigned long i = 1; i <= m_maxPoints; i++) {
+    qDebug() << "MPP: Fill";
+
+    for(unsigned long i = 1; i <= plotPts; i++) {
 
 
-          float tmPos = (float) i / (float) m_maxPoints;
+          float tmPos = (float) i / (float) plotPts;
           float curSpd = 0.0;
 
           if( axParms->easing == OM_MOT_LINEAR )
@@ -168,20 +256,13 @@ void MotionPathPainter::setMotionCurve() {
               curSpd = _qInvCalc(tmPos);
 
           m_renderPoints.append(curSpd);
-          //qDebug() << "MPP: Curve: Render" << i << curSpd;
     }
 
+    qDebug() << "MPP: Append";
 
-    qDebug() << "MPP: Render Amount: " << m_renderPoints.count();
-
-    m_wasDist   = axParms->endDist;
-    m_wasEnd    = axParms->endTm;
-    m_wasStart  = axParms->startTm;
-    m_wasAcc    = axParms->accelTm;
-    m_wasDcc    = axParms->decelTm;
-    m_wasEase   = axParms->easing;
-
-    m_new = true;
+        // pad array after move
+    for( unsigned long i = 0; i < leave; i++ )
+        m_renderPoints.append(0);
 
 }
 
@@ -190,97 +271,122 @@ void MotionPathPainter::setMotionCurve() {
   Returns a QPainterPath representing the movement curve, scaled to
   the supplied QRect.
 
-  If the QRect doesn't change its width or height, no action will be
-  taken and the pre-existing QPainterPath will be returned.  If it has
-  changed, a new path will be generated from existing curve data, scaled
-  to the current QRect.
+  If the QRect doesn't change its width or height, and no changes to the curve have been made,
+  no action will be   taken and the pre-existing QPainterPath will be returned.  If it has
+  changed, a new path will be generated from existing curve data, scaled to the current QRect.
 
   */
 
 QPainterPath* MotionPathPainter::getPath(QRect p_area) {
 
-    qDebug() << "MPP: Get Path" << m_addr;
-
     m_area = p_area;
 
     OMfilmParams filmParams = m_film->getParamsCopy();
-
-        // do nothing if we've already drawn this
-    if( p_area.height() == m_wasHeight && p_area.width() == m_wasWidth && m_new == false && filmParams.realLength == m_wasLength)
-        return m_path;
-
-    qDebug() << "MPP: Rescaling";
-
-    m_new = false;
-    m_wasWidth = p_area.width();
-    m_wasHeight = p_area.height();
-    m_wasLength = filmParams.realLength;
-
     OMaxisOptions* aopts = m_aopt->getOptions(m_addr);
 
-    QPoint start = p_area.bottomLeft();
+        // do nothing if we've already drawn this
+    if( p_area.height() == m_wasHeight &&
+            p_area.width() == m_wasWidth &&
+            m_new == false &&
+            filmParams.realLength == m_wasLength &&
+            aopts->maxSteps == m_wasMax )
+        return m_path;
 
     int width = p_area.width();
     int height = p_area.height();
 
-    unsigned long ms_per_xpix = filmParams.realLength / width;
+    m_hasChanged = true;
+    m_new = false;
+    m_wasWidth = p_area.width();
+    m_wasHeight = p_area.height();
+    m_wasLength = filmParams.realLength;
+    m_wasMax = aopts->maxSteps;
 
-    unsigned long splines = width; // (filmParams.realLength - m_axis->startTm - m_axis->endTm) / ms_per_xpix;
-    float scale = (float) m_maxPoints / (float) splines;
-
+        // determine how to scale the raw data for this sized
+        // display
+    float scale = (float) m_maxPoints / (float) width;
+        // we can't have fractional points in array, so we need
+        // to accumulate and overflow error
     int scaleMajor = int(scale);
     scale -= scaleMajor;
     float scaleErr = 0.0;
 
-   // qDebug() << "MPP: " << ms_per_xpix << splines << width << height << endTm << m_parms->accelTm << m_parms->decelTm;
-
-    int startPoint = start.x() + (m_axis->startTm * ms_per_xpix);
 
         // maxSteps in axis options is steps/second...
         // so we need seconds per (horizontal, using all points) pixel
 
-
-    int spd_per_ypix;
+    int spd_per_ypix = 0;
 
     if( m_relativeScale == true ) {
-        float displaySecs = filmParams.realLength / 1000; // seconds
-        float pixelSecs = displaySecs / m_maxPoints;
+        float pixelSecs = ((float)filmParams.realLength / 1000.0) / (float)m_maxPoints;
         spd_per_ypix = ((float)height * 0.95) / (pixelSecs * aopts->maxSteps);
     }
     else {
         spd_per_ypix = ((float)height * 0.95) / m_splinePlanned.topSpeed;
     }
 
+        // flush out the path, and create a new one
     delete m_path;
     m_path = new QPainterPath;
 
-    m_path->moveTo(startPoint, 0);
-    int curPoint = startPoint;
-    int curIdx = 0;
+    m_maxHeight = height;
 
-    qDebug()  << "MPP: Scale: " << scale << splines << m_maxPoints << ms_per_xpix;
+    int curIdx      = 0;
+    int isMoving   = 0;
 
-    for( unsigned long i = 0; i < splines; i++ ) {
+    m_path->moveTo(0,height);
 
-        if( curIdx > m_renderPoints.count() - 1 ) {
-            qDebug() << "MPP: IDX" << curIdx << "Greater than renderPoints max" << m_renderPoints.count();
+        // for each pixel in the display,
+    for( unsigned long i = 0; i < width; i++ ) {
+
+            // it's possible, but unlikely, that our scale
+            // could move us past the end of our available points
+        if( curIdx > m_renderPoints.count() - 1 )
             break;
-        }
 
         float curSpd = m_renderPoints[curIdx];
-        int hgt = spd_per_ypix * curSpd;
-        m_path->lineTo(curPoint, height - hgt);
-        curPoint++;
+        int hgt = height - (spd_per_ypix * curSpd);
+        m_maxHeight = hgt < m_maxHeight ? hgt : m_maxHeight;
+
+        m_path->lineTo(i, hgt);
+
+            // find key pixel points in curve
+
+        if( isMoving == 0 && curSpd > 0.0 ) {
+            m_startPx = i;
+            isMoving = 1;
+        }
+        else if( isMoving == 1 && curSpd == m_splinePlanned.topSpeed) {
+            m_acEndPx = i;
+            isMoving = 2;
+        }
+        else if( isMoving == 2 && curSpd != m_splinePlanned.topSpeed) {
+            m_dcStartPx = i;
+            isMoving = 3;
+        }
+        else if( isMoving == 3 && curSpd == 0.0 ) {
+            m_endPx = i;
+            isMoving = 4;
+        }
+
+
+            // move point in source data ahead according to scale and accumulate any scaling error
         curIdx += scaleMajor;
         scaleErr += scale;
 
+            // if scaling error overflows, move one point ahead
         if( scaleErr >= 1.0 ) {
             curIdx++;
             scaleErr--;
         }
 
-       // qDebug() << "MPP: RenderScale:" << scale << curIdx << curPoint << hgt;
     }
+
+        // was the end of movement all the way at the end of the drawn
+        // area? If so, indicate it
+
+    if( isMoving != 4 )
+        m_endPx = width;
 
     return m_path;
 
@@ -321,8 +427,6 @@ float MotionPathPainter::_linearEasing(float p_tmPos) {
 
 float MotionPathPainter::_qEaseCalc(float p_tmPos) {
   float curSpd;
-
-
 
   if( p_tmPos < m_splinePlanned.acTm ) {
     p_tmPos = p_tmPos / m_splinePlanned.acTm;
