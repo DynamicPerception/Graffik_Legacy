@@ -15,6 +15,7 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, QWidget *parent) :
     m_jcm = new JogControlManager(m_net, m_opts, m_ldModel, ui->jogResCombo, ui->jogDial, ui->jogSpeedSpin, ui->jogDampSpin, ui->jogHomeButton, ui->jogEndButton, this);
     m_params = new FilmParameters(m_net, this);
     m_exec = new FilmExec(m_net, m_params, m_opts);
+    m_tape = new MotionTape(m_params, this);
 
 
         // connect the device list display to the live device model
@@ -23,6 +24,8 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, QWidget *parent) :
 
     m_areaLayout = new QVBoxLayout;
     ui->visualSAContents->setLayout(m_areaLayout);
+
+    m_areaLayout->addWidget(m_tape);
 
         // we need to populate motion area displays
     QObject::connect(m_net, SIGNAL(deviceAdded(OMdeviceInfo*)), this, SLOT(_drawNewAxis(OMdeviceInfo*)));
@@ -46,6 +49,7 @@ FilmWindow::~FilmWindow() {
         m_areaBlocks.remove(addr);
     }
 
+    delete m_tape;
     delete m_areaLayout;
 
     delete m_exec;

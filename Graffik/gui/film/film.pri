@@ -13,7 +13,8 @@ HEADERS += \
     film/Dialogs/cameracontroldialog.h \
     film/FilmExec/filmexec.h \
     film/FilmExec/homemonitor.h \
-    film/MotionArea/motionpathpainter.h
+    film/MotionArea/motionpathpainter.h \
+    film/MotionArea/motiontape.h
 
 
 SOURCES += \
@@ -28,10 +29,12 @@ SOURCES += \
     film/Dialogs/cameracontroldialog.cpp \
     film/FilmExec/filmexec.cpp \
     film/FilmExec/homemonitor.cpp \
-    film/MotionArea/motionpathpainter.cpp
+    film/MotionArea/motionpathpainter.cpp \
+    film/MotionArea/motiontape.cpp
 
 FORMS += \
     film/filmwindow.ui \
     film/MotionArea/motionarea.ui \
     film/MotionArea/motionbase.ui \
-    film/Dialogs/cameracontroldialog.ui
+    film/Dialogs/cameracontroldialog.ui \
+    film/MotionArea/motiontape.ui

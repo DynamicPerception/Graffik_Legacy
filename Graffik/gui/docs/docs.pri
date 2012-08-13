@@ -79,11 +79,13 @@ win32 {
   EDIR = $$DDIR
   EDIR ~= s,\\,/,g
 
-  !exists($$EDIR) {
-    help_copy.commands += @echo "Creating Docs Directory: $$DDIR ($$EDIR)" $$escape_expand(\\n\\t)
-    help_copy.commands += md $$DDIR $$escape_expand(\\n\\t)
+  exists($$EDIR) {
+    help_copy.commands += @echo "Removing Directory $$EDIR" $$escape_expand(\\n\\t)
+    help_copy.commands += rd /S /Q $$DDIR $$escape_expand(\\n\\t)
   }
 
+  help_copy.commands += @echo "Creating Docs Directory: $$DDIR ($$EDIR)" $$escape_expand(\\n\\t)
+  help_copy.commands += md $$DDIR $$escape_expand(\\n\\t)
   help_copy.commands += $$MYFILECOPY
   help_copy.commands += @echo "Running qhelpgenerator" $$escape_expand(\\n\\t)
   help_copy.commands += $$[QT_INSTALL_BINS]\\qhelpgenerator $$DDIR\\docs.qhp -o $$DDIR\\docs.qch $$escape_expand(\\n\\t)

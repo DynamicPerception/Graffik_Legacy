@@ -11,6 +11,7 @@
 #include "film/JogControlManager/jogcontrolmanager.h"
 #include "film/LiveDeviceModel/livedevicemodel.h"
 #include "film/MotionArea/motionbase.h"
+#include "film/MotionArea/motiontape.h"
 #include "film/FilmParameters/filmparameters.h"
 #include "film/Dialogs/cameracontroldialog.h"
 #include "film/FilmExec/filmexec.h"
@@ -65,6 +66,7 @@ private:
     JogControlManager* m_jcm;
     FilmParameters* m_params;
     FilmExec* m_exec;
+    MotionTape* m_tape;
 
     QVBoxLayout* m_areaLayout;
     QHash<unsigned short, MotionBase*> m_areaBlocks;
