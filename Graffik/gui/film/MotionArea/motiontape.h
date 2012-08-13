@@ -10,6 +10,8 @@
 #include <QPaintEvent>
 #include <QRect>
 
+#define MT_LINE_SPACE   50
+
 namespace Ui {
 class MotionTape;
 }
@@ -35,8 +37,10 @@ private:
 
     bool m_drawn;
     unsigned long m_time;
+    int m_width;
 
-    void _drawLines(QRect p_rect);
+    void _drawTime(QRect p_rect);
+    void _drawLines(QRect p_rect, int p_lines, int p_height, int p_offset = 0);
 
 };
 
