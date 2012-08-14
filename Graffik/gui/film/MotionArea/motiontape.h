@@ -9,9 +9,19 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QRect>
+#include <QFont>
 
-#define MT_LINE_SPACE   50
+#define MT_LINE_SPACE   60
+#define MT_END_GAP      13
 #define MT_LINE_MINSPC  5
+#define MT_FONT_SIZE    9
+
+#define MT_LABEL_SS "SS"
+#define MT_LABEL_MM "MM"
+#define MT_LABEL_HH "HH"
+#define MT_LABEL_DD "DD"
+
+#define MT_LABEL_FONT   "courier"
 
 namespace Ui {
 class MotionTape;
@@ -35,6 +45,7 @@ private:
     Ui::MotionTape* ui;
     QPainterPath* m_path;
     FilmParameters* m_film;
+    QFont* m_font;
 
     bool m_drawn;
     unsigned long m_time;

@@ -2,6 +2,7 @@
 #include "ui_motiontape.h"
 
 #include <QDebug>
+#include <QFont>
 
 
 MotionTape::MotionTape(FilmParameters *c_film, QWidget *parent) :
@@ -17,7 +18,7 @@ MotionTape::MotionTape(FilmParameters *c_film, QWidget *parent) :
     m_drawn = false;
     m_time  = 0;
     m_path = new QPainterPath;
-
+    m_font = new QFont(MT_LABEL_FONT, MT_FONT_SIZE);
     OMfilmParams parms = m_film->getParamsCopy();
     m_time  = parms.realLength;
     m_width = this->width();
@@ -30,6 +31,7 @@ MotionTape::~MotionTape()
 {
     delete ui;
     delete m_path;
+    delete m_font;
 }
 
 void MotionTape::filmUpdated() {
@@ -49,7 +51,7 @@ void MotionTape::paintEvent(QPaintEvent *p_event) {
     QRect eventRect = p_event->rect();
 
 
-    qDebug() << "MT: Paint Event";
+    qDebug() << "MT: Paint Event" << eventRect.width();
 
     if( ! m_drawn || m_width != eventRect.width() ) {
         delete m_path;
@@ -77,6 +79,7 @@ void MotionTape::_drawTime(QRect p_rect) {
     int offset = 0;
     int pad = 0;
     int height = 1;
+    QString labelText;
 
         // We go by largest time set as major marks,
         // with next largest time set as minor marks
@@ -89,6 +92,7 @@ void MotionTape::_drawTime(QRect p_rect) {
             // note that we'll likely have remainding time outside of
             // the
         pad = (float) offset * ((float)(hours - (days * 24)) / 24);
+        labelText.append(MT_LABEL_DD);
     }
 
     else if( hours > 0 ) {
@@ -97,6 +101,7 @@ void MotionTape::_drawTime(QRect p_rect) {
         offset = offset > 60 ? 60 : offset;
         marks = hours;
         pad = (float) offset * ((float)(mins - (hours * 60)) / 60);
+        labelText.append(MT_LABEL_HH);
     }
 
     else if( mins > 0  ) {
@@ -105,6 +110,8 @@ void MotionTape::_drawTime(QRect p_rect) {
         offset = offset > 60 ? 60 : offset;
         marks = mins;
         pad = (float) offset * ((float)(secs - (mins * 60)) / 60);
+        labelText.append(MT_LABEL_MM);
+
     }
     else {
         offset = _calcSpacing(p_rect, secs);
@@ -112,8 +119,11 @@ void MotionTape::_drawTime(QRect p_rect) {
         offset = offset > 100 ? 100 : offset;
         marks = secs;
         pad = (float) offset * ((float)(m_time  - (secs * 1000)) / 100);
+        labelText.append(MT_LABEL_SS);
+
     }
 
+    m_path->addText(5, 5, *m_font, labelText);
     _drawLines(p_rect, marks, height, offset, pad);
 
 }
@@ -122,7 +132,7 @@ void MotionTape::_drawLines(QRect p_rect, int p_lines, int p_height, int p_fill,
 
     float pixStep = _calcSpacing(p_rect, p_lines, p_fill, p_pad);
     int wholeStep = int(pixStep);
-    int curPx = MT_LINE_SPACE; // pad to beginning of actual timeline display
+    int curPx = MT_LINE_SPACE;
     float err = 0.0;
     float fillStep = 0.0;
     int fillWhole = 0;
@@ -167,6 +177,10 @@ void MotionTape::_drawLines(QRect p_rect, int p_lines, int p_height, int p_fill,
         m_path->moveTo(curPx, p_rect.height());
         m_path->lineTo(curPx, p_rect.height() - (p_rect.height() / p_height) );
 
+            // Draw labels
+        int bs = i + 1 > 9 ? MT_FONT_SIZE * 2 : MT_FONT_SIZE;
+
+        m_path->addText(curPx - bs, p_rect.height() - 10, *m_font, QString::number(i + 1));
 
     }
 
@@ -193,7 +207,7 @@ float MotionTape::_calcSpacing(QRect p_rect, int p_lines, int p_fill, int p_pad)
 
     if( p_pad > 0 ) {
         float realLines = (float) p_lines + ((float)p_pad / (float)p_fill);
-        return ((float) p_rect.width() - (float) MT_LINE_SPACE) / realLines;
+        return ((float) p_rect.width() - (float) MT_LINE_SPACE - (float) MT_END_GAP) / realLines;
     }
-    return ((float) p_rect.width() - (float) MT_LINE_SPACE) / (float) p_lines;
+    return ((float) p_rect.width() - (float) MT_LINE_SPACE - (float) MT_END_GAP) / (float) p_lines;
 }
