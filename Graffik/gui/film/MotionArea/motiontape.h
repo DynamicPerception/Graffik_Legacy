@@ -11,6 +11,7 @@
 #include <QRect>
 
 #define MT_LINE_SPACE   50
+#define MT_LINE_MINSPC  5
 
 namespace Ui {
 class MotionTape;
@@ -40,7 +41,8 @@ private:
     int m_width;
 
     void _drawTime(QRect p_rect);
-    void _drawLines(QRect p_rect, int p_lines, int p_height, int p_offset = 0);
+    void _drawLines(QRect p_rect, int p_lines, int p_height, int p_fill = 0, int p_pad = 0);
+    float _calcSpacing(QRect p_rect, int p_lines, int p_fill = 0, int p_pad = 0);
 
 };
 

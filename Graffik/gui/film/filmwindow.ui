@@ -6,12 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>829</width>
+    <width>917</width>
     <height>716</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="sizeConstraint">
@@ -300,7 +303,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>812</width>
+          <width>900</width>
           <height>178</height>
          </rect>
         </property>
