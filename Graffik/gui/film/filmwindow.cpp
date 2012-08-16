@@ -97,8 +97,14 @@ void FilmWindow::_drawNewAxis(OMdeviceInfo *p_dev) {
     m_areaBlocks.insert(p_dev->device->address(), area);
     m_areaLayout->addWidget(area);
 
+    ui->visualSAContents->removeEventFilter(m_filter);
     delete m_motion;
     m_motion = new MotionSection(m_exec, m_params, ui->visualSAContents);
+    m_motion->show();
+    delete m_filter;
+    m_filter = new SectionResizeFilter(m_motion, this);
+    ui->visualSAContents->installEventFilter(m_filter);
+
 }
 
 void FilmWindow::_eraseAxis(QString p_bus, unsigned short p_addr) {
@@ -108,9 +114,6 @@ void FilmWindow::_eraseAxis(QString p_bus, unsigned short p_addr) {
         delete m_areaBlocks.value(p_addr);
         m_areaBlocks.remove(p_addr);
     }
-
-    delete m_motion;
-    m_motion = new MotionSection(m_exec, m_params, ui->visualSAContents);
 }
 
 void FilmWindow::on_camControlCheckBox_stateChanged(int p_state) {
