@@ -363,6 +363,8 @@ void FilmExec::_sendNodeMovements(OMfilmParams *p_film, OMAxis *p_axis) {
         decel = dc_shots;
     }
 
+    qDebug() << "FE: Motor Params: " << which << dir << end << arrive << accel << decel;
+
     p_axis->motorEnable();
     p_axis->continuous(false);
     p_axis->delayMove(parms->startTm);

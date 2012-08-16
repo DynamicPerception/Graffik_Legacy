@@ -15,17 +15,23 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, QWidget *parent) :
     m_jcm = new JogControlManager(m_net, m_opts, m_ldModel, ui->jogResCombo, ui->jogDial, ui->jogSpeedSpin, ui->jogDampSpin, ui->jogHomeButton, ui->jogEndButton, this);
     m_params = new FilmParameters(m_net, this);
     m_exec = new FilmExec(m_net, m_params, m_opts);
-    m_motion = new MotionSection(m_exec, m_params, ui->visualSAContents);
-    m_filter = new SectionResizeFilter(m_motion, this);
 
         // connect the device list display to the live device model
     ui->devButtonList->setModel(m_ldModel);
 
 
     m_areaLayout = new QVBoxLayout;
-    // ui->visualSA->setWidget(m_motion);
     ui->visualSAContents->setLayout(m_areaLayout);
+
+        // create our transparent overlay for drawing position line
+        // this must be done after the layout is added to visualSAContents,
+        // as this class attempts to access that layout
+
+    m_motion = new MotionSection(m_exec, m_params, ui->visualSAContents);
+    m_filter = new SectionResizeFilter(m_motion, this);
+
     m_motion->show();
+
         // need to capture resize events to resize our transparent overlay
     ui->visualSAContents->installEventFilter(m_filter);
 
@@ -97,23 +103,23 @@ void FilmWindow::_drawNewAxis(OMdeviceInfo *p_dev) {
     m_areaBlocks.insert(p_dev->device->address(), area);
     m_areaLayout->addWidget(area);
 
-    ui->visualSAContents->removeEventFilter(m_filter);
-    delete m_motion;
-    m_motion = new MotionSection(m_exec, m_params, ui->visualSAContents);
-    m_motion->show();
-    delete m_filter;
-    m_filter = new SectionResizeFilter(m_motion, this);
-    ui->visualSAContents->installEventFilter(m_filter);
+    _redrawMotionOverlay();
 
 }
 
 void FilmWindow::_eraseAxis(QString p_bus, unsigned short p_addr) {
     qDebug() << "FW: Got erase axis" << p_bus << p_addr;
+
     if( m_areaBlocks.contains(p_addr) ) {
         m_areaLayout->removeWidget(m_areaBlocks.value(p_addr));
+
         delete m_areaBlocks.value(p_addr);
         m_areaBlocks.remove(p_addr);
+
+        _redrawMotionOverlay();
     }
+
+
 }
 
 void FilmWindow::on_camControlCheckBox_stateChanged(int p_state) {
@@ -442,15 +448,16 @@ void FilmWindow::_endSet(unsigned short p_addr, long p_dist) {
 
 
 void FilmWindow::_playStatus(bool p_stat, unsigned long p_time) {
-    qDebug() << "FW: Got PlayStatus Signal:" << p_stat << p_time;
 
+   static bool wasStat = false;
 
         // not running anymore, turn off our status timers and such
-    if( p_stat == false )
+    if( p_stat == false && wasStat == true )
         on_stopButton_clicked();
     else
         _filmTimeDisplay(p_time);
 
+    wasStat = p_stat;
 }
 
  // update time displays as status data comes back from FilmExec
@@ -472,6 +479,10 @@ void FilmWindow::_filmTimeDisplay(unsigned long p_ms) {
         ui->filmHHLCD->display(rhh);
         ui->filmMMLCD->display(rmm);
         ui->filmSSLCD->display(rss);
+
+        ui->curFrameLCD->display((int) (p_ms / 1000) * parms->fps);
+        ui->totFrameLCD->display((int) (parms->realLength / 1000) * parms->fps);
+
     }
     else {
         unsigned long filmTm = ( (float) p_ms * timeDiv);
@@ -492,6 +503,12 @@ void FilmWindow::_filmTimeDisplay(unsigned long p_ms) {
 }
 
 
-void FilmWindow::paintEvent(QPaintEvent *) {
-
+void FilmWindow::_redrawMotionOverlay() {
+    ui->visualSAContents->removeEventFilter(m_filter);
+    delete m_motion;
+    m_motion = new MotionSection(m_exec, m_params, ui->visualSAContents);
+    m_motion->show();
+    delete m_filter;
+    m_filter = new SectionResizeFilter(m_motion, this);
+    ui->visualSAContents->installEventFilter(m_filter);
 }

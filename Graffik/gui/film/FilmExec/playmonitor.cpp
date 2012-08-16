@@ -53,13 +53,10 @@ void PlayMonitor::_timerFire() {
     if( m_master == 0 )
         return;
 
-   // qDebug() << "PM: Sending RunCheck";
 
     int cmdId = m_master->getRunning();
     m_net->getManager()->hold(cmdId);
     m_cmds.insert(cmdId, false);
-
-    //qDebug() << "PM: Sending RunTime";
 
     cmdId = m_master->getRunTime();
     m_net->getManager()->hold(cmdId);

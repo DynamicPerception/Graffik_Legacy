@@ -31,9 +31,11 @@ private:
    QPainterPath* m_path;
    FilmParameters* m_film;
    FilmExec* m_exec;
+   QWidget* m_parent;
 
    int m_width;
    int m_height;
+   int m_scrollWidth;
    unsigned long m_curPos;
    unsigned long m_wasPos;
    unsigned long m_length;

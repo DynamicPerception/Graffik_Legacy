@@ -7,7 +7,6 @@ SectionResizeFilter::SectionResizeFilter(MotionSection *c_motion, QObject *paren
     QObject(parent)
 {
     m_motion = c_motion;
-    qDebug() << "SRF INIT: " << c_motion;
 
 }
 
@@ -15,15 +14,13 @@ SectionResizeFilter::SectionResizeFilter(MotionSection *c_motion, QObject *paren
 bool SectionResizeFilter::eventFilter(QObject *p_obj, QEvent *p_event) {
 
     if( p_event->type() == QEvent::Resize ) {
-        qDebug() << "SRF: got resize" << p_obj;
-        qDebug() << "SRF: " << m_motion;
-
-
-        QWidget *parent = m_motion->parentWidget();
-
-        qDebug() << "SRF: got resize" << parent;
+        QWidget* parent = m_motion->parentWidget();
 
         m_motion->setGeometry(parent->rect());
+        return false;
+    }
+    else if( p_event->type() == QEvent::Paint ) {
+        m_motion->update();
         return false;
     }
     return QObject::eventFilter( p_obj, p_event );

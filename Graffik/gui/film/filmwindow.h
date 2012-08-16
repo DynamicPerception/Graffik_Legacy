@@ -31,8 +31,6 @@ public:
     FilmWindow(OMNetwork* c_net, AxisOptions* c_opts, QWidget *parent = 0);
     ~FilmWindow();
 
-    void paintEvent(QPaintEvent *);
-
 public slots:
 
   // set automatic connections
@@ -97,6 +95,8 @@ private:
     void _setStopButtonStatus(int p_stat);
 
     void _filmTimeDisplay(unsigned long p_ms);
+
+    void _redrawMotionOverlay();
 };
 
 #endif // FILMWINDOW_H

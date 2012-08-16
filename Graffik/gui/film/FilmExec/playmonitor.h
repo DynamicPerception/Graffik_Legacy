@@ -5,12 +5,13 @@
 #include <QTimer>
 #include <QHash>
 
+
 #include "MoCoBus/omnetwork.h"
 #include "Devices/nanoMoCo/omaxis.h"
 
 #include "film/FilmParameters/filmparameters.h"
 
-#define PM_TIMER_PERIOD 400
+#define PM_TIMER_PERIOD 250
 
 
 /** Play State Monitor

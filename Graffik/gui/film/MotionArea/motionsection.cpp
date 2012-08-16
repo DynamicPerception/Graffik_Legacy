@@ -1,6 +1,7 @@
 #include "motionsection.h"
 
 #include <QDebug>
+#include <QLayout>
 
 MotionSection::MotionSection(FilmExec *c_exec, FilmParameters *c_film, QWidget *parent) :
     QWidget(parent)
@@ -8,6 +9,7 @@ MotionSection::MotionSection(FilmExec *c_exec, FilmParameters *c_film, QWidget *
     m_path = new QPainterPath;
     m_film = c_film;
     m_exec = c_exec;
+    m_parent = parent;
 
     m_width  = 0;
     m_height = 0;
@@ -15,11 +17,15 @@ MotionSection::MotionSection(FilmExec *c_exec, FilmParameters *c_film, QWidget *
     m_wasPos = 0;
     m_length = 0;
 
-        // we're making a transparent widget, to overlay the section
+    m_scrollWidth = m_parent->width() - m_parent->layout()->contentsMargins().right();
+
+        // we're making a transparent widget, to overlay the section and draw over all children
     setAttribute(Qt::WA_TransparentForMouseEvents);
     setAttribute(Qt::WA_TranslucentBackground);
 
     connect(m_film, SIGNAL(paramsReleased()), this, SLOT(paramsChanged()));
+    connect(m_exec, SIGNAL(filmPlayStatus(bool,ulong)), this, SLOT(playStatusChanged(bool,ulong)));
+
 }
 
 MotionSection::~MotionSection() {
@@ -27,9 +33,7 @@ MotionSection::~MotionSection() {
 }
 
 void MotionSection::paintEvent(QPaintEvent * p_event) {
-    qDebug() << "MS: pE";
-
-    QPainter painter(this);
+     QPainter painter(this);
 
     if( p_event->rect().width() != m_width ||
             p_event->rect().height() != m_height ||
@@ -38,10 +42,7 @@ void MotionSection::paintEvent(QPaintEvent * p_event) {
         m_width  = p_event->rect().width();
         m_height = p_event->rect().height();
         m_wasPos = m_curPos;
-
-        qDebug() << "PE: WH:" << m_width << m_height;
         _updatePath();
-
     }
 
     painter.drawPath(*m_path);
@@ -55,6 +56,7 @@ void MotionSection::paramsChanged() {
 
     if( params.realLength == m_length )
         return;
+
 
     m_length = params.realLength;
     _updatePath();
@@ -73,10 +75,13 @@ void MotionSection::_updatePath() {
     delete m_path;
     m_path = new QPainterPath;
 
-    unsigned int curPos = ( (float) m_length / (float) (m_width - MS_PRE_GAP)) * ((float) m_curPos / (float) m_length);
+    m_scrollWidth = m_parent->width() - m_parent->layout()->contentsMargins().right();
+    int diff = m_width - m_scrollWidth;
 
-    m_path->moveTo(MS_PRE_GAP + curPos, 0);
-    m_path->lineTo(MS_PRE_GAP + curPos, m_height);
+    int curXpos = ((float) m_curPos / (float) m_length) * (float) (m_width - MS_PRE_GAP - diff);
+
+    m_path->moveTo(MS_PRE_GAP + curXpos, 0);
+    m_path->lineTo(MS_PRE_GAP + curXpos, m_height);
 }
 
 
