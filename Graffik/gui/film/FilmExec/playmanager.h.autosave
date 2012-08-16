@@ -1,0 +1,63 @@
+#ifndef PLAYMANAGER_H
+#define PLAYMANAGER_H
+
+#include <QObject>
+#include <QTimer>
+
+#include "MoCoBus/omnetwork.h"
+#include "Devices/nanoMoCo/omaxis.h"
+
+#include "film/FilmParameters/filmparameters.h"
+
+#define PM_TIMER_PERIOD 1000
+
+/** Play State Manager
+
+  The Play State Manager class provides a mechanism for managing and monitoring the current status of the
+  play state of the film.  It is designed to be run in a thread, and uses a timer to regularly check the
+  timing from the master node.
+
+  This class, when informed to run, emits a signal once per timing period with the current status of the
+  master node and the current execution time in milliseconds.
+
+  Direct interaction with this class is only intended to be done by the FilmExec class.  Any signals emitted
+  by this class will be reflected by it.
+
+  @author C. A. Church
+  Copyright &copy 2012 Dynamic Perception LLC
+
+  */
+
+class PlayManager : public QObject
+{
+    Q_OBJECT
+public:
+    PlayManager(OMNetwork* c_net, FilmParameters* c_film, QObject *parent = 0);
+    ~PlayManager();
+
+    void start();
+    void stop();
+    void master(OMAxis* p_master);
+    
+signals:
+
+    void playStatus(bool p_stat, unsigned long p_runTime);
+    
+public slots:
+    
+private:
+    OMNetwork* m_net;
+    FilmParameters* m_film;
+    OMAxis* m_master;
+    QTimer* m_timer;
+
+    bool m_timerStarted;
+    bool m_running;
+
+    void _timerFire();
+    void _cmdReceived(int p_id, OMCommandBuffer* p_cmd);
+
+
+};
+
+#endif // PLAYMANAGER_H

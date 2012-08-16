@@ -4,7 +4,8 @@
 #include <QWidget>
 #include <QHash>
 #include <QVBoxLayout>
-
+#include <QPainterPath>
+#include <QPaintEvent>
 
 #include "MoCoBus/omnetwork.h"
 #include "core/AxisOptions/axisoptions.h"
@@ -12,6 +13,8 @@
 #include "film/LiveDeviceModel/livedevicemodel.h"
 #include "film/MotionArea/motionbase.h"
 #include "film/MotionArea/motiontape.h"
+#include "film/MotionArea/motionsection.h"
+#include "film/MotionArea/sectionresizefilter.h"
 #include "film/FilmParameters/filmparameters.h"
 #include "film/Dialogs/cameracontroldialog.h"
 #include "film/FilmExec/filmexec.h"
@@ -27,6 +30,8 @@ class FilmWindow : public QWidget
 public:
     FilmWindow(OMNetwork* c_net, AxisOptions* c_opts, QWidget *parent = 0);
     ~FilmWindow();
+
+    void paintEvent(QPaintEvent *);
 
 public slots:
 
@@ -57,6 +62,7 @@ private slots:
     void _drawNewAxis(OMdeviceInfo* p_dev);
     void _eraseAxis(QString p_bus, unsigned short p_addr);
     void _endSet(unsigned short p_addr, long p_dist);
+    void _playStatus(bool p_stat, unsigned long p_time);
 
 private:
     Ui::FilmWindow *ui;
@@ -67,6 +73,8 @@ private:
     FilmParameters* m_params;
     FilmExec* m_exec;
     MotionTape* m_tape;
+    MotionSection* m_motion;
+    SectionResizeFilter* m_filter;
 
     QVBoxLayout* m_areaLayout;
     QHash<unsigned short, MotionBase*> m_areaBlocks;
@@ -87,6 +95,8 @@ private:
 
     void _setPlayButtonStatus(int p_stat);
     void _setStopButtonStatus(int p_stat);
+
+    void _filmTimeDisplay(unsigned long p_ms);
 };
 
 #endif // FILMWINDOW_H

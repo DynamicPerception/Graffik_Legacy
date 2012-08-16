@@ -12,15 +12,23 @@ FilmExec::FilmExec(OMNetwork* c_net, FilmParameters* c_params, AxisOptions* c_op
 
     m_stat = FILM_STOPPED;
 
+
         // initialize our home position monitor (we'll need this later)
     m_home = new HomeMonitor(m_net);
     m_homeThread = new QThread();
-
     m_home->moveToThread(m_homeThread);
     m_homeThread->start();
-    m_home->start();
+
+        // initialize play status monitor
+    m_play = new PlayMonitor(m_net, m_params);
+    m_playThread = new QThread();
+    m_play->moveToThread(m_playThread);
+    m_playThread->start();
+
 
     connect(m_home, SIGNAL(allAtHome()), this, SLOT(_nodesHome()), Qt::QueuedConnection);
+        // reflect signal
+    connect(m_play, SIGNAL(playStatus(bool,ulong)), this, SIGNAL(filmPlayStatus(bool,ulong)), Qt::QueuedConnection);
 
 }
 
@@ -34,6 +42,13 @@ FilmExec::~FilmExec() {
     delete m_home;
     delete m_homeThread;
 
+    m_play->stop();
+    m_playThread->quit();
+    m_playThread->wait();
+
+    delete m_play;
+    delete m_playThread;
+
 }
 
 
@@ -42,12 +57,16 @@ FilmExec::~FilmExec() {
     If program is currently stopped, all motors will be sent to their
     home position before starting, and all parameters for film execution
     will be transmitted to required nodes before a broadcast start is
-    issued.
+    issued.  Note that if nodes are to be sent home, actual starting of
+    the film is not immediate.  Instead, the nodes must reach home first -
+    in this case, attach a slot to the filmPlayStatus() signal and monitor
+    for the running state.
 
     If already started, this method is non-operative.
 
     If paused, all nodes will be sent a broadcast start without first
     sending nodes to home.
+
    */
 
 void FilmExec::start() {
@@ -115,6 +134,9 @@ void FilmExec::start() {
 
         qDebug() << "FEx: Got Master: " << timingMaster;
 
+        m_play->master(timingMaster);
+        m_play->start();
+
         _sendCamera(timingMaster);
         _sendMaster(timingMaster, axes);
     }
@@ -130,7 +152,7 @@ void FilmExec::start() {
             // if we sent nodes home, update HomeMonitor with
             // list of axes sent home
        m_home->checkAxes(axesHome);
-    //   m_home->start();
+       m_home->start();
     }
 }
 
@@ -139,6 +161,7 @@ void FilmExec::stop() {
 
     m_net->broadcast(OMBus::OM_BCAST_STOP);
     m_stat = FILM_STOPPED;
+    m_play->stop();
 
 }
 
@@ -223,7 +246,7 @@ unsigned long FilmExec::interval(OMfilmParams* p_film) {
         minInterval += focMs;
 
 
-    qDebug() << "FEX: IV:" << iv << "MIV:" << minInterval;
+    // qDebug() << "FEX: IV:" << iv << "MIV:" << minInterval;
 
     if( manInt && iv < minInterval ) {
             // manual interval, lock to minimum achievable interval
@@ -259,6 +282,9 @@ void FilmExec::_sendHome(OMAxis* p_axis) {
 void FilmExec::_sendMaster(OMAxis *p_master, QList<OMAxis *> p_axes) {
         // I choose you!
     p_master->timing(true);
+        // send max run time
+    p_master->maxRunTime( m_params->getParamsCopy().realLength );
+
         // inform all of the slaves that they, well, are slaves.
     foreach(OMAxis* axis, p_axes) {
         if(axis != p_master) {
@@ -282,13 +308,13 @@ void FilmExec::_sendCamera(OMAxis* p_master) {
         return;
     }
 
-    float total_shots = m_film.realLength / iv;
-    total_shots = _round(total_shots);
+   // float total_shots = m_film.realLength / iv;
+   // total_shots = _round(total_shots);
 
     p_master->cameraEnable();
     p_master->exposure(m_film.camParams->shutterMS);
     p_master->exposureDelay(m_film.camParams->delayMS);
-    p_master->maxShots(total_shots);
+  //  p_master->maxShots(total_shots);
 
     if( m_film.camParams->focus )
         p_master->focus(m_film.camParams->focusMS);
@@ -350,8 +376,6 @@ void FilmExec::_sendNodeMovements(OMfilmParams *p_film, OMAxis *p_axis) {
 OMAxis* FilmExec::_getTimingMaster(QList<OMAxis *> *p_axes) {
     foreach(OMAxis* axis, *p_axes) {
         OMaxisOptions* aopts = m_opts->getOptions(axis->address());
-        qDebug() << "FEx: AD/AXTYPE: " << axis->address() << aopts->axisType;
-        qDebug() << "FEx: MAX: " << aopts->maxSteps;
 
         if( aopts->master == true ) {
             qDebug() << "FEx: Found Master: " << axis;
@@ -406,7 +430,7 @@ void FilmExec::_nodesHome() {
 
     m_net->broadcast(OMBus::OM_BCAST_START);
     m_stat = FILM_STARTED;
-  //  m_home->stop();
+    m_home->stop();
 }
 
 float FilmExec::_round(float p_val) {

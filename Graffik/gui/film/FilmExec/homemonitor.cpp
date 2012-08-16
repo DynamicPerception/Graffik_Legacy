@@ -7,6 +7,8 @@
 HomeMonitor::HomeMonitor(OMNetwork *c_net, QObject *parent) : QObject(parent) {
     m_net = c_net;
 
+    m_started = false;
+
         // list for commands completed
     connect(m_net, SIGNAL(complete(int,OMCommandBuffer*)), this, SLOT(_cmdReceived(int,OMCommandBuffer*)), Qt::QueuedConnection);
 
@@ -29,8 +31,11 @@ void HomeMonitor::start() {
 }
 
 void HomeMonitor::stop() {
-    if( m_started )
+    if( m_started ) {
         m_timer->stop();
+        delete m_timer;
+        m_started = false;
+    }
 }
 
 

@@ -147,7 +147,7 @@ public:
     OMfilmParams* getParams();
     OMfilmParams getParamsCopy();
 
-    void releaseParams();
+    void releaseParams(bool broadcast = true);
 
 private slots:
 

@@ -63,10 +63,6 @@ private:
 
     int m_moveItem;
 
-    void _drawCenterLine(QPainter* p_paint, QRect* p_rect);
-    QList<QPoint> _getVerticalCenterPoints(QRect* p_rect);
-  //  QList<QPoint> _restrictPoints(QList<QPoint> &p_from, QList<QPoint> &p_into);
-
 };
 
 #endif // MOTIONAREA_H

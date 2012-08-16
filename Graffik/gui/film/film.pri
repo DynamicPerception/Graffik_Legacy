@@ -14,7 +14,10 @@ HEADERS += \
     film/FilmExec/filmexec.h \
     film/FilmExec/homemonitor.h \
     film/MotionArea/motionpathpainter.h \
-    film/MotionArea/motiontape.h
+    film/MotionArea/motiontape.h \
+    film/FilmExec/playmonitor.h \
+    film/MotionArea/motionsection.h \
+    film/MotionArea/sectionresizefilter.h
 
 
 SOURCES += \
@@ -30,7 +33,10 @@ SOURCES += \
     film/FilmExec/filmexec.cpp \
     film/FilmExec/homemonitor.cpp \
     film/MotionArea/motionpathpainter.cpp \
-    film/MotionArea/motiontape.cpp
+    film/MotionArea/motiontape.cpp \
+    film/FilmExec/playmonitor.cpp \
+    film/MotionArea/motionsection.cpp \
+    film/MotionArea/sectionresizefilter.cpp
 
 FORMS += \
     film/filmwindow.ui \

@@ -3,9 +3,10 @@
 
 #include <QDebug>
 #include <QFont>
+#include <QScrollBar>
+#include <QLayout>
 
-
-MotionTape::MotionTape(FilmParameters *c_film, QWidget *parent) :
+MotionTape::MotionTape(FilmParameters *c_film, QWidget *c_scroll, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MotionTape)
 {
@@ -13,15 +14,18 @@ MotionTape::MotionTape(FilmParameters *c_film, QWidget *parent) :
     ui->setupUi(this);
 
     m_film = c_film;
-
+    m_scroll = c_scroll;
 
     m_drawn = false;
     m_time  = 0;
+
     m_path = new QPainterPath;
-    m_font = new QFont(MT_LABEL_FONT, MT_FONT_SIZE);
+    m_font = new QFont(MT_LABEL_FONT, MT_FONT_SIZE, QFont::Light, false);
+
     OMfilmParams parms = m_film->getParamsCopy();
     m_time  = parms.realLength;
     m_width = this->width();
+    m_scrollWidth = m_scroll->width();
 
     connect(m_film, SIGNAL(paramsReleased()), this, SLOT(filmUpdated()));
 
@@ -50,8 +54,10 @@ void MotionTape::paintEvent(QPaintEvent *p_event) {
     QPainter painter(this);
     QRect eventRect = p_event->rect();
 
+        // we want to line up with the motion graph elements
+    m_scrollWidth = m_scroll->width() - m_scroll->layout()->contentsMargins().right();
+  //  m_preSpace = MT_LINE_SPACE + m_scroll->layout()->contentsMargins().left();
 
-    qDebug() << "MT: Paint Event" << eventRect.width();
 
     if( ! m_drawn || m_width != eventRect.width() ) {
         delete m_path;
@@ -61,6 +67,8 @@ void MotionTape::paintEvent(QPaintEvent *p_event) {
         m_drawn = true;
     }
 
+    painter.setPen(QPen());
+    painter.setBrush(QBrush());
     painter.drawPath(*m_path);
 
 }
@@ -123,7 +131,8 @@ void MotionTape::_drawTime(QRect p_rect) {
 
     }
 
-    m_path->addText(5, 5, *m_font, labelText);
+
+  //  m_path->addText(5, 5, *m_font, labelText);
     _drawLines(p_rect, marks, height, offset, pad);
 
 }
@@ -180,7 +189,7 @@ void MotionTape::_drawLines(QRect p_rect, int p_lines, int p_height, int p_fill,
             // Draw labels
         int bs = i + 1 > 9 ? MT_FONT_SIZE * 2 : MT_FONT_SIZE;
 
-        m_path->addText(curPx - bs, p_rect.height() - 10, *m_font, QString::number(i + 1));
+ //       m_path->addText(curPx - bs, p_rect.height() - 10, *m_font, QString::number(i + 1));
 
     }
 
@@ -205,9 +214,12 @@ void MotionTape::_drawLines(QRect p_rect, int p_lines, int p_height, int p_fill,
 
 float MotionTape::_calcSpacing(QRect p_rect, int p_lines, int p_fill, int p_pad) {
 
+        // make sure right edge aligns with internals in scrollarea
+    float diff = m_width - m_scrollWidth;
+
     if( p_pad > 0 ) {
         float realLines = (float) p_lines + ((float)p_pad / (float)p_fill);
-        return ((float) p_rect.width() - (float) MT_LINE_SPACE - (float) MT_END_GAP) / realLines;
+        return ((float) p_rect.width() - (float) MT_LINE_SPACE - diff) / realLines;
     }
-    return ((float) p_rect.width() - (float) MT_LINE_SPACE - (float) MT_END_GAP) / (float) p_lines;
+    return ((float) p_rect.width() - (float) MT_LINE_SPACE - diff) / (float) p_lines;
 }

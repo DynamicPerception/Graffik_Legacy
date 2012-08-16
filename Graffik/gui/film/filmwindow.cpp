@@ -15,17 +15,24 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, QWidget *parent) :
     m_jcm = new JogControlManager(m_net, m_opts, m_ldModel, ui->jogResCombo, ui->jogDial, ui->jogSpeedSpin, ui->jogDampSpin, ui->jogHomeButton, ui->jogEndButton, this);
     m_params = new FilmParameters(m_net, this);
     m_exec = new FilmExec(m_net, m_params, m_opts);
-    m_tape = new MotionTape(m_params, this);
-
+    m_motion = new MotionSection(m_exec, m_params, ui->visualSAContents);
+    m_filter = new SectionResizeFilter(m_motion, this);
 
         // connect the device list display to the live device model
     ui->devButtonList->setModel(m_ldModel);
 
 
     m_areaLayout = new QVBoxLayout;
+    // ui->visualSA->setWidget(m_motion);
     ui->visualSAContents->setLayout(m_areaLayout);
+    m_motion->show();
+        // need to capture resize events to resize our transparent overlay
+    ui->visualSAContents->installEventFilter(m_filter);
 
+    m_tape = new MotionTape(m_params, ui->visualSAContents, this);
     ui->tapeVLayout->addWidget(m_tape);
+
+
 
         // we need to populate motion area displays
     QObject::connect(m_net, SIGNAL(deviceAdded(OMdeviceInfo*)), this, SLOT(_drawNewAxis(OMdeviceInfo*)));
@@ -37,6 +44,8 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, QWidget *parent) :
     QObject::connect(m_jcm, SIGNAL(motorChangeDenied(unsigned short)), this, SLOT(_jogMotorChangeDenied(unsigned short)));
     QObject::connect(m_jcm, SIGNAL(endPosition(unsigned short,long)), this, SLOT(_endSet(unsigned short,long)));
 
+
+    QObject::connect(m_exec, SIGNAL(filmPlayStatus(bool,ulong)), this, SLOT(_playStatus(bool,ulong)));
 
     _prepInputs();
 
@@ -51,6 +60,8 @@ FilmWindow::~FilmWindow() {
 
     delete m_tape;
     delete m_areaLayout;
+    delete m_motion;
+    delete m_filter;
 
     delete m_exec;
     delete m_params;
@@ -85,6 +96,9 @@ void FilmWindow::_drawNewAxis(OMdeviceInfo *p_dev) {
     MotionBase* area = new MotionBase(m_params, p_dev, m_opts, this);
     m_areaBlocks.insert(p_dev->device->address(), area);
     m_areaLayout->addWidget(area);
+
+    delete m_motion;
+    m_motion = new MotionSection(m_exec, m_params, ui->visualSAContents);
 }
 
 void FilmWindow::_eraseAxis(QString p_bus, unsigned short p_addr) {
@@ -94,6 +108,9 @@ void FilmWindow::_eraseAxis(QString p_bus, unsigned short p_addr) {
         delete m_areaBlocks.value(p_addr);
         m_areaBlocks.remove(p_addr);
     }
+
+    delete m_motion;
+    m_motion = new MotionSection(m_exec, m_params, ui->visualSAContents);
 }
 
 void FilmWindow::on_camControlCheckBox_stateChanged(int p_state) {
@@ -138,8 +155,9 @@ void FilmWindow::on_camSetBut_clicked() {
     CameraControlDialog* control = new CameraControlDialog(m_params);
     control->exec();
 
-    OMfilmParams params = m_params->getParamsCopy();
-    bool autoFPS = params.camParams->autoFPS;
+    OMfilmParams* params = m_params->getParams();
+    bool autoFPS = params->camParams->autoFPS;
+    m_params->releaseParams(false);
 
 
         // do we need to enable film control spinners?
@@ -164,9 +182,10 @@ void FilmWindow::on_camSetBut_clicked() {
 }
 
 void FilmWindow::_showFilmTime() {
-    OMfilmParams params = m_params->getParamsCopy();
-    unsigned long wallTM = params.realLength;
-    unsigned long filmTM = params.length;
+    OMfilmParams* params = m_params->getParams();
+    unsigned long wallTM = params->realLength;
+    unsigned long filmTM = params->length;
+    m_params->releaseParams(false);
 
         // convert from mS to hours, minutes, and seconds
 
@@ -233,8 +252,18 @@ void FilmWindow::_changeTime(int p_which, int p_pos, int p_val) {
 
     if( p_which == 1 )
         params->length = mS;
-    else
+    else {
         params->realLength = mS;
+
+            // can't have axis moves end beyond the end of the film!
+
+        foreach( OMfilmAxisParams* axis, params->axes) {
+            if( axis->endTm > params->realLength )
+                axis->endTm = 0;
+            if( axis->startTm > params->realLength )
+                axis->startTm = 0;
+        }
+     }
 
     m_params->releaseParams();
 
@@ -242,28 +271,25 @@ void FilmWindow::_changeTime(int p_which, int p_pos, int p_val) {
 
  // apply constraints to film length, and update display as needed
 void FilmWindow::_checkFilmTimeConstraint() {
-    OMfilmParams params = m_params->getParamsCopy();
-    bool do_adjust = false;
 
-        // TODO: Calculate maximum film time when FPS is used
+        // TODO: Calculate maximum film time when auto FPS is used
         // instead of intervalometer
 
         // TODO: Add UI indicator that limitation has
         // been placed...
 
-    if( params.length > params.realLength ) {
-        OMfilmParams* realParms = m_params->getParams();
-        realParms->length = params.realLength;
+    OMfilmParams* params = m_params->getParams();
+
+    if( params->length > params->realLength ) {
+        params->length = params->realLength;
         m_params->releaseParams();
-        do_adjust = true;
-    }
-
-
-
-    if( do_adjust ) {
         _showFilmTime();
         qDebug() << "FW: Constraining maximum film time to real time";
     }
+    else {
+        m_params->releaseParams(false);
+    }
+
 }
 
 void FilmWindow::on_filmHHSpin_valueChanged(int p_val) {
@@ -293,8 +319,8 @@ void FilmWindow::on_realSSSpin_valueChanged(int p_val) {
 }
 
 void FilmWindow::_calcAutoFilmTime() {
-    OMfilmParams* params = m_params->getParams();
 
+    OMfilmParams* params = m_params->getParams();
     unsigned long interval = m_exec->interval(params);
 
     unsigned short fps = params->fps;
@@ -302,16 +328,13 @@ void FilmWindow::_calcAutoFilmTime() {
     unsigned long wallTm = params->realLength;
 
 
-    qDebug() << "FW: CalcTm: Interval:" << interval;
-
-    // calculate # of shots
-
+        // calculate # of shots
     unsigned long shots = wallTm / interval;
 
-    // determine output film time in mS
+        // determine output film time in mS
     filmTm = (shots / fps) * 1000;
 
-    // store film length
+        // store film length
     params->length = filmTm;
     m_params->releaseParams();
 
@@ -412,4 +435,60 @@ void FilmWindow::_endSet(unsigned short p_addr, long p_dist) {
     parms->axes.value(p_addr)->endDist = p_dist;
 
     m_params->releaseParams();
+}
+
+
+void FilmWindow::_playStatus(bool p_stat, unsigned long p_time) {
+    qDebug() << "FW: Got PlayStatus Signal:" << p_stat << p_time;
+
+
+        // not running anymore, turn off our status timers and such
+    if( p_stat == false )
+        on_stopButton_clicked();
+    else
+        _filmTimeDisplay(p_time);
+
+}
+
+ // update time displays as status data comes back from FilmExec
+
+void FilmWindow::_filmTimeDisplay(unsigned long p_ms) {
+
+    int rhh = p_ms / 1000 / 60 / 60;
+    int rmm = (p_ms - (rhh * 1000 * 60 * 60)) / 1000 / 60;
+    int rss = (p_ms - (rhh * 1000 * 60 * 60) - (rmm * 1000 * 60)) / 1000;
+
+    ui->runHHLCD->display(rhh);
+    ui->runMMLCD->display(rmm);
+    ui->runSSLCD->display(rss);
+
+    OMfilmParams* parms = m_params->getParams();
+    float timeDiv = (float) parms->length / (float) parms->realLength;
+
+    if( ! parms->camParams->camControl ) {
+        ui->filmHHLCD->display(rhh);
+        ui->filmMMLCD->display(rmm);
+        ui->filmSSLCD->display(rss);
+    }
+    else {
+        unsigned long filmTm = ( (float) p_ms * timeDiv);
+        int fhh = filmTm / 1000 / 60 / 60;
+        int fmm = (filmTm - (fhh * 1000 * 60 * 60)) / 1000 / 60;
+        int fss = (filmTm - (fhh * 1000 * 60 * 60) - (fmm * 1000 * 60)) / 1000;
+        ui->filmHHLCD->display(fhh);
+        ui->filmMMLCD->display(fmm);
+        ui->filmSSLCD->display(fss);
+
+        unsigned long interval = m_exec->interval(parms);
+        ui->curFrameLCD->display((int) (p_ms / interval));
+        ui->totFrameLCD->display((int) (parms->realLength / interval) );
+    }
+
+    m_params->releaseParams(false);
+
+}
+
+
+void FilmWindow::paintEvent(QPaintEvent *) {
+
 }

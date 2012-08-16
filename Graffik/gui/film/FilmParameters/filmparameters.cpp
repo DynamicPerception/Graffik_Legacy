@@ -98,8 +98,8 @@ OMfilmParams FilmParameters::getParamsCopy() {
 
   Indicate that you're done modifying it by calling this method.
   */
-void FilmParameters::releaseParams() {
+void FilmParameters::releaseParams(bool broadcast) {
     m_mutex->unlock();
-    qDebug() << "FP: Releasing Params";
-    emit paramsReleased();
+    if( broadcast )
+        emit paramsReleased();
 }

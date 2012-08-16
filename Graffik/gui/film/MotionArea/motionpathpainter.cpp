@@ -213,6 +213,9 @@ void MotionPathPainter::setMotionCurve() {
     m_new        = true;
     m_curveAvail = false;
 
+    if( filmParams.realLength == 0 )
+        return;
+
         // no movement, so just walk away now
     if( axParms->endDist < 1 )
         return;

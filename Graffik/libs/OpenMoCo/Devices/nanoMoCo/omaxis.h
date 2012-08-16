@@ -125,6 +125,7 @@ public:
     const int sleep(bool);
     const int maxStepRate(unsigned short);
     const int maxStepSpeed(unsigned short);
+    const int maxRunTime(unsigned long);
     const int debug(bool);
 
     const int continuous(bool);
@@ -168,6 +169,7 @@ public:
     const int getCameraEnable();
     const int getRunTime();
     const int getExposing();
+    const int getRunning();
 
 
 
@@ -244,6 +246,7 @@ private:
         static const char  progMoveA    = 19;
         static const char  progPlan    = 20;
         static const char  progPlanClr  = 21;
+        static const char  progMaxTime  = 22;
         static const char  progStat     = 100;
 
         static const char   dataCam     = 1;

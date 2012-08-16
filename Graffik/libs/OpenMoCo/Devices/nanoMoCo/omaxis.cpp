@@ -444,6 +444,21 @@ const int OMAxis::debug(bool value) {
    return this->command(COMPROG, progDbg, (char) value);
 }
 
+/** Set Maximum Run Time
+
+  Set maximum run time, in milliseconds
+
+ @param ms
+ Milliseconds
+
+ @return
+ The ID of the command
+  */
+
+const int OMAxis::maxRunTime(unsigned long ms) {
+    return this->command(COMPROG, progMaxTime, ms);
+}
+
 /** Motor Steps
 
  Sets the # of steps to take during each cycle
@@ -834,6 +849,19 @@ const int OMAxis::getExposing() {
    return this->command(COMPROG, progStat, statExposing);
 }
 
+/** Status: Currently Running
+
+  Retrieves the currently running status.  True if automatic
+  operation is running, false if not.
+
+  @return
+  The ID of the command
+  */
+
+const int OMAxis::getRunning() {
+
+   return this->command(COMPROG, progStat, statRunning);
+}
 
 /** Enable the Motor
 

@@ -13,6 +13,7 @@
 #include "core/AxisOptions/axisoptions.h"
 
 #include "homemonitor.h"
+#include "playmonitor.h"
 
 enum { FILM_STOPPED, FILM_STARTED, FILM_PAUSED };
 
@@ -53,8 +54,21 @@ public:
 
 
 signals:
-    void filmStart(bool p_stat);
-    void filmError(QString p_err);
+        /** Film Playing Status Signal
+
+          After a film play has been requested, this signal will emit
+          approximately once per second, reporting the current run state
+          and run time (in wall time, milliseconds) of the film.  This
+          signal will continue to be emitted until the stop() method is
+          called.
+
+          @param p_stat
+          The running state, false = not running, true = running
+
+          @param p_runTime
+          The runtime of the film, in milliseconds.
+          */
+    void filmPlayStatus(bool p_stat, unsigned long p_runTime);
 
 private slots:
     void _nodesHome();
@@ -66,7 +80,9 @@ private:
     AxisOptions* m_opts;
 
     HomeMonitor* m_home;
+    PlayMonitor* m_play;
     QThread* m_homeThread;
+    QThread* m_playThread;
 
     int m_stat;
 
