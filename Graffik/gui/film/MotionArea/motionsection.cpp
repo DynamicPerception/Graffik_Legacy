@@ -66,6 +66,9 @@ void MotionSection::paramsChanged() {
 
 void MotionSection::playStatusChanged(bool p_stat, unsigned long p_runTime) {
 
+    if( p_stat == false )
+        return;
+
     m_curPos = p_runTime;
     this->update();
 }

@@ -452,8 +452,12 @@ void FilmWindow::_playStatus(bool p_stat, unsigned long p_time) {
    static bool wasStat = false;
 
         // not running anymore, turn off our status timers and such
-    if( p_stat == false && wasStat == true )
+    if( p_stat == false && wasStat == true ) {
+        unsigned long len = m_params->getParams()->realLength;
+        m_params->releaseParams(false);
+        _filmTimeDisplay(len);
         on_stopButton_clicked();
+    }
     else
         _filmTimeDisplay(p_time);
 
