@@ -11,10 +11,13 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, QWidget *parent) :
     m_net = c_net;
     m_opts = c_opts;
 
+    m_error = false;
+
     m_ldModel = new LiveDeviceModel(m_net, this);
     m_jcm = new JogControlManager(m_net, m_opts, m_ldModel, ui->jogResCombo, ui->jogDial, ui->jogSpeedSpin, ui->jogDampSpin, ui->jogHomeButton, ui->jogEndButton, this);
     m_params = new FilmParameters(m_net, this);
     m_exec = new FilmExec(m_net, m_params, m_opts);
+    m_busy = new QProgressDialog(this);
 
         // connect the device list display to the live device model
     ui->devButtonList->setModel(m_ldModel);
@@ -41,17 +44,20 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, QWidget *parent) :
 
 
         // we need to populate motion area displays
-    QObject::connect(m_net, SIGNAL(deviceAdded(OMdeviceInfo*)), this, SLOT(_drawNewAxis(OMdeviceInfo*)));
-    QObject::connect(m_net, SIGNAL(deviceDeleted(QString,unsigned short)), this, SLOT(_eraseAxis(QString,unsigned short)));
+    connect(m_net, SIGNAL(deviceAdded(OMdeviceInfo*)), this, SLOT(_drawNewAxis(OMdeviceInfo*)));
+    connect(m_net, SIGNAL(deviceDeleted(QString,unsigned short)), this, SLOT(_eraseAxis(QString,unsigned short)));
 
         // pass a click on to the model via signal
-    QObject::connect(ui->devButtonList, SIGNAL(clicked(const QModelIndex &)), m_ldModel, SLOT(deviceClicked(const QModelIndex &)));
+    connect(ui->devButtonList, SIGNAL(clicked(const QModelIndex &)), m_ldModel, SLOT(deviceClicked(const QModelIndex &)));
 
-    QObject::connect(m_jcm, SIGNAL(motorChangeDenied(unsigned short)), this, SLOT(_jogMotorChangeDenied(unsigned short)));
-    QObject::connect(m_jcm, SIGNAL(endPosition(unsigned short,long)), this, SLOT(_endSet(unsigned short,long)));
+    connect(m_jcm, SIGNAL(motorChangeDenied(unsigned short)), this, SLOT(_jogMotorChangeDenied(unsigned short)));
+    connect(m_jcm, SIGNAL(endPosition(unsigned short,long)), this, SLOT(_endSet(unsigned short,long)));
 
 
-    QObject::connect(m_exec, SIGNAL(filmPlayStatus(bool,ulong)), this, SLOT(_playStatus(bool,ulong)));
+    connect(m_exec, SIGNAL(filmPlayStatus(bool,ulong)), this, SLOT(_playStatus(bool,ulong)));
+    connect(m_exec, SIGNAL(filmStarted()), this, SLOT(_filmStarted()));
+    connect(m_exec, SIGNAL(error(QString)), this, SLOT(error(QString)));
+
 
     _prepInputs();
 
@@ -371,8 +377,16 @@ void FilmWindow::on_playButton_clicked() {
     int bstat = 0;
     int fstat = m_exec->status();
 
+    m_error = false;
+
     if( fstat != FILM_STARTED ) {
         qDebug() << "FW: Send Start";
+
+        m_busy->setLabelText("Sending All Axes Home");
+        m_busy->setMinimum(0);
+        m_busy->setMaximum(0);
+        m_busy->show();
+
         m_exec->start();
         bstat = 1;
     }
@@ -396,6 +410,8 @@ void FilmWindow::on_playButton_clicked() {
 }
 
 void FilmWindow::on_stopButton_clicked() {
+
+    m_error = false;
 
     int fstat = m_exec->status();
 
@@ -515,4 +531,26 @@ void FilmWindow::_redrawMotionOverlay() {
     delete m_filter;
     m_filter = new SectionResizeFilter(m_motion, this);
     ui->visualSAContents->installEventFilter(m_filter);
+}
+
+void FilmWindow::_filmStarted() {
+    qDebug() << "FW: Got filmStarted";
+    m_busy->hide();
+}
+
+void FilmWindow::error(QString p_err) {
+
+    if( ! m_error ) {
+        m_error = true;
+
+        m_busy->hide();
+
+        ErrorDialog error;
+        error.setError(p_err);
+        error.exec();
+
+            // make sure everything is stopped (may trigger another error)
+        on_stopButton_clicked();
+    }
+
 }

@@ -11,6 +11,7 @@
 
 #include "film/FilmParameters/filmparameters.h"
 
+
 #define PM_TIMER_PERIOD 250
 
 
@@ -25,6 +26,9 @@
 
   Direct interaction with this class is only intended to be done by the FilmExec class.  Any signals emitted
   by this class will be reflected by it.
+
+  If, at any point, the Timing Master Node cannot be reached, or responds with an error, the error() signal will
+  be emitted.
 
   @author C. A. Church
   Copyright &copy 2012 Dynamic Perception LLC
@@ -45,6 +49,7 @@ public:
 signals:
 
     void playStatus(bool p_stat, unsigned long p_runTime);
+    void error(QString p_err);
     
 public slots:
     

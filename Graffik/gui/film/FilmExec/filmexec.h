@@ -71,8 +71,25 @@ signals:
           */
     void filmPlayStatus(bool p_stat, unsigned long p_runTime);
 
+        /** Film Started Signal
+
+          This signal is emitted when the broadcast start is actually sent.
+          As nodes may need to travel home, or other activities may need to
+          occur before the film start is transmitted, this signal informs
+          when the actual start occurs
+          */
+    void filmStarted();
+
+        /** Error Occurred Signal
+
+          This signal is emitted when an error occurs.
+          */
+
+    void error(QString p_err);
+
 private slots:
     void _nodesHome();
+    void _error(QString p_error);
 
 private:
     OMNetwork* m_net;

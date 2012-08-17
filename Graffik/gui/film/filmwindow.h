@@ -6,6 +6,7 @@
 #include <QVBoxLayout>
 #include <QPainterPath>
 #include <QPaintEvent>
+#include <QProgressDialog>
 
 #include "MoCoBus/omnetwork.h"
 #include "core/AxisOptions/axisoptions.h"
@@ -18,6 +19,8 @@
 #include "film/FilmParameters/filmparameters.h"
 #include "film/Dialogs/cameracontroldialog.h"
 #include "film/FilmExec/filmexec.h"
+
+#include "core/Dialogs/errordialog.h"
 
 namespace Ui {
     class FilmWindow;
@@ -54,6 +57,7 @@ public slots:
     void on_realMMSpin_valueChanged(int p_val);
     void on_realSSSpin_valueChanged(int p_val);
 
+    void error(QString p_err);
 
 private slots:
     void _jogMotorChangeDenied(unsigned short p_oldAddr);
@@ -61,6 +65,7 @@ private slots:
     void _eraseAxis(QString p_bus, unsigned short p_addr);
     void _endSet(unsigned short p_addr, long p_dist);
     void _playStatus(bool p_stat, unsigned long p_time);
+    void _filmStarted();
 
 private:
     Ui::FilmWindow *ui;
@@ -73,6 +78,7 @@ private:
     MotionTape* m_tape;
     MotionSection* m_motion;
     SectionResizeFilter* m_filter;
+    QProgressDialog* m_busy;
 
     QVBoxLayout* m_areaLayout;
     QHash<unsigned short, MotionBase*> m_areaBlocks;
@@ -82,6 +88,8 @@ private:
     static const int s_Disable  = 2;
     static const int s_Pause    = 3;
     static const int s_Play     = 4;
+
+    bool m_error;
 
     void _enableCamControl(bool p_en = true);
     void _showFilmTime();

@@ -27,8 +27,12 @@ FilmExec::FilmExec(OMNetwork* c_net, FilmParameters* c_params, AxisOptions* c_op
 
 
     connect(m_home, SIGNAL(allAtHome()), this, SLOT(_nodesHome()), Qt::QueuedConnection);
+    connect(m_home, SIGNAL(error(QString)), this, SLOT(_error(QString)), Qt::QueuedConnection);
+
         // reflect signal
     connect(m_play, SIGNAL(playStatus(bool,ulong)), this, SIGNAL(filmPlayStatus(bool,ulong)), Qt::QueuedConnection);
+
+    connect(m_play, SIGNAL(error(QString)), this, SLOT(_error(QString)), Qt::QueuedConnection);
 
 }
 
@@ -433,8 +437,16 @@ void FilmExec::_nodesHome() {
     m_net->broadcast(OMBus::OM_BCAST_START);
     m_stat = FILM_STARTED;
     m_home->stop();
+    emit filmStarted();
 }
 
 float FilmExec::_round(float p_val) {
     p_val = p_val > int(p_val) ? int(p_val) + 1 : int(p_val);
+}
+
+void FilmExec::_error(QString p_error) {
+    m_home->stop();
+    m_play->stop();
+
+    emit error(p_error);
 }

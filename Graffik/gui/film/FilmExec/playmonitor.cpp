@@ -73,6 +73,8 @@ void PlayMonitor::_cmdReceived(int p_id, OMCommandBuffer *p_cmd) {
     if( ! m_cmds.contains(p_id) )
         return;
 
+    qDebug() << "PM: Recv'd back " << p_id;
+
     if( p_cmd->status() == OMC_SUCCESS ) {
         unsigned int resSize = p_cmd->resultSize();
 
@@ -93,6 +95,14 @@ void PlayMonitor::_cmdReceived(int p_id, OMCommandBuffer *p_cmd) {
             m_gotCount++;
 
         } // end if( resSize > 0...
+    }
+    else {
+
+        qDebug() << "PM: Got Err";
+
+        QString errText = "Received Error Monitoring Master Device " + m_net->getDevices().value(m_master->address())->name + ", Film Aborted";
+        emit error(errText);
+
     }
 
     m_cmds.remove(p_id);

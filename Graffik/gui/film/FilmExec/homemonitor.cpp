@@ -89,6 +89,10 @@ void HomeMonitor::_cmdReceived(int p_id, OMCommandBuffer *p_cmd) {
 
         } // end if( resSize > 0...
     }
+    else {
+        QString errText = "Received Error Sending Device " + m_net->getDevices().value(m_axes.value(p_id)->address())->name + " Home";
+        emit error(errText);
+    }
 
     m_cmds.remove(p_id);
     m_net->getManager()->release(p_id);
