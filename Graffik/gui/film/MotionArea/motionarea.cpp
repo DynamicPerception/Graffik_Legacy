@@ -15,6 +15,8 @@ MotionArea::MotionArea(FilmParameters *c_film, OMdeviceInfo *c_dev, AxisOptions*
     m_film = c_film;
     m_aopt = c_aopt;
 
+    m_bgCol = MA_BG_COLOR;
+
     ui->setupUi(this);
 
     ui->gridLayout->setContentsMargins(0,0,0,0);
@@ -29,6 +31,7 @@ MotionArea::MotionArea(FilmParameters *c_film, OMdeviceInfo *c_dev, AxisOptions*
 
     connect(m_film, SIGNAL(paramsReleased()), this, SLOT(filmUpdated()));
     connect(m_aopt, SIGNAL(deviceOptionsChanged(OMaxisOptions*,unsigned short)), this, SLOT(axisOptionsUpdated(OMaxisOptions*,unsigned short)));
+    connect(m_path, SIGNAL(moveSane(bool)), this, SLOT(moveSane(bool)));
 
 }
 
@@ -91,27 +94,69 @@ void MotionArea::mouseMoveEvent(QMouseEvent *p_event) {
 
     if( m_moveItem == MA_PT_START ) {
         unsigned long startTm = m_path->getFilmTime(newX);
+        unsigned long acTm = m_path->getFilmTime(m_path->getAcEndPx());
+        unsigned long dcTm = m_path->getFilmTime(m_path->getDcStartPx());
+
         OMfilmParams* parms = m_film->getParams();
-        parms->axes.value(m_dev->device->address())->startTm = startTm;
+        OMfilmAxisParams* axis = parms->axes.value(m_dev->device->address());
+
+            // sanity check!
+        if( startTm > axis->startTm ) {
+            if( acTm + (startTm - axis->startTm) > dcTm )
+                startTm = axis->startTm;
+        }
+
+        axis->startTm = startTm;
         m_film->releaseParams();
     }
     else if( m_moveItem == MA_PT_END ) {
         unsigned long endTm = m_path->getFilmTime(newX);
+        unsigned long acTm = m_path->getFilmTime(m_path->getAcEndPx());
+        unsigned long dcTm = m_path->getFilmTime(m_path->getDcStartPx());
+
         OMfilmParams* parms = m_film->getParams();
-        parms->axes.value(m_dev->device->address())->endTm = endTm;
+        OMfilmAxisParams* axis = parms->axes.value(m_dev->device->address());
+
+
+        if( endTm < axis->endTm ) {
+            if( dcTm - (axis->endTm - endTm ) < acTm )
+                endTm = axis->endTm;
+        }
+
+        qDebug() << "MA: ET" << endTm << dcTm << axis->decelTm;
+
+        axis->endTm = endTm;
         m_film->releaseParams();
     }
     else if( m_moveItem == MA_PT_ACE ) {
         unsigned long acEnd = m_path->getFilmTime(newX);
+        unsigned long dcTm = m_path->getFilmTime(m_path->getDcStartPx());
+
         OMfilmParams* parms = m_film->getParams();
-        unsigned long newAccel = acEnd - parms->axes.value(m_dev->device->address())->startTm;
-        parms->axes.value(m_dev->device->address())->accelTm = newAccel;
+        OMfilmAxisParams* axis = parms->axes.value(m_dev->device->address());
+
+        qDebug() << "MA: AC: " << acEnd << dcTm;
+
+        if( acEnd >= dcTm )
+            acEnd = dcTm - 10;
+
+        unsigned long newAccel = acEnd - axis->startTm;
+        axis->accelTm = newAccel;
         m_film->releaseParams();
     }
     else if( m_moveItem == MA_PT_DCS ) {
         unsigned long dcStart = m_path->getFilmTime(newX);
+        unsigned long acTm = m_path->getFilmTime(m_path->getAcEndPx());
+
         OMfilmParams* parms = m_film->getParams();
-        unsigned long endTm = parms->axes.value(m_dev->device->address())->endTm;
+        OMfilmAxisParams* axis = parms->axes.value(m_dev->device->address());
+
+        qDebug() << "MA: DC: " << dcStart << acTm;
+
+        if( dcStart <= acTm )
+            dcStart = acTm + 10;
+
+        unsigned long endTm = axis->endTm;
         endTm = endTm > 0 ? endTm : parms->realLength;
         unsigned long newDecel = endTm - dcStart;
         parms->axes.value(m_dev->device->address())->decelTm = newDecel;
@@ -129,7 +174,7 @@ void MotionArea::paintEvent(QPaintEvent *e) {
     QPainter painter(this);
     QRect eventRect = e->rect();
 
-    painter.fillRect(eventRect, QColor(MA_BG_COLOR));
+    painter.fillRect(eventRect, QColor(m_bgCol));
     painter.drawPath(*m_path->getPath(eventRect));
 
 
@@ -155,3 +200,11 @@ void MotionArea::paintEvent(QPaintEvent *e) {
 
 }
 
+void MotionArea::moveSane(bool p_sane) {
+
+    qDebug() << "MA: Got Sane: " << p_sane;
+    if( p_sane )
+        m_bgCol = MA_BG_COLOR;
+    else
+        m_bgCol = MA_ER_COLOR;
+}

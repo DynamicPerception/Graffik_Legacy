@@ -19,6 +19,7 @@
 #define OMC_SUCCESS  1
 #define OMC_NOCMD    2
 #define OMC_QUEUED   3
+#define OMC_TIMEOUT  4
 
 #define OM_ERR_ARG     2
 #define OM_ERR_MEM     3

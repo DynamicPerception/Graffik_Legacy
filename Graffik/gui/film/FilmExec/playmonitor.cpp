@@ -98,9 +98,9 @@ void PlayMonitor::_cmdReceived(int p_id, OMCommandBuffer *p_cmd) {
     }
     else {
 
-        qDebug() << "PM: Got Err";
+        qDebug() << "PM: Got Err" << p_cmd->status();
 
-        QString errText = "Received Error Monitoring Master Device " + m_net->getDevices().value(m_master->address())->name + ", Film Aborted";
+        QString errText = "Received Error Monitoring Master Device " + m_net->getDevices().value(m_master->address())->name + " " + QString::number(p_cmd->status()) + ", Film Aborted";
         emit error(errText);
 
     }

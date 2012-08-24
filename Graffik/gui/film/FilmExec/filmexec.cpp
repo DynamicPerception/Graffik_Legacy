@@ -100,6 +100,17 @@ void FilmExec::start() {
 
         QList<OMAxis*> axes = _getAxes(&m_film);
 
+        OMAxis* timingMaster = _getTimingMaster(&axes);
+
+        if( timingMaster == 0 ) {
+            qDebug() << "FEx: No Master Found!";
+            QString errText = "No timing master has been assigned, film cannot Be started. Go to Network -> Manage Network, and use the Device Configuration to set the timing master";
+            emit error(errText);
+            return;
+        }
+
+        qDebug() << "FEx: Got Master: " << timingMaster;
+
             // send all axes home and prep their movements, if they are configured for movement
         foreach(OMAxis* axis, axes) {
 
@@ -132,17 +143,12 @@ void FilmExec::start() {
             // when starting from a stopped state, we transmit timing,
             // configuration, and movement data
 
-            // TODO: Check for failure
-
-        OMAxis* timingMaster = _getTimingMaster(&axes);
-
-        qDebug() << "FEx: Got Master: " << timingMaster;
-
-        m_play->master(timingMaster);
-        m_play->start();
 
         _sendCamera(timingMaster);
         _sendMaster(timingMaster, axes);
+
+        m_play->master(timingMaster);
+
     }
 
     // send broadcast command if we didn't send nodes
@@ -151,6 +157,9 @@ void FilmExec::start() {
     if( ! sentHome ) {
         m_net->broadcast(OMBus::OM_BCAST_START);
         m_stat = FILM_STARTED;
+        m_play->start();
+
+        emit filmStarted();
     }
     else {
             // if we sent nodes home, update HomeMonitor with
@@ -163,9 +172,10 @@ void FilmExec::start() {
 
 void FilmExec::stop() {
 
+    m_home->stop();
+    m_play->stop();
     m_net->broadcast(OMBus::OM_BCAST_STOP);
     m_stat = FILM_STOPPED;
-    m_play->stop();
 
 }
 
@@ -437,6 +447,7 @@ void FilmExec::_nodesHome() {
     m_net->broadcast(OMBus::OM_BCAST_START);
     m_stat = FILM_STARTED;
     m_home->stop();
+    m_play->start();
     emit filmStarted();
 }
 

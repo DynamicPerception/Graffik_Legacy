@@ -47,6 +47,17 @@ public:
 
 signals:
     
+    /** Is the current motion profile sane?
+
+      This signal is emitted when the motion profile is changed.  Sanity is defined
+      as: the cruising speed does not exceed the maximum speed of the motor, and no
+      other unlikely to succeed combination of parameters has been detected.
+
+      @param p_state
+      Movement state: true = sane, false = not sane
+      */
+    void moveSane(bool p_stat);
+
 public slots:
     void paramsChanged();
     

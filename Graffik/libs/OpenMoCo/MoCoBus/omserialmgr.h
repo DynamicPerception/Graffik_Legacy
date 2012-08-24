@@ -67,7 +67,7 @@ private:
 
     void _sendCom(OMCommandBuffer*&);
     void _getResponse(OMCommandBuffer*&);
-    void _cmdErr(OMCommandBuffer*&);
+    void _cmdErr(OMCommandBuffer*&, int p_err = OMC_FAILURE);
     int _getSerByte();
 
 private slots:

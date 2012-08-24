@@ -16,6 +16,7 @@
 
 #define MA_BG_COLOR "#5999BC"
 #define MA_CL_COLOR "#FFFFFF"
+#define MA_ER_COLOR "#550000"
 
 #define MA_PT_NONE  0
 #define MA_PT_START 1
@@ -45,6 +46,7 @@ public slots:
     void filmUpdated();
     void scaleChange();
     void axisOptionsUpdated(OMaxisOptions* p_opts,unsigned short p_addr);
+    void moveSane(bool p_sane);
 
 signals:
     void scaleChanged(bool p_scale);
@@ -60,6 +62,8 @@ private:
     QRect m_mvEnd;
     QRect m_acEnd;
     QRect m_dcStart;
+
+    QString m_bgCol;
 
     int m_moveItem;
 

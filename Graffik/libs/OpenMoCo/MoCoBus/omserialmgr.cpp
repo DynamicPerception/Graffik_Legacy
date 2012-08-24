@@ -261,8 +261,8 @@ int OMSerialMgr::_getSerByte() {
 }
 
 
-void OMSerialMgr::_cmdErr(OMCommandBuffer* &thsCmd) {
-    thsCmd->status(OMC_FAILURE);
+void OMSerialMgr::_cmdErr(OMCommandBuffer* &thsCmd, int p_err) {
+    thsCmd->status(p_err);
     emit commandComplete(thsCmd);
 }
 
@@ -281,7 +281,7 @@ void OMSerialMgr::_getResponse(OMCommandBuffer* &thsCmd) {
 
       if( curCh == -300 ) {
           DEBUG("Timeout waiting for serial response");
-          _cmdErr(thsCmd);
+          _cmdErr(thsCmd, OMC_TIMEOUT);
           return;
       }
 
@@ -296,7 +296,7 @@ void OMSerialMgr::_getResponse(OMCommandBuffer* &thsCmd) {
                }
                else if( curCh == -300 ){
                    DEBUG("Timeout reading start sequence [1]");
-                   _cmdErr(thsCmd);
+                   _cmdErr(thsCmd, OMC_TIMEOUT);
                    return;
                }
                else {
@@ -316,7 +316,7 @@ void OMSerialMgr::_getResponse(OMCommandBuffer* &thsCmd) {
 
         if( curCh == -300 ) {
             DEBUG("Timeout reading start sequence [2]");
-            _cmdErr(thsCmd);
+            _cmdErr(thsCmd, OMC_TIMEOUT);
             return;
         }
 
@@ -345,7 +345,7 @@ void OMSerialMgr::_getResponse(OMCommandBuffer* &thsCmd) {
 
             if( curCh == -300 ) {
                 DEBUG("Timeout reading address");
-                _cmdErr(thsCmd);
+                _cmdErr(thsCmd, OMC_TIMEOUT);
                 return;
             }
             else {
@@ -371,7 +371,7 @@ void OMSerialMgr::_getResponse(OMCommandBuffer* &thsCmd) {
 
         if( curCh == -300 ) {
             DEBUG("Timeout reading command status");
-            _cmdErr(thsCmd);
+            _cmdErr(thsCmd, OMC_TIMEOUT);
             return;
         }
 
@@ -392,7 +392,7 @@ void OMSerialMgr::_getResponse(OMCommandBuffer* &thsCmd) {
 
         if( curCh == -300 ) {
             DEBUG("Timeout reading DLB");
-            _cmdErr(thsCmd);
+            _cmdErr(thsCmd, OMC_TIMEOUT);
             return;
         }
 
@@ -412,7 +412,7 @@ void OMSerialMgr::_getResponse(OMCommandBuffer* &thsCmd) {
                 curCh = _getSerByte();
                 if( curCh == -300 ) {
                     DEBUG("Timeout reading data");
-                    _cmdErr(thsCmd);
+                    _cmdErr(thsCmd, OMC_TIMEOUT);
                     return;
                 }
 

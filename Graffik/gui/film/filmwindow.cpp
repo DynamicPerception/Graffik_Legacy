@@ -58,6 +58,8 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, QWidget *parent) :
     connect(m_exec, SIGNAL(filmStarted()), this, SLOT(_filmStarted()));
     connect(m_exec, SIGNAL(error(QString)), this, SLOT(error(QString)));
 
+    connect(m_busy, SIGNAL(canceled()), this, SLOT(_busyCanceled()));
+
 
     _prepInputs();
 
@@ -268,11 +270,28 @@ void FilmWindow::_changeTime(int p_which, int p_pos, int p_val) {
     if( p_which == 1 )
         params->length = mS;
     else {
+        unsigned long oldTm = params->realLength;
+
         params->realLength = mS;
+
+        float timeDiff = (float) mS / (float) oldTm;
 
             // can't have axis moves end beyond the end of the film!
 
         foreach( OMfilmAxisParams* axis, params->axes) {
+                // scale movement times with new time difference
+            if( axis->endTm != 0 )
+                axis->endTm = (float) axis->endTm * timeDiff;
+
+            if( axis->startTm != 0 )
+                axis->startTm = (float) axis->startTm * timeDiff;
+
+            if( axis->accelTm != 0 )
+                axis->accelTm = (float) axis->accelTm * timeDiff;
+
+            if( axis->decelTm != 0 )
+                axis->decelTm = (float) axis->decelTm * timeDiff;
+
             if( axis->endTm > params->realLength )
                 axis->endTm = 0;
             if( axis->startTm > params->realLength )
@@ -407,23 +426,22 @@ void FilmWindow::on_playButton_clicked() {
     }
 
     _setStopButtonStatus(s_Enable);
+
+    qDebug() << "FW: Play: Checking error" << m_error;
+
+        // did an error occur during starting?
+    if( m_error )
+        on_stopButton_clicked();
 }
 
 void FilmWindow::on_stopButton_clicked() {
 
-    m_error = false;
-
-    int fstat = m_exec->status();
-
-    if( fstat == FILM_STOPPED )
-        return;
+    _setStopButtonStatus(s_Disable);
+    _setPlayButtonStatus(s_Play);
 
     qDebug() << "FW: Sending Stop";
 
     m_exec->stop();
-
-    _setStopButtonStatus(s_Disable);
-    _setPlayButtonStatus(s_Play);
 
 }
 
@@ -500,7 +518,7 @@ void FilmWindow::_filmTimeDisplay(unsigned long p_ms) {
         ui->filmMMLCD->display(rmm);
         ui->filmSSLCD->display(rss);
 
-        ui->curFrameLCD->display((int) (p_ms / 1000) * parms->fps);
+        ui->curFrameLCD->display((int) ((float) p_ms * ((float) parms->fps / 1000.0)));
         ui->totFrameLCD->display((int) (parms->realLength / 1000) * parms->fps);
 
     }
@@ -543,14 +561,21 @@ void FilmWindow::error(QString p_err) {
     if( ! m_error ) {
         m_error = true;
 
+            // make sure everything is stopped (may trigger another error)
+        on_stopButton_clicked();
+
         m_busy->hide();
 
         ErrorDialog error;
         error.setError(p_err);
         error.exec();
-
-            // make sure everything is stopped (may trigger another error)
-        on_stopButton_clicked();
     }
 
+}
+
+void FilmWindow::_busyCanceled() {
+    qDebug() << "FW: Busy Canceled";
+
+
+    on_stopButton_clicked();
 }

@@ -220,6 +220,9 @@ void MotionPathPainter::setMotionCurve() {
     if( axParms->endDist < 1 )
         return;
 
+    unsigned long maxSpeed = m_aopt->getOptions(m_addr)->maxSteps;
+    bool sane = true;
+
     m_curveAvail = true;
 
         // if no end time is specified, then the move ends when the film does
@@ -258,6 +261,9 @@ void MotionPathPainter::setMotionCurve() {
           else
               curSpd = _qInvCalc(tmPos);
 
+          if( curSpd > maxSpeed )
+              sane = false;
+
           m_renderPoints.append(curSpd);
     }
 
@@ -267,6 +273,7 @@ void MotionPathPainter::setMotionCurve() {
     for( unsigned long i = 0; i < leave; i++ )
         m_renderPoints.append(0);
 
+    emit moveSane(sane);
 }
 
 /** Get Path Model

@@ -78,6 +78,7 @@ signals:
           occur before the film start is transmitted, this signal informs
           when the actual start occurs
           */
+
     void filmStarted();
 
         /** Error Occurred Signal

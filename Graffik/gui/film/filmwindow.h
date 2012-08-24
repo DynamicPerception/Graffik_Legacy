@@ -66,6 +66,7 @@ private slots:
     void _endSet(unsigned short p_addr, long p_dist);
     void _playStatus(bool p_stat, unsigned long p_time);
     void _filmStarted();
+    void _busyCanceled();
 
 private:
     Ui::FilmWindow *ui;
