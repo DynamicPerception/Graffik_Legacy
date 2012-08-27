@@ -29,9 +29,13 @@ MotionArea::MotionArea(FilmParameters *c_film, OMdeviceInfo *c_dev, AxisOptions*
 
     m_moveItem = MA_PT_NONE;
 
+    m_timer = new QTimer;
+    m_timer->setSingleShot(true);
+
     connect(m_film, SIGNAL(paramsReleased()), this, SLOT(filmUpdated()));
     connect(m_aopt, SIGNAL(deviceOptionsChanged(OMaxisOptions*,unsigned short)), this, SLOT(axisOptionsUpdated(OMaxisOptions*,unsigned short)));
     connect(m_path, SIGNAL(moveSane(bool)), this, SLOT(moveSane(bool)));
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(_tooltipTimer()));
 
 }
 
@@ -39,11 +43,15 @@ MotionArea::~MotionArea()
 {
     delete ui;
     delete m_path;
+
+    m_timer->stop();
+    delete m_timer;
 }
 
 void MotionArea::filmUpdated() {
     this->update();
 }
+
 
 void MotionArea::scaleChange() {
         // flip scale
@@ -51,6 +59,8 @@ void MotionArea::scaleChange() {
     this->update();
     emit scaleChanged(m_path->scaling());
 }
+
+/** Slot for receiving changes to axis option */
 
 void MotionArea::axisOptionsUpdated(OMaxisOptions *p_opts, unsigned short p_addr) {
     if( p_addr != m_dev->device->address() )
@@ -60,9 +70,13 @@ void MotionArea::axisOptionsUpdated(OMaxisOptions *p_opts, unsigned short p_addr
     this->update();
 }
 
+/** Handle Mouse Press inside of Widget */
 
 void MotionArea::mousePressEvent(QMouseEvent *p_event) {
     QPoint cPos = p_event->pos();
+
+        // stop tooltip display timer
+    m_timer->stop();
 
     if( m_mvStart.contains(cPos) ) {
         qDebug() << "MA: Clicked MVStart";
@@ -82,17 +96,33 @@ void MotionArea::mousePressEvent(QMouseEvent *p_event) {
     }
     else {
         m_moveItem = MA_PT_NONE;
+        // we're clicking the mouse inside of the area,
+        // but we haven't clicked on a grab circle.  We
+        // want to re-set our timer, which will look
+        // for us hovering over one spot for MA_TT_TIMER period
+        m_timer->stop();
+        m_timer->start(MA_TT_TIMER);
+        m_curPx = cPos.x();
+        m_curPy = cPos.y();
     }
 
 }
 
+/** Handle Mouse Movement inside of Widget */
+
 void MotionArea::mouseMoveEvent(QMouseEvent *p_event) {
-    if( m_moveItem == MA_PT_NONE )
-        return;
+
 
     int newX = p_event->pos().x();
 
-    qDebug() << "MA: MPTM: " << newX << m_path->getFilmTime(newX);
+    if( m_moveItem == MA_PT_NONE ) {
+
+        return;
+    }
+    else {
+            // turn off timer,
+        m_timer->stop();
+    }
 
     if( m_moveItem == MA_PT_START ) {
         unsigned long startTm = m_path->getFilmTime(newX);
@@ -190,9 +220,13 @@ void MotionArea::mouseMoveEvent(QMouseEvent *p_event) {
   //  this->update();
 }
 
+/** Handle mouse Release Events inside of widget */
+
 void MotionArea::mouseReleaseEvent(QMouseEvent *p_event) {
     m_moveItem = MA_PT_NONE;
 }
+
+/** Override Paint Event - Draw Motion Path */
 
 void MotionArea::paintEvent(QPaintEvent *e) {
     QPainter painter(this);
@@ -201,23 +235,19 @@ void MotionArea::paintEvent(QPaintEvent *e) {
     painter.fillRect(eventRect, QColor(m_bgCol));
     painter.drawPath(*m_path->getPath(eventRect));
 
+        // Regenerate grab-and-drag circles if the path has changed
 
-        // only update drag point position if the pather path has
-        // changed
+        // TODO: Remove hard-coded sizes.
 
     if( m_path->hasChanged() ) {
         m_mvStart.setRect(m_path->getStartPx() - 5, eventRect.bottom() - 5, 10, 10);
         m_mvEnd.setRect(m_path->getEndPx() - 5, eventRect.bottom() - 5, 10, 10);
         m_acEnd.setRect(m_path->getAcEndPx() - 5, m_path->getMaxHeight() - 5, 10, 10);
-
-        qDebug() << "MA: ACE: " << m_path->getAcEndPx() << m_path->getFilmTime(m_path->getAcEndPx());
-
         m_dcStart.setRect(m_path->getDcStartPx() - 5, m_path->getMaxHeight() - 5, 10, 10);
     }
 
      // draw drag points for start and end time
     if( m_path->isDrawn() ) {
-
         painter.drawEllipse(m_mvStart);
         painter.drawEllipse(m_mvEnd);
         painter.drawEllipse(m_acEnd);
@@ -227,6 +257,8 @@ void MotionArea::paintEvent(QPaintEvent *e) {
 
 }
 
+/** Slot For Sane Movement Signal from MotionPathPainter */
+
 void MotionArea::moveSane(bool p_sane) {
 
     qDebug() << "MA: Got Sane: " << p_sane;
@@ -234,4 +266,28 @@ void MotionArea::moveSane(bool p_sane) {
         m_bgCol = MA_BG_COLOR;
     else
         m_bgCol = MA_ER_COLOR;
+}
+
+/** Slot for when ToolTip Timer Triggers */
+
+void MotionArea::_tooltipTimer() {
+        // don't do anything if we're not under the
+        // mouse any more!
+    if( ! QWidget::underMouse() )
+        return;
+
+        // determine position to draw tooltip
+    QPoint point = this->mapToGlobal(QPoint(m_curPx, m_curPy));
+
+    float curPos = m_path->getPosition(m_curPx);
+    float curSpd = m_path->getSpeed(m_curPx);
+
+    qDebug() << "MA: TTT: Under Mouse" << curPos << curSpd;
+
+        // TODO: need to convert absolute step values into correct deg/distance
+    // OMaxisOptions* devOpts = m_aopt->getOptions(m_dev->device->address());
+
+    QString descText = "Position: " + QString::number(curPos) + "\n" + "Speed: " + QString::number(curSpd) + "/sec";
+
+    QToolTip::showText(point, descText);
 }

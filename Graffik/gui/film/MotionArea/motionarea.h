@@ -6,6 +6,8 @@
 #include <QPaintEvent>
 #include <QRect>
 #include <QList>
+#include <QTimer>
+#include <QToolTip>
 
 #include "MoCoBus/omnetwork.h"
 
@@ -24,6 +26,8 @@
 #define MA_PT_ACE   3
 #define MA_PT_DCS   4
 
+#define MA_TT_TIMER 500
+
 namespace Ui {
 class MotionArea;
 }
@@ -41,6 +45,7 @@ public:
     void mousePressEvent(QMouseEvent* p_event);
     void mouseMoveEvent(QMouseEvent* p_event);
     void mouseReleaseEvent(QMouseEvent* p_event);
+
     
 public slots:
     void filmUpdated();
@@ -51,12 +56,16 @@ public slots:
 signals:
     void scaleChanged(bool p_scale);
 
+private slots:
+    void _tooltipTimer();
+
 private:
     Ui::MotionArea *ui;
     OMdeviceInfo* m_dev;
     FilmParameters* m_film;
     MotionPathPainter* m_path;
     AxisOptions* m_aopt;
+    QTimer* m_timer;
 
     QRect m_mvStart;
     QRect m_mvEnd;
@@ -66,6 +75,8 @@ private:
     QString m_bgCol;
 
     int m_moveItem;
+    int m_curPx;
+    int m_curPy;
 
 };
 

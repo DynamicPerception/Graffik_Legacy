@@ -44,6 +44,8 @@ public:
     bool hasChanged();
 
     unsigned long getFilmTime(int p_x);
+    float getSpeed(unsigned long p_x);
+    float getPosition(unsigned long p_x);
 
 signals:
     
@@ -114,6 +116,9 @@ private:
     float _qInvCalc(float p_tmPos);
     float _qEaseCalc(float p_tmPos);
     float _linearEasing(float p_tmPos);
+
+    float _getScale();
+    unsigned long _getMaxPoints();
 
 };
 

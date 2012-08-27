@@ -152,10 +152,35 @@ void MotionPathPainter::maxSplinePoints(unsigned long p_points) {
     m_maxPoints = p_points;
 }
 
-/** Get the Maximum Number of Curve Points */
+/** Get the Maximum Number of Curve Points
+
+    Note: this returns the maximum -possible- curve points.
+    Actual maximum may be limited by total number of milliseconds
+    in movement
+*/
 
 unsigned long MotionPathPainter::maxSplinePoints() {
     return m_maxPoints;
+}
+
+/** Return the speed (in steps/second) of the Motor at this X position */
+
+float MotionPathPainter::getSpeed(unsigned long p_x) {
+
+    OMfilmParams filmParams = m_film->getParamsCopy();
+        // determine how many seconds per sample...
+    float mult = 1000.0 / ((float) filmParams.realLength / _getMaxPoints());
+    unsigned long pos = (float) p_x * _getScale();
+    return m_renderPoints[pos] * mult;
+}
+
+/** Return the distance from home (in steps) of the Motor at this X Position */
+
+float MotionPathPainter::getPosition(unsigned long p_x) {
+
+  unsigned long pos = (float) p_x * _getScale();
+  return m_stepsTaken[pos];
+
 }
 
 /** Set a new Motion Curve
@@ -227,7 +252,7 @@ void MotionPathPainter::setMotionCurve() {
     m_curveAvail = true;
 
         // put upper boundary at 1 point per millisecond
-    unsigned long actMaxPts = m_maxPoints > filmParams.realLength ? filmParams.realLength : m_maxPoints;
+    unsigned long actMaxPts = _getMaxPoints();
 
         // if no end time is specified, then the move ends when the film does
     unsigned long endTm = m_axis->endTm > 0 ? m_axis->endTm : filmParams.realLength;
@@ -333,7 +358,7 @@ QPainterPath* MotionPathPainter::getPath(QRect p_area) {
 
         // determine how to scale the raw data for this sized
         // display
-    float scale = (float) actMaxPts / (float) width;
+    float scale = _getScale();
         // we can't have fractional points in array, so we need
         // to accumulate and overflow error
     int scaleMajor = int(scale);
@@ -435,6 +460,21 @@ QPainterPath* MotionPathPainter::getPath(QRect p_area) {
 void MotionPathPainter::paramsChanged() {
     qDebug() << "MPP: Got parameter changes" << this;
     setMotionCurve();
+}
+
+unsigned long MotionPathPainter::_getMaxPoints() {
+    OMfilmParams filmParams = m_film->getParamsCopy();
+    // put upper boundary at 1 point per millisecond
+    unsigned long actMaxPts = m_maxPoints > filmParams.realLength ? filmParams.realLength : m_maxPoints;
+    return actMaxPts;
+}
+
+float MotionPathPainter::_getScale() {
+
+        // determine how to scale the raw data for this sized
+        // display
+
+    return (float) _getMaxPoints() / (float) m_wasWidth;
 }
 
 /* These methods are pulled from the OMMotor implementation on AVR, so that we model the
