@@ -16,7 +16,7 @@
 
 #define MA_BG_COLOR "#5999BC"
 #define MA_CL_COLOR "#FFFFFF"
-#define MA_ER_COLOR "#550000"
+#define MA_ER_COLOR "#FF3333"
 
 #define MA_PT_NONE  0
 #define MA_PT_START 1

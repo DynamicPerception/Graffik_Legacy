@@ -202,6 +202,7 @@ void MotionPathPainter::setMotionCurve() {
         // wipe out all saved points
 
     m_renderPoints.clear();
+    m_stepsTaken.clear();
 
     m_wasDist   = axParms->endDist;
     m_wasEnd    = axParms->endTm;
@@ -225,28 +226,37 @@ void MotionPathPainter::setMotionCurve() {
 
     m_curveAvail = true;
 
+        // put upper boundary at 1 point per millisecond
+    unsigned long actMaxPts = m_maxPoints > filmParams.realLength ? filmParams.realLength : m_maxPoints;
+
         // if no end time is specified, then the move ends when the film does
     unsigned long endTm = m_axis->endTm > 0 ? m_axis->endTm : filmParams.realLength;
 
+
         // determine padding to add before and after move
 
-    unsigned long ms_per_xpt = filmParams.realLength / m_maxPoints;
-    unsigned long jmpAhead = m_axis->startTm / ms_per_xpt;
-    unsigned long endPt    = m_axis->endTm / ms_per_xpt;
-    unsigned long leave = endPt > 0 ? m_maxPoints - endPt : 0;
+    float ms_per_xpt = (float) filmParams.realLength / (float) actMaxPts;
+    unsigned long jmpAhead = (float) m_axis->startTm / (float) ms_per_xpt;
+    unsigned long endPt    = endTm / (float) ms_per_xpt;
+    endPt = endPt > actMaxPts ? actMaxPts : endPt;
+    unsigned long leave = endPt > 0 ? actMaxPts - endPt : 0;
 
 
-    unsigned long plotPts = m_maxPoints - jmpAhead - leave;
+    unsigned long plotPts = actMaxPts - jmpAhead - leave;
 
-    qDebug() << "MPP: Prepend" << this << ms_per_xpt << jmpAhead << leave << plotPts << endPt << m_axis->endTm;
+    qDebug() << "MPP: Prepend" << this << ms_per_xpt << m_axis->startTm << jmpAhead << leave << plotPts << endPt << actMaxPts << m_axis->endTm << endTm;
 
         // pad array prior to move
-    for( unsigned long i = 0; i < jmpAhead; i++)
+    for( unsigned long i = 0; i < jmpAhead; i++) {
         m_renderPoints.append(0);
+        m_stepsTaken.append(0);
+    }
 
-    _initSpline(axParms->endDist, endTm, axParms->accelTm, axParms->decelTm, m_maxPoints);
+    _initSpline(axParms->endDist, endTm, axParms->accelTm, axParms->decelTm, actMaxPts);
 
     qDebug() << "MPP: Fill";
+
+    float totalSteps = 0.0;
 
     for(unsigned long i = 1; i <= plotPts; i++) {
 
@@ -261,17 +271,23 @@ void MotionPathPainter::setMotionCurve() {
           else
               curSpd = _qInvCalc(tmPos);
 
-          if( curSpd > maxSpeed )
+          if( curSpd > ((float)maxSpeed / (1000.0 / ms_per_xpt)) )
               sane = false;
 
           m_renderPoints.append(curSpd);
+
+            // record steps taken from home
+          totalSteps += curSpd;
+          m_stepsTaken.append(totalSteps);
     }
 
     qDebug() << "MPP: Append";
 
         // pad array after move
-    for( unsigned long i = 0; i < leave; i++ )
+    for( unsigned long i = 0; i < leave; i++ ) {
         m_renderPoints.append(0);
+        m_stepsTaken.append(totalSteps);
+    }
 
     emit moveSane(sane);
 }
@@ -312,9 +328,12 @@ QPainterPath* MotionPathPainter::getPath(QRect p_area) {
     m_wasLength = filmParams.realLength;
     m_wasMax = aopts->maxSteps;
 
+        // put upper boundary at 1 point per millisecond
+    unsigned long actMaxPts = m_maxPoints > filmParams.realLength ? filmParams.realLength : m_maxPoints;
+
         // determine how to scale the raw data for this sized
         // display
-    float scale = (float) m_maxPoints / (float) width;
+    float scale = (float) actMaxPts / (float) width;
         // we can't have fractional points in array, so we need
         // to accumulate and overflow error
     int scaleMajor = int(scale);
@@ -322,17 +341,18 @@ QPainterPath* MotionPathPainter::getPath(QRect p_area) {
     float scaleErr = 0.0;
 
 
+    float maxDrawHeight = (float)height * 0.95;
         // maxSteps in axis options is steps/second...
         // so we need seconds per (horizontal, using all points) pixel
 
-    int spd_per_ypix = 0;
+    float spd_per_ypix = 0.0;
 
     if( m_relativeScale == true ) {
-        float pixelSecs = ((float)filmParams.realLength / 1000.0) / (float)m_maxPoints;
-        spd_per_ypix = ((float)height * 0.95) / (pixelSecs * aopts->maxSteps);
+        float pixelSecs = ((float)filmParams.realLength / 1000.0) / (float)actMaxPts;
+        spd_per_ypix = maxDrawHeight / (pixelSecs * (float) aopts->maxSteps);
     }
     else {
-        spd_per_ypix = ((float)height * 0.95) / m_splinePlanned.topSpeed;
+        spd_per_ypix = maxDrawHeight / (float) m_splinePlanned.topSpeed;
     }
 
         // flush out the path, and create a new one
@@ -355,7 +375,15 @@ QPainterPath* MotionPathPainter::getPath(QRect p_area) {
             break;
 
         float curSpd = m_renderPoints[curIdx];
-        int hgt = height - (spd_per_ypix * curSpd);
+      //  qDebug() << "MPP: CSPD: " << curSpd;
+
+        int hgt = (float) height - (spd_per_ypix * (float) curSpd);
+
+        // hgt = hgt < (height - maxDrawHeight) ? (height - maxDrawHeight) : hgt;
+
+
+     //   qDebug() << "MPP: HGT: " << (float) hgt;
+
         m_maxHeight = hgt < m_maxHeight ? hgt : m_maxHeight;
 
         m_path->lineTo(i, hgt);

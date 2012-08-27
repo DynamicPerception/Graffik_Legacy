@@ -263,6 +263,14 @@ void FilmWindow::_changeTime(int p_which, int p_pos, int p_val) {
     else
         ss = p_val;
 
+        // can't have less than one second of real time
+    if( p_which != 1 ) {
+        if( hh == 0 && mm == 0 && ss == 0 ) {
+            ss = 1;
+            ui->realSSSpin->setValue(1);
+        }
+    }
+
     unsigned long mS = (hh * 60 * 60 * 1000) + (mm * 60 * 1000) + (ss * 1000);
 
     OMfilmParams* params = m_params->getParams();
@@ -276,27 +284,31 @@ void FilmWindow::_changeTime(int p_which, int p_pos, int p_val) {
 
         float timeDiff = (float) mS / (float) oldTm;
 
-            // can't have axis moves end beyond the end of the film!
 
+        // can't have axis moves end beyond the end of the film!
         foreach( OMfilmAxisParams* axis, params->axes) {
-                // scale movement times with new time difference
-            if( axis->endTm != 0 )
+            // scale movement times with new time difference
+            if( axis->endTm != 0 ) {
                 axis->endTm = (float) axis->endTm * timeDiff;
 
-            if( axis->startTm != 0 )
+                if( axis->decelTm != 0 )
+                    axis->decelTm = (float) axis->decelTm * timeDiff;
+            }
+
+            if( axis->startTm != 0 ) {
                 axis->startTm = (float) axis->startTm * timeDiff;
 
-            if( axis->accelTm != 0 )
-                axis->accelTm = (float) axis->accelTm * timeDiff;
+                if( axis->accelTm != 0 )
+                    axis->accelTm = (float) axis->accelTm * timeDiff;
+            }
 
-            if( axis->decelTm != 0 )
-                axis->decelTm = (float) axis->decelTm * timeDiff;
 
             if( axis->endTm > params->realLength )
                 axis->endTm = 0;
             if( axis->startTm > params->realLength )
                 axis->startTm = 0;
         }
+
      }
 
     m_params->releaseParams();

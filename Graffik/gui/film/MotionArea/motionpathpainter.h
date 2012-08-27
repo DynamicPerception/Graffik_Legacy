@@ -96,6 +96,7 @@ private:
     unsigned long m_wasLength;
 
     QList<float> m_renderPoints;
+    QList<float> m_stepsTaken;
 
     unsigned long m_maxPoints;
     bool m_new;

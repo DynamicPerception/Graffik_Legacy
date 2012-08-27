@@ -92,6 +92,8 @@ void MotionArea::mouseMoveEvent(QMouseEvent *p_event) {
 
     int newX = p_event->pos().x();
 
+    qDebug() << "MA: MPTM: " << newX << m_path->getFilmTime(newX);
+
     if( m_moveItem == MA_PT_START ) {
         unsigned long startTm = m_path->getFilmTime(newX);
         unsigned long acTm = m_path->getFilmTime(m_path->getAcEndPx());
@@ -130,36 +132,58 @@ void MotionArea::mouseMoveEvent(QMouseEvent *p_event) {
     }
     else if( m_moveItem == MA_PT_ACE ) {
         unsigned long acEnd = m_path->getFilmTime(newX);
+        unsigned long oldAc = m_path->getFilmTime(m_path->getAcEndPx());
+
         unsigned long dcTm = m_path->getFilmTime(m_path->getDcStartPx());
 
         OMfilmParams* parms = m_film->getParams();
         OMfilmAxisParams* axis = parms->axes.value(m_dev->device->address());
 
-        qDebug() << "MA: AC: " << acEnd << dcTm;
+        long diff = acEnd - oldAc;
 
-        if( acEnd >= dcTm )
-            acEnd = dcTm - 10;
+            // limit move to decel start point
+        if( acEnd > dcTm ) {
+            acEnd = dcTm;
+            diff = 0;
+        }
 
-        unsigned long newAccel = acEnd - axis->startTm;
-        axis->accelTm = newAccel;
+        if( acEnd <= axis->startTm ) {
+            acEnd = axis->startTm + 100;
+            diff = 0;
+        }
+
+
+
+        qDebug() << "MA: AC: " << acEnd << oldAc << dcTm << diff << axis->startTm << (axis->accelTm + diff) ;
+
+        axis->accelTm = axis->accelTm + diff;
         m_film->releaseParams();
     }
     else if( m_moveItem == MA_PT_DCS ) {
         unsigned long dcStart = m_path->getFilmTime(newX);
+        unsigned long oldDc   = m_path->getFilmTime(m_path->getDcStartPx());
+
         unsigned long acTm = m_path->getFilmTime(m_path->getAcEndPx());
 
         OMfilmParams* parms = m_film->getParams();
         OMfilmAxisParams* axis = parms->axes.value(m_dev->device->address());
 
-        qDebug() << "MA: DC: " << dcStart << acTm;
+        long diff = dcStart - oldDc;
 
-        if( dcStart <= acTm )
-            dcStart = acTm + 10;
+            // limit move the ac end point
+        if( dcStart < acTm ) {
+            dcStart = acTm;
+            diff = 0;
+        }
 
-        unsigned long endTm = axis->endTm;
-        endTm = endTm > 0 ? endTm : parms->realLength;
-        unsigned long newDecel = endTm - dcStart;
-        parms->axes.value(m_dev->device->address())->decelTm = newDecel;
+        if( axis->endTm > 0 && dcStart >= axis->endTm ) {
+            dcStart = axis->endTm - 100;
+            diff = 0;
+        }
+
+         qDebug() << "MA: DC: " << dcStart << acTm << diff;
+
+        axis->decelTm = axis->decelTm - diff;
         m_film->releaseParams();
     }
 
@@ -185,6 +209,9 @@ void MotionArea::paintEvent(QPaintEvent *e) {
         m_mvStart.setRect(m_path->getStartPx() - 5, eventRect.bottom() - 5, 10, 10);
         m_mvEnd.setRect(m_path->getEndPx() - 5, eventRect.bottom() - 5, 10, 10);
         m_acEnd.setRect(m_path->getAcEndPx() - 5, m_path->getMaxHeight() - 5, 10, 10);
+
+        qDebug() << "MA: ACE: " << m_path->getAcEndPx() << m_path->getFilmTime(m_path->getAcEndPx());
+
         m_dcStart.setRect(m_path->getDcStartPx() - 5, m_path->getMaxHeight() - 5, 10, 10);
     }
 
