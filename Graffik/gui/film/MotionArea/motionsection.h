@@ -9,7 +9,14 @@
 #include "film/FilmParameters/filmparameters.h"
 #include "film/FilmExec/filmexec.h"
 
-#define MS_PRE_GAP  63
+
+/**
+
+  The MotionSection class creates a transparent section which is displayed
+  over the motion path elements, and draws a vertical line where the current
+  time is.
+
+  */
 
 class MotionSection : public QWidget
 {
@@ -26,6 +33,7 @@ signals:
 public slots:
     void paramsChanged();
     void playStatusChanged(bool p_stat, unsigned long p_runTime);
+    void setBorders(int p_leftX, int p_rightX);
 
 private:
    QPainterPath* m_path;
@@ -39,6 +47,8 @@ private:
    unsigned long m_curPos;
    unsigned long m_wasPos;
    unsigned long m_length;
+   int m_leftX;
+   int m_rightX;
 
    void _updatePath();
 

@@ -18,10 +18,16 @@ MotionBase::MotionBase(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions 
     m_dev = c_dev;
 
     ui->nameLabel->setText(c_dev->name);
+    ui->resButton->setText(" R "); // default is rapid mode
 
         // pass through click signal
     connect(ui->scaleButton, SIGNAL(clicked()), m_area, SLOT(scaleChange()));
+    connect(ui->muteButton, SIGNAL(clicked()), m_area, SLOT(mute()));
+
     connect(m_area, SIGNAL(scaleChanged(bool)), this, SLOT(curScale(bool)));
+    connect(m_area, SIGNAL(muted(int)), this, SLOT(muted(int)));
+
+    connect(m_area, SIGNAL(globalPosition(int,int)), this, SIGNAL(areaBorders(int,int)));
 
 }
 
@@ -60,5 +66,70 @@ void MotionBase::on_easeButton_clicked() {
 
     axis->easing = curEase;
     m_film->releaseParams();
+
+}
+
+void MotionBase::on_resButton_clicked() {
+
+    OMfilmParams* parms = m_film->getParams();
+
+    OMfilmAxisParams* axis = parms->axes.value(m_dev->device->address());
+
+    int curRes = axis->ms;
+
+    if( curRes == 1 ) {
+        curRes = 2;
+        ui->resButton->setText(" C ");
+    }
+    else if( curRes == 2 ) {
+        curRes = 4;
+        ui->resButton->setText(" M ");
+    }
+    else if( curRes == 4 ) {
+        curRes = 8;
+        ui->resButton->setText(" F ");
+    }
+    else if( curRes == 8 ){
+        curRes = 16;
+        ui->resButton->setText("VF ");
+    }
+    else {
+        curRes = 1;
+        ui->resButton->setText(" R ");
+    }
+
+    axis->ms = curRes;
+    m_film->releaseParams();
+
+}
+
+/** This slot is triggered when receiving a muted signal from the MotionArea.
+
+    We use the MotionArea to handle muting, since it controls display of the motion area (colors, etc.)
+    and also handles sanity checking on the move its self, which may mute the track.
+
+    We handle updating the button state, and the axis' parameters as needed
+
+    */
+
+void MotionBase::muted(int p_muted) {
+
+    OMfilmParams* parms = m_film->getParams();
+
+    OMfilmAxisParams* axis = parms->axes.value(m_dev->device->address());
+
+    if( p_muted != MA_MUTE_NA ) {
+        p_muted = 1;
+        ui->muteButton->setDown(true);
+    }
+    else {
+        p_muted = 0;
+        ui->muteButton->setDown(false);
+    }
+
+    axis->mute = p_muted;
+        // we can enter a feedback loop.  No one cares about muting
+        // except MotionArea, us, and FilmExec.
+    m_film->releaseParams(false);
 
 }

@@ -16,6 +16,8 @@ MotionArea::MotionArea(FilmParameters *c_film, OMdeviceInfo *c_dev, AxisOptions*
     m_aopt = c_aopt;
 
     m_bgCol = MA_BG_COLOR;
+    m_mute  = MA_MUTE_NA;
+    m_sane  = true;
 
     ui->setupUi(this);
 
@@ -191,6 +193,7 @@ void MotionArea::mouseMoveEvent(QMouseEvent *p_event) {
     }
     else if( m_moveItem == MA_PT_DCS ) {
         unsigned long dcStart = m_path->getFilmTime(newX);
+        unsigned long endTm   = m_path->getFilmTime(m_path->getEndPx());
         unsigned long oldDc   = m_path->getFilmTime(m_path->getDcStartPx());
 
         unsigned long acTm = m_path->getFilmTime(m_path->getAcEndPx());
@@ -211,9 +214,12 @@ void MotionArea::mouseMoveEvent(QMouseEvent *p_event) {
             diff = 0;
         }
 
-         qDebug() << "MA: DC: " << dcStart << acTm << diff;
 
-        axis->decelTm = axis->decelTm - diff;
+
+        axis->decelTm = endTm - dcStart;
+
+        qDebug() << "MA: DC: " << dcStart << endTm << axis->decelTm;
+
         m_film->releaseParams();
     }
 
@@ -234,6 +240,9 @@ void MotionArea::paintEvent(QPaintEvent *e) {
 
     painter.fillRect(eventRect, QColor(m_bgCol));
     painter.drawPath(*m_path->getPath(eventRect));
+
+        // let everyone know where our left and right sides are, so tied elements can line up
+    emit globalPosition(mapToGlobal(QPoint(eventRect.topLeft().x(), 0)).x(), mapToGlobal(QPoint(eventRect.topRight().x(), 0)).x());
 
         // Regenerate grab-and-drag circles if the path has changed
 
@@ -261,11 +270,39 @@ void MotionArea::paintEvent(QPaintEvent *e) {
 
 void MotionArea::moveSane(bool p_sane) {
 
-    qDebug() << "MA: Got Sane: " << p_sane;
-    if( p_sane )
-        m_bgCol = MA_BG_COLOR;
-    else
+        // handle mute check for bg color
+    if( p_sane ) {
+
+
+            // do not change mute setting on sane check, unless it was
+            // set to error by this function
+        if( m_mute == MA_MUTE_ER  || m_mute == MA_MUTE_NA ) {
+            m_mute = MA_MUTE_NA;
+            m_bgCol = MA_BG_COLOR;
+        }
+        else {
+                // leave muted if the mute wasn't triggered by error
+            m_bgCol = MA_MT_COLOR;
+        }
+
+    }
+    else {
         m_bgCol = MA_ER_COLOR;
+            // do not change mute setting if track already muted
+        if( m_mute != MA_MUTE_MT )
+            m_mute = MA_MUTE_ER;
+
+    }
+
+        // inform other components that this track is either
+        // muted, or un-muted.
+
+    m_sane = p_sane;
+        // careful of feedback loop - do not let any slot
+        // attached to this attempt to broadcast a change to
+        // film parameters
+    emit muted(m_mute);
+
 }
 
 /** Slot for when ToolTip Timer Triggers */
@@ -281,13 +318,30 @@ void MotionArea::_tooltipTimer() {
 
     float curPos = m_path->getPosition(m_curPx);
     float curSpd = m_path->getSpeed(m_curPx);
-
-    qDebug() << "MA: TTT: Under Mouse" << curPos << curSpd;
+    unsigned long curMs = m_path->getFilmTime(m_curPx);
 
         // TODO: need to convert absolute step values into correct deg/distance
     // OMaxisOptions* devOpts = m_aopt->getOptions(m_dev->device->address());
 
-    QString descText = "Position: " + QString::number(curPos) + "\n" + "Speed: " + QString::number(curSpd) + "/sec";
+    QString descText = "Position: " + QString::number(curPos) + "\n" + "Speed: " + QString::number(curSpd) + "/sec\n" + QString::number(curMs);
 
     QToolTip::showText(point, descText);
+}
+
+/** Slot for when the track is to be muted. Does not change mute setting if track
+    is already muted from an error */
+
+void MotionArea::mute() {
+    if( m_sane ) {
+        if( m_mute == MA_MUTE_NA ) {
+            m_mute = MA_MUTE_MT;
+            m_bgCol = MA_MT_COLOR;
+        }
+        else if( m_mute != MA_MUTE_ER ) {
+            m_mute = MA_MUTE_NA;
+            m_bgCol = MA_BG_COLOR;
+        }
+    }
+
+    emit muted(m_mute);
 }

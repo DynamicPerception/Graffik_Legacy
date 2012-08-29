@@ -103,6 +103,8 @@ private:
     QThread* m_homeThread;
     QThread* m_playThread;
 
+    QList<OMAxis*> m_axesHome;
+
     int m_stat;
 
     void _sendHome(OMAxis* p_axis);

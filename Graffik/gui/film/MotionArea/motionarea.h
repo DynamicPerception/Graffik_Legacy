@@ -19,6 +19,7 @@
 #define MA_BG_COLOR "#5999BC"
 #define MA_CL_COLOR "#FFFFFF"
 #define MA_ER_COLOR "#FF3333"
+#define MA_MT_COLOR "#CDC5BF"
 
 #define MA_PT_NONE  0
 #define MA_PT_START 1
@@ -27,6 +28,10 @@
 #define MA_PT_DCS   4
 
 #define MA_TT_TIMER 500
+
+#define MA_MUTE_NA  0
+#define MA_MUTE_MT  1
+#define MA_MUTE_ER  2
 
 namespace Ui {
 class MotionArea;
@@ -52,9 +57,15 @@ public slots:
     void scaleChange();
     void axisOptionsUpdated(OMaxisOptions* p_opts,unsigned short p_addr);
     void moveSane(bool p_sane);
+    void mute();
 
 signals:
+        /** Signal indicates when the display scale (relative or proportional) has been changed */
     void scaleChanged(bool p_scale);
+        /** Signal indicates when the track has been muted */
+    void muted(int p_muted);
+        /** Signal indicates the global far-left and far-right x-pixel of the area (for aligning other elements) */
+    void globalPosition(int p_left, int p_right);
 
 private slots:
     void _tooltipTimer();
@@ -77,6 +88,8 @@ private:
     int m_moveItem;
     int m_curPx;
     int m_curPy;
+    int m_mute;
+    bool m_sane;
 
 };
 

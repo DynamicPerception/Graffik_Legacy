@@ -27,6 +27,9 @@ MotionTape::MotionTape(FilmParameters *c_film, QWidget *c_scroll, QWidget *paren
     m_width = this->width();
     m_scrollWidth = m_scroll->width();
 
+    m_leftX = 0;
+    m_rightX = m_width;
+
     connect(m_film, SIGNAL(paramsReleased()), this, SLOT(filmUpdated()));
 
 }
@@ -55,13 +58,13 @@ void MotionTape::paintEvent(QPaintEvent *p_event) {
     QRect eventRect = p_event->rect();
 
         // we want to line up with the motion graph elements
-    m_scrollWidth = m_scroll->width() - m_scroll->layout()->contentsMargins().right();
+  //  m_scrollWidth = m_scroll->width() - m_scroll->layout()->contentsMargins().right();
   //  m_preSpace = MT_LINE_SPACE + m_scroll->layout()->contentsMargins().left();
 
 
-    if( ! m_drawn || m_width != eventRect.width() ) {
+    if( ! m_drawn || m_width != (m_rightX - m_leftX) ) {
         delete m_path;
-        m_width = eventRect.width();
+        m_width = m_rightX - m_leftX;
         m_path = new QPainterPath;
         _drawTime(eventRect);
         m_drawn = true;
@@ -141,7 +144,7 @@ void MotionTape::_drawLines(QRect p_rect, int p_lines, int p_height, int p_fill,
 
     float pixStep = _calcSpacing(p_rect, p_lines, p_fill, p_pad);
     int wholeStep = int(pixStep);
-    int curPx = MT_LINE_SPACE;
+    int curPx = m_leftX;
     float err = 0.0;
     float fillStep = 0.0;
     int fillWhole = 0;
@@ -187,7 +190,7 @@ void MotionTape::_drawLines(QRect p_rect, int p_lines, int p_height, int p_fill,
         m_path->lineTo(curPx, p_rect.height() - (p_rect.height() / p_height) );
 
             // Draw labels
-        int bs = i + 1 > 9 ? MT_FONT_SIZE * 2 : MT_FONT_SIZE;
+        // int bs = i + 1 > 9 ? MT_FONT_SIZE * 2 : MT_FONT_SIZE;
 
  //       m_path->addText(curPx - bs, p_rect.height() - 10, *m_font, QString::number(i + 1));
 
@@ -215,11 +218,18 @@ void MotionTape::_drawLines(QRect p_rect, int p_lines, int p_height, int p_fill,
 float MotionTape::_calcSpacing(QRect p_rect, int p_lines, int p_fill, int p_pad) {
 
         // make sure right edge aligns with internals in scrollarea
-    float diff = m_width - m_scrollWidth;
+  //  float diff = m_width - m_scrollWidth;
 
     if( p_pad > 0 ) {
         float realLines = (float) p_lines + ((float)p_pad / (float)p_fill);
-        return ((float) p_rect.width() - (float) MT_LINE_SPACE - diff) / realLines;
+        return ((float) m_rightX - (float) m_leftX) / realLines;
     }
-    return ((float) p_rect.width() - (float) MT_LINE_SPACE - diff) / (float) p_lines;
+    return ((float) m_rightX - (float) m_leftX) / (float) p_lines;
 }
+
+void MotionTape::setBorders(int p_left, int p_right) {
+    m_leftX = mapFromGlobal(QPoint(p_left, 0)).x();
+    m_rightX = mapFromGlobal(QPoint(p_right, 0)).x();
+
+}
+

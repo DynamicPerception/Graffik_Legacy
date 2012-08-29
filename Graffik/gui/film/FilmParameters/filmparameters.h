@@ -87,16 +87,19 @@ struct OMfilmAxisParams {
     unsigned long startTm;
         /** end Running Time */
     unsigned long endTm;
+        /** Mute Axis (don't run) */
+    bool mute;
 
     OMfilmAxisParams() {
         bus = "";
         endDist = 0;
         easing = OM_MOT_QUAD;
-        accelTm = 5000;
-        decelTm = 5000;
+        accelTm = 0;
+        decelTm = 0;
         ms = 1;
         startTm = 0;
         endTm = 0;
+        mute = false;
     }
 
 };

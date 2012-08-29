@@ -68,6 +68,12 @@ private slots:
     void _filmStarted();
     void _busyCanceled();
 
+signals:
+        /** This signal is reflected from the drawn motion areas to indicate
+            the location of their borders */
+
+    void motionAreaBorders(int p_leftX, int p_rightX);
+
 private:
     Ui::FilmWindow *ui;
     LiveDeviceModel* m_ldModel;

@@ -50,7 +50,7 @@ MotionPathPainter::~MotionPathPainter() {
 unsigned long MotionPathPainter::getFilmTime(int p_x) {
 
     OMfilmParams parms = m_film->getParamsCopy();
-    unsigned long filmTm = (parms.realLength / m_wasWidth) * p_x;
+    unsigned long filmTm = (((float) parms.realLength / (float)m_wasWidth) * (float)p_x);
     filmTm = filmTm > parms.realLength ? parms.realLength : filmTm;
     return filmTm;
 }
@@ -269,8 +269,6 @@ void MotionPathPainter::setMotionCurve() {
 
     unsigned long plotPts = actMaxPts - jmpAhead - leave;
 
-    qDebug() << "MPP: Prepend" << this << ms_per_xpt << m_axis->startTm << jmpAhead << leave << plotPts << endPt << actMaxPts << m_axis->endTm << endTm;
-
         // pad array prior to move
     for( unsigned long i = 0; i < jmpAhead; i++) {
         m_renderPoints.append(0);
@@ -278,8 +276,6 @@ void MotionPathPainter::setMotionCurve() {
     }
 
     _initSpline(axParms->endDist, endTm, axParms->accelTm, axParms->decelTm, actMaxPts);
-
-    qDebug() << "MPP: Fill";
 
     float totalSteps = 0.0;
 
@@ -305,8 +301,6 @@ void MotionPathPainter::setMotionCurve() {
           totalSteps += curSpd;
           m_stepsTaken.append(totalSteps);
     }
-
-    qDebug() << "MPP: Append";
 
         // pad array after move
     for( unsigned long i = 0; i < leave; i++ ) {
@@ -365,8 +359,6 @@ QPainterPath* MotionPathPainter::getPath(QRect p_area) {
     scale -= scaleMajor;
     float scaleErr = 0.0;
 
-
-    float maxDrawHeight = (float)height * 0.95;
         // maxSteps in axis options is steps/second...
         // so we need seconds per (horizontal, using all points) pixel
 
@@ -374,10 +366,12 @@ QPainterPath* MotionPathPainter::getPath(QRect p_area) {
 
     if( m_relativeScale == true ) {
         float pixelSecs = ((float)filmParams.realLength / 1000.0) / (float)actMaxPts;
-        spd_per_ypix = maxDrawHeight / (pixelSecs * (float) aopts->maxSteps);
+        spd_per_ypix = height / (pixelSecs * (float) aopts->maxSteps);
     }
     else {
-        spd_per_ypix = maxDrawHeight / (float) m_splinePlanned.topSpeed;
+            // set a limit at 95% high for proportional displa
+
+        spd_per_ypix = (height * 0.95) / (float) m_splinePlanned.topSpeed;
     }
 
         // flush out the path, and create a new one
@@ -389,7 +383,7 @@ QPainterPath* MotionPathPainter::getPath(QRect p_area) {
     int curIdx      = 0;
     int isMoving   = 0;
 
-    m_path->moveTo(0,height);
+    m_path->moveTo(0, height);
 
         // for each pixel in the display,
     for( unsigned long i = 0; i < width; i++ ) {
@@ -400,14 +394,8 @@ QPainterPath* MotionPathPainter::getPath(QRect p_area) {
             break;
 
         float curSpd = m_renderPoints[curIdx];
-      //  qDebug() << "MPP: CSPD: " << curSpd;
 
         int hgt = (float) height - (spd_per_ypix * (float) curSpd);
-
-        // hgt = hgt < (height - maxDrawHeight) ? (height - maxDrawHeight) : hgt;
-
-
-     //   qDebug() << "MPP: HGT: " << (float) hgt;
 
         m_maxHeight = hgt < m_maxHeight ? hgt : m_maxHeight;
 

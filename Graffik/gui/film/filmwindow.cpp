@@ -14,7 +14,7 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, QWidget *parent) :
     m_error = false;
 
     m_ldModel = new LiveDeviceModel(m_net, this);
-    m_jcm = new JogControlManager(m_net, m_opts, m_ldModel, ui->jogResCombo, ui->jogDial, ui->jogSpeedSpin, ui->jogDampSpin, ui->jogHomeButton, ui->jogEndButton, this);
+    m_jcm = new JogControlManager(m_net, m_opts, m_ldModel, ui->jogDial, ui->jogSpeedSpin, ui->jogDampSpin, ui->jogHomeButton, ui->jogEndButton, this);
     m_params = new FilmParameters(m_net, this);
     m_exec = new FilmExec(m_net, m_params, m_opts);
     m_busy = new QProgressDialog(this);
@@ -24,6 +24,7 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, QWidget *parent) :
 
 
     m_areaLayout = new QVBoxLayout;
+    m_areaLayout->setContentsMargins(0, 10, 10, 0);
     ui->visualSAContents->setLayout(m_areaLayout);
 
         // create our transparent overlay for drawing position line
@@ -59,6 +60,9 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, QWidget *parent) :
     connect(m_exec, SIGNAL(error(QString)), this, SLOT(error(QString)));
 
     connect(m_busy, SIGNAL(canceled()), this, SLOT(_busyCanceled()));
+
+    connect(this, SIGNAL(motionAreaBorders(int,int)), m_tape, SLOT(setBorders(int,int)));
+    connect(this, SIGNAL(motionAreaBorders(int,int)), m_motion, SLOT(setBorders(int,int)));
 
 
     _prepInputs();
@@ -110,6 +114,9 @@ void FilmWindow::_drawNewAxis(OMdeviceInfo *p_dev) {
     MotionBase* area = new MotionBase(m_params, p_dev, m_opts, this);
     m_areaBlocks.insert(p_dev->device->address(), area);
     m_areaLayout->addWidget(area);
+
+        // reflect signal from new motion area
+    connect(area, SIGNAL(areaBorders(int,int)), this, SIGNAL(motionAreaBorders(int,int)));
 
     _redrawMotionOverlay();
 
@@ -288,20 +295,17 @@ void FilmWindow::_changeTime(int p_which, int p_pos, int p_val) {
         // can't have axis moves end beyond the end of the film!
         foreach( OMfilmAxisParams* axis, params->axes) {
             // scale movement times with new time difference
-            if( axis->endTm != 0 ) {
+            if( axis->endTm != 0 )
                 axis->endTm = (float) axis->endTm * timeDiff;
 
-                if( axis->decelTm != 0 )
-                    axis->decelTm = (float) axis->decelTm * timeDiff;
-            }
+            if( axis->decelTm != 0 )
+                axis->decelTm = (float) axis->decelTm * timeDiff;
 
-            if( axis->startTm != 0 ) {
+            if( axis->startTm != 0 )
                 axis->startTm = (float) axis->startTm * timeDiff;
 
-                if( axis->accelTm != 0 )
-                    axis->accelTm = (float) axis->accelTm * timeDiff;
-            }
-
+            if( axis->accelTm != 0 )
+                axis->accelTm = (float) axis->accelTm * timeDiff;
 
             if( axis->endTm > params->realLength )
                 axis->endTm = 0;
@@ -487,7 +491,15 @@ void FilmWindow::_endSet(unsigned short p_addr, long p_dist) {
 
     OMfilmParams* parms = m_params->getParams();
 
-    parms->axes.value(p_addr)->endDist = p_dist;
+    OMfilmAxisParams* axis = parms->axes.value(p_addr);
+    axis->endDist = p_dist;
+
+    if( axis->accelTm == 0 )
+        axis->accelTm = ( (float)parms->realLength * 0.10);
+
+    if( axis->decelTm == 0 )
+        axis->decelTm = ( (float)parms->realLength * 0.10);
+
 
     m_params->releaseParams();
 }
@@ -561,6 +573,8 @@ void FilmWindow::_redrawMotionOverlay() {
     delete m_filter;
     m_filter = new SectionResizeFilter(m_motion, this);
     ui->visualSAContents->installEventFilter(m_filter);
+    connect(this, SIGNAL(motionAreaBorders(int,int)), m_motion, SLOT(setBorders(int,int)));
+
 }
 
 void FilmWindow::_filmStarted() {

@@ -80,7 +80,8 @@ void FilmExec::start() {
 
 
     bool sentHome = false;
-    QList<OMAxis*> axesHome;
+
+    m_axesHome.clear();
 
         // If stopped, we have to do several things before
         // starting - but if paused, we can just broadcast
@@ -116,14 +117,15 @@ void FilmExec::start() {
 
             unsigned short addr = axis->address();
             long distanceToMove = abs(m_film.axes.value(addr)->endDist);
+            bool mute           = m_film.axes.value(addr)->mute;
 
-            if( distanceToMove != 0 ) {
+            if( distanceToMove != 0 && ! mute ) {
                     // only do this if moving
                 qDebug() << "FEx: Sending Device Home: " << addr;
                 _sendHome(axis);
 
                     // record that we sent axes home
-                axesHome.append(axis);
+                m_axesHome.append(axis);
                 sentHome = true;
 
                     // when nodes have to go Home, we need to wait for them
@@ -164,7 +166,7 @@ void FilmExec::start() {
     else {
             // if we sent nodes home, update HomeMonitor with
             // list of axes sent home
-       m_home->checkAxes(axesHome);
+       m_home->checkAxes(m_axesHome);
        m_home->start();
     }
 }
@@ -289,6 +291,7 @@ unsigned long FilmExec::interval(OMfilmParams* p_film) {
 void FilmExec::_sendHome(OMAxis* p_axis) {
     qDebug() << "FEx: Sending node home" << p_axis->address();
     p_axis->motorEnable();
+    p_axis->microSteps(1);
     p_axis->home();
 }
 
@@ -353,12 +356,15 @@ void FilmExec::_sendNodeMovements(OMfilmParams *p_film, OMAxis *p_axis) {
 
     long end   = parms->endDist;
     bool dir   = end < 0 ? false : true;
-    end = abs(end);
+        // multiply end point by microsteps, we jog in rapid
+    end = abs(end * parms->ms);
+
 
         // if no end time specified, arrive at end of film
     unsigned long arrive = parms->endTm > 0 ? parms->endTm : p_film->realLength;
     unsigned long accel = parms->accelTm;
     unsigned long decel = parms->decelTm;
+
 
     if( which ) {
         // in sms mode, we go by shots - not walltime
@@ -377,13 +383,13 @@ void FilmExec::_sendNodeMovements(OMfilmParams *p_film, OMAxis *p_axis) {
         decel = dc_shots;
     }
 
-    qDebug() << "FE: Motor Params: " << which << dir << end << arrive << accel << decel;
+    qDebug() << "FE: Motor Params: " << which << dir << parms->startTm << end << arrive << accel << decel;
 
     p_axis->motorEnable();
     p_axis->continuous(false);
     p_axis->delayMove(parms->startTm);
     p_axis->easing(parms->easing);
-    p_axis->microSteps(parms->ms);
+        // We do this after the node gets home!
     p_axis->plan(which, dir, end, arrive, accel, decel);
 
 }
@@ -393,10 +399,9 @@ OMAxis* FilmExec::_getTimingMaster(QList<OMAxis *> *p_axes) {
     foreach(OMAxis* axis, *p_axes) {
         OMaxisOptions* aopts = m_opts->getOptions(axis->address());
 
-        if( aopts->master == true ) {
-            qDebug() << "FEx: Found Master: " << axis;
+        if( aopts->master == true )
             return axis;
-        }
+
     }
 }
 
@@ -442,7 +447,15 @@ QList<OMAxis*> FilmExec::_getAxes(OMfilmParams* p_film) {
     // start when all nodes are found to be at home
 
 void FilmExec::_nodesHome() {
-    qDebug() << "FEx: Nodes are all home, starting";
+    qDebug() << "FEx: Nodes are all home, sending mS values";
+
+
+        // send mS parameter for each node
+    foreach(OMAxis* axis, m_axesHome)
+        axis->microSteps(m_film.axes.value(axis->address())->ms);
+
+
+    qDebug() << "FEx: Nodes all re-configured, starting";
 
     m_net->broadcast(OMBus::OM_BCAST_START);
     m_stat = FILM_STARTED;

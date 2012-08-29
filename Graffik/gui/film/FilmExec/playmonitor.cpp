@@ -19,6 +19,8 @@ PlayMonitor::~PlayMonitor() {
         delete m_timer;
 }
 
+/** Start Timer */
+
 void PlayMonitor::start() {
 
     if( ! m_started ) {
@@ -30,6 +32,8 @@ void PlayMonitor::start() {
 
 }
 
+/** Stop Timer */
+
 void PlayMonitor::stop() {
     if( m_started == true ) {
         m_timer->stop();
@@ -38,6 +42,11 @@ void PlayMonitor::stop() {
     }
 }
 
+
+/** Specify master node
+
+    You -must- specify the master before starting the timer!
+*/
 
 void PlayMonitor::master(OMAxis *p_master) {
     m_master = p_master;
@@ -73,7 +82,7 @@ void PlayMonitor::_cmdReceived(int p_id, OMCommandBuffer *p_cmd) {
     if( ! m_cmds.contains(p_id) )
         return;
 
-    qDebug() << "PM: Recv'd back " << p_id;
+   // qDebug() << "PM: Recv'd back " << p_id;
 
     if( p_cmd->status() == OMC_SUCCESS ) {
         unsigned int resSize = p_cmd->resultSize();

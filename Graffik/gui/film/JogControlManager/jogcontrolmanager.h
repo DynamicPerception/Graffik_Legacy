@@ -29,7 +29,7 @@ class JogControlManager : public QObject
 {
     Q_OBJECT
 public:
-    JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, LiveDeviceModel* c_ldm, QComboBox* c_jogCombo, QDial* c_jogDial, QDoubleSpinBox* c_jogSpd, QDoubleSpinBox* c_jogDmp, QPushButton* c_homeBut, QPushButton* c_endBut, QObject *parent = 0);
+    JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, LiveDeviceModel* c_ldm, QDial* c_jogDial, QDoubleSpinBox* c_jogSpd, QDoubleSpinBox* c_jogDmp, QPushButton* c_homeBut, QPushButton* c_endBut, QObject *parent = 0);
     ~JogControlManager();
 
 signals:

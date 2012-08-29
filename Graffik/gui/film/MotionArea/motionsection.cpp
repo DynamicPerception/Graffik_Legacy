@@ -26,6 +26,9 @@ MotionSection::MotionSection(FilmExec *c_exec, FilmParameters *c_film, QWidget *
     connect(m_film, SIGNAL(paramsReleased()), this, SLOT(paramsChanged()));
     connect(m_exec, SIGNAL(filmPlayStatus(bool,ulong)), this, SLOT(playStatusChanged(bool,ulong)));
 
+    m_leftX = 0;
+    m_rightX = rect().width();
+
 }
 
 MotionSection::~MotionSection() {
@@ -35,11 +38,10 @@ MotionSection::~MotionSection() {
 void MotionSection::paintEvent(QPaintEvent * p_event) {
      QPainter painter(this);
 
-    if( p_event->rect().width() != m_width ||
-            p_event->rect().height() != m_height ||
+     if( m_width != (m_rightX - m_leftX) ||
             m_curPos != m_wasPos ) {
 
-        m_width  = p_event->rect().width();
+        m_width  = m_rightX - m_leftX;
         m_height = p_event->rect().height();
         m_wasPos = m_curPos;
         _updatePath();
@@ -78,14 +80,17 @@ void MotionSection::_updatePath() {
     delete m_path;
     m_path = new QPainterPath;
 
-    m_scrollWidth = m_parent->width() - m_parent->layout()->contentsMargins().right();
-    int diff = m_width - m_scrollWidth;
+    int curXpos = ((float) m_curPos / (float) m_length) * (float) m_width;
 
-    int curXpos = ((float) m_curPos / (float) m_length) * (float) (m_width - MS_PRE_GAP - diff);
-
-    m_path->moveTo(MS_PRE_GAP + curXpos, 0);
-    m_path->lineTo(MS_PRE_GAP + curXpos, m_height);
+    m_path->moveTo(m_leftX + curXpos, 0);
+    m_path->lineTo(m_leftX + curXpos, m_height);
 }
 
+
+void MotionSection::setBorders(int p_left, int p_right) {
+    m_leftX = mapFromGlobal(QPoint(p_left, 0)).x();
+    m_rightX = mapFromGlobal(QPoint(p_right, 0)).x();
+
+}
 
 

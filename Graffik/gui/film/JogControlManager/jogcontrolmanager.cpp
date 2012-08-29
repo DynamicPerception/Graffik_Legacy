@@ -4,13 +4,13 @@
 
 #include <QDebug>
 
-JogControlManager::JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, LiveDeviceModel* c_ldm, QComboBox* c_jogCombo, QDial* c_jogDial, QDoubleSpinBox* c_jogSpd, QDoubleSpinBox *c_jogDmp, QPushButton* c_homeBut, QPushButton* c_endBut, QObject *parent) :
+JogControlManager::JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, LiveDeviceModel* c_ldm, QDial* c_jogDial, QDoubleSpinBox* c_jogSpd, QDoubleSpinBox *c_jogDmp, QPushButton* c_homeBut, QPushButton* c_endBut, QObject *parent) :
     QObject(parent)
 {
     m_curAxis = 0;
     m_curRes = 1;
 
-    m_jogCombo = c_jogCombo;
+  //  m_jogCombo = c_jogCombo;
     m_jogSpd = c_jogSpd;
     m_jogDmp = c_jogDmp;
     m_jogDial = c_jogDial;
@@ -26,12 +26,12 @@ JogControlManager::JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, Live
 
         // populate resolution combo
 
-    m_jogCombo->addItem("Rapid", OM_JOGRES_RAPID);
+ /*   m_jogCombo->addItem("Rapid", OM_JOGRES_RAPID);
     m_jogCombo->addItem("Coarse", OM_JOGRES_COARSE);
     m_jogCombo->addItem("Fine", OM_JOGRES_FINE);
     m_jogCombo->addItem("X Fine", OM_JOGRES_XFINE);
     m_jogCombo->setCurrentIndex(0);
-
+*/
         // create speedcontrolproxy object and run timer loop
         // in its own thread
     m_scp = new SpeedControlProxy(m_opts);
@@ -64,7 +64,7 @@ JogControlManager::JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, Live
     QObject::connect(m_jogDial, SIGNAL(sliderMoved(int)), m_scp, SLOT(speedPosChange(int)));
 
         // tie resolution change to us (we'll pass onto SCP)
-    QObject::connect(m_jogCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(_jogResChange(int)));
+   // QObject::connect(m_jogCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(_jogResChange(int)));
 
         // tie home and end buttons
     QObject::connect(m_homeBut, SIGNAL(clicked()), this, SLOT(_homeClicked()));
@@ -99,7 +99,7 @@ void JogControlManager::_liveDeviceSelected(unsigned short p_addr) {
     _prepJogInputs(p_addr);
 
         // revert to rapid
-    m_jogCombo->setCurrentIndex(0);
+   // m_jogCombo->setCurrentIndex(0);
     m_scp->setResolution(1);
 
 }
@@ -200,7 +200,8 @@ void JogControlManager::_jogDampChange(double p_damp) {
 // anything about the combobox its self
 
 void JogControlManager::_jogResChange(int p_idx) {
-    unsigned int ms = m_jogCombo->itemData(p_idx).toUInt();
+   // unsigned int ms = m_jogCombo->itemData(p_idx).toUInt();
+    unsigned int ms = 1; //m_jogCombo->itemData(p_idx).toUInt();
 
     m_scp->setResolution(ms);
 

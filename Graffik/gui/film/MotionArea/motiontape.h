@@ -12,8 +12,6 @@
 #include <QFont>
 #include <QWidget>
 
-#define MT_LINE_SPACE   63
-#define MT_END_GAP      13
 #define MT_LINE_MINSPC  5
 #define MT_FONT_SIZE    8
 
@@ -42,6 +40,7 @@ public:
 public slots:
 
     void filmUpdated();
+    void setBorders(int p_left, int p_right);
 
 private:
     Ui::MotionTape* ui;
@@ -55,6 +54,8 @@ private:
     int m_width;
     int m_scrollWidth;
     int m_preSpace;
+    int m_leftX;
+    int m_rightX;
 
     void _drawTime(QRect p_rect);
     void _drawLines(QRect p_rect, int p_lines, int p_height, int p_fill = 0, int p_pad = 0);

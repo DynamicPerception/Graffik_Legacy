@@ -22,7 +22,16 @@ public:
     
 public slots:
     void curScale(bool p_scale);
+    void muted(int p_muted);
     void on_easeButton_clicked();
+    void on_resButton_clicked();
+
+signals:
+
+        /** Reflected signal from Motion Area, indicates the left X and right X borders
+            (in global coordinates) of the area drawn */
+
+    void areaBorders(int p_leftX, int p_rightX);
 
 private:
     Ui::MotionBase *ui;
