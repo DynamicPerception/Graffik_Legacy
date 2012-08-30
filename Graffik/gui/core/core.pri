@@ -15,13 +15,16 @@ HEADERS                 +=  \
     core/UserData/userdata.h \
     core/Dialogs/confirmdialog.h \
     core/Dialogs/deletedevicedialog.h \
-    core/AxisOptions/axisoptionsdialog.h \
-    core/AxisOptions/axisoptions.h \
+    core/Options/axisoptionsdialog.h \
+    core/Options/axisoptions.h \
     core/Dialogs/deletebusdialog.h \ 
     core/DeviceScan/devicescandialog.h \
     core/DeviceScan/devicescanner.h \
     core/DeviceScan/deviceassigndialog.h \
-    core/Dialogs/aboutdialog.h
+    core/Dialogs/aboutdialog.h \
+    core/Options/globaloptions.h \
+    core/Options/globaloptionsdialog.h \
+    core/Options/optiontypes.h
 
 			   
 SOURCES                 +=  \
@@ -35,19 +38,21 @@ SOURCES                 +=  \
     core/UserData/userdata.cpp \
     core/Dialogs/confirmdialog.cpp \
     core/Dialogs/deletedevicedialog.cpp \
-    core/AxisOptions/axisoptionsdialog.cpp \
-    core/AxisOptions/axisoptions.cpp \
+    core/Options/axisoptionsdialog.cpp \
+    core/Options/axisoptions.cpp \
     core/Dialogs/deletebusdialog.cpp \ 
     core/DeviceScan/devicescandialog.cpp \
     core/DeviceScan/devicescanner.cpp \
     core/DeviceScan/deviceassigndialog.cpp \
-    core/Dialogs/aboutdialog.cpp
+    core/Dialogs/aboutdialog.cpp \
+    core/Options/globaloptions.cpp \
+    core/Options/globaloptionsdialog.cpp
 
 			   
 FORMS 			+=  \
     core/NetworkStatusDisplay/networkstatusdisplay.ui \
     core/NetworkManager/networkmanager.ui \
-    core/AxisOptions/axisoptionsdialog.ui \
+    core/Options/axisoptionsdialog.ui \
     core/Dialogs/adddevicedialog.ui \
     core/Dialogs/confirmdialog.ui \
     core/Dialogs/deletedevicedialog.ui \
@@ -56,6 +61,7 @@ FORMS 			+=  \
    core/Dialogs/addnetdialog.ui \ 
     core/DeviceScan/devicescandialog.ui \
     core/DeviceScan/deviceassigndialog.ui \
-    core/Dialogs/aboutdialog.ui
-	   
+    core/Dialogs/aboutdialog.ui \
+    core/Options/globaloptionsdialog.ui
+
 	   

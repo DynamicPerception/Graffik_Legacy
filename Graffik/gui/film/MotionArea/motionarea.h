@@ -12,7 +12,7 @@
 #include "MoCoBus/omnetwork.h"
 
 #include "film/FilmParameters/filmparameters.h"
-#include "core/AxisOptions/axisoptions.h"
+#include "core/Options/axisoptions.h"
 
 #include "motionpathpainter.h"
 

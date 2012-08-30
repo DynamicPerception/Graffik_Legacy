@@ -9,11 +9,16 @@
 
 #include "core/Dialogs/addnetdialog.h"
 #include "core/Dialogs/adddevicedialog.h"
+#include "core/Dialogs/aboutdialog.h"
+
 
 #include "core/NetworkModel/networkmodel.h"
 #include "core/NetworkManager/networkmanager.h"
-#include "core/AxisOptions/axisoptions.h"
-#include "core/AxisOptions/axisoptionsdialog.h"
+
+#include "core/Options/axisoptions.h"
+#include "core/Options/axisoptionsdialog.h"
+#include "core/Options/globaloptions.h"
+#include "core/Options/globaloptionsdialog.h"
 
 #include "Slim/slimcommandparser.h"
 
@@ -48,6 +53,7 @@ private:
     UserData* _uData;
     AxisOptions* _axisOpts;
     CommandHistoryModel* _cmdHist;
+    GlobalOptions* _globalOpts;
 
 public slots:
     void on_actionOpen_File_triggered();
@@ -58,8 +64,15 @@ public slots:
     void on_actionHelp_Contents_triggered();
     void on_actionScan_for_Devices_triggered();
     void on_actionInitialize_New_Device_triggered();
+    void on_actionSettings_triggered();
+    void on_actionAbout_Graffik_triggered();
 
 private slots:
+
+    void globalOptionsChanged();
+
+signals:
+    void globalOptionsChanged(GlobalOptions* p_opts);
 
 };
 

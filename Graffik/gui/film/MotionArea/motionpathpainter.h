@@ -5,7 +5,7 @@
 #include <QRect>
 
 #include "film/FilmParameters/filmparameters.h"
-#include "core/AxisOptions/axisoptions.h"
+#include "core/Options/axisoptions.h"
 
     // rough and dirty travel constants from
     // OMMotor (on AVR)

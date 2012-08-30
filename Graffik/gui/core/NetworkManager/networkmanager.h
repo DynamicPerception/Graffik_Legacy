@@ -11,7 +11,7 @@
 #include "core/Dialogs/adddevicedialog.h"
 #include "core/Dialogs/deletedevicedialog.h"
 #include "core/Dialogs/deletebusdialog.h"
-#include "core/AxisOptions/axisoptions.h"
+#include "core/Options/axisoptions.h"
 
 namespace Ui {
 class NetworkManager;

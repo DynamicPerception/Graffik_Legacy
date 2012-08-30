@@ -54,11 +54,37 @@ void UserData::deviceOptionsChanged(OMaxisOptions *p_opts, unsigned short p_addr
     QString key = "film/device_options/" + QString::number(p_addr);
 
         // this really shouldn't happen... but just in case, let's not try to use an invalid pointer
-        // (some spurious agent may get and invalid device option, and then try to save it back
+        // (some spurious agent may get an invalid device option, and then try to save it back)
     if( p_opts == 0 )
         return;
 
     m_qset->setValue(key, QVariant::fromValue(*p_opts));
+}
+
+void UserData::globalOptionsChanged(GlobalOptions *p_opts) {
+
+    qDebug() << "UD: Got Global Opts Change";
+
+    m_qset->beginGroup("global/options");
+
+    m_qset->setValue("stop", p_opts->stopOnErr());
+    m_qset->setValue("display", p_opts->display());
+
+    m_qset->endGroup();
+}
+
+void UserData::recoverGlobalOptions(GlobalOptions *p_opts) {
+    qDebug() << "UD: recoverGlobalOptions";
+
+    m_qset->beginGroup("global/options");
+
+    bool stop = m_qset->value("stop").toBool();
+    int  disp = m_qset->value("display").toInt();
+
+    p_opts->stopOnErr(stop);
+    p_opts->display(disp);
+
+    m_qset->endGroup();
 }
 
 void UserData::recoverAxisOptions(AxisOptions *p_opts) {

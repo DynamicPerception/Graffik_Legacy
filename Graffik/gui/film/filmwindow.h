@@ -9,7 +9,7 @@
 #include <QProgressDialog>
 
 #include "MoCoBus/omnetwork.h"
-#include "core/AxisOptions/axisoptions.h"
+#include "core/Options/axisoptions.h"
 #include "film/JogControlManager/jogcontrolmanager.h"
 #include "film/LiveDeviceModel/livedevicemodel.h"
 #include "film/MotionArea/motionbase.h"

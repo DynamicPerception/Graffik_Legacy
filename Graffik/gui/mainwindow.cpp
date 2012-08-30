@@ -10,10 +10,7 @@
 #include "core/DeviceScan/devicescanner.h"
 
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
-{
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
     _net = new OMNetwork();
     _axisOpts = new AxisOptions(this);
@@ -23,18 +20,21 @@ MainWindow::MainWindow(QWidget *parent) :
     _filmWindow = new FilmWindow(_net, _axisOpts, this);
     _slimWindow =  new SlimWindow(_net, _cmdHist, _parser, ui->tabs);
     _uData = new UserData(this);
+    _globalOpts = new GlobalOptions(this);
 
     ui->tabs->addTab(_filmWindow, "Film");
     ui->tabs->addTab(_slimWindow, "Slim");
 
+    qRegisterMetaType<GlobalOptions*>("GlobalOptions");
+
         // make sure that the slim parser can update its alias and registration when a new device is added/deleted
         // (must be done before recoverBuses)
-    QObject::connect(_net, SIGNAL(deviceAdded(OMbusInfo*,OMdeviceInfo*)), _slimWindow, SLOT(registerNewDevice(OMbusInfo*,OMdeviceInfo*)));
-    QObject::connect(_net, SIGNAL(deviceDeleted(OMbusInfo*,unsigned short)), _slimWindow, SLOT(removeDevice(OMbusInfo*,unsigned short)));
+    connect(_net, SIGNAL(deviceAdded(OMbusInfo*,OMdeviceInfo*)), _slimWindow, SLOT(registerNewDevice(OMbusInfo*,OMdeviceInfo*)));
+    connect(_net, SIGNAL(deviceDeleted(OMbusInfo*,unsigned short)), _slimWindow, SLOT(removeDevice(OMbusInfo*,unsigned short)));
 
         // create new options for devices as they are added/deleted
-    QObject::connect(_net, SIGNAL(deviceAdded(OMbusInfo*,OMdeviceInfo*)), _axisOpts, SLOT(deviceAdded(OMbusInfo*,OMdeviceInfo*)));
-    QObject::connect(_net, SIGNAL(deviceDeleted(OMbusInfo*,unsigned short)), _axisOpts, SLOT(deviceDeleted(OMbusInfo*,unsigned short)));
+    connect(_net, SIGNAL(deviceAdded(OMbusInfo*,OMdeviceInfo*)), _axisOpts, SLOT(deviceAdded(OMbusInfo*,OMdeviceInfo*)));
+    connect(_net, SIGNAL(deviceDeleted(OMbusInfo*,unsigned short)), _axisOpts, SLOT(deviceDeleted(OMbusInfo*,unsigned short)));
 
         // recover stored bus data back to network manager
         // Do this BEFORE connecting up the signals and slots in uData to
@@ -47,29 +47,31 @@ MainWindow::MainWindow(QWidget *parent) :
         // overwritten with the default values
     _uData->recoverAxisOptions(_axisOpts);
 
+        // recover global options
+    _uData->recoverGlobalOptions(_globalOpts);
+
         // connect network manager to userdata handlers (to save input information automatically)
-    QObject::connect(_net, SIGNAL(busAdded(OMbusInfo*)), _uData, SLOT(busAdded(OMbusInfo*)));
-    QObject::connect(_net, SIGNAL(busDeleted(QString,QString)), _uData, SLOT(busDeleted(QString,QString)));
-    QObject::connect(_net, SIGNAL(deviceAdded(OMbusInfo*,OMdeviceInfo*)), _uData, SLOT(deviceAdded(OMbusInfo*,OMdeviceInfo*)));
-    QObject::connect(_net, SIGNAL(deviceDeleted(OMbusInfo*,unsigned short)), _uData, SLOT(deviceDeleted(OMbusInfo*,unsigned short)));
+    connect(_net, SIGNAL(busAdded(OMbusInfo*)), _uData, SLOT(busAdded(OMbusInfo*)));
+    connect(_net, SIGNAL(busDeleted(QString,QString)), _uData, SLOT(busDeleted(QString,QString)));
+    connect(_net, SIGNAL(deviceAdded(OMbusInfo*,OMdeviceInfo*)), _uData, SLOT(deviceAdded(OMbusInfo*,OMdeviceInfo*)));
+    connect(_net, SIGNAL(deviceDeleted(OMbusInfo*,unsigned short)), _uData, SLOT(deviceDeleted(OMbusInfo*,unsigned short)));
 
         // again, we connect the userdata to the OMAxisFilmOptions object -after- recoverBuses to prevent the loading
         // of stored axis options to trigger a re-write back to the ini file.  We do not use a queued connection here.
-    QObject::connect(_axisOpts, SIGNAL(deviceOptionsChanged(OMaxisOptions*,unsigned short)), _uData, SLOT(deviceOptionsChanged(OMaxisOptions*,unsigned short)));
-    QObject::connect(_axisOpts, SIGNAL(deviceOptionsRemoved(unsigned short)), _uData, SLOT(deviceOptionsRemoved(unsigned short)));
+    connect(_axisOpts, SIGNAL(deviceOptionsChanged(OMaxisOptions*,unsigned short)), _uData, SLOT(deviceOptionsChanged(OMaxisOptions*,unsigned short)));
+    connect(_axisOpts, SIGNAL(deviceOptionsRemoved(unsigned short)), _uData, SLOT(deviceOptionsRemoved(unsigned short)));
 
+    connect(_globalOpts, SIGNAL(optionsChanged()), this, SLOT(globalOptionsChanged()));
+    connect(this, SIGNAL(globalOptionsChanged(GlobalOptions*)), _uData, SLOT(globalOptionsChanged(GlobalOptions*)));
 
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
 
         // ALWAYS delete userdata first to prevent it catching
         // signals as other classes are destroyed
 
     delete _uData;
-
-
     delete _filmWindow;
     delete _slimWindow;
     delete _parser;
@@ -77,8 +79,14 @@ MainWindow::~MainWindow()
     delete _netModel;
     delete _axisOpts;
     delete _net;
+    delete _globalOpts;
     delete ui;
 
+}
+
+
+void MainWindow::globalOptionsChanged() {
+    emit globalOptionsChanged(_globalOpts);
 }
 
 void MainWindow::on_actionAdd_Bus_triggered() {
@@ -126,6 +134,19 @@ void MainWindow::on_actionScan_for_Devices_triggered() {
 void MainWindow::on_actionInitialize_New_Device_triggered() {
     qDebug() << "MW: Initialize New Device Triggered";
     DeviceScanner* scan = new DeviceScanner(_net, 2);
+}
+
+
+void MainWindow::on_actionSettings_triggered() {
+    qDebug() << "MW: Settings Triggered";
+    GlobalOptionsDialog options(_globalOpts);
+    options.exec();
+}
+
+void MainWindow::on_actionAbout_Graffik_triggered() {
+    qDebug() << "MW: About Triggered";
+    AboutDialog about;
+    about.exec();
 }
 
 /*void MainWindow::setSlimWindow(SlimWindow * p_slim) {

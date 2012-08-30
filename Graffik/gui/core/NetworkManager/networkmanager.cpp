@@ -3,7 +3,7 @@
 #include "networkmanager.h"
 #include "ui_networkmanager.h"
 
-#include "core/AxisOptions/axisoptionsdialog.h"
+#include "core/Options/axisoptionsdialog.h"
 
 
 NetworkManager::NetworkManager(NetworkModel *c_net, AxisOptions* c_opts, QWidget *parent) :

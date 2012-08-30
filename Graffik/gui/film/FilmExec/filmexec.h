@@ -11,7 +11,7 @@
 #include "Devices/nanoMoCo/omaxis.h"
 
 #include "film/FilmParameters/filmparameters.h"
-#include "core/AxisOptions/axisoptions.h"
+#include "core/Options/axisoptions.h"
 
 #include "homemonitor.h"
 #include "playmonitor.h"

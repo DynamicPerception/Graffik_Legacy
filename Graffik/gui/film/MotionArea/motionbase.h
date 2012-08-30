@@ -5,7 +5,7 @@
 
 #include "motionarea.h"
 #include "MoCoBus/omnetwork.h"
-#include "core/AxisOptions/axisoptions.h"
+#include "core/Options/axisoptions.h"
 #include "film/FilmParameters/filmparameters.h"
 
 namespace Ui {
