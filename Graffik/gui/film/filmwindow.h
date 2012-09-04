@@ -9,7 +9,11 @@
 #include <QProgressDialog>
 
 #include "MoCoBus/omnetwork.h"
+
 #include "core/Options/axisoptions.h"
+#include "core/Options/globaloptions.h"
+#include "core/Dialogs/errordialog.h"
+
 #include "film/JogControlManager/jogcontrolmanager.h"
 #include "film/LiveDeviceModel/livedevicemodel.h"
 #include "film/MotionArea/motionbase.h"
@@ -20,8 +24,6 @@
 #include "film/Dialogs/cameracontroldialog.h"
 #include "film/FilmExec/filmexec.h"
 
-#include "core/Dialogs/errordialog.h"
-
 namespace Ui {
     class FilmWindow;
 }
@@ -31,7 +33,7 @@ class FilmWindow : public QWidget
     Q_OBJECT
     
 public:
-    FilmWindow(OMNetwork* c_net, AxisOptions* c_opts, QWidget *parent = 0);
+    FilmWindow(OMNetwork* c_net, AxisOptions* c_opts, GlobalOptions* c_gopts, QWidget *parent = 0);
     ~FilmWindow();
 
 public slots:
@@ -71,14 +73,18 @@ private slots:
 signals:
         /** This signal is reflected from the drawn motion areas to indicate
             the location of their borders */
-
     void motionAreaBorders(int p_leftX, int p_rightX);
+
+        /** This signal is sent when the film playing status is changed, indicating what
+          the current status is */
+    void playStatusChange(bool p_stat);
 
 private:
     Ui::FilmWindow *ui;
     LiveDeviceModel* m_ldModel;
     OMNetwork* m_net;
     AxisOptions* m_opts;
+    GlobalOptions* m_gopts;
     JogControlManager* m_jcm;
     FilmParameters* m_params;
     FilmExec* m_exec;
@@ -112,6 +118,7 @@ private:
     void _filmTimeDisplay(unsigned long p_ms);
 
     void _redrawMotionOverlay();
+    void _inputEnable(bool p_stat);
 };
 
 #endif // FILMWINDOW_H

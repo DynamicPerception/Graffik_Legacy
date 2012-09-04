@@ -1,14 +1,15 @@
 #include "motionbase.h"
 #include "ui_motionbase.h"
 
+#include <QDebug>
 
-MotionBase::MotionBase(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions *c_aopts, QWidget *parent) :
+MotionBase::MotionBase(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions *c_aopts, GlobalOptions *c_gopts, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MotionBase)
 {
     ui->setupUi(this);
 
-    m_area = new MotionArea(c_film, c_dev, c_aopts, this);
+    m_area = new MotionArea(c_film, c_dev, c_aopts, c_gopts, this);
     ui->horizontalLayout->addWidget(m_area);
     ui->horizontalLayout->setContentsMargins(0,0,0,0);
     ui->horizontalLayout->setMargin(0);
@@ -28,6 +29,7 @@ MotionBase::MotionBase(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions 
     connect(m_area, SIGNAL(muted(int)), this, SLOT(muted(int)));
 
     connect(m_area, SIGNAL(globalPosition(int,int)), this, SIGNAL(areaBorders(int,int)));
+    connect(this, SIGNAL(playStatus(bool)), m_area, SLOT(playStatus(bool)));
 
 }
 
@@ -128,8 +130,29 @@ void MotionBase::muted(int p_muted) {
     }
 
     axis->mute = p_muted;
-        // we can enter a feedback loop.  No one cares about muting
+        // we can enter a feedback loop - so don't broadcast.  No one cares about muting
         // except MotionArea, us, and FilmExec.
     m_film->releaseParams(false);
+
+}
+
+/** Receive Playing Status
+
+  This slot receives the current playing status.  We only do something when
+  this status actually changes.
+
+  The purpose of monitoring status here is to disable certain inputs when
+  the film is playing, as the user should not be able to modify them.
+  */
+
+void MotionBase::statusChange(bool p_stat) {
+
+    qDebug() << "MB: Got statChange:" << p_stat;
+
+    ui->muteButton->setEnabled( ! p_stat);
+    ui->easeButton->setEnabled( ! p_stat);
+    ui->resButton->setEnabled( ! p_stat);
+
+    emit playStatus(p_stat);
 
 }

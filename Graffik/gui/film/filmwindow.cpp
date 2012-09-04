@@ -4,12 +4,13 @@
 #include <QDebug>
 
 
-FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, QWidget *parent) : QWidget(parent), ui(new Ui::FilmWindow) {
+FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_gopts, QWidget *parent) : QWidget(parent), ui(new Ui::FilmWindow) {
 
     ui->setupUi(this);
 
     m_net = c_net;
     m_opts = c_opts;
+    m_gopts = c_gopts;
 
     m_error = false;
 
@@ -111,12 +112,13 @@ void FilmWindow::_drawNewAxis(OMdeviceInfo *p_dev) {
 
     qDebug() << "FW: Got new axis, spawning motion area" << p_dev->type;
 
-    MotionBase* area = new MotionBase(m_params, p_dev, m_opts, this);
+    MotionBase* area = new MotionBase(m_params, p_dev, m_opts, m_gopts, this);
     m_areaBlocks.insert(p_dev->device->address(), area);
     m_areaLayout->addWidget(area);
 
         // reflect signal from new motion area
     connect(area, SIGNAL(areaBorders(int,int)), this, SIGNAL(motionAreaBorders(int,int)));
+    connect(this, SIGNAL(playStatusChange(bool)), area, SLOT(statusChange(bool)));
 
     _redrawMotionOverlay();
 
@@ -458,6 +460,8 @@ void FilmWindow::on_stopButton_clicked() {
     qDebug() << "FW: Sending Stop";
 
     m_exec->stop();
+    _inputEnable(true);
+    emit playStatusChange(false);
 
 }
 
@@ -510,7 +514,7 @@ void FilmWindow::_playStatus(bool p_stat, unsigned long p_time) {
    static bool wasStat = false;
 
         // not running anymore, turn off our status timers and such
-    if( p_stat == false && wasStat == true ) {
+    if( p_stat == false && wasStat == true && m_exec->status() != FILM_PAUSED ) {
         unsigned long len = m_params->getParams()->realLength;
         m_params->releaseParams(false);
         _filmTimeDisplay(len);
@@ -580,6 +584,8 @@ void FilmWindow::_redrawMotionOverlay() {
 void FilmWindow::_filmStarted() {
     qDebug() << "FW: Got filmStarted";
     m_busy->hide();
+    _inputEnable(false);
+    emit playStatusChange(true);
 }
 
 void FilmWindow::error(QString p_err) {
@@ -604,4 +610,32 @@ void FilmWindow::_busyCanceled() {
 
 
     on_stopButton_clicked();
+}
+
+
+void FilmWindow::_inputEnable(bool p_stat) {
+    ui->realHHSpin->setEnabled(p_stat);
+    ui->realMMSpin->setEnabled(p_stat);
+    ui->realSSSpin->setEnabled(p_stat);
+    ui->forwardButton->setEnabled(p_stat);
+    ui->rewindButton->setEnabled(p_stat);
+    ui->frameFwdButton->setEnabled(p_stat);
+    ui->frameRwdButton->setEnabled(p_stat);
+    ui->camControlCheckBox->setEnabled(p_stat);
+
+        // only control status of certain camera inputs, if
+        // cam control enabled
+
+    OMfilmParams params = m_params->getParamsCopy();
+    bool cam = params.camParams->camControl;
+    bool autoFPS = params.camParams->autoFPS;
+
+    if( cam ) {
+        ui->camSetBut->setEnabled(p_stat);
+        if( autoFPS ) {
+            ui->filmHHSpin->setEnabled(p_stat);
+            ui->filmMMSpin->setEnabled(p_stat);
+            ui->filmSSSpin->setEnabled(p_stat);
+        }
+    }
 }

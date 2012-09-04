@@ -14,13 +14,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->setupUi(this);
     _net = new OMNetwork();
     _axisOpts = new AxisOptions(this);
+    _globalOpts = new GlobalOptions(this);
     _netModel = new NetworkModel(_net, this);
     _parser = new SlimCommandParser(_net);
     _cmdHist = new CommandHistoryModel(_net, this);
-    _filmWindow = new FilmWindow(_net, _axisOpts, this);
+    _filmWindow = new FilmWindow(_net, _axisOpts, _globalOpts, this);
     _slimWindow =  new SlimWindow(_net, _cmdHist, _parser, ui->tabs);
     _uData = new UserData(this);
-    _globalOpts = new GlobalOptions(this);
 
     ui->tabs->addTab(_filmWindow, "Film");
     ui->tabs->addTab(_slimWindow, "Slim");

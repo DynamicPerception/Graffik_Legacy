@@ -13,6 +13,7 @@
 
 #include "film/FilmParameters/filmparameters.h"
 #include "core/Options/axisoptions.h"
+#include "core/Options/globaloptions.h"
 
 #include "motionpathpainter.h"
 
@@ -20,6 +21,14 @@
 #define MA_CL_COLOR "#FFFFFF"
 #define MA_ER_COLOR "#FF3333"
 #define MA_MT_COLOR "#CDC5BF"
+
+#define MA_STR_STEP " Steps"
+#define MA_STR_IMP  " In."
+#define MA_STR_MET  " cm."
+#define MA_STR_DEG  " Deg."
+#define MA_STR_POS  "Postion: "
+#define MA_STR_SPD  "Speed: "
+#define MA_STR_MOD  "/sec"
 
 #define MA_PT_NONE  0
 #define MA_PT_START 1
@@ -42,7 +51,7 @@ class MotionArea : public QWidget
     Q_OBJECT
     
 public:
-    MotionArea(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions* c_aopt, QWidget *parent);
+    MotionArea(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions* c_aopt, GlobalOptions* c_gopt, QWidget *parent);
     ~MotionArea();
 
     void paintEvent(QPaintEvent* e);
@@ -58,6 +67,7 @@ public slots:
     void axisOptionsUpdated(OMaxisOptions* p_opts,unsigned short p_addr);
     void moveSane(bool p_sane);
     void mute();
+    void playStatus(bool p_stat);
 
 signals:
         /** Signal indicates when the display scale (relative or proportional) has been changed */
@@ -76,6 +86,7 @@ private:
     FilmParameters* m_film;
     MotionPathPainter* m_path;
     AxisOptions* m_aopt;
+    GlobalOptions* m_gopt;
     QTimer* m_timer;
 
     QRect m_mvStart;
@@ -90,6 +101,8 @@ private:
     int m_curPy;
     int m_mute;
     bool m_sane;
+    bool m_pstat;
+
 
 };
 

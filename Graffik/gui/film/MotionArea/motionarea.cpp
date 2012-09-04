@@ -7,17 +7,20 @@
 #include <QDebug>
 
 
-MotionArea::MotionArea(FilmParameters *c_film, OMdeviceInfo *c_dev, AxisOptions* c_aopt, QWidget *parent) :
+MotionArea::MotionArea(FilmParameters *c_film, OMdeviceInfo *c_dev, AxisOptions* c_aopt, GlobalOptions *c_gopt, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MotionArea)
 {
     m_dev = c_dev;
     m_film = c_film;
     m_aopt = c_aopt;
+    m_gopt = c_gopt;
 
     m_bgCol = MA_BG_COLOR;
     m_mute  = MA_MUTE_NA;
     m_sane  = true;
+
+    m_pstat = false;
 
     ui->setupUi(this);
 
@@ -80,19 +83,22 @@ void MotionArea::mousePressEvent(QMouseEvent *p_event) {
         // stop tooltip display timer
     m_timer->stop();
 
-    if( m_mvStart.contains(cPos) ) {
+        // note that we never allow click+drag when the film is playing,
+        // so check the play status
+
+    if( m_pstat == false && m_mvStart.contains(cPos) ) {
         qDebug() << "MA: Clicked MVStart";
         m_moveItem = MA_PT_START;
     }
-    else if( m_mvEnd.contains(cPos) ) {
+    else if( m_pstat == false && m_mvEnd.contains(cPos) ) {
         qDebug() << "MA: Clicked MVEnd";
         m_moveItem = MA_PT_END;
     }
-    else if( m_acEnd.contains(cPos) ) {
+    else if( m_pstat == false && m_acEnd.contains(cPos) ) {
         qDebug() << "MA: Clicked ACEnd";
         m_moveItem = MA_PT_ACE;
     }
-    else if(m_dcStart.contains(cPos) ) {
+    else if(m_pstat == false && m_dcStart.contains(cPos) ) {
         qDebug() << "MA: Clicked DCStart";
         m_moveItem = MA_PT_DCS;
     }
@@ -107,6 +113,7 @@ void MotionArea::mousePressEvent(QMouseEvent *p_event) {
         m_curPx = cPos.x();
         m_curPy = cPos.y();
     }
+
 
 }
 
@@ -244,25 +251,27 @@ void MotionArea::paintEvent(QPaintEvent *e) {
         // let everyone know where our left and right sides are, so tied elements can line up
     emit globalPosition(mapToGlobal(QPoint(eventRect.topLeft().x(), 0)).x(), mapToGlobal(QPoint(eventRect.topRight().x(), 0)).x());
 
-        // Regenerate grab-and-drag circles if the path has changed
+        // Regenerate grab-and-drag circles if the path has changed, but only
+        // do so if the film is not playing
 
         // TODO: Remove hard-coded sizes.
 
-    if( m_path->hasChanged() ) {
-        m_mvStart.setRect(m_path->getStartPx() - 5, eventRect.bottom() - 5, 10, 10);
-        m_mvEnd.setRect(m_path->getEndPx() - 5, eventRect.bottom() - 5, 10, 10);
-        m_acEnd.setRect(m_path->getAcEndPx() - 5, m_path->getMaxHeight() - 5, 10, 10);
-        m_dcStart.setRect(m_path->getDcStartPx() - 5, m_path->getMaxHeight() - 5, 10, 10);
-    }
+    if( m_pstat == false ) {
+        if( m_path->hasChanged() ) {
+            m_mvStart.setRect(m_path->getStartPx() - 5, eventRect.bottom() - 5, 10, 10);
+            m_mvEnd.setRect(m_path->getEndPx() - 5, eventRect.bottom() - 5, 10, 10);
+            m_acEnd.setRect(m_path->getAcEndPx() - 5, m_path->getMaxHeight() - 5, 10, 10);
+            m_dcStart.setRect(m_path->getDcStartPx() - 5, m_path->getMaxHeight() - 5, 10, 10);
+        }
 
-     // draw drag points for start and end time
-    if( m_path->isDrawn() ) {
-        painter.drawEllipse(m_mvStart);
-        painter.drawEllipse(m_mvEnd);
-        painter.drawEllipse(m_acEnd);
-        painter.drawEllipse(m_dcStart);
+         // draw drag points for start and end time
+        if( m_path->isDrawn() ) {
+            painter.drawEllipse(m_mvStart);
+            painter.drawEllipse(m_mvEnd);
+            painter.drawEllipse(m_acEnd);
+            painter.drawEllipse(m_dcStart);
+        }
     }
-
 
 }
 
@@ -318,12 +327,39 @@ void MotionArea::_tooltipTimer() {
 
     float curPos = m_path->getPosition(m_curPx);
     float curSpd = m_path->getSpeed(m_curPx);
-    unsigned long curMs = m_path->getFilmTime(m_curPx);
+   // unsigned long curMs = m_path->getFilmTime(m_curPx);
 
-        // TODO: need to convert absolute step values into correct deg/distance
-    // OMaxisOptions* devOpts = m_aopt->getOptions(m_dev->device->address());
+        // Convert absolute step values into correct deg/distance as required
+    OMaxisOptions* devOpts = m_aopt->getOptions(m_dev->device->address());
 
-    QString descText = "Position: " + QString::number(curPos) + "\n" + "Speed: " + QString::number(curSpd) + "/sec\n" + QString::number(curMs);
+    float devRatio = devOpts->ratio;
+
+    int dispType = m_gopt->display();
+    QString dLabel = MA_STR_STEP;
+
+    if( dispType != Options::Steps ) {
+        if( devOpts->axisMove == AXIS_MOVE_ROT ) {
+            curPos = curPos * (360.0 / devRatio);
+            curSpd = curSpd * (360.0 / devRatio);
+            dLabel = MA_STR_DEG;
+        }
+        else {
+            if( dispType == Options::Imperial ) {
+                curPos = curPos * (1.0 / devRatio);
+                curSpd = curSpd * (1.0 / devRatio);
+                dLabel = MA_STR_IMP;
+            }
+            else {
+                curPos = curPos * (2.54 / devRatio);
+                curSpd = curSpd * (2.54 / devRatio);
+                dLabel = MA_STR_MET;
+            }
+
+        }
+    }
+
+        // tooltip text
+    QString descText = MA_STR_POS + QString::number(curPos, 'f', 2) + dLabel + "\n" + MA_STR_SPD + QString::number(curSpd, 'f', 2) + dLabel + MA_STR_MOD;
 
     QToolTip::showText(point, descText);
 }
@@ -344,4 +380,12 @@ void MotionArea::mute() {
     }
 
     emit muted(m_mute);
+}
+
+/** Slot for Setting Current Play Status
+
+  Used to disable certain inputs when the film is playing */
+
+void MotionArea::playStatus(bool p_stat) {
+    m_pstat = p_stat;
 }
