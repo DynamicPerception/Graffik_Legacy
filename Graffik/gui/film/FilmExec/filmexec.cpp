@@ -186,7 +186,7 @@ void FilmExec::pause() {
     if( m_stat == FILM_PAUSED )
         return;
 
-    int cmdId = m_net->broadcast(OMBus::OM_BCAST_PAUSE);
+    m_net->broadcast(OMBus::OM_BCAST_PAUSE);
 
     m_stat = FILM_PAUSED;
 }
@@ -395,6 +395,8 @@ void FilmExec::_sendNodeMovements(OMfilmParams *p_film, OMAxis *p_axis) {
 }
 
 
+// TODO: Fix timing master check
+
 OMAxis* FilmExec::_getTimingMaster(QList<OMAxis *> *p_axes) {
     foreach(OMAxis* axis, *p_axes) {
         OMaxisOptions* aopts = m_opts->getOptions(axis->address());
@@ -403,6 +405,8 @@ OMAxis* FilmExec::_getTimingMaster(QList<OMAxis *> *p_axes) {
             return axis;
 
     }
+
+    return 0;
 }
 
 
@@ -466,6 +470,7 @@ void FilmExec::_nodesHome() {
 
 float FilmExec::_round(float p_val) {
     p_val = p_val > int(p_val) ? int(p_val) + 1 : int(p_val);
+    return p_val;
 }
 
 void FilmExec::_error(QString p_error) {

@@ -78,7 +78,7 @@ void MotionArea::scaleChange() {
 
 /** Slot for receiving changes to axis option */
 
-void MotionArea::axisOptionsUpdated(OMaxisOptions *p_opts, unsigned short p_addr) {
+void MotionArea::axisOptionsUpdated(OMaxisOptions*, unsigned short p_addr) {
     if( p_addr != m_dev->device->address() )
         return;
 
@@ -247,7 +247,7 @@ void MotionArea::mouseMoveEvent(QMouseEvent *p_event) {
 
 /** Handle mouse Release Events inside of widget */
 
-void MotionArea::mouseReleaseEvent(QMouseEvent *p_event) {
+void MotionArea::mouseReleaseEvent(QMouseEvent *) {
     m_moveItem = MA_PT_NONE;
 }
 

@@ -23,11 +23,11 @@ CommandHistoryModel::~CommandHistoryModel() {
     delete m_bcCol;
 }
 
-int CommandHistoryModel::rowCount(const QModelIndex & parent) const {
+int CommandHistoryModel::rowCount(const QModelIndex &) const {
         return _cmdHist.size();
  }
 
- int CommandHistoryModel::columnCount(const QModelIndex & parent) const {
+ int CommandHistoryModel::columnCount(const QModelIndex &) const {
      return 4; // 4 columns in slimCommand for display
  }
 

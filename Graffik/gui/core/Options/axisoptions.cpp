@@ -115,7 +115,7 @@ void AxisOptions::setMaster(unsigned short p_addr) {
     m_optMutex->unlock();
 }
 
-void AxisOptions::deviceAdded(OMbusInfo *p_bus, OMdeviceInfo *p_dev) {
+void AxisOptions::deviceAdded(OMbusInfo*, OMdeviceInfo *p_dev) {
     qDebug() << "OAFO: Added new device" << p_dev->device->address();
         // only create new settings if they do not already exist
 
@@ -127,7 +127,7 @@ void AxisOptions::deviceAdded(OMbusInfo *p_bus, OMdeviceInfo *p_dev) {
     m_optMutex->unlock();
 }
 
-void AxisOptions::deviceDeleted(OMbusInfo *p_bus, unsigned short p_addr) {
+void AxisOptions::deviceDeleted(OMbusInfo*, unsigned short p_addr) {
     qDebug() << "OAFO: Deleted device" << p_addr;
 
     m_optMutex->lock();

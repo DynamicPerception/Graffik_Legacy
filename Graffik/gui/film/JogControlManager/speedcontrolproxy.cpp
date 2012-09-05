@@ -183,7 +183,7 @@ void SpeedControlProxy::deviceAdded(OMdeviceInfo *p_dev) {
 
 }
 
-void SpeedControlProxy::deviceRemoved(QString p_bus, unsigned short p_addr) {
+void SpeedControlProxy::deviceRemoved(QString, unsigned short p_addr) {
     if( m_devList.contains(p_addr) ) {
         m_devList.remove(p_addr);
     }

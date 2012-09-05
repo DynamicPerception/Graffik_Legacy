@@ -25,7 +25,7 @@
 
   */
 
-OMSerialMgr::OMSerialMgr(QString port, OMMoCoBus* parent) : QObject() {
+OMSerialMgr::OMSerialMgr(QString port, OMMoCoBus*) : QObject() {
 
 
 

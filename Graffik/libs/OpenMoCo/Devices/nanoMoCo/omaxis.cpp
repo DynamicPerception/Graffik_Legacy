@@ -955,30 +955,30 @@ const int OMAxis::_slimMax(QStringList& p_str) {
 
 }
 
-const int OMAxis::_slimStart(QStringList& p_str) {
+const int OMAxis::_slimStart(QStringList&) {
     return play();
 }
 
-const int OMAxis::_slimStop(QStringList& p_str) {
+const int OMAxis::_slimStop(QStringList&) {
     return stop();
 }
 
-const int OMAxis::_slimStopMotor(QStringList& p_str) {
+const int OMAxis::_slimStopMotor(QStringList&) {
     return stopMotor();
 }
-const int OMAxis::_slimPause(QStringList& p_str) {
+const int OMAxis::_slimPause(QStringList&) {
     return pause();
 }
 
-const int OMAxis::_slimHome(QStringList& p_str) {
+const int OMAxis::_slimHome(QStringList&) {
     return home();
 }
 
-const int OMAxis::_slimSetHome(QStringList& p_str) {
+const int OMAxis::_slimSetHome(QStringList&) {
     return setHome();
 }
 
-const int OMAxis::_slimSleep(QStringList & p_str) {
+const int OMAxis::_slimSleep(QStringList& p_str) {
     if( p_str.isEmpty() )
         throw SLIM_ERR_ARGS;
 

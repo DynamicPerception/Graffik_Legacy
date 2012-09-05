@@ -215,7 +215,7 @@ void MotionTape::_drawLines(QRect p_rect, int p_lines, int p_height, int p_fill,
     }
 }
 
-float MotionTape::_calcSpacing(QRect p_rect, int p_lines, int p_fill, int p_pad) {
+float MotionTape::_calcSpacing(QRect, int p_lines, int p_fill, int p_pad) {
 
         // make sure right edge aligns with internals in scrollarea
   //  float diff = m_width - m_scrollWidth;

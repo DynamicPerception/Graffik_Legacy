@@ -33,12 +33,12 @@ void LiveDeviceModel::deviceClicked(const QModelIndex &p_item) {
     emit deviceSelected(addr);
 }
 
-int LiveDeviceModel::rowCount(const QModelIndex & parent) const {
+int LiveDeviceModel::rowCount(const QModelIndex &) const {
 
     return m_cacheNet.count();
 }
 
-int LiveDeviceModel::columnCount(const QModelIndex &parent) const {
+int LiveDeviceModel::columnCount(const QModelIndex &) const {
     return 1; // only one column
 }
 
