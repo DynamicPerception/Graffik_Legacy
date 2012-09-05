@@ -1,8 +1,7 @@
 #include "motionarea.h"
 #include "ui_motionarea.h"
 
-#include <QPoint>
-#include <QPen>
+
 
 #include <QDebug>
 
@@ -42,6 +41,8 @@ MotionArea::MotionArea(FilmParameters *c_film, OMdeviceInfo *c_dev, AxisOptions*
     connect(m_path, SIGNAL(moveSane(bool)), this, SLOT(moveSane(bool)));
     connect(m_timer, SIGNAL(timeout()), this, SLOT(_tooltipTimer()));
 
+        // enable mouse tracking so we can draw grab points
+    this->setMouseTracking(true);
 }
 
 MotionArea::~MotionArea()
@@ -51,6 +52,16 @@ MotionArea::~MotionArea()
 
     m_timer->stop();
     delete m_timer;
+}
+
+
+ /** Return a pointer to the MotionPathPainter object
+
+    No caller should retain this pointer after use.
+ */
+
+MotionPathPainter* MotionArea::getPathPainter() {
+    return m_path;
 }
 
 void MotionArea::filmUpdated() {
@@ -122,16 +133,17 @@ void MotionArea::mousePressEvent(QMouseEvent *p_event) {
 void MotionArea::mouseMoveEvent(QMouseEvent *p_event) {
 
 
-    int newX = p_event->pos().x();
 
     if( m_moveItem == MA_PT_NONE ) {
-
+        this->update();
         return;
     }
     else {
             // turn off timer,
         m_timer->stop();
     }
+
+    int newX = p_event->pos().x();
 
     if( m_moveItem == MA_PT_START ) {
         unsigned long startTm = m_path->getFilmTime(newX);
@@ -265,7 +277,7 @@ void MotionArea::paintEvent(QPaintEvent *e) {
         }
 
          // draw drag points for start and end time
-        if( m_path->isDrawn() ) {
+        if( m_path->isDrawn() && QWidget::underMouse() ) {
             painter.drawEllipse(m_mvStart);
             painter.drawEllipse(m_mvEnd);
             painter.drawEllipse(m_acEnd);
@@ -314,6 +326,55 @@ void MotionArea::moveSane(bool p_sane) {
 
 }
 
+/** Convert a Given Speed or Distance Value
+
+  Converts the given speed or distance value to the correct
+  numeric representation, based on the user's preference of
+  imperial, metric, or steps.
+
+  @return
+  A QList<QString> with two elements, the first being the string
+  representation of the number (fixed to two decimal places), and the
+  second being the textual label correct for the unit type.
+
+  */
+
+QList<QString> MotionArea::convertValue(float p_val) {
+    OMaxisOptions* devOpts = m_aopt->getOptions(m_dev->device->address());
+
+    float devRatio = devOpts->ratio;
+
+    int dispType = m_gopt->display();
+    QString dLabel = MA_STR_STEP;
+
+    if( dispType != Options::Steps ) {
+        if( devOpts->axisMove == AXIS_MOVE_ROT ) {
+            p_val = p_val * (360.0 / devRatio);
+            dLabel = MA_STR_DEG;
+        }
+        else {
+            if( dispType == Options::Imperial ) {
+                p_val = p_val * (1.0 / devRatio);
+                dLabel = MA_STR_IMP;
+            }
+            else {
+                p_val = p_val * (2.54 / devRatio);
+                dLabel = MA_STR_MET;
+            }
+
+        }
+    }
+
+        // deal with very low FP values
+    p_val = p_val < 0.0001 ? 0.0 : p_val;
+
+    QList<QString> ret;
+    ret.append(QString::number(p_val, 'f', 2));
+    ret.append(dLabel);
+
+    return ret;
+}
+
 /** Slot for when ToolTip Timer Triggers */
 
 void MotionArea::_tooltipTimer() {
@@ -327,39 +388,27 @@ void MotionArea::_tooltipTimer() {
 
     float curPos = m_path->getPosition(m_curPx);
     float curSpd = m_path->getSpeed(m_curPx);
-   // unsigned long curMs = m_path->getFilmTime(m_curPx);
+    unsigned long curMs = m_path->getFilmTime(m_curPx);
+
+    QList<QString> posDisp = convertValue(curPos);
+    QList<QString> spdDisp = convertValue(curSpd);
 
         // Convert absolute step values into correct deg/distance as required
-    OMaxisOptions* devOpts = m_aopt->getOptions(m_dev->device->address());
 
-    float devRatio = devOpts->ratio;
+        // create useful time string, with a minimum of two-digit numbers for hours, minutes, and seconds
 
-    int dispType = m_gopt->display();
-    QString dLabel = MA_STR_STEP;
-
-    if( dispType != Options::Steps ) {
-        if( devOpts->axisMove == AXIS_MOVE_ROT ) {
-            curPos = curPos * (360.0 / devRatio);
-            curSpd = curSpd * (360.0 / devRatio);
-            dLabel = MA_STR_DEG;
-        }
-        else {
-            if( dispType == Options::Imperial ) {
-                curPos = curPos * (1.0 / devRatio);
-                curSpd = curSpd * (1.0 / devRatio);
-                dLabel = MA_STR_IMP;
-            }
-            else {
-                curPos = curPos * (2.54 / devRatio);
-                curSpd = curSpd * (2.54 / devRatio);
-                dLabel = MA_STR_MET;
-            }
-
-        }
-    }
+    QString timeText = QString("%1").arg((unsigned int)TimeConverter::hours(curMs), 2, 10, QChar('0')) + "'"
+            + QString("%1").arg((unsigned int)TimeConverter::freeMinutes(curMs), 2, 10, QChar('0')) + "\""
+            + QString("%1").arg((unsigned int)TimeConverter::freeSeconds(curMs), 2, 10, QChar('0'));
 
         // tooltip text
-    QString descText = MA_STR_POS + QString::number(curPos, 'f', 2) + dLabel + "\n" + MA_STR_SPD + QString::number(curSpd, 'f', 2) + dLabel + MA_STR_MOD;
+/*    QString descText = MA_STR_POS + QString::number(curPos, 'f', 2) + dLabel + "\n"
+            + MA_STR_SPD + QString::number(curSpd, 'f', 2) + dLabel + MA_STR_MOD + "\n"
+            + MA_STR_TIM + timeText; */
+
+    QString descText = MA_STR_POS + posDisp[0] + posDisp[1] + "\n"
+            + MA_STR_SPD + spdDisp[0] + spdDisp[1] + MA_STR_MOD + "\n"
+            + MA_STR_TIM + timeText;
 
     QToolTip::showText(point, descText);
 }

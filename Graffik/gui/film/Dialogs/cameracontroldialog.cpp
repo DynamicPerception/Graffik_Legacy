@@ -85,12 +85,12 @@ void CameraControlDialog::_setupInputs() {
     ui->autoCheck->setChecked(aFPS);
 
     bool enManControls = aFPS ? false : man ? true : false;
-    bool enFPS = enManControls ? false : aFPS ? false : true;
+    // bool enFPS = enManControls ? false : aFPS ? false : true;
 
         // set interval inputs
-    unsigned long ihh = cam->interval / 1000 / 60 / 60;
-    unsigned long imm = (cam->interval / 1000 - (ihh * 60 * 60)) / 60;
-    unsigned long iss = cam->interval / 1000 - (ihh * 60 * 60) - (imm * 60);
+    unsigned long ihh = TimeConverter::hours(cam->interval);
+    unsigned long imm = TimeConverter::freeMinutes(cam->interval);
+    unsigned long iss = TimeConverter::freeSeconds(cam->interval);
 
     ui->intervalCheck->setChecked(enManControls);
     ui->hhSpinBox->setEnabled(enManControls);
@@ -116,16 +116,16 @@ void CameraControlDialog::_setupInputs() {
 
     ui->bulbCheck->setChecked(bulb);
     ui->bulbSpin->setEnabled(bulb);
-    ui->bulbSpin->setValue( (float) cam->shutterMS / 1000.0 );
+    ui->bulbSpin->setValue( (float) TimeConverter::seconds(cam->shutterMS) );
 
     ui->focusCheck->setChecked(foc);
     ui->focusSpin->setEnabled(foc);
-    ui->focusSpin->setValue( (float) cam->focusMS / 1000.0 );
+    ui->focusSpin->setValue( (float) TimeConverter::seconds(cam->focusMS) );
 
     ui->lockCheck->setChecked(lck);
     ui->smsCheck->setChecked(sms);
 
-    ui->delaySpin->setValue( (float) cam->delayMS / 1000.0 );
+    ui->delaySpin->setValue( (float) TimeConverter::seconds(cam->delayMS) );
 
 
 }
@@ -142,17 +142,17 @@ void CameraControlDialog::accept() {
     cam->autoFPS = ui->autoCheck->isChecked();
 
     if( cam->bulb )
-        cam->shutterMS = ui->bulbSpin->value() * 1000.0;
+        cam->shutterMS = TimeConverter::msFromSeconds(ui->bulbSpin->value());
     else
         cam->shutterMS = CAM_DEF_EXPOSURE;
 
 
     if( cam->focus )
-        cam->focusMS = ui->focusSpin->value() * 1000.0;
+        cam->focusMS = TimeConverter::msFromSeconds(ui->focusSpin->value());
     else
         cam->focusMS = CAM_DEF_FOCUS;
 
-    cam->delayMS = ui->delaySpin->value() * 1000.0;
+    cam->delayMS = TimeConverter::msFromSeconds(ui->delaySpin->value());
 
     parmRef->filmMode = ui->smsCheck->isChecked() == true ? FILM_MODE_SMS : FILM_MODE_CONT;
 
@@ -165,7 +165,7 @@ void CameraControlDialog::accept() {
         iv += ui->mmSpinBox->value() * 60;
         iv += ui->hhSpinBox->value() * 60 * 60;
 
-        iv *= 1000; // convert back to mS
+        iv = TimeConverter::msFromSeconds(iv); // convert back to mS
         cam->interval = iv;
 
 

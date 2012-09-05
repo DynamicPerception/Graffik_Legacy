@@ -8,12 +8,18 @@
 #include <QList>
 #include <QTimer>
 #include <QToolTip>
+#include <QPoint>
+#include <QPen>
+
 
 #include "MoCoBus/omnetwork.h"
 
-#include "film/FilmParameters/filmparameters.h"
 #include "core/Options/axisoptions.h"
 #include "core/Options/globaloptions.h"
+#include "core/Utilities/timeconverter.h"
+
+#include "film/FilmParameters/filmparameters.h"
+
 
 #include "motionpathpainter.h"
 
@@ -29,6 +35,7 @@
 #define MA_STR_POS  "Postion: "
 #define MA_STR_SPD  "Speed: "
 #define MA_STR_MOD  "/sec"
+#define MA_STR_TIM  "Time: "
 
 #define MA_PT_NONE  0
 #define MA_PT_START 1
@@ -59,6 +66,9 @@ public:
     void mousePressEvent(QMouseEvent* p_event);
     void mouseMoveEvent(QMouseEvent* p_event);
     void mouseReleaseEvent(QMouseEvent* p_event);
+
+    MotionPathPainter* getPathPainter();
+    QList<QString> convertValue(float p_val);
 
     
 public slots:

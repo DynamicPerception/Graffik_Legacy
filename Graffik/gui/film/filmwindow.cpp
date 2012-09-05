@@ -119,6 +119,7 @@ void FilmWindow::_drawNewAxis(OMdeviceInfo *p_dev) {
         // reflect signal from new motion area
     connect(area, SIGNAL(areaBorders(int,int)), this, SIGNAL(motionAreaBorders(int,int)));
     connect(this, SIGNAL(playStatusChange(bool)), area, SLOT(statusChange(bool)));
+    connect(m_exec, SIGNAL(filmPlayStatus(bool,ulong)), area, SLOT(currentPlayStatus(bool,ulong)));
 
     _redrawMotionOverlay();
 
@@ -209,19 +210,19 @@ void FilmWindow::on_camSetBut_clicked() {
 
 void FilmWindow::_showFilmTime() {
     OMfilmParams* params = m_params->getParams();
-    unsigned long wallTM = params->realLength;
-    unsigned long filmTM = params->length;
+    unsigned long wallTm = params->realLength;
+    unsigned long filmTm = params->length;
     m_params->releaseParams(false);
 
         // convert from mS to hours, minutes, and seconds
 
-    unsigned long whh = wallTM / 1000 / 60 / 60;
-    unsigned long wmm = (wallTM - (whh * 1000 * 60 * 60)) / 1000 / 60;
-    unsigned long wss = (wallTM - (whh * 1000 * 60 * 60) - (wmm * 1000 * 60)) / 1000;
+    unsigned long whh = TimeConverter::hours(wallTm);
+    unsigned long wmm = TimeConverter::freeMinutes(wallTm);
+    unsigned long wss = TimeConverter::freeSeconds(wallTm);
 
-    unsigned long fhh = filmTM / 1000 / 60 / 60;
-    unsigned long fmm = (filmTM - (fhh * 1000 * 60 * 60)) / 1000 / 60;
-    unsigned long fss = (filmTM - (fhh * 1000 * 60 * 60) - (fmm * 1000 * 60)) / 1000;
+    unsigned long fhh = TimeConverter::hours(filmTm);
+    unsigned long fmm = TimeConverter::freeMinutes(filmTm);
+    unsigned long fss = TimeConverter::freeSeconds(filmTm);
 
     ui->filmHHSpin->setValue(fhh);
     ui->filmMMSpin->setValue(fmm);
@@ -272,7 +273,8 @@ void FilmWindow::_changeTime(int p_which, int p_pos, int p_val) {
     else
         ss = p_val;
 
-        // can't have less than one second of real time
+        // can't have less than one second of real time, we just wouldn't know
+        // what to do with ourselves!
     if( p_which != 1 ) {
         if( hh == 0 && mm == 0 && ss == 0 ) {
             ss = 1;
@@ -280,7 +282,7 @@ void FilmWindow::_changeTime(int p_which, int p_pos, int p_val) {
         }
     }
 
-    unsigned long mS = (hh * 60 * 60 * 1000) + (mm * 60 * 1000) + (ss * 1000);
+    unsigned long mS = TimeConverter::msFromHours(hh) + TimeConverter::msFromMinutes(mm) + TimeConverter::msFromSeconds(ss);
 
     OMfilmParams* params = m_params->getParams();
 
@@ -384,7 +386,7 @@ void FilmWindow::_calcAutoFilmTime() {
     unsigned long shots = wallTm / interval;
 
         // determine output film time in mS
-    filmTm = (shots / fps) * 1000;
+    filmTm = TimeConverter::msFromSeconds((float)shots / (float)fps);
 
         // store film length
     params->length = filmTm;
@@ -530,9 +532,9 @@ void FilmWindow::_playStatus(bool p_stat, unsigned long p_time) {
 
 void FilmWindow::_filmTimeDisplay(unsigned long p_ms) {
 
-    int rhh = p_ms / 1000 / 60 / 60;
-    int rmm = (p_ms - (rhh * 1000 * 60 * 60)) / 1000 / 60;
-    int rss = (p_ms - (rhh * 1000 * 60 * 60) - (rmm * 1000 * 60)) / 1000;
+    int rhh = TimeConverter::hours(p_ms);
+    int rmm = TimeConverter::freeMinutes(p_ms);
+    int rss = TimeConverter::freeSeconds(p_ms);
 
     ui->runHHLCD->display(rhh);
     ui->runMMLCD->display(rmm);
@@ -552,12 +554,10 @@ void FilmWindow::_filmTimeDisplay(unsigned long p_ms) {
     }
     else {
         unsigned long filmTm = ( (float) p_ms * timeDiv);
-        int fhh = filmTm / 1000 / 60 / 60;
-        int fmm = (filmTm - (fhh * 1000 * 60 * 60)) / 1000 / 60;
-        int fss = (filmTm - (fhh * 1000 * 60 * 60) - (fmm * 1000 * 60)) / 1000;
-        ui->filmHHLCD->display(fhh);
-        ui->filmMMLCD->display(fmm);
-        ui->filmSSLCD->display(fss);
+
+        ui->filmHHLCD->display((int)TimeConverter::hours(filmTm));
+        ui->filmMMLCD->display((int)TimeConverter::freeMinutes(filmTm));
+        ui->filmSSLCD->display((int)TimeConverter::freeSeconds(filmTm));
 
         unsigned long interval = m_exec->interval(parms);
         ui->curFrameLCD->display((int) (p_ms / interval));
@@ -581,6 +581,7 @@ void FilmWindow::_redrawMotionOverlay() {
 
 }
 
+
 void FilmWindow::_filmStarted() {
     qDebug() << "FW: Got filmStarted";
     m_busy->hide();
@@ -588,6 +589,8 @@ void FilmWindow::_filmStarted() {
     emit playStatusChange(true);
 }
 
+
+/** Error Handling Slot */
 void FilmWindow::error(QString p_err) {
 
     if( ! m_error ) {
@@ -605,6 +608,7 @@ void FilmWindow::error(QString p_err) {
 
 }
 
+ // What to do when the busy window (e.g. sending nodes home) is cancelled?
 void FilmWindow::_busyCanceled() {
     qDebug() << "FW: Busy Canceled";
 
@@ -612,6 +616,9 @@ void FilmWindow::_busyCanceled() {
     on_stopButton_clicked();
 }
 
+
+ // Change the enable state of several inputs,
+ // as is required when playing/stopping the film
 
 void FilmWindow::_inputEnable(bool p_stat) {
     ui->realHHSpin->setEnabled(p_stat);

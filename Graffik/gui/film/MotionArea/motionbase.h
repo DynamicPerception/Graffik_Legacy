@@ -9,6 +9,8 @@
 #include "core/Options/globaloptions.h"
 #include "film/FilmParameters/filmparameters.h"
 
+#define MB_STR_POS  "Position:"
+
 namespace Ui {
 class MotionBase;
 }
@@ -28,6 +30,7 @@ public slots:
     void on_resButton_clicked();
 
     void statusChange(bool p_stat);
+    void currentPlayStatus(bool p_stat, unsigned long p_runTime);
 
 signals:
 

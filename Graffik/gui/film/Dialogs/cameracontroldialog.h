@@ -3,6 +3,8 @@
 
 #include <QDialog>
 
+#include "core/Utilities/timeconverter.h"
+
 #include "film/FilmParameters/filmparameters.h"
 
 namespace Ui {

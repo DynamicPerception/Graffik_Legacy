@@ -40,6 +40,17 @@ MotionPathPainter::~MotionPathPainter() {
 }
 
 
+/** Get X Pixel Point at (Wall) Time
+
+  Returns the X-pixel value of the specified film time
+  */
+
+int MotionPathPainter::getX(int p_time) {
+    OMfilmParams parms = m_film->getParamsCopy();
+    int x = ((float) p_time / (float) parms.realLength) * (float) m_wasWidth;
+    return x;
+}
+
 /** Get Film (Wall) Time at pixel
 
   Returns the time, in milliseconds, of the film's real length (wall time)

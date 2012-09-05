@@ -24,7 +24,8 @@ HEADERS                 +=  \
     core/Dialogs/aboutdialog.h \
     core/Options/globaloptions.h \
     core/Options/globaloptionsdialog.h \
-    core/Options/optiontypes.h
+    core/Options/optiontypes.h \
+    core/Utilities/timeconverter.h
 
 			   
 SOURCES                 +=  \
@@ -46,7 +47,8 @@ SOURCES                 +=  \
     core/DeviceScan/deviceassigndialog.cpp \
     core/Dialogs/aboutdialog.cpp \
     core/Options/globaloptions.cpp \
-    core/Options/globaloptionsdialog.cpp
+    core/Options/globaloptionsdialog.cpp \
+    core/Utilities/timeconverter.cpp
 
 			   
 FORMS 			+=  \

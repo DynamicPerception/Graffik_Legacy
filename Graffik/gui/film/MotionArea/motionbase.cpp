@@ -20,6 +20,7 @@ MotionBase::MotionBase(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions 
 
     ui->nameLabel->setText(c_dev->name);
     ui->resButton->setText(" R "); // default is rapid mode
+    ui->dispLCD->setToolTip(MB_STR_POS);
 
         // pass through click signal
     connect(ui->scaleButton, SIGNAL(clicked()), m_area, SLOT(scaleChange()));
@@ -136,10 +137,9 @@ void MotionBase::muted(int p_muted) {
 
 }
 
-/** Receive Playing Status
+/** Receive Status On/Off Change
 
-  This slot receives the current playing status.  We only do something when
-  this status actually changes.
+  This slot receives the current playing status when it changes.
 
   The purpose of monitoring status here is to disable certain inputs when
   the film is playing, as the user should not be able to modify them.
@@ -155,4 +155,22 @@ void MotionBase::statusChange(bool p_stat) {
 
     emit playStatus(p_stat);
 
+}
+
+/** Receive Current Playing Status
+
+  This slot receives the current playing status, and is used to update the
+  real-time pos/speed display.  This slot differs from statusChange(), because
+  it is not use to set enable/disable, but instead is attached to the PlayMonitor
+  by FilmWindow, and is only used to monitor status when playing.
+  */
+
+void MotionBase::currentPlayStatus(bool p_stat, unsigned long p_runTime) {
+    if( p_stat == true ) {
+        int x = m_area->getPathPainter()->getX(p_runTime);
+        float spd = m_area->getPathPainter()->getPosition(x);
+        QList<QString> disp = m_area->convertValue(spd);
+        ui->dispLCD->display(disp[0]);
+        ui->dispLCD->setToolTip(MB_STR_POS + disp[1]);
+    }
 }

@@ -14,6 +14,8 @@
 #include "core/Options/globaloptions.h"
 #include "core/Dialogs/errordialog.h"
 
+#include "core/Utilities/timeconverter.h"
+
 #include "film/JogControlManager/jogcontrolmanager.h"
 #include "film/LiveDeviceModel/livedevicemodel.h"
 #include "film/MotionArea/motionbase.h"
