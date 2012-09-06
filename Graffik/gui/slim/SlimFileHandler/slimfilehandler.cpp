@@ -1,12 +1,10 @@
 #include "slimfilehandler.h"
-#include <QFile>
-#include <QTextStream>
+
 #include <QDebug>
 
-#include "core/Dialogs/errordialog.h"
-#include "core/Dialogs/confirmdialog.h"
 
-SlimFileHandler::SlimFileHandler(SlimCommandParser *c_parse, CommandHistoryModel *c_hist)
+
+SlimFileHandler::SlimFileHandler()
 {
 }
 
@@ -15,7 +13,22 @@ SlimFileHandler::~SlimFileHandler() {
 
 }
 
-void SlimFileHandler::writeFile(QString p_file, OMNetwork* p_net, CommandHistoryModel *p_hist, bool p_showErr) {
+/** Static Write File
+
+  Writes a given command histtory as a series of strings to a specific file
+
+  @param p_file
+  File to write to
+
+  @param p_hist
+  A CommandHistoryModel pointer which contains the history of commands to be written
+  to the file
+
+  @param p_showErr
+  Whether or not to report errors back to user (default = true)
+
+*/
+void SlimFileHandler::writeFile(QString p_file, CommandHistoryModel *p_hist, bool p_showErr) {
 
     if( p_file.isEmpty() )
         return;
@@ -25,17 +38,6 @@ void SlimFileHandler::writeFile(QString p_file, OMNetwork* p_net, CommandHistory
     QString errors;
     bool errorOccur = false;
 
-        // not needed, QFileDialog already handles existing files
-
-    /* if( scriptFile.exists() ) {
-
-        QString confTxt = "File " + p_file + " Already Exists, Do You Want to Overwrite It?";
-        ConfirmDialog dia(confTxt);
-        int res = dia.exec();
-        if( res != QDialog::Accepted ) {
-            return;
-        }
-    }*/
 
     if( scriptFile.open(QIODevice::WriteOnly | QIODevice::Text) ) {
         QTextStream text( &scriptFile );

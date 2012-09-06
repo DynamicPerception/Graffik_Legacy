@@ -6,9 +6,10 @@
 #include <QHash>
 #include <QTimer>
 
+#include "livedevicemodel.h"
+
 #include "MoCoBus/omnetwork.h"
 #include "Devices/nanoMoCo/omaxis.h"
-#include "film/LiveDeviceModel/livedevicemodel.h"
 #include "core/Options/axisoptions.h"
 
     // timer period mS - changes speed every period during

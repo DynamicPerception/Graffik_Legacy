@@ -33,17 +33,17 @@ AxisOptionsDialog::~AxisOptionsDialog()
 void AxisOptionsDialog::_initInputs() {
 
         // populate "defaults" combo box
-    ui->defaultCombo->addItem("VX1 Pan", AXIS_VX1_PAN);
-    ui->defaultCombo->addItem("VX1 Tilt", AXIS_VX1_TILT);
-    ui->defaultCombo->addItem("SX1 Slider", AXIS_SX1_SLIDE);
-    ui->defaultCombo->addItem("Custom", AXIS_CUSTOM);
+    ui->defaultCombo->addItem(AOD_STR_PAN, AXIS_VX1_PAN);
+    ui->defaultCombo->addItem(AOD_STR_TILT, AXIS_VX1_TILT);
+    ui->defaultCombo->addItem(AOD_STR_SLIDE, AXIS_SX1_SLIDE);
+    ui->defaultCombo->addItem(AOD_STR_CUST, AXIS_CUSTOM);
 
         // get current "default" type for this axis
     int combShowSel = ui->defaultCombo->findData(m_opts->axisType);
     ui->defaultCombo->setCurrentIndex(combShowSel);
 
-    ui->typeCombo->addItem("Rotary", AXIS_MOVE_ROT);
-    ui->typeCombo->addItem("Linear", AXIS_MOVE_LIN);
+    ui->typeCombo->addItem(AOD_STR_ROT, AXIS_MOVE_ROT);
+    ui->typeCombo->addItem(AOD_STR_LIN, AXIS_MOVE_LIN);
 
     // get current "default" type for this axis
     combShowSel = ui->typeCombo->findData(m_opts->axisMove);
@@ -120,20 +120,18 @@ void AxisOptionsDialog::_accept() {
     m_opts->jogLimit = m_opts->maxSteps;
     m_opts->jogDamp = OM_OPT_JOGDAMP;
 
-    if( m_opts->master != ui->masterCheck->checkState() ) {
+    if( m_opts->master != ui->masterCheck->isChecked() ) {
             // changing the timing master flag has implications, force the user to confirm
             // do nothing if they do not confirm
         if( m_opts->master == false ) {
-            QString confTxt = "By setting this device as the timing master, you will automatically unset any existing master device. Do you want to do this?";
-            ConfirmDialog dia(confTxt, this);
+            ConfirmDialog dia(AOD_STR_MAST, this);
             int res = dia.exec();
             if( res == QDialog::Accepted ) {
                 m_optObj->setMaster(m_addr);
             }
         }
         else {
-            QString confTxt = "If you unset this device as the timing master, you must manually select and edit another device and configure it as timing master for synchronization to work. Do you want to do this?";
-            ConfirmDialog dia(confTxt, this);
+            ConfirmDialog dia(AOD_STR_UNMAST, this);
             int res = dia.exec();
             if( res == QDialog::Accepted ) {
                 m_opts->master = false;

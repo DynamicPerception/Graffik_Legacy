@@ -169,6 +169,7 @@ void MotionBase::currentPlayStatus(bool p_stat, unsigned long p_runTime) {
     if( p_stat == true ) {
         int x = m_area->getPathPainter()->getX(p_runTime);
         float spd = m_area->getPathPainter()->getPosition(x);
+        qDebug() << "MB: Update Spd Disp: " << x << spd;
         QList<QString> disp = m_area->convertValue(spd);
         ui->dispLCD->display(disp[0]);
         ui->dispLCD->setToolTip(MB_STR_POS + disp[1]);

@@ -1,8 +1,10 @@
 DEFINES *= QT_USE_QSTRINGBUILDER
 
-# un-comment to disable all debugging output from libraries
+CONFIG(release, debug|release) {
+    # un-comment to disable all debugging output from libraries
 
-# DEFINES *= QT_NO_DEBUG_OUTPUT
+    DEFINES *= QT_NO_DEBUG_OUTPUT
+}
 
 HEADERS                 +=  \
 			   core/Dialogs/errordialog.h \
@@ -25,7 +27,8 @@ HEADERS                 +=  \
     core/Options/globaloptions.h \
     core/Options/globaloptionsdialog.h \
     core/Options/optiontypes.h \
-    core/Utilities/timeconverter.h
+    core/Utilities/timeconverter.h \
+    core/Dialogs/netbasedialog.h
 
 			   
 SOURCES                 +=  \
@@ -48,7 +51,8 @@ SOURCES                 +=  \
     core/Dialogs/aboutdialog.cpp \
     core/Options/globaloptions.cpp \
     core/Options/globaloptionsdialog.cpp \
-    core/Utilities/timeconverter.cpp
+    core/Utilities/timeconverter.cpp \
+    core/Dialogs/netbasedialog.cpp
 
 			   
 FORMS 			+=  \
@@ -64,6 +68,7 @@ FORMS 			+=  \
     core/DeviceScan/devicescandialog.ui \
     core/DeviceScan/deviceassigndialog.ui \
     core/Dialogs/aboutdialog.ui \
-    core/Options/globaloptionsdialog.ui
+    core/Options/globaloptionsdialog.ui \
+    core/Dialogs/netbasedialog.ui
 
 	   

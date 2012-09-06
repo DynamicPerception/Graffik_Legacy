@@ -17,7 +17,7 @@ public:
     ~DeviceScanner();
 
 signals:
-    
+
 public slots:
     
 private slots:

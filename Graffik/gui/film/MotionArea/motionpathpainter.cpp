@@ -30,6 +30,11 @@ MotionPathPainter::MotionPathPainter(unsigned short c_addr, FilmParameters *c_pa
     m_new           = false;
     m_relativeScale = false;
 
+        // fill arrays with default (0) values.
+    for(unsigned long i = 0; i < m_maxPoints; i++ ) {
+        m_renderPoints.append(0);
+        m_stepsTaken.append(0);
+    }
 
     connect(m_film, SIGNAL(paramsReleased()), this, SLOT(paramsChanged()));
 
@@ -178,16 +183,23 @@ unsigned long MotionPathPainter::maxSplinePoints() {
 
 float MotionPathPainter::getSpeed(unsigned long p_x) {
 
+    if( m_wasDist == 0 )
+        return 0.0;
+
     OMfilmParams filmParams = m_film->getParamsCopy();
         // determine how many seconds per sample...
     float mult = 1000.0 / ((float) filmParams.realLength / _getMaxPoints());
     unsigned long pos = (float) p_x * _getScale();
+
     return m_renderPoints[pos] * mult;
 }
 
 /** Return the distance from home (in steps) of the Motor at this X Position */
 
 float MotionPathPainter::getPosition(unsigned long p_x) {
+
+  if( m_wasDist == 0 )
+      return 0.0;
 
   unsigned long pos = (float) p_x * _getScale();
   return m_stepsTaken[pos];

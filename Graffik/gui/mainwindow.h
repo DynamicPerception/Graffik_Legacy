@@ -10,6 +10,7 @@
 #include "core/Dialogs/addnetdialog.h"
 #include "core/Dialogs/adddevicedialog.h"
 #include "core/Dialogs/aboutdialog.h"
+#include "core/Dialogs/netbasedialog.h"
 
 
 #include "core/NetworkModel/networkmodel.h"
@@ -66,6 +67,11 @@ public slots:
     void on_actionInitialize_New_Device_triggered();
     void on_actionSettings_triggered();
     void on_actionAbout_Graffik_triggered();
+
+    void on_filmButton_clicked();
+    void on_scriptButton_clicked();
+    void on_netButton_clicked();
+    void on_optButton_clicked();
 
 private slots:
 

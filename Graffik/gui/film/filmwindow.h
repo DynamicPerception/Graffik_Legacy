@@ -16,8 +16,7 @@
 
 #include "core/Utilities/timeconverter.h"
 
-#include "film/JogControlManager/jogcontrolmanager.h"
-#include "film/LiveDeviceModel/livedevicemodel.h"
+#include "film/JogControlManager/jogcontrolpanel.h"
 #include "film/MotionArea/motionbase.h"
 #include "film/MotionArea/motiontape.h"
 #include "film/MotionArea/motionsection.h"
@@ -52,6 +51,8 @@ public slots:
     void on_camControlCheckBox_stateChanged(int p_state);
     void on_camSetBut_clicked();
 
+    void on_plugJogButton_clicked();
+
     // spinbox handlers
 
     void on_filmHHSpin_valueChanged(int p_val);
@@ -64,10 +65,8 @@ public slots:
     void error(QString p_err);
 
 private slots:
-    void _jogMotorChangeDenied(unsigned short p_oldAddr);
     void _drawNewAxis(OMdeviceInfo* p_dev);
     void _eraseAxis(QString p_bus, unsigned short p_addr);
-    void _endSet(unsigned short p_addr, long p_dist);
     void _playStatus(bool p_stat, unsigned long p_time);
     void _filmStarted();
     void _busyCanceled();
@@ -83,17 +82,16 @@ signals:
 
 private:
     Ui::FilmWindow *ui;
-    LiveDeviceModel* m_ldModel;
     OMNetwork* m_net;
     AxisOptions* m_opts;
     GlobalOptions* m_gopts;
-    JogControlManager* m_jcm;
     FilmParameters* m_params;
     FilmExec* m_exec;
     MotionTape* m_tape;
     MotionSection* m_motion;
     SectionResizeFilter* m_filter;
     QProgressDialog* m_busy;
+    JogControlPanel* m_jcp;
 
     QVBoxLayout* m_areaLayout;
     QHash<unsigned short, MotionBase*> m_areaBlocks;

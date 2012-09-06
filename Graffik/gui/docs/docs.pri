@@ -1,6 +1,11 @@
 # load correct help libraries for specific OSes
 # and copy correct files to correct locations during build
 
+CONFIG(release, debug|release) {
+    # un-comment to disable all debugging output from libraries
+
+    DEFINES *= QT_NO_DEBUG_OUTPUT
+}
 
 win32 {
 

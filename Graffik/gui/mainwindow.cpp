@@ -22,8 +22,22 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     _slimWindow =  new SlimWindow(_net, _cmdHist, _parser, ui->tabs);
     _uData = new UserData(this);
 
-    ui->tabs->addTab(_filmWindow, "Film");
-    ui->tabs->addTab(_slimWindow, "Slim");
+    ui->tabs->addWidget(_filmWindow);
+    ui->tabs->addWidget(_slimWindow);
+
+
+    ui->centralwidget->layout()->setMargin(0);
+    ui->centralwidget->layout()->setSpacing(0);
+    ui->centralwidget->layout()->setContentsMargins(0, 0, 0, 0);
+
+
+    ui->gridLayout->setContentsMargins(0, 0, 0, 0);
+    ui->gridLayout->setMargin(0);
+
+    ui->gridLayout_2->setMargin(0);
+    ui->gridLayout_2->setContentsMargins(0, 0, 0, 0);
+
+    // ui->tabs->setContentsMargins(0,0,0,0);
 
     qRegisterMetaType<GlobalOptions*>("GlobalOptions");
 
@@ -63,6 +77,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     connect(_globalOpts, SIGNAL(optionsChanged()), this, SLOT(globalOptionsChanged()));
     connect(this, SIGNAL(globalOptionsChanged(GlobalOptions*)), _uData, SLOT(globalOptionsChanged(GlobalOptions*)));
+
+    // simulate pressing the film button to default to film screen
+    on_filmButton_clicked();
+
 
 }
 
@@ -109,7 +127,7 @@ void MainWindow::on_actionOpen_File_triggered() {
 void MainWindow::on_actionSave_File_triggered() {
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save Script"), "", tr("Slim Script (*.slim)"));
     qDebug() << "MW: SlimSave Got File: " << fileName;
-    SlimFileHandler::writeFile(fileName, _net, _cmdHist, true);
+    SlimFileHandler::writeFile(fileName, _cmdHist, true);
 }
 
 
@@ -147,6 +165,27 @@ void MainWindow::on_actionAbout_Graffik_triggered() {
     qDebug() << "MW: About Triggered";
     AboutDialog about;
     about.exec();
+}
+
+void MainWindow::on_filmButton_clicked() {
+    ui->tabs->setCurrentWidget(_filmWindow);
+    ui->filmButton->setDown(true);
+    ui->scriptButton->setDown(false);
+}
+
+void MainWindow::on_scriptButton_clicked() {
+    ui->tabs->setCurrentWidget(_slimWindow);
+    ui->filmButton->setDown(false);
+    ui->scriptButton->setDown(true);
+}
+
+void MainWindow::on_netButton_clicked() {
+    NetBaseDialog net(_net, _netModel, _axisOpts);
+    net.exec();
+}
+
+void MainWindow::on_optButton_clicked() {
+    on_actionSettings_triggered();
 }
 
 /*void MainWindow::setSlimWindow(SlimWindow * p_slim) {

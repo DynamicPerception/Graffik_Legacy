@@ -342,10 +342,17 @@ void MotionArea::moveSane(bool p_sane) {
 QList<QString> MotionArea::convertValue(float p_val) {
     OMaxisOptions* devOpts = m_aopt->getOptions(m_dev->device->address());
 
+    qDebug() << "MA: cV: Got " << p_val;
+
     float devRatio = devOpts->ratio;
 
     int dispType = m_gopt->display();
     QString dLabel = MA_STR_STEP;
+    bool forceZero = false;
+
+        // FP division can do miraculous things...
+    if( p_val < 0.0001 )
+        forceZero = true;
 
     if( dispType != Options::Steps ) {
         if( devOpts->axisMove == AXIS_MOVE_ROT ) {
@@ -367,6 +374,10 @@ QList<QString> MotionArea::convertValue(float p_val) {
 
         // deal with very low FP values
     p_val = p_val < 0.0001 ? 0.0 : p_val;
+
+        // if we started with nothing, let's end with nothing
+    if( forceZero == true )
+        p_val = 0.0;
 
     QList<QString> ret;
     ret.append(QString::number(p_val, 'f', 2));

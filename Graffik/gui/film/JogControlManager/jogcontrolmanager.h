@@ -9,9 +9,11 @@
 #include <QPushButton>
 
 #include "speedcontrolproxy.h"
+#include "livedevicemodel.h"
+
 #include "MoCoBus/omnetwork.h"
 #include "core/Options/axisoptions.h"
-#include "film/LiveDeviceModel/livedevicemodel.h"
+
 
 #define OM_JOGRES_RAPID 1
 #define OM_JOGRES_COARSE 2

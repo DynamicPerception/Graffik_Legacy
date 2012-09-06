@@ -1,9 +1,15 @@
 DEFINES *= QT_USE_QSTRINGBUILDER
 # DEFINES *= QT_NO_DEBUG_OUTPUT
 
+CONFIG(release, debug|release) {
+    # un-comment to disable all debugging output from libraries
+
+    DEFINES *= QT_NO_DEBUG_OUTPUT
+}
+
 HEADERS += \
     film/filmwindow.h \
-    film/LiveDeviceModel/livedevicemodel.h \
+    film/JogControlManager/livedevicemodel.h \
     film/JogControlManager/speedcontrolproxy.h \
     film/FilmGlobalOptions/filmglobaloptions.h \
     film/JogControlManager/jogcontrolmanager.h \
@@ -17,12 +23,13 @@ HEADERS += \
     film/MotionArea/motiontape.h \
     film/FilmExec/playmonitor.h \
     film/MotionArea/motionsection.h \
-    film/MotionArea/sectionresizefilter.h
+    film/MotionArea/sectionresizefilter.h \
+    film/JogControlManager/jogcontrolpanel.h
 
 
 SOURCES += \
     film/filmwindow.cpp \
-    film/LiveDeviceModel/livedevicemodel.cpp \
+    film/JogControlManager/livedevicemodel.cpp \
     film/JogControlManager/speedcontrolproxy.cpp \
     film/FilmGlobalOptions/filmglobaloptions.cpp \
     film/JogControlManager/jogcontrolmanager.cpp \
@@ -36,11 +43,13 @@ SOURCES += \
     film/MotionArea/motiontape.cpp \
     film/FilmExec/playmonitor.cpp \
     film/MotionArea/motionsection.cpp \
-    film/MotionArea/sectionresizefilter.cpp
+    film/MotionArea/sectionresizefilter.cpp \
+    film/JogControlManager/jogcontrolpanel.cpp
 
 FORMS += \
     film/filmwindow.ui \
     film/MotionArea/motionarea.ui \
     film/MotionArea/motionbase.ui \
     film/Dialogs/cameracontroldialog.ui \
-    film/MotionArea/motiontape.ui
+    film/MotionArea/motiontape.ui \
+    film/JogControlManager/jogcontrolpanel.ui
