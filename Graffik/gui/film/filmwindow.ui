@@ -54,7 +54,7 @@
           <x>0</x>
           <y>0</y>
           <width>784</width>
-          <height>178</height>
+          <height>198</height>
          </rect>
         </property>
        </widget>
@@ -91,6 +91,9 @@
      </item>
      <item row="0" column="2">
       <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="spacing">
+        <number>0</number>
+       </property>
        <property name="leftMargin">
         <number>0</number>
        </property>
@@ -112,17 +115,65 @@
        </item>
        <item>
         <layout class="QHBoxLayout" name="ControlButHoriz">
+         <property name="spacing">
+          <number>15</number>
+         </property>
          <item>
-          <spacer name="horizontalSpacer_6">
+          <widget class="QPushButton" name="loadFilmButton">
+           <property name="minimumSize">
+            <size>
+             <width>45</width>
+             <height>15</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>45</width>
+             <height>15</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>8</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Load</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="saveFilmButton">
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>15</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>40</width>
+             <height>15</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>8</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Save</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_2">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>90</width>
+             <width>40</width>
              <height>20</height>
             </size>
            </property>
@@ -130,6 +181,11 @@
          </item>
          <item>
           <widget class="QCheckBox" name="camControlCheckBox">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>Camera Control</string>
            </property>
@@ -137,6 +193,11 @@
          </item>
          <item>
           <widget class="QToolButton" name="camSetBut">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>Settings</string>
            </property>
@@ -146,6 +207,11 @@
        </item>
        <item>
         <widget class="QLabel" name="label">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Film Length</string>
          </property>
@@ -164,6 +230,11 @@
          </item>
          <item row="0" column="0">
           <widget class="QLabel" name="label_5">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>HH</string>
            </property>
@@ -171,6 +242,11 @@
          </item>
          <item row="0" column="1">
           <widget class="QLabel" name="label_6">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>MM</string>
            </property>
@@ -178,6 +254,11 @@
          </item>
          <item row="0" column="2">
           <widget class="QLabel" name="label_7">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>SS</string>
            </property>
@@ -187,6 +268,11 @@
        </item>
        <item>
         <widget class="QLabel" name="label_8">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Real Time</string>
          </property>
@@ -205,6 +291,11 @@
          </item>
          <item row="0" column="0">
           <widget class="QLabel" name="label_2">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>HH</string>
            </property>
@@ -212,6 +303,11 @@
          </item>
          <item row="0" column="1">
           <widget class="QLabel" name="label_3">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>MM</string>
            </property>
@@ -219,6 +315,11 @@
          </item>
          <item row="0" column="2">
           <widget class="QLabel" name="label_4">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>SS</string>
            </property>
@@ -228,6 +329,9 @@
        </item>
        <item>
         <layout class="QGridLayout" name="TimeDispGrid">
+         <property name="spacing">
+          <number>0</number>
+         </property>
          <item row="1" column="1">
           <widget class="QLCDNumber" name="filmHHLCD"/>
          </item>
@@ -248,6 +352,11 @@
          </item>
          <item row="0" column="1" colspan="3">
           <widget class="QLabel" name="label_9">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>Film Time</string>
            </property>
@@ -255,6 +364,11 @@
          </item>
          <item row="2" column="1" colspan="3">
           <widget class="QLabel" name="label_10">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>Run Time</string>
            </property>
@@ -270,7 +384,7 @@
           <widget class="QLabel" name="label_11">
            <property name="font">
             <font>
-             <pointsize>11</pointsize>
+             <pointsize>10</pointsize>
             </font>
            </property>
            <property name="text">
@@ -282,7 +396,7 @@
           <widget class="QLabel" name="label_12">
            <property name="font">
             <font>
-             <pointsize>11</pointsize>
+             <pointsize>10</pointsize>
             </font>
            </property>
            <property name="text">
@@ -312,6 +426,11 @@
         <layout class="QHBoxLayout" name="seekbuttonhoriztonallayout">
          <item>
           <widget class="QPushButton" name="rewindButton">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>|&lt;&lt;</string>
            </property>
@@ -319,6 +438,11 @@
          </item>
          <item>
           <widget class="QPushButton" name="frameRwdButton">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>&lt;</string>
            </property>
@@ -326,6 +450,11 @@
          </item>
          <item>
           <widget class="QPushButton" name="playButton">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>Play</string>
            </property>
@@ -333,6 +462,11 @@
          </item>
          <item>
           <widget class="QPushButton" name="stopButton">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>Stop</string>
            </property>
@@ -340,6 +474,11 @@
          </item>
          <item>
           <widget class="QPushButton" name="frameFwdButton">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>&gt;</string>
            </property>
@@ -347,6 +486,11 @@
          </item>
          <item>
           <widget class="QPushButton" name="forwardButton">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>&gt;&gt;|</string>
            </property>
@@ -417,15 +561,20 @@
         <widget class="QPushButton" name="plugJogButton">
          <property name="minimumSize">
           <size>
-           <width>100</width>
+           <width>75</width>
            <height>35</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>100</width>
+           <width>75</width>
            <height>35</height>
           </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
          </property>
          <property name="text">
           <string>Motor Jog</string>

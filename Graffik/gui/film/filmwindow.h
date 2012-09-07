@@ -7,6 +7,7 @@
 #include <QPainterPath>
 #include <QPaintEvent>
 #include <QProgressDialog>
+#include <QFileDialog>
 
 #include "MoCoBus/omnetwork.h"
 
@@ -24,6 +25,7 @@
 #include "film/FilmParameters/filmparameters.h"
 #include "film/Dialogs/cameracontroldialog.h"
 #include "film/FilmExec/filmexec.h"
+#include "film/FilmFileHandler/filmfilehandler.h"
 
 namespace Ui {
     class FilmWindow;
@@ -53,6 +55,9 @@ public slots:
 
     void on_plugJogButton_clicked();
 
+    void on_loadFilmButton_clicked();
+    void on_saveFilmButton_clicked();
+
     // spinbox handlers
 
     void on_filmHHSpin_valueChanged(int p_val);
@@ -63,6 +68,8 @@ public slots:
     void on_realSSSpin_valueChanged(int p_val);
 
     void error(QString p_err);
+
+    void filmParamsChanged();
 
 private slots:
     void _drawNewAxis(OMdeviceInfo* p_dev);
@@ -104,6 +111,7 @@ private:
 
     bool m_error;
 
+    void _displayCamControl();
     void _enableCamControl(bool p_en = true);
     void _showFilmTime();
     void _prepInputs();

@@ -5,6 +5,8 @@
 #include <QWidget>
 #include <QString>
 #include <QMutex>
+#include <QDataStream>
+#include <QDebug>
 
 #include "MoCoBus/omnetwork.h"
 #include "Devices/nanoMoCo/omaxis.h"
@@ -69,6 +71,51 @@ struct OMfilmCamParams {
 
 };
 
+
+// Provide streaming operators for use in persistance, writing to files, etc.
+
+Q_DECLARE_METATYPE(OMfilmCamParams)
+
+inline QDataStream& operator<<(QDataStream& out, const OMfilmCamParams& params) {
+    out << params.camControl;
+    out << params.focLock;
+    out << quint32(params.shutterMS);
+    out << quint32(params.delayMS);
+    out << quint32(params.focusMS);
+    out << params.bulb;
+    out << params.focus;
+    out << params.manInterval;
+    out << quint32(params.interval);
+    out << params.autoFPS;
+
+    return out;
+}
+
+inline QDataStream& operator>>(QDataStream& in, OMfilmCamParams& options) {
+
+    quint32 shutterMS;
+    quint32 delayMS;
+    quint32 focusMS;
+    quint32 interval;
+
+    in >> options.camControl;
+    in >> options.focLock;
+    in >> shutterMS;
+        options.shutterMS = shutterMS;
+    in >> delayMS;
+        options.delayMS = delayMS;
+    in >> focusMS;
+        options.focusMS = focusMS;
+    in >> options.bulb;
+    in >> options.focus;
+    in >> options.manInterval;
+    in >> interval;
+        options.interval = interval;
+    in >> options.autoFPS;
+
+    return in;
+}
+
  /** Film Parameters for a Specific Axis */
 struct OMfilmAxisParams {
         /** Bus of device */
@@ -104,6 +151,55 @@ struct OMfilmAxisParams {
 
 };
 
+
+Q_DECLARE_METATYPE(OMfilmAxisParams)
+
+inline QDataStream& operator<<(QDataStream& out, const OMfilmAxisParams& params) {
+    out << params.bus;
+    out << quint32(params.endDist);
+    out << qint16(params.easing);
+    out << quint32(params.accelTm);
+    out << quint32(params.decelTm);
+    out << qint16(params.ms);
+    out << quint32(params.startTm);
+    out << quint32(params.endTm);
+    out << params.mute;
+
+    return out;
+}
+
+inline QDataStream& operator>>(QDataStream& in, OMfilmAxisParams& options) {
+
+
+    quint32 endDist;
+    qint16 easing;
+    quint32 accelTm;
+    quint32 decelTm;
+    qint16 ms;
+    quint32 startTm;
+    quint32 endTm;
+
+    in >> options.bus;
+    in >> endDist;
+        options.endDist = endDist;
+    in >> easing;
+        options.easing = easing;
+    in >> accelTm;
+        options.accelTm = accelTm;
+    in >> decelTm;
+        options.decelTm = decelTm;
+    in >> ms;
+        options.ms = ms;
+    in >> startTm;
+        options.startTm = startTm;
+    in >> endTm;
+        options.endTm = endTm;
+    in >> options.mute;
+
+    return in;
+}
+
+
  /** Parameters for the Film Program */
 struct OMfilmParams {
         /** Film length (output film) */
@@ -120,12 +216,67 @@ struct OMfilmParams {
     unsigned short fps;
 
     OMfilmParams() {
-        length = 1000 * 60 * 42;
-        realLength = 1000 * 60 * 42;
+        length = 1000 * 60 * 2;
+        realLength = 1000 * 60 * 2;
         camParams = new OMfilmCamParams;
         fps = 24;
     }
 };
+
+Q_DECLARE_METATYPE(OMfilmParams)
+
+inline QDataStream& operator<<(QDataStream& out, const OMfilmParams& params) {
+    out << quint32(params.length);
+    out << quint32(params.realLength);
+    out << *params.camParams;
+    out << quint32(params.filmMode);
+    out << quint32(params.fps);
+
+    quint32 axCnt = params.axes.count();
+
+    out << axCnt;
+
+    foreach(unsigned short addr, params.axes.keys()) {
+        out << quint32(addr);
+        OMfilmAxisParams* axis = params.axes.value(addr);
+        out << *axis;
+    }
+
+    return out;
+}
+
+inline QDataStream& operator>>(QDataStream& in, OMfilmParams& params) {
+
+   quint32 length;
+   quint32 realLength;
+   OMfilmCamParams camParams;
+   quint32 filmMode;
+   quint32 fps;
+   quint32 axCnt;
+
+   in >> length;
+    params.length = length;
+   in >> realLength;
+    params.realLength = realLength;
+   in >> camParams;
+    params.camParams = new OMfilmCamParams(camParams);
+   in >> filmMode;
+    params.filmMode = filmMode;
+   in >> fps;
+    params.fps = fps;
+   in >> axCnt;
+
+   for(quint32 i = 0; i < axCnt; i++) {
+       quint32 addr;
+       in >> addr;
+       OMfilmAxisParams axis;
+       in >> axis;
+       params.axes.insert(addr, new OMfilmAxisParams(axis));
+   }
+
+
+    return in;
+}
 
 
 /** Film Parameters

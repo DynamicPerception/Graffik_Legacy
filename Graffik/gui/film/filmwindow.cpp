@@ -56,6 +56,7 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
     connect(this, SIGNAL(motionAreaBorders(int,int)), m_tape, SLOT(setBorders(int,int)));
     connect(this, SIGNAL(motionAreaBorders(int,int)), m_motion, SLOT(setBorders(int,int)));
 
+    connect(m_params, SIGNAL(paramsReleased()), this, SLOT(filmParamsChanged()));
 
     _prepInputs();
 
@@ -135,22 +136,30 @@ void FilmWindow::_enableCamControl(bool p_en) {
 
     OMfilmParams* params = m_params->getParams();
     params->camParams->camControl = p_en;
-    bool autoFPS = params->camParams->autoFPS;
     m_params->releaseParams();
 
-    ui->camSetBut->setEnabled(p_en);
+    _displayCamControl();
+
+}
+
+void FilmWindow::_displayCamControl() {
+
+    OMfilmParams parms = m_params->getParamsCopy();
+
+    bool en = parms.camParams->camControl;
+    bool autoFPS = parms.camParams->autoFPS;
+
+    ui->camSetBut->setEnabled(en);
 
         // disable film time spinners unless auto fps is enabled
-    if( autoFPS && p_en )
-        p_en = true;
+    if( autoFPS && en )
+        en = true;
     else
-        p_en = false;
+        en = false;
 
-    ui->filmHHSpin->setEnabled(p_en);
-    ui->filmMMSpin->setEnabled(p_en);
-    ui->filmSSSpin->setEnabled(p_en);
-
-
+    ui->filmHHSpin->setEnabled(en);
+    ui->filmMMSpin->setEnabled(en);
+    ui->filmSSSpin->setEnabled(en);
 
 }
 
@@ -213,8 +222,8 @@ void FilmWindow::_showFilmTime() {
 }
 
 void FilmWindow::_prepInputs() {
-        // default is no camera control
-    _enableCamControl(false);
+
+    _displayCamControl();
 
     _showFilmTime();
 
@@ -611,4 +620,21 @@ void FilmWindow::_inputEnable(bool p_stat) {
 void FilmWindow::on_plugJogButton_clicked() {
     ui->pluginStackedWidget->setCurrentWidget(m_jcp);
     ui->plugJogButton->setDown(true);
+}
+
+void FilmWindow::on_loadFilmButton_clicked() {
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Film"), "", tr("Film Files (*.film)"));
+    qDebug() << "FW: FilmOpen Got File: " << fileName;
+    FilmFileHandler::readFile(fileName, m_params);
+}
+
+void FilmWindow::on_saveFilmButton_clicked() {
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Film"), "", tr("Film Files (*.film)"));
+    qDebug() << "FW: FilmSave Got File: " << fileName;
+    FilmFileHandler::writeFile(fileName, m_params);
+}
+
+void FilmWindow::filmParamsChanged() {
+        // re-display inputs when params change
+    _prepInputs();
 }

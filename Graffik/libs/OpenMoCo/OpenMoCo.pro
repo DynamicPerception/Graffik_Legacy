@@ -10,9 +10,12 @@ VERSION                 = 1.0.0
 
 DEFINES *= QT_USE_QSTRINGBUILDER
 
-# un-comment to disable all debugging output from libraries
+CONFIG(release, debug|release) {
+    # un-comment to disable all debugging output from libraries
 
-DEFINES *= QT_NO_DEBUG_OUTPUT
+    DEFINES *= QT_NO_DEBUG_OUTPUT
+}
+
 
  # enable debugging in OM serial manager?
  # comment this line out to disable, then make clean and run qmake

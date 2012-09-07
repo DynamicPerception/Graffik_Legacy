@@ -24,7 +24,8 @@ HEADERS += \
     film/FilmExec/playmonitor.h \
     film/MotionArea/motionsection.h \
     film/MotionArea/sectionresizefilter.h \
-    film/JogControlManager/jogcontrolpanel.h
+    film/JogControlManager/jogcontrolpanel.h \
+    film/FilmFileHandler/filmfilehandler.h
 
 
 SOURCES += \
@@ -44,7 +45,8 @@ SOURCES += \
     film/FilmExec/playmonitor.cpp \
     film/MotionArea/motionsection.cpp \
     film/MotionArea/sectionresizefilter.cpp \
-    film/JogControlManager/jogcontrolpanel.cpp
+    film/JogControlManager/jogcontrolpanel.cpp \
+    film/FilmFileHandler/filmfilehandler.cpp
 
 FORMS += \
     film/filmwindow.ui \
