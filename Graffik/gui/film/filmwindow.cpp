@@ -150,6 +150,7 @@ void FilmWindow::_displayCamControl() {
     bool autoFPS = parms.camParams->autoFPS;
 
     ui->camSetBut->setEnabled(en);
+    ui->camControlCheckBox->setChecked(en);
 
         // disable film time spinners unless auto fps is enabled
     if( autoFPS && en )
