@@ -626,7 +626,7 @@ void FilmWindow::on_plugJogButton_clicked() {
 void FilmWindow::on_loadFilmButton_clicked() {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open Film"), "", tr("Film Files (*.film)"));
     qDebug() << "FW: FilmOpen Got File: " << fileName;
-    FilmFileHandler::readFile(fileName, m_params);
+    FilmFileHandler::readFile(fileName, m_params, m_net);
 }
 
 void FilmWindow::on_saveFilmButton_clicked() {

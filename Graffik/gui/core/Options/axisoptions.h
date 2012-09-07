@@ -16,6 +16,8 @@
 #define OM_OPT_SX1RATIO       200 / 0.3
 #define OM_OPT_JOGDAMP        5.0
 
+
+
 enum {
     AXIS_MOVE_ROT, AXIS_MOVE_LIN
 };
@@ -23,6 +25,7 @@ enum {
 enum {
     AXIS_VX1_PAN, AXIS_VX1_TILT, AXIS_SX1_SLIDE, AXIS_CUSTOM
 };
+
 
     // properties related to film functionality
     // for an axis

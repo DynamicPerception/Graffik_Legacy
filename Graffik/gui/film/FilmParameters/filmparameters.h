@@ -22,9 +22,11 @@
 #define CAM_MAX_DELAY       ULONG_MAX
 #define CAM_MAX_FOCUS       ULONG_MAX
 
- /** Axis Easing Type */
+ // change when you change structure of film parameters
+ // to prevent crashes and other unhappiness when attempting
+ // to load a saved film from an old version
 
-
+#define OM_FILM_FMT_VER      1
 
  /** Film Motion type */
 
