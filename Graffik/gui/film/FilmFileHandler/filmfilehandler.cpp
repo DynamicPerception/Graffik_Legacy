@@ -1,7 +1,7 @@
 #include "filmfilehandler.h"
 
-FilmFileHandler::FilmFileHandler()
-{
+FilmFileHandler::FilmFileHandler() {
+
 }
 
 FilmFileHandler::~FilmFileHandler() {
@@ -59,7 +59,7 @@ void FilmFileHandler::writeFile(QString p_file, FilmParameters* p_params, bool p
 
 }
 
-/** Static readFile
+/** Static Read File
 
 
   Restores a persisted OMfilmParams structure from a file into a given FilmParameters object.
@@ -105,7 +105,7 @@ void FilmFileHandler::readFile(QString p_file, FilmParameters* p_params, OMNetwo
                 // stream in data from file
             data >> newParams;
 
-            OMfilmParams* ptr = p_params->getParams();
+            OMfilmParams fp = p_params->getParamsCopy();
             OMfilmParams* nparm = new OMfilmParams(newParams);
 
 
@@ -113,10 +113,11 @@ void FilmFileHandler::readFile(QString p_file, FilmParameters* p_params, OMNetwo
                 // validate that all devices loaded from file are known
                 // and do any required re-mapping
 
-            _validateDevices(ptr, nparm, p_net);
+            _validateDevices(&fp, nparm, p_net);
 
                 // TODO: Fix memory leak from OMfilmCamParams and list of OMfilmAxisParams
 
+            OMfilmParams* ptr = p_params->getParams();
             *ptr = *nparm;
             p_params->releaseParams();
         }
@@ -166,6 +167,7 @@ void FilmFileHandler::_validateDevices(OMfilmParams* p_current, OMfilmParams* p_
 
         // no addresses available to use... Throw out invalid devices
     if( notFound.count() > 0 && available.count() == 0 ) {
+        qDebug() << "FFH: Validate Devices: Devices Remain with No Available Targets";
         foreach(unsigned short addr, notFound)
             p_new->axes.remove(addr);
     }
@@ -173,18 +175,27 @@ void FilmFileHandler::_validateDevices(OMfilmParams* p_current, OMfilmParams* p_
         // if we have anything that wasn't found, and we have addresses available, then
         // see if the user wants to remap each one
 
+
         foreach(unsigned short addr, notFound) {
+
             AddressNotFoundDialog mapdia(addr, available);
             int ret = mapdia.exec();
+
+            qDebug() << "FFH: Got Return Code" << ret;
+
             if( ret == 0 || ret == 1 ) {
+                qDebug() << "FFH: Validate Devices: User Chose Not to Remap" << addr;
+
                 // they didn't choose a valid device... remove the found one
                 p_new->axes.remove(addr);
             }
             else {
                     // copy to new location
-                p_new->axes.insert(ret, p_new->axes.value(addr));
+                qDebug() << "FFH: Validate Devices: User Chose to Remap" << addr << "to" << ret;
+                OMfilmAxisParams* axparms = p_new->axes.value(addr);
+                p_new->axes.insert(ret, new OMfilmAxisParams(*axparms));
                 p_new->axes.remove(addr);
-                available.remove(addr);
+                available.remove(ret);
             }
         }
 
@@ -196,8 +207,10 @@ void FilmFileHandler::_validateDevices(OMfilmParams* p_current, OMfilmParams* p_
     if( notFound.count() == 0 && available.count() > 0 ) {
         // dang, we have devices not found in the file - make sure we keep those guys
         // and don't lose their OMfilmAxisParameters (or its crash city for us!)
-        foreach( unsigned short addr, available.keys() )
+        foreach( unsigned short addr, available.keys() ) {
+            qDebug() << "FHH: Adding Back Address not in Film File" << addr;
             p_new->axes.insert(addr, p_current->axes.value(addr));
+        }
     }
 
 }

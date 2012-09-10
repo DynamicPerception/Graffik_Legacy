@@ -3,6 +3,7 @@
 
 #include <QFile>
 #include <QString>
+#include <QApplication>
 
 #include "MoCoBus/omnetwork.h"
 
@@ -14,6 +15,7 @@
 
 class FilmFileHandler
 {
+
 public:
     FilmFileHandler();
     ~FilmFileHandler();
@@ -24,6 +26,7 @@ public:
 private:
 
     static void _validateDevices(OMfilmParams *p_current, OMfilmParams *p_new, OMNetwork *p_net);
+
 };
 
 #endif // FILMFILEHANDLER_H

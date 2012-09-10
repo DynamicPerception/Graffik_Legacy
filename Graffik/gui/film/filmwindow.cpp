@@ -630,6 +630,7 @@ void FilmWindow::on_loadFilmButton_clicked() {
 }
 
 void FilmWindow::on_saveFilmButton_clicked() {
+
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save Film"), "", tr("Film Files (*.film)"));
     qDebug() << "FW: FilmSave Got File: " << fileName;
     FilmFileHandler::writeFile(fileName, m_params);

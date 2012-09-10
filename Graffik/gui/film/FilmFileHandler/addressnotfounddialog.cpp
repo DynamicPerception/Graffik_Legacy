@@ -11,6 +11,8 @@ AddressNotFoundDialog::AddressNotFoundDialog(unsigned short c_addr, QHash<unsign
     ui->setupUi(this);
     m_replace = c_list;
 
+    setWindowModality(Qt::WindowModal);
+
     foreach(QString name, m_replace.values()) {
         ui->devCombo->addItem(name);
     }
@@ -36,6 +38,12 @@ void AddressNotFoundDialog::accept() {
             selAddr = addr;
     }
 
-    done(selAddr);
+    qDebug() << "ANFD: New device address:" << selAddr;
+
+   // setResult(selAddr);
+   // QDialog::accept();
+    QDialog::done(selAddr);
+
+    qDebug() << "ANFD: Done done";
 
 }
