@@ -2,7 +2,6 @@
 
 #include <QCoreApplication>
 #include <QDebug>
-#include <QColor>
 
 #include "core/Dialogs/errordialog.h"
 
@@ -27,10 +26,8 @@ void UserData::busAdded(OMbusInfo *p_bus) {
 
     QString root_key = "network/buses/" + p_bus->name + "/";
     QString p_key = root_key + "port";
-    QString c_key = root_key + "color";
 
     m_qset->setValue(p_key, p_bus->bus->port());
-    m_qset->setValue(c_key, p_bus->color);
 
 
 }
@@ -153,9 +150,6 @@ void UserData::recoverBuses(OMNetwork *p_net) {
          // get devices recovered as well (but only if we could connect to the bus)
         if( ok ) {
             _recoverDevices(p_net, bus, bus_port);
-
-                // set bus color
-            p_net->busColor(bus_port, m_qset->value(root_key + "color").value< QColor >());
         }
     }
 

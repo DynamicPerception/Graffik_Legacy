@@ -2,10 +2,11 @@
 
 #include <QDebug>
 
-FilmExec::FilmExec(OMNetwork* c_net, FilmParameters* c_params, AxisOptions* c_opts) : QObject() {
+FilmExec::FilmExec(OMNetwork* c_net, FilmParameters* c_params, AxisOptions* c_opts, GlobalOptions *c_gopts, QObject *parent) : QObject(parent) {
     m_net = c_net;
     m_params = c_params;
     m_opts = c_opts;
+    m_gopts = c_gopts;
 
         // get an initial copy of film parameters
     m_film = m_params->getParamsCopy();
@@ -14,13 +15,13 @@ FilmExec::FilmExec(OMNetwork* c_net, FilmParameters* c_params, AxisOptions* c_op
 
 
         // initialize our home position monitor (we'll need this later)
-    m_home = new HomeMonitor(m_net);
+    m_home = new HomeMonitor(m_net, m_gopts);
     m_homeThread = new QThread();
     m_home->moveToThread(m_homeThread);
     m_homeThread->start();
 
         // initialize play status monitor
-    m_play = new PlayMonitor(m_net, m_params);
+    m_play = new PlayMonitor(m_net, m_params, m_gopts);
     m_playThread = new QThread();
     m_play->moveToThread(m_playThread);
     m_playThread->start();
@@ -414,24 +415,18 @@ QList<OMAxis*> FilmExec::_getAxes(OMfilmParams* p_film) {
     QList<OMAxis*> ret;
 
 
-    qDebug() << "FEx: GA: Get Axes";
-
         // go through list of axes
     foreach( unsigned short addr, p_film->axes.keys() ) {
 
         OMDevice* axis;
 
-        qDebug() << "FEx: Bus: " << p_film->axes.value(addr)->bus;
-
         try {
             axis = m_net->deviceInfo(p_film->axes.value(addr)->bus, addr)->device;
         }
         catch (int e) {
-            qDebug() << "FEx: Got exception: " << e;
+            qDebug() << "FEx: Got exception getting device info: " << e;
             return ret;
         }
-
-        qDebug() << "FEx: GA: Checking Axis type: " << axis->type();
 
         if( axis->type() == "nanoMoCo" ) {
                 // ensure that we have the right type, and cast to
@@ -454,7 +449,8 @@ void FilmExec::_nodesHome() {
     qDebug() << "FEx: Nodes are all home, sending mS values";
 
 
-        // send mS parameter for each node
+        // send mS parameter for each node - do this after moving
+        // to ensure home uses rapid moves
     foreach(OMAxis* axis, m_axesHome)
         axis->microSteps(m_film.axes.value(axis->address())->ms);
 

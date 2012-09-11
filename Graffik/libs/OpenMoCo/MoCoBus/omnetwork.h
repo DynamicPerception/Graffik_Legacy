@@ -4,10 +4,9 @@
 #include <QString>
 #include <QList>
 #include <QHash>
-#include <QColor>
 #include <QObject>
 #include <QByteArray>
-#include <QString>
+#include <QStringList>
 
 #include "openmoco.h"
 #include "ommocobus.h"
@@ -55,8 +54,6 @@ struct OMdeviceInfo {
 struct OMbusInfo {
     /** bus name */
     QString name;
-    /** bus color */
-    QColor color;
     /** OMMoCoBus object pointer */
     OMMoCoBus* bus;
     /** Hash of devices - device address is key */
@@ -143,7 +140,6 @@ public:
     void addBus(QString p_port, QString p_name);
     bool deleteBus(QString p_port);
     bool busExists(QString p_port);
-    void busColor(QString p_port, QColor p_color);
     OMbusInfo* busInfo(QString p_port);
     QList<QString> getBuses();
 

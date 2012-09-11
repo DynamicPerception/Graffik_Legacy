@@ -4,8 +4,9 @@
 #include <QDebug>
 
 
-HomeMonitor::HomeMonitor(OMNetwork *c_net, QObject *parent) : QObject(parent) {
+HomeMonitor::HomeMonitor(OMNetwork *c_net, GlobalOptions *c_gopts, QObject *parent) : QObject(parent) {
     m_net = c_net;
+    m_gopts = c_gopts;
 
     m_started = false;
 
@@ -89,7 +90,7 @@ void HomeMonitor::_cmdReceived(int p_id, OMCommandBuffer *p_cmd) {
 
         } // end if( resSize > 0...
     }
-    else {
+    else if( m_gopts->stopOnErr() ){
         QString errText = "Received Error Sending Device " + m_net->getDevices().value(m_axes.value(p_id)->address())->name + " Home";
         emit error(errText);
     }

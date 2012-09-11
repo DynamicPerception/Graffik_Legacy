@@ -57,14 +57,7 @@ private:
     GlobalOptions* _globalOpts;
 
 public slots:
-    void on_actionOpen_File_triggered();
-    void on_actionAdd_Bus_triggered();
-    void on_actionAdd_Device_triggered();
-    void on_actionManage_Network_triggered();
-    void on_actionSave_File_triggered();
     void on_actionHelp_Contents_triggered();
-    void on_actionScan_for_Devices_triggered();
-    void on_actionInitialize_New_Device_triggered();
     void on_actionSettings_triggered();
     void on_actionAbout_Graffik_triggered();
 

@@ -174,7 +174,6 @@ void OMNetwork::addBus(QString p_port, QString p_name) {
 
     net->bus = bus;
     net->name = p_name;
-    net->color = QColor("blue");
     net->devices = QHash<unsigned short, OMdeviceInfo*>();
 
     m_busList[p_port] = net;
@@ -188,28 +187,6 @@ void OMNetwork::addBus(QString p_port, QString p_name) {
 
 }
 
-/** Set Color for Bus
-
-   Sets the color for a bus, for use with UIs and other elements
-   which require a color to display the bus.
-
-   @param p_port
-   A QString containing the port of the bus
-
-   @param p_color
-   A QColor representing the bus
-
-   @throws OM_NET_BUS
-   The bus port does not exist on the network
-   */
-
-void OMNetwork::busColor(QString p_port, QColor p_color) {
-        // throw an error if bus port doesn't exist
-    if( ! m_busList.contains(p_port) )
-        throw OM_NET_BUS;
-
-    m_busList[p_port]->color = p_color;
-}
 
 /** Delete Bus
 

@@ -4,7 +4,6 @@
 #include <QAbstractTableModel>
 #include <QString>
 #include <QList>
-#include <QColor>
 
 #include "Slim/slimcommandparser.h"
 #include "MoCoBus/omnetwork.h"
@@ -16,8 +15,6 @@ struct slimHistoryEntry {
     mutable slimCommand cmdObject;
         /** bus name */
     QString bus;
-        /** bus color */
-    QColor color;
         /** device name */
     QString deviceName;
         /** device address */
@@ -30,10 +27,9 @@ struct slimHistoryEntry {
     bool broadcast;
 
         /** constructor */
-    slimHistoryEntry(slimCommand c_cmd, QString c_bus, QColor c_col, QString c_devName, unsigned short c_devAddr, int c_stat, QString c_com, bool p_bcast) {
+    slimHistoryEntry(slimCommand c_cmd, QString c_bus, QString c_devName, unsigned short c_devAddr, int c_stat, QString c_com, bool p_bcast) {
         cmdObject = c_cmd;
         bus = c_bus;
-        color = c_col;
         deviceName = c_devName;
         deviceAddr = c_devAddr;
         status = c_stat;
@@ -72,7 +68,6 @@ private:
     QHash<int, int> m_cmdLoc;
 
     OMNetwork* m_net;
-    QColor* m_bcCol;
     QString m_headers;
 };
 

@@ -15,7 +15,7 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
     m_error = false;
 
     m_params = new FilmParameters(m_net, this);
-    m_exec = new FilmExec(m_net, m_params, m_opts);
+    m_exec = new FilmExec(m_net, m_params, m_opts, m_gopts, this);
     m_busy = new QProgressDialog(this);
     m_jcp = new JogControlPanel(m_net, m_opts, m_params, this);
 

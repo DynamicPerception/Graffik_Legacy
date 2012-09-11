@@ -4,10 +4,11 @@
 #include <QDebug>
 #include <QtEndian>
 
-PlayMonitor::PlayMonitor(OMNetwork *c_net, FilmParameters *c_film, QObject *parent) : QObject(parent) {
+PlayMonitor::PlayMonitor(OMNetwork *c_net, FilmParameters *c_film, GlobalOptions *c_gopts, QObject *parent) : QObject(parent) {
     m_film = c_film;
     m_net = c_net;
     m_started = false;
+    m_gopts = c_gopts;
 
         // listen for commands completed
     connect(m_net, SIGNAL(complete(int,OMCommandBuffer*)), this, SLOT(_cmdReceived(int,OMCommandBuffer*)), Qt::QueuedConnection);
@@ -109,8 +110,10 @@ void PlayMonitor::_cmdReceived(int p_id, OMCommandBuffer *p_cmd) {
 
         qDebug() << "PM: Got Err" << p_cmd->status();
 
-        QString errText = "Received Error Monitoring Master Device " + m_net->getDevices().value(m_master->address())->name + " " + QString::number(p_cmd->status()) + ", Film Aborted";
-        emit error(errText);
+        if( m_gopts->stopOnErr() ) {
+            QString errText = "Received Error Monitoring Master Device " + m_net->getDevices().value(m_master->address())->name + " " + QString::number(p_cmd->status()) + ", Film Aborted";
+            emit error(errText);
+        }
 
     }
 

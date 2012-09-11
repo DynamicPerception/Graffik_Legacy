@@ -9,8 +9,6 @@ CommandHistoryModel::CommandHistoryModel(OMNetwork *c_net, QObject *parent) :
     QAbstractTableModel(parent)
 {
     m_net = c_net;
-    m_bcCol = new QColor("white");
-
 
     qRegisterMetaType<slimCommand>("slimCommand");
 
@@ -20,7 +18,6 @@ CommandHistoryModel::CommandHistoryModel(OMNetwork *c_net, QObject *parent) :
 }
 
 CommandHistoryModel::~CommandHistoryModel() {
-    delete m_bcCol;
 }
 
 int CommandHistoryModel::rowCount(const QModelIndex &) const {
@@ -107,16 +104,6 @@ int CommandHistoryModel::rowCount(const QModelIndex &) const {
 
          }
      }
-     else if( role == Qt::BackgroundRole ) {
-
-         if( index.column() == 0 ) {
-             // color background of network area by user-specified color
-
-             QBrush netBackground(_cmdHist.at(index.row()).color);
-             return(netBackground);
-         }
-
-     }
 
      return QVariant();
  }
@@ -129,7 +116,6 @@ int CommandHistoryModel::rowCount(const QModelIndex &) const {
      beginInsertRows(QModelIndex(), this->rowCount(), this->rowCount());
 
      QString bName;
-     QColor bCol = *m_bcCol;
      QString dName;
      unsigned short dAddr;
 
@@ -141,7 +127,6 @@ int CommandHistoryModel::rowCount(const QModelIndex &) const {
      }
      else {
          bName = m_net->busInfo(p_com.network)->name;
-         bCol  = m_net->busInfo(p_com.network)->color;
          dName = m_net->deviceInfo(p_com.network, p_com.address)->name;
          dAddr = p_com.address;
      }
@@ -149,7 +134,7 @@ int CommandHistoryModel::rowCount(const QModelIndex &) const {
      QString cmd = p_com.command + " " + p_com.arguments.join(" ");
 
 
-     slimHistoryEntry ent(p_com, bName, bCol, dName, dAddr, OMC_QUEUED, cmd, p_com.broadcast);
+     slimHistoryEntry ent(p_com, bName, dName, dAddr, OMC_QUEUED, cmd, p_com.broadcast);
 
      _cmdHist.append(ent);
 

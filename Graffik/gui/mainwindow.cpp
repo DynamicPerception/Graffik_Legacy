@@ -107,51 +107,12 @@ void MainWindow::globalOptionsChanged() {
     emit globalOptionsChanged(_globalOpts);
 }
 
-void MainWindow::on_actionAdd_Bus_triggered() {
-    AddNetDialog addNet(_net, this);
-    addNet.exec();
-}
-
-void MainWindow::on_actionAdd_Device_triggered() {
-    AddDeviceDialog addDev(_net, this);
-    addDev.exec();
-}
-
-
-void MainWindow::on_actionOpen_File_triggered() {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Script"), "", tr("Slim Scripts (*.slim)"));
-    qDebug() << "MW: SlimOpen Got File: " << fileName;
-    SlimFileHandler::readFile(fileName, _parser, _cmdHist, true);
-}
-
-void MainWindow::on_actionSave_File_triggered() {
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Script"), "", tr("Slim Script (*.slim)"));
-    qDebug() << "MW: SlimSave Got File: " << fileName;
-    SlimFileHandler::writeFile(fileName, _cmdHist, true);
-}
-
-
-void MainWindow::on_actionManage_Network_triggered() {
-    NetworkManager netMan(_netModel, _axisOpts, this);
-    netMan.exec();
-}
 
  // TODO: Fix leak
 void MainWindow::on_actionHelp_Contents_triggered() {
     qDebug() << "MW: Help Index triggered";
     HelpWindow* help = new HelpWindow(this);
     help->show();
-}
-
- // TODO: Fix leak
-void MainWindow::on_actionScan_for_Devices_triggered() {
-    qDebug() << "MW: Scan for Devices Triggered";
-    DeviceScanner* scan = new DeviceScanner(_net);
-}
-
-void MainWindow::on_actionInitialize_New_Device_triggered() {
-    qDebug() << "MW: Initialize New Device Triggered";
-    DeviceScanner* scan = new DeviceScanner(_net, 2);
 }
 
 

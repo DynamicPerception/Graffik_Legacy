@@ -9,6 +9,8 @@
 #include "MoCoBus/omnetwork.h"
 #include "Devices/nanoMoCo/omaxis.h"
 
+#include "core/Options/globaloptions.h"
+
 #include "film/FilmParameters/filmparameters.h"
 
 
@@ -39,7 +41,7 @@ class PlayMonitor : public QObject
 {
     Q_OBJECT
 public:
-    PlayMonitor(OMNetwork* c_net, FilmParameters* c_film, QObject *parent = 0);
+    PlayMonitor(OMNetwork* c_net, FilmParameters* c_film, GlobalOptions* c_gopts, QObject *parent = 0);
     ~PlayMonitor();
 
     void start();
@@ -62,6 +64,7 @@ private:
     FilmParameters* m_film;
     OMAxis* m_master;
     QTimer* m_timer;
+    GlobalOptions* m_gopts;
 
         // commands are associated either as a run state check (false), or run time check (true)
     QHash<int, bool> m_cmds;

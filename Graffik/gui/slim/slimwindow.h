@@ -3,11 +3,13 @@
 
 #include <QWidget>
 #include <QString>
+#include <QFileDialog>
 
 #include "MoCoBus/omcommandbuffer.h"
 #include "MoCoBus/omnetwork.h"
 #include "Slim/slimcommandparser.h"
 
+#include "slim/SlimFileHandler/slimfilehandler.h"
 #include "slim/CommandHistoryModel/commandhistorymodel.h"
 
 namespace Ui {
@@ -29,6 +31,9 @@ private slots:
 public slots:
         void registerNewDevice(OMbusInfo* p_bus, OMdeviceInfo* p_dev);
         void removeDevice(OMbusInfo* p_bus, unsigned short p_addr);
+        void on_saveButton_clicked();
+        void on_loadButton_clicked();
+
 private:
 
     Ui::SlimWindow *ui;

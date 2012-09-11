@@ -12,6 +12,7 @@
 
 #include "film/FilmParameters/filmparameters.h"
 #include "core/Options/axisoptions.h"
+#include "core/Options/globaloptions.h"
 
 #include "homemonitor.h"
 #include "playmonitor.h"
@@ -40,7 +41,7 @@ class FilmExec : public QObject
     Q_OBJECT
 
 public:
-    FilmExec(OMNetwork* c_net, FilmParameters* c_params, AxisOptions* c_opts);
+    FilmExec(OMNetwork* c_net, FilmParameters* c_params, AxisOptions* c_opts, GlobalOptions* c_gopts, QObject* parent = 0);
     ~FilmExec();
 
     void start();
@@ -97,6 +98,7 @@ private:
     FilmParameters* m_params;
     OMfilmParams m_film;
     AxisOptions* m_opts;
+    GlobalOptions* m_gopts;
 
     HomeMonitor* m_home;
     PlayMonitor* m_play;

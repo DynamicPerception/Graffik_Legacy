@@ -18,62 +18,20 @@ AddNetDialog::AddNetDialog(OMNetwork *c_net, QWidget *c_parent) :
 
     _parent = c_parent;
     _net = c_net;
-    _thsColor = QColor("white");
 
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-    _setNetBackground(_thsColor);
-
     updateSerialPorts();
 
-#ifdef Q_OS_MACX
-    _colorDia = new QColorDialog;
-#endif
-
     QWidget::setTabOrder(ui->portCombo, ui->netName);
-    QWidget::setTabOrder(ui->netName, ui->colorSetButton);
 }
 
 AddNetDialog::~AddNetDialog()
 {
 
-#ifdef Q_OS_MACX
-    delete _colorDia;
-#endif
-
-
     delete ui;
 }
 
-void AddNetDialog::_setNetBackground(QColor p_color) {
-    // unfortunately, we cannot use a palette on windows, so
-    // we need to use a stylesheet instead
-    _thsColor = p_color;
-    QString myStyle = "background-color: rgb(%1,%2,%3);";
-    ui->colorSetButton->setStyleSheet(myStyle.arg(_thsColor.red()).arg(_thsColor.green()).arg(_thsColor.blue()));
-}
-
-void AddNetDialog::_colorChange(const QColor &color) {
-    qDebug() << "AND: Got color change";
-    _setNetBackground(color);
-}
-
-void AddNetDialog::on_colorSetButton_clicked() {
-
-    // an issue on OSX, the nested modal dialogs do not play well
-    // when attempting to exit this dialog after having called the
-    // static getColor
-
-#ifdef Q_OS_MACX
-
-    QObject::connect(_colorDia, SIGNAL(currentColorChanged(const QColor &)), this, SLOT(_colorChange(const QColor &)));
-
-    _colorDia->show();
-#else
-    _thsColor = QColorDialog::getColor(_thsColor, _parent, "Bus Color");
-    _setNetBackground(_thsColor);
-#endif
-}
 
 void AddNetDialog::updateSerialPorts() {
     QList<QextPortInfo> ports = QextSerialEnumerator::getPorts();
@@ -142,8 +100,6 @@ void AddNetDialog::accept() {
         er.exec();
     }
     else {
-            // set color
-        _net->busColor(port, _thsColor);
 
         // qDebug() << "Accepting dialog";
         setResult(QDialog::Accepted);

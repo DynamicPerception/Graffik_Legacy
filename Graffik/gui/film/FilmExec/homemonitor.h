@@ -8,6 +8,8 @@
 #include "MoCoBus/omnetwork.h"
 #include "Devices/nanoMoCo/omaxis.h"
 
+#include "core/Options/globaloptions.h"
+
 
 #define HMM_PERIOD  500
 #define HMM_SLOP    10
@@ -29,7 +31,7 @@ class HomeMonitor : public QObject
 {
     Q_OBJECT
 public:
-    explicit HomeMonitor(OMNetwork* c_net, QObject *parent = 0);
+    explicit HomeMonitor(OMNetwork* c_net, GlobalOptions* c_gopts, QObject *parent = 0);
     ~HomeMonitor();
 
 
@@ -57,6 +59,8 @@ private:
 
     OMNetwork* m_net;
     QTimer* m_timer;
+    GlobalOptions* m_gopts;
+
     QList<OMAxis*> m_axes;
     QHash<int, OMAxis*> m_cmds;
 
