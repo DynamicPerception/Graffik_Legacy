@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #include <QList>
+#include <QHash>
 #include <QThread>
 
 
@@ -14,11 +15,17 @@
 #include "core/Options/axisoptions.h"
 #include "core/Options/globaloptions.h"
 
-#include "homemonitor.h"
+#include "positionmonitor.h"
 #include "playmonitor.h"
 
 enum { FILM_STOPPED, FILM_STARTED, FILM_PAUSED };
 
+    // differentiation between shuttling home and shuttle to beginning
+    // is minial except for expectation of the user and UI, we typically
+    // shuttle home when beginning a film, and shuttle to beginning when
+    // not playing
+
+enum { SHUTTLE_NONE, SHUTTLE_HOME, SHUTTLE_END, SHUTTLE_BEG };
 
 /** Film Execution Handler
 
@@ -48,6 +55,9 @@ public:
     void stop();
     void pause();
 
+    void rewind();
+    void ffwd();
+
     int status();
     unsigned long runTime();
     unsigned long filmTime();
@@ -70,6 +80,7 @@ signals:
           @param p_runTime
           The runtime of the film, in milliseconds.
           */
+
     void filmPlayStatus(bool p_stat, unsigned long p_runTime);
 
         /** Film Started Signal
@@ -82,6 +93,14 @@ signals:
 
     void filmStarted();
 
+        /** Shuttle Completed Signal
+
+          When Shuttling (fast forward, rewind, etc.) this signal is emitted when
+          all axes have arrived at their desired position
+          */
+
+    void shuttleComplete();
+
         /** Error Occurred Signal
 
           This signal is emitted when an error occurs.
@@ -90,8 +109,9 @@ signals:
     void error(QString p_err);
 
 private slots:
-    void _nodesHome();
+    void _nodesAtPosition();
     void _error(QString p_error);
+    void _cmdReceived(int p_id, OMCommandBuffer* p_cmd);
 
 private:
     OMNetwork* m_net;
@@ -100,16 +120,19 @@ private:
     AxisOptions* m_opts;
     GlobalOptions* m_gopts;
 
-    HomeMonitor* m_home;
+    PositionMonitor* m_position;
     PlayMonitor* m_play;
     QThread* m_homeThread;
     QThread* m_playThread;
 
-    QList<OMAxis*> m_axesHome;
+    QHash<OMAxis*, unsigned long> m_axesHome;
+    QHash<int, OMAxis*> m_cmds;
 
     int m_stat;
+    int m_shuttle;
 
     void _sendHome(OMAxis* p_axis);
+    void _sendDistance(OMAxis* p_axis, unsigned long p_distance, bool p_dir);
     void _sendCamera(OMAxis* p_master);
     void _sendMaster(OMAxis* p_master, QList<OMAxis*> p_axes);
     void _sendNodeMovements(OMfilmParams* p_film, OMAxis* p_axis);

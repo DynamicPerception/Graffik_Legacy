@@ -50,6 +50,7 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
     connect(m_exec, SIGNAL(filmPlayStatus(bool,ulong)), this, SLOT(_playStatus(bool,ulong)));
     connect(m_exec, SIGNAL(filmStarted()), this, SLOT(_filmStarted()));
     connect(m_exec, SIGNAL(error(QString)), this, SLOT(error(QString)));
+    connect(m_exec, SIGNAL(shuttleComplete()), this, SLOT(_shuttleComplete()));
 
     connect(m_busy, SIGNAL(canceled()), this, SLOT(_busyCanceled()));
 
@@ -140,6 +141,7 @@ void FilmWindow::_enableCamControl(bool p_en) {
 
     _displayCamControl();
 
+
 }
 
 void FilmWindow::_displayCamControl() {
@@ -161,6 +163,8 @@ void FilmWindow::_displayCamControl() {
     ui->filmHHSpin->setEnabled(en);
     ui->filmMMSpin->setEnabled(en);
     ui->filmSSSpin->setEnabled(en);
+
+    _inputEnable(true);
 
 }
 
@@ -225,7 +229,7 @@ void FilmWindow::_showFilmTime() {
 void FilmWindow::_prepInputs() {
 
     _displayCamControl();
-
+    _inputEnable(true);
     _showFilmTime();
 
     ui->filmHHSpin->setMaximum(999);
@@ -455,6 +459,32 @@ void FilmWindow::on_stopButton_clicked() {
 
 }
 
+void FilmWindow::on_rewindButton_clicked() {
+    qDebug() << "FW: Send Rewind";
+
+    m_busy->setLabelText("Sending All Axes to Start Point");
+    m_busy->setMinimum(0);
+    m_busy->setMaximum(0);
+    m_busy->show();
+
+    m_exec->rewind();
+    _inputEnable(false);
+
+}
+
+void FilmWindow::on_forwardButton_clicked() {
+    qDebug() << "FW: Send Forward";
+
+    m_busy->setLabelText("Sending All Axes to End Point");
+    m_busy->setMinimum(0);
+    m_busy->setMaximum(0);
+    m_busy->show();
+
+    m_exec->ffwd();
+    _inputEnable(false);
+
+}
+
 void FilmWindow::_setPlayButtonStatus(int p_stat) {
     if( p_stat == s_Disable ) {
         ui->playButton->setEnabled(false);
@@ -582,8 +612,6 @@ void FilmWindow::error(QString p_err) {
  // What to do when the busy window (e.g. sending nodes home) is cancelled?
 void FilmWindow::_busyCanceled() {
     qDebug() << "FW: Busy Canceled";
-
-
     on_stopButton_clicked();
 }
 
@@ -597,8 +625,6 @@ void FilmWindow::_inputEnable(bool p_stat) {
     ui->realSSSpin->setEnabled(p_stat);
     ui->forwardButton->setEnabled(p_stat);
     ui->rewindButton->setEnabled(p_stat);
-    ui->frameFwdButton->setEnabled(p_stat);
-    ui->frameRwdButton->setEnabled(p_stat);
     ui->camControlCheckBox->setEnabled(p_stat);
 
         // only control status of certain camera inputs, if
@@ -607,6 +633,7 @@ void FilmWindow::_inputEnable(bool p_stat) {
     OMfilmParams params = m_params->getParamsCopy();
     bool cam = params.camParams->camControl;
     bool autoFPS = params.camParams->autoFPS;
+    bool mode = params.filmMode;
 
     if( cam ) {
         ui->camSetBut->setEnabled(p_stat);
@@ -615,6 +642,20 @@ void FilmWindow::_inputEnable(bool p_stat) {
             ui->filmMMSpin->setEnabled(p_stat);
             ui->filmSSSpin->setEnabled(p_stat);
         }
+
+        if( mode == FILM_MODE_SMS ) {
+            ui->frameFwdButton->setEnabled(p_stat);
+            ui->frameRwdButton->setEnabled(p_stat);
+        }
+        else {
+            ui->frameFwdButton->setEnabled(false);
+            ui->frameRwdButton->setEnabled(false);
+        }
+    }
+    else {
+        ui->camSetBut->setEnabled(false);
+        ui->frameFwdButton->setEnabled(false);
+        ui->frameRwdButton->setEnabled(false);
     }
 }
 
@@ -639,4 +680,10 @@ void FilmWindow::on_saveFilmButton_clicked() {
 void FilmWindow::filmParamsChanged() {
         // re-display inputs when params change
     _prepInputs();
+}
+
+
+void FilmWindow::_shuttleComplete() {
+    m_busy->hide();
+    _inputEnable(true);
 }

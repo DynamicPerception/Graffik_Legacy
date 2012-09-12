@@ -18,7 +18,7 @@ HEADERS += \
     film/MotionArea/motionbase.h \
     film/Dialogs/cameracontroldialog.h \
     film/FilmExec/filmexec.h \
-    film/FilmExec/homemonitor.h \
+    film/FilmExec/positionmonitor.h \
     film/MotionArea/motionpathpainter.h \
     film/MotionArea/motiontape.h \
     film/FilmExec/playmonitor.h \
@@ -40,7 +40,7 @@ SOURCES += \
     film/MotionArea/motionbase.cpp \
     film/Dialogs/cameracontroldialog.cpp \
     film/FilmExec/filmexec.cpp \
-    film/FilmExec/homemonitor.cpp \
+    film/FilmExec/positionmonitor.cpp \
     film/MotionArea/motionpathpainter.cpp \
     film/MotionArea/motiontape.cpp \
     film/FilmExec/playmonitor.cpp \

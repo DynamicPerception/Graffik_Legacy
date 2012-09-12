@@ -1,10 +1,9 @@
-#include "homemonitor.h"
+#include "positionmonitor.h"
 
-#include <QtEndian>
 #include <QDebug>
 
 
-HomeMonitor::HomeMonitor(OMNetwork *c_net, GlobalOptions *c_gopts, QObject *parent) : QObject(parent) {
+PositionMonitor::PositionMonitor(OMNetwork *c_net, GlobalOptions *c_gopts, QObject *parent) : QObject(parent) {
     m_net = c_net;
     m_gopts = c_gopts;
 
@@ -15,12 +14,12 @@ HomeMonitor::HomeMonitor(OMNetwork *c_net, GlobalOptions *c_gopts, QObject *pare
 
 }
 
-HomeMonitor::~HomeMonitor() {
+PositionMonitor::~PositionMonitor() {
     if( m_started )
         delete m_timer;
 }
 
-void HomeMonitor::start() {
+void PositionMonitor::start() {
 
     if( ! m_started ) {
         m_timer = new QTimer();
@@ -31,7 +30,7 @@ void HomeMonitor::start() {
 
 }
 
-void HomeMonitor::stop() {
+void PositionMonitor::stop() {
     if( m_started ) {
         m_timer->stop();
         delete m_timer;
@@ -40,17 +39,23 @@ void HomeMonitor::stop() {
 }
 
 
-void HomeMonitor::checkAxes(QList<OMAxis *> p_axes) {
+void PositionMonitor::checkAxes(QHash<OMAxis *, unsigned long> p_axes) {
     m_axes = p_axes;
+    m_positions.clear();
+
+        // record target locations
+    foreach(OMAxis* axis, m_axes.keys())
+        m_positions.insert(axis->address(), m_axes.value(axis));
+
 }
 
-void HomeMonitor::_timerFire() {
+void PositionMonitor::_timerFire() {
 
         // on timer fire, we issue commands
         // to request distance from home from all
         // known axes.  We check and remove axes
         // with the command complete slot
-    foreach(OMAxis* axis, m_axes) {
+    foreach(OMAxis* axis, m_axes.keys()) {
         qDebug() << "HM: Sending request for axis" << axis->address();
         int cmdId = axis->getHomeDist();
             // hold on to results!
@@ -61,14 +66,13 @@ void HomeMonitor::_timerFire() {
 
 }
 
-void HomeMonitor::_cmdReceived(int p_id, OMCommandBuffer *p_cmd) {
+void PositionMonitor::_cmdReceived(int p_id, OMCommandBuffer *p_cmd) {
     // received command completed from network manager
 
     if( ! m_cmds.contains(p_id) )
         return;
 
     if( p_cmd->status() == OMC_SUCCESS ) {
-        long distance = 0;
         unsigned int resSize = p_cmd->resultSize();
 
         if( resSize > 0 ) {
@@ -76,22 +80,27 @@ void HomeMonitor::_cmdReceived(int p_id, OMCommandBuffer *p_cmd) {
             char* res = new char[resSize];
             p_cmd->result(res, resSize);
 
-            distance = abs(qFromBigEndian<qint32>((uchar*)res));
+                // get target position for axis, and determine
+                // distance from target
+            unsigned long target = m_positions.value(m_cmds.value(p_id)->address());
+            unsigned long position = qFromBigEndian<qint32>((uchar*)res);
+            unsigned long distance = target > position ? target - position : position - target;
+
             delete res;
 
-            qDebug() << "HM: Found current position for axis" << m_cmds.value(p_id)->address() << "is" << distance;
+            qDebug() << "HM: Found current distance from target for axis" << m_cmds.value(p_id)->address() << "is" << distance;
 
             if( distance < HMM_SLOP ) {
-                    // node is at home, remove it from list
+                    // node is (generally) at target, remove it from list
                     // of axes we're monitoring
-                m_axes.removeAll(m_cmds.value(p_id));
-                qDebug() << "HM: Device is at home";
+                m_axes.remove(m_cmds.value(p_id));
+                qDebug() << "HM: Device is (close enough to) desired position";
             }
 
         } // end if( resSize > 0...
     }
     else if( m_gopts->stopOnErr() ){
-        QString errText = "Received Error Sending Device " + m_net->getDevices().value(m_axes.value(p_id)->address())->name + " Home";
+        QString errText = "Received Error Sending Device " + m_net->getDevices().value(m_cmds.value(p_id)->address())->name + " Home";
         emit error(errText);
     }
 
@@ -101,7 +110,7 @@ void HomeMonitor::_cmdReceived(int p_id, OMCommandBuffer *p_cmd) {
         // no more axes left, we can emit a signal
         // informing that all nodes are at home!
     if( m_axes.count() < 1 )
-        emit allAtHome();
+        emit allAtPosition();
 
 
 }

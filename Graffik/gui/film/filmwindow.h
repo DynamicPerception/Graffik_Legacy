@@ -58,6 +58,9 @@ public slots:
     void on_loadFilmButton_clicked();
     void on_saveFilmButton_clicked();
 
+    void on_rewindButton_clicked();
+    void on_forwardButton_clicked();
+
     // spinbox handlers
 
     void on_filmHHSpin_valueChanged(int p_val);
@@ -77,6 +80,7 @@ private slots:
     void _playStatus(bool p_stat, unsigned long p_time);
     void _filmStarted();
     void _busyCanceled();
+    void _shuttleComplete();
 
 signals:
         /** This signal is reflected from the drawn motion areas to indicate

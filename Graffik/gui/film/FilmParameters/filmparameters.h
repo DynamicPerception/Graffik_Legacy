@@ -221,6 +221,7 @@ struct OMfilmParams {
         length = 1000 * 60 * 2;
         realLength = 1000 * 60 * 2;
         camParams = new OMfilmCamParams;
+        filmMode = FILM_MODE_CONT;
         fps = 24;
     }
 };

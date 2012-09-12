@@ -12,12 +12,13 @@ FilmExec::FilmExec(OMNetwork* c_net, FilmParameters* c_params, AxisOptions* c_op
     m_film = m_params->getParamsCopy();
 
     m_stat = FILM_STOPPED;
+    m_shuttle = SHUTTLE_NONE;
 
 
         // initialize our home position monitor (we'll need this later)
-    m_home = new HomeMonitor(m_net, m_gopts);
+    m_position = new PositionMonitor(m_net, m_gopts);
     m_homeThread = new QThread();
-    m_home->moveToThread(m_homeThread);
+    m_position->moveToThread(m_homeThread);
     m_homeThread->start();
 
         // initialize play status monitor
@@ -27,8 +28,10 @@ FilmExec::FilmExec(OMNetwork* c_net, FilmParameters* c_params, AxisOptions* c_op
     m_playThread->start();
 
 
-    connect(m_home, SIGNAL(allAtHome()), this, SLOT(_nodesHome()), Qt::QueuedConnection);
-    connect(m_home, SIGNAL(error(QString)), this, SLOT(_error(QString)), Qt::QueuedConnection);
+    connect(m_net, SIGNAL(complete(int,OMCommandBuffer*)), this, SLOT(_cmdReceived(int,OMCommandBuffer*)), Qt::QueuedConnection);
+
+    connect(m_position, SIGNAL(allAtPosition()), this, SLOT(_nodesAtPosition()), Qt::QueuedConnection);
+    connect(m_position, SIGNAL(error(QString)), this, SLOT(_error(QString)), Qt::QueuedConnection);
 
         // reflect signal
     connect(m_play, SIGNAL(playStatus(bool,ulong)), this, SIGNAL(filmPlayStatus(bool,ulong)), Qt::QueuedConnection);
@@ -40,11 +43,11 @@ FilmExec::FilmExec(OMNetwork* c_net, FilmParameters* c_params, AxisOptions* c_op
 
 FilmExec::~FilmExec() {
 
-    m_home->stop();
+    m_position->stop();
     m_homeThread->quit();
     m_homeThread->wait();
 
-    delete m_home;
+    delete m_position;
     delete m_homeThread;
 
     m_play->stop();
@@ -83,6 +86,7 @@ void FilmExec::start() {
     bool sentHome = false;
 
     m_axesHome.clear();
+    m_shuttle = SHUTTLE_NONE;
 
         // If stopped, we have to do several things before
         // starting - but if paused, we can just broadcast
@@ -126,7 +130,7 @@ void FilmExec::start() {
                 _sendHome(axis);
 
                     // record that we sent axes home
-                m_axesHome.append(axis);
+                m_axesHome.insert(axis, 0);
                 sentHome = true;
 
                     // when nodes have to go Home, we need to wait for them
@@ -167,15 +171,16 @@ void FilmExec::start() {
     else {
             // if we sent nodes home, update HomeMonitor with
             // list of axes sent home
-       m_home->checkAxes(m_axesHome);
-       m_home->start();
+       m_position->checkAxes(m_axesHome);
+       m_position->start();
+       m_shuttle = SHUTTLE_HOME;
     }
 }
 
 
 void FilmExec::stop() {
 
-    m_home->stop();
+    m_position->stop();
     m_play->stop();
     m_net->broadcast(OMBus::OM_BCAST_STOP);
     m_stat = FILM_STOPPED;
@@ -190,6 +195,118 @@ void FilmExec::pause() {
     m_net->broadcast(OMBus::OM_BCAST_PAUSE);
 
     m_stat = FILM_PAUSED;
+}
+
+
+/** Rewind Film
+
+  In most cases, perfoms a simple activity:
+
+  Sends all nodes home.
+
+  Does not send a node to start point if it has no distance to move
+  or the axis is muted.
+
+  When all axes have arrived at their target position, the shuttleComplete() signal will
+  be emitted.
+
+  */
+
+void FilmExec::rewind() {
+
+        // refresh film parameters for a fresh start
+    m_film = m_params->getParamsCopy();
+
+    QList<OMAxis*> axes = _getAxes(&m_film);
+    m_axesHome.clear();
+
+    foreach(OMAxis* axis, axes) {
+
+        unsigned short addr = axis->address();
+        unsigned long distanceToMove = m_film.axes.value(addr)->endDist;
+        bool mute           = m_film.axes.value(addr)->mute;
+
+        if( distanceToMove != 0 && ! mute ) {
+                // only do this if moving
+            qDebug() << "FEx: Sending Device Home: " << addr;
+            _sendHome(axis);
+
+                // record that we sent axes home
+            m_axesHome.insert(axis, 0);
+        }
+
+    }
+
+    if( m_axesHome.count() < 1 ) {
+        emit shuttleComplete();
+        return;
+    }
+
+    m_position->checkAxes(m_axesHome);
+    m_position->start();
+    m_shuttle = SHUTTLE_BEG;
+
+}
+
+/** Fast Foward Film
+
+  In most cases, performs a simple activity:
+
+  Sends all nodes to their end positions.
+
+  Does not send a node to end point if it has no distance to move
+  or the axis is muted.
+
+  When all axes have arrived at their target position, the shuttleComplete() signal will
+  be emitted.
+
+  */
+
+void FilmExec::ffwd() {
+
+        // refresh film parameters for a fresh start
+    m_film = m_params->getParamsCopy();
+
+        // We must first determine location of nodes, so that we may send them to their desired position...
+    QList<OMAxis*> axes = _getAxes(&m_film);
+    m_axesHome.clear();
+
+        // do this first...
+    m_shuttle = SHUTTLE_END;
+
+        // Send commands to read current position from each
+        // node which shall move, so we can determine how
+        // far, and in which direction, to move to reach their
+        // end destinations.
+
+    foreach(OMAxis* axis, axes) {
+
+        unsigned short addr = axis->address();
+        long moveTo = m_film.axes.value(addr)->endDist;
+        bool mute           = m_film.axes.value(addr)->mute;
+
+        if( moveTo != 0 && ! mute ) {
+                // only do this if moving
+            qDebug() << "FEx: Querying Device Position: " << addr;
+
+            int cmdId = axis->getHomeDist();
+            m_net->getManager()->hold(cmdId);
+            m_cmds.insert(cmdId, axis);
+
+                // record that we sent axes home
+            m_axesHome.insert(axis, moveTo);
+        }
+
+    }
+
+    if( m_axesHome.count() < 1 ) {
+        emit shuttleComplete();
+        return;
+    }
+
+    m_position->checkAxes(m_axesHome);
+
+
 }
 
 /** Return Current Execution Status
@@ -296,6 +413,12 @@ void FilmExec::_sendHome(OMAxis* p_axis) {
     p_axis->home();
 }
 
+void FilmExec::_sendDistance(OMAxis *p_axis, unsigned long p_distance, bool p_dir) {
+    qDebug() << "FEx: Sending node to position" << p_axis->address() << p_distance << p_dir;
+    p_axis->motorEnable();
+    p_axis->microSteps(1);
+    p_axis->move(p_dir, p_distance);
+}
 
 void FilmExec::_sendMaster(OMAxis *p_master, QList<OMAxis *> p_axes) {
         // I choose you!
@@ -445,23 +568,32 @@ QList<OMAxis*> FilmExec::_getAxes(OMfilmParams* p_film) {
     // all nodes arrive at home.  We broadcast a
     // start when all nodes are found to be at home
 
-void FilmExec::_nodesHome() {
-    qDebug() << "FEx: Nodes are all home, sending mS values";
+void FilmExec::_nodesAtPosition() {
+    qDebug() << "FEx: Nodes are at desired position";
+
+        // if shuttling home, it's because we started a
+        // film...  Otherwise, we're just moving to start or end positions
+
+    if( m_shuttle == SHUTTLE_HOME ) {
+
+            // send mS parameter for each node - do this after moving
+            // to ensure home uses rapid moves
+        foreach(OMAxis* axis, m_axesHome.keys())
+            axis->microSteps(m_film.axes.value(axis->address())->ms);
 
 
-        // send mS parameter for each node - do this after moving
-        // to ensure home uses rapid moves
-    foreach(OMAxis* axis, m_axesHome)
-        axis->microSteps(m_film.axes.value(axis->address())->ms);
+        qDebug() << "FEx: Nodes all re-configured, starting";
 
-
-    qDebug() << "FEx: Nodes all re-configured, starting";
-
-    m_net->broadcast(OMBus::OM_BCAST_START);
-    m_stat = FILM_STARTED;
-    m_home->stop();
-    m_play->start();
-    emit filmStarted();
+        m_net->broadcast(OMBus::OM_BCAST_START);
+        m_stat = FILM_STARTED;
+        m_position->stop();
+        m_play->start();
+        emit filmStarted();
+    }
+    else {
+        m_position->stop();
+        emit shuttleComplete();
+    }
 }
 
 float FilmExec::_round(float p_val) {
@@ -470,8 +602,77 @@ float FilmExec::_round(float p_val) {
 }
 
 void FilmExec::_error(QString p_error) {
-    m_home->stop();
+    m_position->stop();
     m_play->stop();
 
     emit error(p_error);
+}
+
+
+void FilmExec::_cmdReceived(int p_id, OMCommandBuffer *p_cmd) {
+    // received command completed from network manager
+
+    qDebug() << "FEx: Received Command" << p_id;
+
+    // ignore any command we're not monitoring
+    if( ! m_cmds.contains(p_id) )
+        return;
+
+    qDebug() << "FEx: Wanted Command" << p_id;
+
+    if( p_cmd->status() == OMC_SUCCESS ) {
+        unsigned int resSize = p_cmd->resultSize();
+
+        if( resSize > 0 ) {
+
+            char* res = new char[resSize];
+            p_cmd->result(res, resSize);
+
+            if( m_shuttle == SHUTTLE_END ) {
+
+                    // for shuttle to end status, we need to
+                OMAxis* axis = m_cmds.value(p_id);
+                unsigned short addr = axis->address();
+
+                    // get target position for axis, and determine
+                    // distance from target
+                unsigned long target = m_film.axes.value(addr)->endDist;
+                unsigned long position = qFromBigEndian<qint32>((uchar*)res);
+                unsigned long distance = 0;
+                bool dir = true;
+
+                if( target > position ) {
+                    distance = target - position;
+                    dir = true;
+                }
+                else {
+                    distance = position - target;
+                    dir = false;
+                }
+
+                qDebug() << "FEx: Got Position Response for Axis" << m_cmds.value(p_id)->address() << ":" << position << distance << dir;
+
+                _sendDistance(axis, distance, dir);
+            } // end if shuttle_end
+
+            delete res;
+
+        } // end if( resSize > 0...
+    } // end if success
+    else if( m_gopts->stopOnErr() ) {
+        QString errText = "Received Error Sending Device " + m_net->getDevices().value(m_cmds.value(p_id)->address())->name + " request for position";
+        _error(errText);
+    }
+
+    m_cmds.remove(p_id);
+    m_net->getManager()->release(p_id);
+
+        // no more axes left, we can tell the monitor
+        // to start checking to see if all nodes are at
+        // their target position (for shuttle to end)
+    if( m_cmds.count() < 1 && m_shuttle == SHUTTLE_END )
+        m_position->start();
+
+
+
 }

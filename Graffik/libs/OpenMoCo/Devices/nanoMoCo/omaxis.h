@@ -129,7 +129,7 @@ public:
     const int debug(bool);
 
     const int continuous(bool);
-    const int move(bool, unsigned short);
+    const int move(bool, unsigned long);
     const int move(bool, unsigned long, unsigned long, unsigned long, unsigned long);
     const int plan(bool which, bool dir, unsigned long step, unsigned long shots, unsigned long accel, unsigned long decel);
     const int delayMove(unsigned long ms);

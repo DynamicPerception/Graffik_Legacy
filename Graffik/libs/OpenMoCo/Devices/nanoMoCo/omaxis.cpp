@@ -116,7 +116,7 @@ const int OMAxis::continuous(bool en) {
 /** Move Motor Now
 
  Moves motor a given number of steps immediately in the given direction.
- Specifying steps as '0' causes motor to engaged in continuous motion
+ Specifying steps as '0' causes motor to engage in continuous motion
  (no defined stop point).  Use stopMotor() and speed() to control continuous
  behavior.
 
@@ -131,8 +131,8 @@ const int OMAxis::continuous(bool en) {
  The ID of the command
  */
 
-const int OMAxis::move(bool dir, unsigned short steps) {
-   return this->command(COMPROG, progMove, dir, steps);
+const int OMAxis::move(bool dir, unsigned long steps) {
+   return this->command(COMPROG, progMove, dir, (unsigned long) steps);
 }
 
 /** Move Motor Now
