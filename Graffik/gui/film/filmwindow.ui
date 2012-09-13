@@ -53,8 +53,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>784</width>
-          <height>198</height>
+          <width>790</width>
+          <height>230</height>
          </rect>
         </property>
        </widget>
@@ -123,13 +123,13 @@
            <property name="minimumSize">
             <size>
              <width>45</width>
-             <height>15</height>
+             <height>20</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
              <width>45</width>
-             <height>15</height>
+             <height>20</height>
             </size>
            </property>
            <property name="font">
@@ -147,13 +147,13 @@
            <property name="minimumSize">
             <size>
              <width>40</width>
-             <height>15</height>
+             <height>20</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
              <width>40</width>
-             <height>15</height>
+             <height>20</height>
             </size>
            </property>
            <property name="font">
@@ -555,7 +555,7 @@
      <item row="0" column="1">
       <layout class="QGridLayout" name="pluginPanelGridLayout">
        <property name="spacing">
-        <number>-1</number>
+        <number>6</number>
        </property>
        <item row="0" column="0">
         <widget class="QPushButton" name="plugJogButton">
