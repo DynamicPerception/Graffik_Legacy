@@ -48,6 +48,9 @@ AddDeviceDialog::AddDeviceDialog(OMNetwork *c_net, QWidget *parent) : QDialog(pa
     @param c_addr
     The address of the new device
 
+    @param c_name
+    The name of the new device
+
     @param parent
     The parent widget
 
@@ -55,7 +58,7 @@ AddDeviceDialog::AddDeviceDialog(OMNetwork *c_net, QWidget *parent) : QDialog(pa
 
   */
 
-AddDeviceDialog::AddDeviceDialog(OMNetwork *c_net, QString c_bus, QString c_type, unsigned short c_addr, QWidget *parent) : QDialog(parent), ui(new Ui::AddDeviceDialog) {
+AddDeviceDialog::AddDeviceDialog(OMNetwork *c_net, QString c_bus, QString c_type, unsigned short c_addr, QString c_name, QWidget *parent) : QDialog(parent), ui(new Ui::AddDeviceDialog) {
 
     ui->setupUi(this);
     _net = c_net;
@@ -84,6 +87,9 @@ AddDeviceDialog::AddDeviceDialog(OMNetwork *c_net, QString c_bus, QString c_type
     ui->deviceTypeList->setEnabled(false);
 
     ui->devAddr->setText(QString::number(c_addr));
+    ui->devAddr->setEnabled(false);
+
+    ui->devName->setText(c_name);
     ui->devAddr->setEnabled(false);
 
 }

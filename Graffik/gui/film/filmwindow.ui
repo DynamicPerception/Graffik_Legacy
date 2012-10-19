@@ -53,8 +53,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>790</width>
-          <height>230</height>
+          <width>784</width>
+          <height>208</height>
          </rect>
         </property>
        </widget>
@@ -123,13 +123,13 @@
            <property name="minimumSize">
             <size>
              <width>45</width>
-             <height>20</height>
+             <height>15</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
              <width>45</width>
-             <height>20</height>
+             <height>15</height>
             </size>
            </property>
            <property name="font">
@@ -147,13 +147,13 @@
            <property name="minimumSize">
             <size>
              <width>40</width>
-             <height>20</height>
+             <height>15</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
              <width>40</width>
-             <height>20</height>
+             <height>15</height>
             </size>
            </property>
            <property name="font">
@@ -219,15 +219,6 @@
        </item>
        <item>
         <layout class="QGridLayout" name="FilmLenGrid">
-         <item row="1" column="0">
-          <widget class="QSpinBox" name="filmHHSpin"/>
-         </item>
-         <item row="1" column="1">
-          <widget class="QSpinBox" name="filmMMSpin"/>
-         </item>
-         <item row="1" column="2">
-          <widget class="QSpinBox" name="filmSSSpin"/>
-         </item>
          <item row="0" column="0">
           <widget class="QLabel" name="label_5">
            <property name="font">
@@ -264,6 +255,22 @@
            </property>
           </widget>
          </item>
+         <item row="1" column="2">
+          <widget class="FlickNumber" name="filmSSSpin" native="true"/>
+         </item>
+         <item row="1" column="1">
+          <widget class="FlickNumber" name="filmMMSpin" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="FlickNumber" name="filmHHSpin" native="true"/>
+         </item>
         </layout>
        </item>
        <item>
@@ -280,27 +287,6 @@
        </item>
        <item>
         <layout class="QGridLayout" name="RealLenGrid">
-         <item row="1" column="0">
-          <widget class="QSpinBox" name="realHHSpin"/>
-         </item>
-         <item row="1" column="1">
-          <widget class="QSpinBox" name="realMMSpin"/>
-         </item>
-         <item row="1" column="2">
-          <widget class="QSpinBox" name="realSSSpin"/>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_2">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>HH</string>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="1">
           <widget class="QLabel" name="label_3">
            <property name="font">
@@ -322,6 +308,34 @@
            </property>
            <property name="text">
             <string>SS</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="FlickNumber" name="realSSSpin" native="true"/>
+         </item>
+         <item row="1" column="1">
+          <widget class="FlickNumber" name="realMMSpin" native="true"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="FlickNumber" name="realHHSpin" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>HH</string>
            </property>
           </widget>
          </item>
@@ -555,7 +569,7 @@
      <item row="0" column="1">
       <layout class="QGridLayout" name="pluginPanelGridLayout">
        <property name="spacing">
-        <number>6</number>
+        <number>-1</number>
        </property>
        <item row="0" column="0">
         <widget class="QPushButton" name="plugJogButton">
@@ -606,6 +620,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>FlickNumber</class>
+   <extends>QWidget</extends>
+   <header>core/Utilities/flicknumber.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

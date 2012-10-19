@@ -28,7 +28,9 @@ HEADERS                 +=  \
     core/Options/globaloptionsdialog.h \
     core/Options/optiontypes.h \
     core/Utilities/timeconverter.h \
-    core/Dialogs/netbasedialog.h
+    core/Dialogs/netbasedialog.h \
+    core/Utilities/flickcharm.h \
+    core/Utilities/flicknumber.h
 
 			   
 SOURCES                 +=  \
@@ -52,7 +54,9 @@ SOURCES                 +=  \
     core/Options/globaloptions.cpp \
     core/Options/globaloptionsdialog.cpp \
     core/Utilities/timeconverter.cpp \
-    core/Dialogs/netbasedialog.cpp
+    core/Dialogs/netbasedialog.cpp \
+    core/Utilities/flickcharm.cpp \
+    core/Utilities/flicknumber.cpp
 
 			   
 FORMS 			+=  \
@@ -69,6 +73,9 @@ FORMS 			+=  \
     core/DeviceScan/deviceassigndialog.ui \
     core/Dialogs/aboutdialog.ui \
     core/Options/globaloptionsdialog.ui \
-    core/Dialogs/netbasedialog.ui
+    core/Dialogs/netbasedialog.ui \
+    core/Utilities/flicknumber.ui
 
 	   
+
+OTHER_FILES +=

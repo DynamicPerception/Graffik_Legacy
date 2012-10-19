@@ -30,6 +30,29 @@ OMAxis::~OMAxis() {
 
 
 
+/** Set Device Name
+
+  Sets device name
+
+  @param p_name
+  A QString with the name of the device, only the first 15 characters
+  will be used.
+
+  @return
+  The ID of the command
+  */
+
+const int OMAxis::name(QString p_name) {
+
+    p_name.truncate(15);
+
+    QByteArray ba = p_name.toLocal8Bit();
+    char* dat = ba.data();
+
+    return this->command(COMPROG, progName, dat, p_name.length());
+
+}
+
 /** Enable Camera
 
  Enables camera, so that it will fire on cycle.
@@ -649,6 +672,17 @@ const int OMAxis::exposureRepeat(unsigned char count) {
 }
 
 
+/** Status: Device Name
+
+  Retrieves the current device name.
+
+  @return
+  The ID of the command
+  */
+
+const int OMAxis::getName() {
+    return this->command(COMPROG, progStat, statName);
+}
 
 /** Status: Interval
 
@@ -935,6 +969,7 @@ void OMAxis::_initScripting() {
     this->addNamedCommand("stopmotor", static_cast<f_callBack>(&OMAxis::_slimStopMotor) );
     this->addNamedCommand("sleep", static_cast<f_callBack>(&OMAxis::_slimSleep) );
     this->addNamedCommand("leadin", static_cast<f_callBack>(&OMAxis::_slimDelay) );
+    this->addNamedCommand("name", static_cast<f_callBack>(&OMAxis::_slimName) );
 
 }
 
@@ -1262,6 +1297,8 @@ const int OMAxis::_slimStatus(QStringList& p_str) {
         return getBusVer();
     else if( p_str[0] == "id")
         return getId();
+    else if( p_str[0] == "name")
+        return getName();
     else
         throw SLIM_ERR_ARG;
 
@@ -1299,4 +1336,11 @@ const int OMAxis::_slimAddr(QStringList& p_str) {
     // protected, inherited member
     deviceAddress = addr;
     return id;
+}
+
+const int OMAxis::_slimName(QStringList& p_str) {
+    if( p_str.isEmpty() )
+        throw SLIM_ERR_ARGS;
+
+    return name(p_str[0]);
 }

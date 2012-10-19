@@ -16,6 +16,8 @@
 #include "core/Dialogs/errordialog.h"
 
 #include "core/Utilities/timeconverter.h"
+#include "core/Utilities/flickcharm.h"
+#include "core/Utilities/flicknumber.h"
 
 #include "film/JogControlManager/jogcontrolpanel.h"
 #include "film/MotionArea/motionbase.h"
@@ -63,12 +65,12 @@ public slots:
 
     // spinbox handlers
 
-    void on_filmHHSpin_valueChanged(int p_val);
-    void on_filmMMSpin_valueChanged(int p_val);
-    void on_filmSSSpin_valueChanged(int p_val);
-    void on_realHHSpin_valueChanged(int p_val);
-    void on_realMMSpin_valueChanged(int p_val);
-    void on_realSSSpin_valueChanged(int p_val);
+    void on_filmHHSpin_valueChanged(unsigned int p_val);
+    void on_filmMMSpin_valueChanged(unsigned int p_val);
+    void on_filmSSSpin_valueChanged(unsigned int p_val);
+    void on_realHHSpin_valueChanged(unsigned int p_val);
+    void on_realMMSpin_valueChanged(unsigned int p_val);
+    void on_realSSSpin_valueChanged(unsigned int p_val);
 
     void error(QString p_err);
 
@@ -103,6 +105,7 @@ private:
     SectionResizeFilter* m_filter;
     QProgressDialog* m_busy;
     JogControlPanel* m_jcp;
+    FlickCharm* m_fcp;
 
     QVBoxLayout* m_areaLayout;
     QHash<unsigned short, MotionBase*> m_areaBlocks;

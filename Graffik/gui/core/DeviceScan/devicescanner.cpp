@@ -150,7 +150,11 @@ void DeviceScanner::_sendRequest(QString p_bus, unsigned short p_addr) {
         // make sure the returned omcommandbuffer object is retained until we're done
     m_cmd->hold(id);
 
-    m_cmdSent.insert(id, p_addr);
+    QList<unsigned short> cmdList;
+    cmdList.append(p_addr);
+    cmdList.append(OMDS_IDQ);
+
+    m_cmdSent.insert(id, cmdList);
     m_cmdSentBus.insert(id, p_bus);
 
     m_scanDialog->totalNodes(m_cmdSent.count());
@@ -163,57 +167,99 @@ void DeviceScanner::_commandCompleted(int p_id, OMCommandBuffer *p_com) {
 
     qDebug() << "DS: Got response to" << p_id;
 
+
         // ignore any commands not sent by us
     if( ! m_cmdSent.contains(p_id) )
         return;
 
-    m_respCount++;
 
         // update progress bar
     m_scanDialog->scannedNodes(m_respCount);
 
 
 
-    unsigned short addr = m_cmdSent.value(p_id);
-    QString bus = m_cmdSentBus.value(p_id);
+    unsigned short addr = m_cmdSent.value(p_id)[0];
+    bool isName         = m_cmdSent.value(p_id)[1];
+    QString bus         = m_cmdSentBus.value(p_id);
+    bool done           = true;
+    QString name        = "";
 
-        // go ahead and get rid of the device now
-    m_net->deleteDevice(bus, addr, false);
 
         // failure - the device wasn't on the bus, or didn't
         // understand a required command
 
     if( p_com->status() != OMC_SUCCESS ) {
+            // go ahead and get rid of the device now
+        m_net->deleteDevice(bus, addr, false);
+        m_respCount++;
+
         qDebug() << "DS: Scan Node Not Found:" << bus << addr;
         m_cmd->release(p_id);
         _checkDone();
         return;
     }
 
-    qDebug() << "DS: Scan Node Got a response:" << bus << addr;
-
-    m_foundCount++;
-
-
-        // get result of command (id string)
+       // get result of command (id or name string - but we only deal with strings here)
     int resSize = p_com->resultSize();
     char* res = new char[resSize];
     p_com->result(res, resSize);
-    QString idStr = QString::fromAscii(res, resSize);
+
+        // stop at first null character, in case of null-padded strings (like dev name)
+    for(int i = 0; i < resSize; i++) {
+        if(res[i] == 0) {
+            resSize = i;
+            break;
+        }
+    }
+
+    QString resStr = QString::fromLocal8Bit(res, resSize);
     delete res;
-
-    QString foundMsg("Found new device on bus " + bus + " at address " + QString::number(addr) + "\t\tType = " + idStr + "\n");
-
-
-        // update the scan dialog
-    m_scanDialog->addNote(foundMsg);
-    m_scanDialog->nodesFound(true);
-
-    devInfo thsDevice(bus, idStr, addr);
-    m_foundDevs.append(thsDevice);
 
         // release the command buffer object to be deleted
     m_cmd->release(p_id);
+    m_respCount++;
+
+    qDebug() << "DS: Scan Node Got a response:" << bus << addr;
+
+    if( isName == OMDS_IDQ ) {
+
+            // check to see if device is to be probed for a name
+        done = _probe(bus, addr, resStr);
+    }
+    else if( isName == OMDS_NMQ ) {
+
+        name = resStr.trimmed();
+            // bring back the id string
+        resStr = m_addrType.value(addr);
+        m_addrType.remove(addr);
+        qDebug() << "DS: Got name for OMAXISVX type at addr" << bus << addr << name;
+        done = true;
+
+        QString foundMsg("Found name for device at address " + QString::number(addr) + " : " + name + "\n");
+        m_scanDialog->addNote(foundMsg);
+    }
+
+
+        // add a message for all device types found...
+    if( isName == OMDS_IDQ ) {
+        QString foundMsg("Found new device on bus " + bus + ", address: " + QString::number(addr) + ", Type: " + resStr + "\n");
+        m_scanDialog->addNote(foundMsg);
+    }
+
+        // if we're done probing the device, then
+    if( done) {
+            // update the scan dialog
+        m_net->deleteDevice(bus, addr, false);
+        m_foundCount++;
+
+        m_scanDialog->nodesFound(true);
+
+        qDebug() << "DS: Creating Device Template " << bus << addr << resStr << name;
+
+        devInfo thsDevice(bus, resStr, addr, name);
+        m_foundDevs.append(thsDevice);
+
+    }
 
     _checkDone();
 
@@ -224,13 +270,17 @@ void DeviceScanner::_commandCompleted(int p_id, OMCommandBuffer *p_com) {
 
 void DeviceScanner::_scanAccepted() {
     m_scanDialog->hide();
+
+
     if( m_findAddr == 0 ) {
+            // scanning, not looking for a specific address
         foreach(devInfo dev, m_foundDevs) {
-            AddDeviceDialog addDev(m_net, dev.bus, dev.id, dev.addr);
+            AddDeviceDialog addDev(m_net, dev.bus, dev.id, dev.addr, dev.name);
             addDev.exec();
         }
     }
     else {
+            // looking for a device at a specific address
         if(m_foundDevs.count() < 1) {
             ErrorDialog er;
             er.setError("Could not find a device at the default address of 2. Perhaps you should scan instead?");
@@ -238,8 +288,8 @@ void DeviceScanner::_scanAccepted() {
         }
         else {
             devInfo dev = m_foundDevs[0];
-            qDebug() << "Starting DeviceAssingDialog with" << dev.bus << dev.id;
-            DeviceAssignDialog assign(m_net, dev.bus, dev.id);
+            qDebug() << "Starting DeviceAssingDialog with" << dev.bus << dev.id << dev.name;
+            DeviceAssignDialog assign(m_net, dev.bus, dev.id, dev.name);
             assign.exec();
         }
     } // end if scanning a specific address
@@ -255,5 +305,33 @@ void DeviceScanner::_checkDone() {
         else
             m_scanDialog->addNote("Found " + QString::number(m_foundCount) + " New Devices");
 
+    }
 }
+
+ // probe known device types for names (if supported)
+
+bool DeviceScanner::_probe(QString p_bus, unsigned short p_addr, QString p_type) {
+
+    bool ret = true;
+
+    OMdeviceInfo* dev = m_net->deviceInfo(p_bus, p_addr);
+
+    if( p_type == "OMAXISVX") {
+        OMAxis* omaxis = dynamic_cast<OMAxis*>(dev->device);
+
+        qDebug() << "DS: Requesting name for OMAXISVX type at addr" << p_bus << p_addr;
+        const int newId = omaxis->getName();
+        QList<unsigned short> cmdList;
+        cmdList.append(p_addr);
+        cmdList.append(OMDS_NMQ);
+
+        m_cmdSent.insert(newId, cmdList);
+        m_cmdSentBus.insert(newId, p_bus);
+        ret = false;
+
+            // store the device type, so we can retrieve it later
+        m_addrType.insert(p_addr, p_type);
+    }
+
+    return ret;
 }

@@ -5,14 +5,16 @@
 
 #include <QDebug>
 
-DeviceAssignDialog::DeviceAssignDialog(OMNetwork *c_net, QString c_bus, QString c_type, QWidget *parent) :
+DeviceAssignDialog::DeviceAssignDialog(OMNetwork *c_net, QString c_bus, QString c_type, QString c_name, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DeviceAssignDialog)
 {
     ui->setupUi(this);
+
     m_net = c_net;
     m_bus = c_bus;
     m_type = c_type;
+    m_name = c_name;
     m_cmdId = 0;
 
     _initInputs(m_type);
@@ -47,6 +49,8 @@ void DeviceAssignDialog::_initInputs(QString p_type) {
             ui->addrCombo->addItem(QString::number(i));
         }
     }
+
+    ui->nameLine->setText(m_name);
 
 }
 
@@ -93,7 +97,7 @@ void DeviceAssignDialog::_commandComplete(int p_id, OMCommandBuffer *p_cmd) {
     if( p_cmd->status() != OMC_SUCCESS ) {
             // well, that's just painful! How dare someone not follow the spec!
         ErrorDialog er;
-        er.setError("The device did not respond positively to the change address command");
+        er.setError("The device did not respond positively to a required command");
         er.exec();
         m_net->getManager()->release(m_cmdId);
         done(1);
@@ -103,5 +107,20 @@ void DeviceAssignDialog::_commandComplete(int p_id, OMCommandBuffer *p_cmd) {
 
     m_net->addDevice(m_bus, m_newAddr, m_type, m_newName, true);
 
+    _postInit(m_bus, m_newAddr, m_type, m_newName);
+
     done(1);
+}
+
+void DeviceAssignDialog::_postInit(QString p_bus, unsigned short p_addr, QString p_type, QString p_name) {
+
+    OMdeviceInfo* dev = m_net->deviceInfo(p_bus, p_addr);
+    qDebug() << "DAD: Post-init for device " << p_bus << p_addr << p_type << p_name;
+
+        // For OMAXISVX types, we send a (blind) name change command
+    if( p_type == "OpenMoCo Axis") {
+        qDebug() << "DAD: Setting name for device " << p_bus << p_addr << p_type << p_name;
+        OMAxis* omaxis = dynamic_cast<OMAxis*>(dev->device);
+        omaxis->name(p_name);
+    }
 }

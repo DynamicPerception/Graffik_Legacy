@@ -140,6 +140,8 @@ public:
 
     const int stopMotor();
 
+    const int name(QString);
+
     const int steps(unsigned short);
     const int speed(float);
     const int rampSteps(unsigned char);
@@ -170,6 +172,7 @@ public:
     const int getRunTime();
     const int getExposing();
     const int getRunning();
+    const int getName();
 
 
 
@@ -224,6 +227,8 @@ private:
 
         const int _slimDelay(QStringList&);
 
+        const int _slimName(QStringList&);
+
         static const char  progNoop   = 0;
         static const char  progPlay   = 1;
         static const char  progPause = 2;
@@ -247,6 +252,8 @@ private:
         static const char  progPlan    = 20;
         static const char  progPlanClr  = 21;
         static const char  progMaxTime  = 22;
+        static const char  progName     = 23;
+        static const char  progCom      = 24;
         static const char  progStat     = 100;
 
         static const char   dataCam     = 1;
@@ -301,6 +308,8 @@ private:
         static const char statMotRamp   = 14;
         static const char statMotBack   = 15;
         static const char statMotSteps  = 16;
+        static const char statMaster    = 22;
+        static const char statName      = 23;
 
 
 };

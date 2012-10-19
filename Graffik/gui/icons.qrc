@@ -7,4 +7,16 @@
         <file>img/redled.png</file>
         <file>img/blueled.png</file>
     </qresource>
+    <qresource prefix="/numbers">
+        <file>img/numbers/number-0.png</file>
+        <file>img/numbers/number-1.png</file>
+        <file>img/numbers/number-2.png</file>
+        <file>img/numbers/number-3.png</file>
+        <file>img/numbers/number-4.png</file>
+        <file>img/numbers/number-5.png</file>
+        <file>img/numbers/number-6.png</file>
+        <file>img/numbers/number-7.png</file>
+        <file>img/numbers/number-8.png</file>
+        <file>img/numbers/number-9.png</file>
+    </qresource>
 </RCC>

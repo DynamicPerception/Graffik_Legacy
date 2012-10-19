@@ -18,6 +18,7 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
     m_exec = new FilmExec(m_net, m_params, m_opts, m_gopts, this);
     m_busy = new QProgressDialog(this);
     m_jcp = new JogControlPanel(m_net, m_opts, m_params, this);
+    m_fcp = new FlickCharm;
 
     m_areaLayout = new QVBoxLayout;
     m_areaLayout->setContentsMargins(0, 10, 10, 0);
@@ -77,6 +78,7 @@ FilmWindow::~FilmWindow() {
 
     delete m_exec;
     delete m_jcp;
+    delete m_fcp;
     delete m_params;
     delete ui;
 }
@@ -232,13 +234,13 @@ void FilmWindow::_prepInputs() {
     _inputEnable(true);
     _showFilmTime();
 
-    ui->filmHHSpin->setMaximum(999);
-    ui->filmMMSpin->setMaximum(59);
-    ui->filmSSSpin->setMaximum(59);
+    ui->filmHHSpin->setCount(999);
+    ui->filmMMSpin->setCount(59);
+    ui->filmSSSpin->setCount(59);
 
-    ui->realHHSpin->setMaximum(999);
-    ui->realMMSpin->setMaximum(59);
-    ui->realSSSpin->setMaximum(59);
+    ui->realHHSpin->setCount(999);
+    ui->realMMSpin->setCount(59);
+    ui->realSSSpin->setCount(59);
 
 }
 
@@ -256,6 +258,8 @@ void FilmWindow::_changeTime(int p_which, int p_pos, int p_val) {
         hh = ui->realHHSpin->value();
         mm = ui->realMMSpin->value();
         ss = ui->realSSSpin->value();
+
+        qDebug() << "FW: _cT:" << hh << mm << ss;
     }
 
     if( p_pos == 1 )
@@ -338,29 +342,30 @@ void FilmWindow::_checkFilmTimeConstraint() {
 
 }
 
-void FilmWindow::on_filmHHSpin_valueChanged(int p_val) {
+void FilmWindow::on_filmHHSpin_valueChanged(unsigned int p_val) {
     _changeTime(1, 1, p_val);
     _checkFilmTimeConstraint();
 }
 
-void FilmWindow::on_filmMMSpin_valueChanged(int p_val) {
+void FilmWindow::on_filmMMSpin_valueChanged(unsigned int p_val) {
     _changeTime(1, 2, p_val);
     _checkFilmTimeConstraint();}
 
-void FilmWindow::on_filmSSSpin_valueChanged(int p_val) {
+void FilmWindow::on_filmSSSpin_valueChanged(unsigned int p_val) {
     _changeTime(1, 3, p_val);
     _checkFilmTimeConstraint();
 }
 
-void FilmWindow::on_realHHSpin_valueChanged(int p_val) {
+void FilmWindow::on_realHHSpin_valueChanged(unsigned int p_val) {
     _changeTime(2, 1, p_val);
 }
 
-void FilmWindow::on_realMMSpin_valueChanged(int p_val) {
+void FilmWindow::on_realMMSpin_valueChanged(unsigned int p_val) {
+    qDebug() << "FW: Got MMSpin: " << p_val;
     _changeTime(2, 2, p_val);
 }
 
-void FilmWindow::on_realSSSpin_valueChanged(int p_val) {
+void FilmWindow::on_realSSSpin_valueChanged(unsigned int p_val) {
     _changeTime(2, 3, p_val);
 }
 
@@ -461,6 +466,7 @@ void FilmWindow::on_stopButton_clicked() {
 
 void FilmWindow::on_rewindButton_clicked() {
     qDebug() << "FW: Send Rewind";
+    _inputEnable(false);
 
     m_busy->setLabelText("Sending All Axes to Start Point");
     m_busy->setMinimum(0);
@@ -468,12 +474,12 @@ void FilmWindow::on_rewindButton_clicked() {
     m_busy->show();
 
     m_exec->rewind();
-    _inputEnable(false);
 
 }
 
 void FilmWindow::on_forwardButton_clicked() {
     qDebug() << "FW: Send Forward";
+    _inputEnable(false);
 
     m_busy->setLabelText("Sending All Axes to End Point");
     m_busy->setMinimum(0);
@@ -481,7 +487,6 @@ void FilmWindow::on_forwardButton_clicked() {
     m_busy->show();
 
     m_exec->ffwd();
-    _inputEnable(false);
 
 }
 

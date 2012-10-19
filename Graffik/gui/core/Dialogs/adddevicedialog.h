@@ -17,7 +17,7 @@ class AddDeviceDialog : public QDialog
     
 public:
     AddDeviceDialog(OMNetwork* c_net, QWidget *parent = 0);
-    AddDeviceDialog(OMNetwork* c_net, QString c_bus, QString c_type, unsigned short c_addr, QWidget *parent = 0);
+    AddDeviceDialog(OMNetwork* c_net, QString c_bus, QString c_type, unsigned short c_addr, QString c_name, QWidget *parent = 0);
 
     ~AddDeviceDialog();
     

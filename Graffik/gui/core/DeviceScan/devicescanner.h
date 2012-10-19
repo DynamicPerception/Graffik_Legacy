@@ -6,6 +6,11 @@
 #include "deviceassigndialog.h"
 #include "devicescandialog.h"
 #include "MoCoBus/omnetwork.h"
+#include "Devices/nanoMoCo/omaxis.h"
+
+
+#define OMDS_IDQ    0
+#define OMDS_NMQ    1
 
 class DeviceScanner : public QObject
 {
@@ -30,17 +35,22 @@ private:
         QString bus;
         QString id;
         unsigned short addr;
-        devInfo(QString c_bus, QString c_id, unsigned short c_addr) {
+        QString name;
+        devInfo(QString c_bus, QString c_id, unsigned short c_addr, QString c_name) {
             bus = c_bus;
             id = c_id;
             addr = c_addr;
+            name = c_name;
         }
     };
 
     OMNetwork* m_net;
     OMCommandManager* m_cmd;
     DeviceScanDialog* m_scanDialog;
-    QHash<int, unsigned short> m_cmdSent;
+        // list contains address sent to, and type (id or name)
+    QHash<int, QList<unsigned short> > m_cmdSent;
+    QHash<unsigned short, QString> m_addrType;
+
     QHash<int, QString> m_cmdSentBus;
     QList<devInfo> m_foundDevs;
     int m_respCount;
@@ -54,6 +64,10 @@ private:
 
     void _scan(unsigned short p_addr);
     void _sendRequest(QString p_bus, unsigned short p_addr);
+
+
+    bool _probe(QString p_bus, unsigned short p_addr, QString p_type);
+
 
 };
 

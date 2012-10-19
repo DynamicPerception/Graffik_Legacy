@@ -5,6 +5,12 @@
 
 #include "core/Dialogs/errordialog.h"
 
+/** Constructor
+
+  Create a new UserData object.
+
+  */
+
 UserData::UserData(QWidget* parent) : QObject()
 {
     m_parent = parent;
@@ -14,10 +20,26 @@ UserData::UserData(QWidget* parent) : QObject()
     QCoreApplication::setApplicationName("Graffik");
 
     m_qset = new QSettings(QSettings::IniFormat, QSettings::UserScope, "Dynamic Perception", "Graffik");
+
 }
 
 UserData::~UserData() {
     delete m_qset;
+}
+
+/** Settings Exist
+
+  Returns whether or not the settings file exists.
+
+  If settings file does not already exist, returns false.
+
+  Is best used to determine if the current installation has ever
+  been configured.
+
+  */
+
+bool UserData::exists() {
+    return m_qset->contains("stat");
 }
 
 void UserData::busAdded(OMbusInfo *p_bus) {
@@ -70,6 +92,12 @@ void UserData::globalOptionsChanged(GlobalOptions *p_opts) {
     m_qset->endGroup();
 }
 
+/** Recover Global Options
+
+  Recovers any stored Global Options to the supplied GlobalOptions object
+
+  */
+
 void UserData::recoverGlobalOptions(GlobalOptions *p_opts) {
     qDebug() << "UD: recoverGlobalOptions";
 
@@ -83,6 +111,12 @@ void UserData::recoverGlobalOptions(GlobalOptions *p_opts) {
 
     m_qset->endGroup();
 }
+
+/** Recover Axis Options
+
+  Recovers any stored axis options to the supplied AxisOptions object
+
+  */
 
 void UserData::recoverAxisOptions(AxisOptions *p_opts) {
 
@@ -104,6 +138,20 @@ void UserData::recoverAxisOptions(AxisOptions *p_opts) {
 
     m_qset->endGroup();
 }
+
+/** Recover Saved Buses
+
+  This method recovers any buses saved to the ini file, re-creating them
+  in the supplied OMNetwork object, and recovers any devices associated with
+  them.
+
+  This method will display an error dialog to the user if the buses cannot be
+  recovered for any reason.
+
+  If any bus can be recovered, the devices associated with that bus will be
+  recovered as well.
+
+  */
 
 void UserData::recoverBuses(OMNetwork *p_net) {
     m_qset->beginGroup("network/buses");
@@ -208,6 +256,9 @@ void UserData::busDeleted(QString p_port, QString p_name) {
     qDebug() << "UD:busDeleted: Got Bus" << p_port << p_name;
 
     QString key = "network/buses/" + p_name;
+    m_qset->beginGroup(key);
+    m_qset->remove("");
+    m_qset->endGroup();
     m_qset->remove(key);
 }
 
@@ -216,4 +267,8 @@ void UserData::deviceOptionsRemoved(unsigned short p_addr) {
 
     QString key = "film/device_options/" + QString::number(p_addr);
     m_qset->remove(key);
+}
+
+void UserData::_haveWritten(bool p_stat) {
+    m_qset->setValue("stat", p_stat);
 }

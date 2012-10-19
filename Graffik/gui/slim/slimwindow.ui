@@ -132,7 +132,7 @@
           <bool>false</bool>
          </property>
          <attribute name="horizontalHeaderVisible">
-          <bool>false</bool>
+          <bool>true</bool>
          </attribute>
          <attribute name="horizontalHeaderDefaultSectionSize">
           <number>40</number>
@@ -191,13 +191,13 @@
          <property name="minimumSize">
           <size>
            <width>45</width>
-           <height>20</height>
+           <height>15</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>45</width>
-           <height>20</height>
+           <height>15</height>
           </size>
          </property>
          <property name="font">
@@ -215,13 +215,13 @@
          <property name="minimumSize">
           <size>
            <width>45</width>
-           <height>20</height>
+           <height>15</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>45</width>
-           <height>20</height>
+           <height>15</height>
           </size>
          </property>
          <property name="font">
