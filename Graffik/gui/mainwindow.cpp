@@ -172,14 +172,4 @@ void MainWindow::on_optButton_clicked() {
     on_actionSettings_triggered();
 }
 
-/*void MainWindow::setSlimWindow(SlimWindow * p_slim) {
-    _slimWindow = p_slim;
-    QObject::connect(_slimWindow, SIGNAL(out()), this, SLOT(slimClose()), Qt::QueuedConnection);
 
-}
-
-void MainWindow::on_slimButton_clicked() {
-    this->hide();
-    _slimWindow->show();
-}
-*/
