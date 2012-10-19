@@ -1,3 +1,26 @@
+/*
+
+  Graffik Motion Control Application
+
+  Copyright (c) 2011-2012 Dynamic Perception
+
+ This file is part of Graffik.
+
+    Graffik is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Graffik is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Graffik.  If not, see <http://www.gnu.org/licenses/>.
+
+    */
+
 #ifndef MOTIONPATHPAINTER_H
 #define MOTIONPATHPAINTER_H
 
@@ -16,6 +39,16 @@
 
 #define MPP_DEF_MAX_PTS     2500
 
+
+/** Motion Path Painer
+
+  The Motion Path Painter does the heavy lifting of creating a painter path representing the
+  travel of an axis, and provides key working methods for querying information about that
+  path used in the operation of a Motion Area widget
+
+  @author
+  C. A. Church
+  */
 
 class MotionPathPainter : public QWidget
 {

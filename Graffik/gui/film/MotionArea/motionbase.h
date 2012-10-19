@@ -1,3 +1,26 @@
+/*
+
+  Graffik Motion Control Application
+
+  Copyright (c) 2011-2012 Dynamic Perception
+
+ This file is part of Graffik.
+
+    Graffik is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Graffik is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Graffik.  If not, see <http://www.gnu.org/licenses/>.
+
+    */
+
 #ifndef MOTIONBASE_H
 #define MOTIONBASE_H
 
@@ -14,6 +37,14 @@
 namespace Ui {
 class MotionBase;
 }
+
+/** Motion Base Widget
+
+  The Motion Base Widget provides information about the axis, and serves as a container widget for the Motion Area
+
+  @author
+  C. A. Church
+  */
 
 class MotionBase : public QWidget
 {

@@ -1,3 +1,26 @@
+/*
+
+  Graffik Motion Control Application
+
+  Copyright (c) 2011-2012 Dynamic Perception
+
+ This file is part of Graffik.
+
+    Graffik is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Graffik is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Graffik.  If not, see <http://www.gnu.org/licenses/>.
+
+    */
+
 #ifndef DEVICESCANNER_H
 #define DEVICESCANNER_H
 
@@ -11,6 +34,18 @@
 
 #define OMDS_IDQ    0
 #define OMDS_NMQ    1
+
+/** Device Scanner Class
+
+  The Device Scanner looks for devices on all buses - either for any device
+  by scanning the complete address range, or for a specific device when constructed
+  with an address argument.
+
+  Instances should be destroyed when scanning is complete.
+
+  @author
+  C. A. Church
+  */
 
 class DeviceScanner : public QObject
 {
