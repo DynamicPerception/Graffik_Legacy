@@ -18,7 +18,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>750</width>
+    <width>425</width>
     <height>75</height>
    </size>
   </property>
@@ -29,19 +29,12 @@
    <string notr="true"/>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="leftMargin">
+   <property name="margin">
     <number>0</number>
    </property>
-   <item row="0" column="0">
-    <widget class="Line" name="line">
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
+   <property name="spacing">
+    <number>0</number>
+   </property>
   </layout>
  </widget>
  <resources/>

@@ -689,7 +689,7 @@ void FilmWindow::_inputEnable(bool p_stat) {
 
 void FilmWindow::on_plugJogButton_clicked() {
     ui->pluginStackedWidget->setCurrentWidget(m_jcp);
-    ui->plugJogButton->setDown(true);
+   // ui->plugJogButton->setDown(true);
 }
 
 void FilmWindow::on_loadFilmButton_clicked() {

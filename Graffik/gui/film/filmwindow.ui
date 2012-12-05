@@ -10,31 +10,28 @@
     <height>640</height>
    </rect>
   </property>
-  <property name="minimumSize">
-   <size>
-    <width>800</width>
-    <height>640</height>
-   </size>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>FilmWindow</string>
   </property>
-  <property name="styleSheet">
-   <string notr="true"/>
-  </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <property name="sizeConstraint">
-    <enum>QLayout::SetDefaultConstraint</enum>
-   </property>
+  <layout class="QGridLayout" name="gridLayout_2">
    <property name="margin">
     <number>0</number>
    </property>
    <property name="spacing">
     <number>0</number>
    </property>
-   <item row="1" column="0">
-    <layout class="QGridLayout" name="gridLayout_5">
-     <item row="6" column="1" colspan="2">
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item row="3" column="0" colspan="2">
       <widget class="QScrollArea" name="visualSA">
        <property name="minimumSize">
         <size>
@@ -53,537 +50,324 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>784</width>
-          <height>208</height>
+          <width>596</width>
+          <height>438</height>
          </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
        </widget>
       </widget>
      </item>
-     <item row="1" column="1" colspan="2">
-      <widget class="Line" name="line_2">
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
-       <property name="lineWidth">
-        <number>5</number>
-       </property>
-       <property name="midLineWidth">
-        <number>0</number>
-       </property>
+     <item row="0" column="0" colspan="2">
+      <spacer name="horizontalSpacer_3">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <spacer name="verticalSpacer_5">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
+       <property name="sizeType">
+        <enum>QSizePolicy::Preferred</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>0</width>
-         <height>40</height>
+         <width>440</width>
+         <height>10</height>
         </size>
        </property>
       </spacer>
      </item>
      <item row="0" column="2">
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <spacer name="horizontalSpacer_5">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Maximum</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>300</width>
-           <height>1</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="ControlButHoriz">
-         <property name="spacing">
-          <number>15</number>
-         </property>
-         <item>
-          <widget class="QPushButton" name="loadFilmButton">
-           <property name="minimumSize">
-            <size>
-             <width>45</width>
-             <height>15</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>45</width>
-             <height>15</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>8</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>Load</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="saveFilmButton">
-           <property name="minimumSize">
-            <size>
-             <width>40</width>
-             <height>15</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>40</width>
-             <height>15</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>8</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>Save</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="camControlCheckBox">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>Camera Control</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QToolButton" name="camSetBut">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>Settings</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QLabel" name="label">
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Film Length</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QGridLayout" name="FilmLenGrid">
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_5">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>HH</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLabel" name="label_6">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>MM</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="2">
-          <widget class="QLabel" name="label_7">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>SS</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="2">
-          <widget class="FlickNumber" name="filmSSSpin" native="true"/>
-         </item>
-         <item row="1" column="1">
-          <widget class="FlickNumber" name="filmMMSpin" native="true">
-           <property name="minimumSize">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="FlickNumber" name="filmHHSpin" native="true"/>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_8">
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Real Time</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QGridLayout" name="RealLenGrid">
-         <item row="0" column="1">
-          <widget class="QLabel" name="label_3">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>MM</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="2">
-          <widget class="QLabel" name="label_4">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>SS</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="2">
-          <widget class="FlickNumber" name="realSSSpin" native="true"/>
-         </item>
-         <item row="1" column="1">
-          <widget class="FlickNumber" name="realMMSpin" native="true"/>
-         </item>
-         <item row="1" column="0">
-          <widget class="FlickNumber" name="realHHSpin" native="true">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>20</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_2">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>HH</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QGridLayout" name="TimeDispGrid">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <item row="1" column="1">
-          <widget class="QLCDNumber" name="filmHHLCD"/>
-         </item>
-         <item row="1" column="2">
-          <widget class="QLCDNumber" name="filmMMLCD"/>
-         </item>
-         <item row="1" column="3">
-          <widget class="QLCDNumber" name="filmSSLCD"/>
-         </item>
-         <item row="3" column="1">
-          <widget class="QLCDNumber" name="runHHLCD"/>
-         </item>
-         <item row="3" column="2">
-          <widget class="QLCDNumber" name="runMMLCD"/>
-         </item>
-         <item row="3" column="3">
-          <widget class="QLCDNumber" name="runSSLCD"/>
-         </item>
-         <item row="0" column="1" colspan="3">
-          <widget class="QLabel" name="label_9">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>Film Time</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1" colspan="3">
-          <widget class="QLabel" name="label_10">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>Run Time</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1">
-          <widget class="QLCDNumber" name="curFrameLCD"/>
-         </item>
-         <item row="5" column="3">
-          <widget class="QLCDNumber" name="totFrameLCD"/>
-         </item>
-         <item row="4" column="1">
-          <widget class="QLabel" name="label_11">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>Current Frame</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="3">
-          <widget class="QLabel" name="label_12">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>Total Frames</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0" rowspan="6">
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::MinimumExpanding</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>1</width>
-             <height>200</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="seekbuttonhoriztonallayout">
-         <item>
-          <widget class="QPushButton" name="rewindButton">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>|&lt;&lt;</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="frameRwdButton">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>&lt;</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="playButton">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>Play</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="stopButton">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>Stop</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="frameFwdButton">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>&gt;</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="forwardButton">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>&gt;&gt;|</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </item>
-     <item row="6" column="0">
-      <spacer name="verticalSpacer_6">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::MinimumExpanding</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>0</width>
-         <height>180</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="2" column="1" colspan="2">
-      <spacer name="widthHSpacer">
+      <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
        <property name="sizeType">
-        <enum>QSizePolicy::MinimumExpanding</enum>
+        <enum>QSizePolicy::Fixed</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>792</width>
+         <width>200</width>
          <height>1</height>
         </size>
        </property>
       </spacer>
      </item>
-     <item row="3" column="1" colspan="2">
-      <layout class="QVBoxLayout" name="tapeVLayout">
-       <property name="spacing">
-        <number>0</number>
-       </property>
+     <item row="5" column="0" colspan="2">
+      <layout class="QHBoxLayout" name="timeInputHLayout">
        <item>
-        <spacer name="horizontalSpacer_7">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>1</height>
-          </size>
-         </property>
-        </spacer>
+        <layout class="QVBoxLayout" name="FilmLenVLayout">
+         <item>
+          <widget class="QLabel" name="FilmLengthLabel">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Film Length</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="FlickNumber" name="filmHHSpin" native="true"/>
+           </item>
+           <item>
+            <widget class="FlickNumber" name="filmMMSpin" native="true">
+             <property name="minimumSize">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="FlickNumber" name="filmSSSpin" native="true"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QLabel" name="label_5">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>HH</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_6">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>MM</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_7">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>SS</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="RealTimeVLayout">
+         <item>
+          <widget class="QLabel" name="RealTimeLabel">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Real Time</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="FlickNumber" name="realMMSpin" native="true"/>
+           </item>
+           <item>
+            <widget class="FlickNumber" name="realHHSpin" native="true">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>20</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="FlickNumber" name="realSSSpin" native="true"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>HH</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_3">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>MM</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_4">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>SS</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
        </item>
       </layout>
      </item>
-     <item row="0" column="1">
-      <layout class="QGridLayout" name="pluginPanelGridLayout">
-       <property name="spacing">
-        <number>-1</number>
-       </property>
-       <item row="0" column="0">
-        <widget class="QPushButton" name="plugJogButton">
-         <property name="minimumSize">
-          <size>
-           <width>75</width>
-           <height>35</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>75</width>
-           <height>35</height>
-          </size>
+     <item row="6" column="0" colspan="2">
+      <layout class="QHBoxLayout" name="TimeDispHLayout">
+       <item>
+        <layout class="QVBoxLayout" name="RunTimeDispVLayout">
+         <item>
+          <widget class="QLabel" name="label_17">
+           <property name="text">
+            <string>Run Time</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="RunTimeDispHLayout">
+           <item>
+            <widget class="QLCDNumber" name="runHHLCD"/>
+           </item>
+           <item>
+            <widget class="QLCDNumber" name="runMMLCD"/>
+           </item>
+           <item>
+            <widget class="QLCDNumber" name="runSSLCD"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="RunTimeDispLblHLayout">
+           <item>
+            <widget class="QLabel" name="label_14">
+             <property name="text">
+              <string>Hr</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_15">
+             <property name="text">
+              <string>Min</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_16">
+             <property name="text">
+              <string>Sec</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="FilmTimeDispVLayout">
+         <item>
+          <widget class="QLabel" name="FilmTimeDispLabel">
+           <property name="text">
+            <string>Film Time</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="FilmTimeDispHLayout">
+           <item>
+            <widget class="QLCDNumber" name="filmHHLCD"/>
+           </item>
+           <item>
+            <widget class="QLCDNumber" name="filmSSLCD"/>
+           </item>
+           <item>
+            <widget class="QLCDNumber" name="filmMMLCD"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="FilmTimeDispLblHLayout">
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Hr</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_8">
+             <property name="text">
+              <string>Min</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_13">
+             <property name="text">
+              <string>Sec</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item row="4" column="0" colspan="2">
+      <layout class="QHBoxLayout" name="ShuttleAreaHLAyout">
+       <item>
+        <widget class="QPushButton" name="rewindButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
          <property name="font">
           <font>
@@ -591,28 +375,214 @@
           </font>
          </property>
          <property name="text">
-          <string>Motor Jog</string>
+          <string>|&lt;&lt;</string>
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QPushButton" name="frameRwdButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>&lt;</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="playButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Play</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="stopButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Stop</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="frameFwdButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="forwardButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>&gt;&gt;|</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="curFramesLabel">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Current Frame</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLCDNumber" name="curFrameLCD">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="totalFramesLabel">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Total Frames</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLCDNumber" name="totFrameLCD">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="2" column="0" colspan="2">
+      <layout class="QVBoxLayout" name="tapeVLayout">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+      </layout>
+     </item>
+     <item row="2" column="2" rowspan="5">
+      <layout class="QGridLayout" name="pluginPanelGridLayout">
+       <property name="sizeConstraint">
+        <enum>QLayout::SetFixedSize</enum>
+       </property>
+       <property name="spacing">
+        <number>-1</number>
+       </property>
        <item row="1" column="0" colspan="2">
         <widget class="QStackedWidget" name="pluginStackedWidget">
          <widget class="QWidget" name="page_3"/>
          <widget class="QWidget" name="page_4"/>
         </widget>
        </item>
-       <item row="0" column="1">
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="camControlCheckBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <property name="sizeHint" stdset="0">
+         <property name="maximumSize">
           <size>
-           <width>40</width>
-           <height>20</height>
+           <width>100</width>
+           <height>16777215</height>
           </size>
          </property>
-        </spacer>
+         <property name="baseSize">
+          <size>
+           <width>100</width>
+           <height>18</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Camera Control</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QToolButton" name="camSetBut">
+         <property name="baseSize">
+          <size>
+           <width>55</width>
+           <height>22</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Settings</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
