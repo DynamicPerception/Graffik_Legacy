@@ -53,6 +53,9 @@ MotionTape::MotionTape(FilmParameters *c_film, QWidget *c_scroll, QWidget *paren
     m_leftX = 0;
     m_rightX = m_width;
 
+    m_bgCol = Qt::white;
+    m_fgCol = Qt::black;
+
     connect(m_film, SIGNAL(paramsReleased()), this, SLOT(filmUpdated()));
 
 }
@@ -62,6 +65,23 @@ MotionTape::~MotionTape()
     delete ui;
     delete m_path;
     delete m_font;
+}
+
+
+/** Set Background Color
+
+   For use in property access within stylesheets
+   */
+void MotionTape::background(QColor p_col) {
+    m_bgCol = p_col;
+}
+
+/** Set Foreground Color
+
+   For use in property access within stylesheets
+   */
+void MotionTape::color(QColor p_col) {
+    m_fgCol = p_col;
 }
 
 void MotionTape::filmUpdated() {
@@ -93,8 +113,9 @@ void MotionTape::paintEvent(QPaintEvent *p_event) {
         m_drawn = true;
     }
 
-    painter.setPen(QPen());
-    painter.setBrush(QBrush());
+    painter.fillRect(eventRect, m_bgCol);
+    painter.setPen(QPen(m_fgCol));
+    painter.setBrush(QBrush(m_fgCol));
     painter.drawPath(*m_path);
 
 }
@@ -210,7 +231,7 @@ void MotionTape::_drawLines(QRect p_rect, int p_lines, int p_height, int p_fill,
         }
 
         m_path->moveTo(curPx, p_rect.height());
-        m_path->lineTo(curPx, p_rect.height() - (p_rect.height() / p_height) );
+        m_path->lineTo(curPx, p_rect.height() - (p_rect.height() / (p_height * 2)) );
 
             // Draw labels
         // int bs = i + 1 > 9 ? MT_FONT_SIZE * 2 : MT_FONT_SIZE;

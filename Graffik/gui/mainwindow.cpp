@@ -48,6 +48,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->tabs->addWidget(_filmWindow);
     ui->tabs->addWidget(_slimWindow);
 
+    ui->screenSelCombo->addItem(MW_STR_FILM);
+    ui->screenSelCombo->addItem(MW_STR_SCRIPT);
 
     ui->centralwidget->layout()->setMargin(0);
     ui->centralwidget->layout()->setSpacing(0);
@@ -102,8 +104,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(this, SIGNAL(globalOptionsChanged(GlobalOptions*)), _uData, SLOT(globalOptionsChanged(GlobalOptions*)));
 
     // simulate pressing the film button to default to film screen
-    on_filmButton_clicked();
+    //on_filmButton_clicked();
 
+    ui->screenSelCombo->setCurrentIndex(0);
+    ui->tabs->setCurrentWidget(_filmWindow);
 
 }
 
@@ -151,16 +155,24 @@ void MainWindow::on_actionAbout_Graffik_triggered() {
     about.exec();
 }
 
-void MainWindow::on_filmButton_clicked() {
+/*void MainWindow::on_filmButton_clicked() {
     ui->tabs->setCurrentWidget(_filmWindow);
-    ui->filmButton->setDown(true);
-    ui->scriptButton->setDown(false);
+  //  ui->filmButton->setDown(true);
+  //  ui->scriptButton->setDown(false);
 }
 
 void MainWindow::on_scriptButton_clicked() {
     ui->tabs->setCurrentWidget(_slimWindow);
-    ui->filmButton->setDown(false);
-    ui->scriptButton->setDown(true);
+  //  ui->filmButton->setDown(false);
+  //  ui->scriptButton->setDown(true);
+}*/
+
+
+void MainWindow::on_screenSelCombo_currentIndexChanged(const QString p_str) {
+    if( p_str == MW_STR_SCRIPT )
+        ui->tabs->setCurrentWidget(_slimWindow);
+    else if( p_str == MW_STR_FILM )
+        ui->tabs->setCurrentWidget(_filmWindow);
 }
 
 void MainWindow::on_netButton_clicked() {

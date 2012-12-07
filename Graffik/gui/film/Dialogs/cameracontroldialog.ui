@@ -137,7 +137,7 @@
      <item row="0" column="0">
       <widget class="QCheckBox" name="autoCheck">
        <property name="text">
-        <string>Auto-Calculate FPS Based on Film Time</string>
+        <string>Calculate Interval from Film Time</string>
        </property>
       </widget>
      </item>

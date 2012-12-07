@@ -34,6 +34,7 @@
 #include <QRect>
 #include <QFont>
 #include <QWidget>
+#include <QColor>
 
 #define MT_LINE_MINSPC  5
 #define MT_FONT_SIZE    8
@@ -62,13 +63,18 @@ class MotionTape;
 class MotionTape : public QWidget
 {
     Q_OBJECT
-    
+    Q_PROPERTY(QColor background WRITE background DESIGNABLE true)
+    Q_PROPERTY(QColor color WRITE color DESIGNABLE true)
+
 public:
     explicit MotionTape(FilmParameters* c_film, QWidget* c_scroll, QWidget *parent = 0);
     ~MotionTape();
 
     void paintEvent(QPaintEvent* p_event);
     
+    void background(QColor p_col);
+    void color(QColor p_col);
+
 public slots:
 
     void filmUpdated();
@@ -88,6 +94,9 @@ private:
     int m_preSpace;
     int m_leftX;
     int m_rightX;
+
+    QColor m_bgCol;
+    QColor m_fgCol;
 
     void _drawTime(QRect p_rect);
     void _drawLines(QRect p_rect, int p_lines, int p_height, int p_fill = 0, int p_pad = 0);

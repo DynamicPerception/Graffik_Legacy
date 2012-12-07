@@ -52,6 +52,11 @@
 #include "film/filmwindow.h"
 #include "slim/slimwindow.h"
 
+
+#define MW_STR_FILM "Film"
+#define MW_STR_SCRIPT "Script"
+
+
 namespace Ui {
     class MainWindow;
 }
@@ -94,10 +99,12 @@ public slots:
     void on_actionSettings_triggered();
     void on_actionAbout_Graffik_triggered();
 
-    void on_filmButton_clicked();
-    void on_scriptButton_clicked();
+//    void on_filmButton_clicked();
+//    void on_scriptButton_clicked();
     void on_netButton_clicked();
     void on_optButton_clicked();
+
+    void on_screenSelCombo_currentIndexChanged(const QString p_str);
 
 private slots:
 

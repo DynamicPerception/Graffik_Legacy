@@ -577,8 +577,9 @@ void FilmWindow::_filmTimeDisplay(unsigned long p_ms) {
         ui->filmMMLCD->display(rmm);
         ui->filmSSLCD->display(rss);
 
-        ui->curFrameLCD->display((int) ((float) p_ms * ((float) parms->fps / 1000.0)));
-        ui->totFrameLCD->display((int) (parms->realLength / 1000) * parms->fps);
+
+        ui->curFrameDispLabel->setText(QString::number((int) ((float) p_ms * ((float) parms->fps / 1000.0))));
+        ui->totalFrameDispLabel->setText(QString::number((int) (parms->realLength / 1000) * parms->fps));
 
     }
     else {
@@ -589,8 +590,8 @@ void FilmWindow::_filmTimeDisplay(unsigned long p_ms) {
         ui->filmSSLCD->display((int)TimeConverter::freeSeconds(filmTm));
 
         unsigned long interval = m_exec->interval(parms);
-        ui->curFrameLCD->display((int) (p_ms / interval));
-        ui->totFrameLCD->display((int) (parms->realLength / interval) );
+        ui->curFrameDispLabel->setText(QString::number((int) (p_ms / interval)));
+        ui->totalFrameDispLabel->setText(QString::number((int) (parms->realLength / interval) ));
     }
 
     m_params->releaseParams(false);
