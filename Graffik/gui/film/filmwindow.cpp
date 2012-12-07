@@ -145,11 +145,11 @@ void FilmWindow::_eraseAxis(QString p_bus, unsigned short p_addr) {
 
 }
 
-void FilmWindow::on_camControlCheckBox_stateChanged(int p_state) {
+void FilmWindow::on_camControlSlider_selected(int p_value) {
 
     bool camControl = false;
 
-    if( p_state == Qt::Checked )
+    if( p_value == 1)
         camControl = true;
 
     qDebug() << "FW: Cam Control Set to: " << camControl;
@@ -176,8 +176,12 @@ void FilmWindow::_displayCamControl() {
     bool en = parms.camParams->camControl;
     bool autoFPS = parms.camParams->autoFPS;
 
+    if( en )
+        ui->camControlSlider->setValue(1);
+    else
+        ui->camControlSlider->setValue(0);
+
     ui->camSetBut->setEnabled(en);
-    ui->camControlCheckBox->setChecked(en);
 
         // disable film time spinners unless auto fps is enabled
     if( autoFPS && en )
@@ -565,18 +569,18 @@ void FilmWindow::_filmTimeDisplay(unsigned long p_ms) {
     int rmm = TimeConverter::freeMinutes(p_ms);
     int rss = TimeConverter::freeSeconds(p_ms);
 
-    ui->runHHLCD->display(rhh);
-    ui->runMMLCD->display(rmm);
-    ui->runSSLCD->display(rss);
+    _popTimeDisplay(ui->runHHLabel, rhh);
+    _popTimeDisplay(ui->runMMLabel, rmm);
+    _popTimeDisplay(ui->runSSLabel, rss);
 
     OMfilmParams* parms = m_params->getParams();
     float timeDiv = (float) parms->length / (float) parms->realLength;
 
     if( ! parms->camParams->camControl ) {
-        ui->filmHHLCD->display(rhh);
-        ui->filmMMLCD->display(rmm);
-        ui->filmSSLCD->display(rss);
 
+        _popTimeDisplay(ui->filmHHLabel, rhh);
+        _popTimeDisplay(ui->filmMMLabel, rmm);
+        _popTimeDisplay(ui->filmSSLabel, rss);
 
         ui->curFrameDispLabel->setText(QString::number((int) ((float) p_ms * ((float) parms->fps / 1000.0))));
         ui->totalFrameDispLabel->setText(QString::number((int) (parms->realLength / 1000) * parms->fps));
@@ -585,9 +589,9 @@ void FilmWindow::_filmTimeDisplay(unsigned long p_ms) {
     else {
         unsigned long filmTm = ( (float) p_ms * timeDiv);
 
-        ui->filmHHLCD->display((int)TimeConverter::hours(filmTm));
-        ui->filmMMLCD->display((int)TimeConverter::freeMinutes(filmTm));
-        ui->filmSSLCD->display((int)TimeConverter::freeSeconds(filmTm));
+        _popTimeDisplay(ui->filmHHLabel, (int)TimeConverter::hours(filmTm));
+        _popTimeDisplay(ui->filmMMLabel, (int)TimeConverter::freeMinutes(filmTm));
+        _popTimeDisplay(ui->filmSSLabel, (int)TimeConverter::freeSeconds(filmTm));
 
         unsigned long interval = m_exec->interval(parms);
         ui->curFrameDispLabel->setText(QString::number((int) (p_ms / interval)));
@@ -598,6 +602,16 @@ void FilmWindow::_filmTimeDisplay(unsigned long p_ms) {
 
 }
 
+void FilmWindow::_popTimeDisplay(QLabel *p_label, int p_time) {
+    QString disp;
+
+    if( p_time < 10 )
+        disp = "0" + QString::number(p_time);
+    else
+        disp = QString::number(p_time);
+
+    p_label->setText(disp);
+}
 
 void FilmWindow::_redrawMotionOverlay() {
     ui->visualSAContents->removeEventFilter(m_filter);
@@ -654,7 +668,7 @@ void FilmWindow::_inputEnable(bool p_stat) {
     ui->realSSSpin->setEnabled(p_stat);
     ui->forwardButton->setEnabled(p_stat);
     ui->rewindButton->setEnabled(p_stat);
-    ui->camControlCheckBox->setEnabled(p_stat);
+    ui->camControlSlider->setEnabled(p_stat);
 
         // only control status of certain camera inputs, if
         // cam control enabled

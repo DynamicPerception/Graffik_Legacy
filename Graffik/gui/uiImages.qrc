@@ -1,0 +1,27 @@
+<RCC>
+    <qresource prefix="/core">
+        <file alias="slider-back.png">img/ui_images/slider-back.png</file>
+        <file alias="slider-handle.png">img/ui_images/slider-handle.png</file>
+        <file alias="slider-back-gray.png">img/ui_images/slider-back-gray.png</file>
+        <file alias="toggle-bg-off.png">img/ui_images/toggle-bg-off.png</file>
+        <file alias="toggle-bg-on.png">img/ui_images/toggle-bg-on.png</file>
+        <file alias="slider-handle-dark.png">img/ui_images/slider-handle-dark.png</file>
+        <file alias="toggle-bg.png">img/ui_images/toggle-bg.png</file>
+        <file alias="camset-but-normal.png">img/ui_images/camset-but-normal.png</file>
+        <file alias="camset-but-pressed.png">img/ui_images/camset-but-pressed.png</file>
+        <file alias="camset-but-desat.png">img/ui_images/camset-but-desat.png</file>
+        <file alias="set-home-normal.png">img/ui_images/set-home-normal.png</file>
+        <file alias="set-home-sel.png">img/ui_images/set-home-sel.png</file>
+        <file alias="set-end-normal.png">img/ui_images/set-end-normal.png</file>
+        <file alias="set-end-sel.png">img/ui_images/set-end-sel.png</file>
+        <file alias="sel-list-bg.png">img/ui_images/sel-list-bg.png</file>
+        <file alias="devices-but-normal.png">img/ui_images/devices-but-normal.png</file>
+        <file alias="devices-but-pressed.png">img/ui_images/devices-but-pressed.png</file>
+        <file alias="set-but-normal.png">img/ui_images/set-but-normal.png</file>
+        <file alias="set-but-pressed.png">img/ui_images/set-but-pressed.png</file>
+        <file alias="load-but-normal.png">img/ui_images/load-but-normal.png</file>
+        <file alias="load-but-pressed.png">img/ui_images/load-but-pressed.png</file>
+        <file alias="save-but-normal.png">img/ui_images/save-but-normal.png</file>
+        <file alias="save-but-pressed.png">img/ui_images/save-but-pressed.png</file>
+    </qresource>
+</RCC>

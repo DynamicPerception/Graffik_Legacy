@@ -77,7 +77,8 @@ include(docs/docs.pri)
 # load resources
 
 RESOURCES += \
-    icons.qrc
+    icons.qrc \
+    uiImages.qrc
 
 
 # WIN32-Specific Build Instructions

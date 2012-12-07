@@ -27,7 +27,7 @@
 
 #include <QDebug>
 
-JogControlManager::JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, LiveDeviceModel* c_ldm, QDial* c_jogDial, QDoubleSpinBox* c_jogSpd, QDoubleSpinBox *c_jogDmp, QPushButton* c_homeBut, QPushButton* c_endBut, QObject *parent) :
+JogControlManager::JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, LiveDeviceModel* c_ldm, QDial* c_jogDial, QSlider* c_jogSpd, QSlider *c_jogDmp, QPushButton* c_homeBut, QPushButton* c_endBut, QObject *parent) :
     QObject(parent)
 {
     m_curAxis = 0;
@@ -101,7 +101,6 @@ JogControlManager::JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, Live
         // has affinity to the new thread, rather than ours
     m_scp->startDampTimer();
 
-
 }
 
 JogControlManager::~JogControlManager() {
@@ -166,24 +165,24 @@ void JogControlManager::_prepJogInputs(unsigned short p_addr) {
     if( type != AXIS_MOVE_ROT )
         setMove = 1.0;
 
-
-    float dispMax = _stepsToJogSpeed(opts, max_jog);
     float curMax  = _stepsToJogSpeed(opts, jog_limit);
 
     qDebug() << "JCM: Setting current speed max value to" << curMax;
 
-    m_jogSpd->setMaximum(dispMax);
-    m_jogSpd->setValue(curMax);
+    m_jogSpd->setMinimum(1);
+    m_jogSpd->setMaximum(100);
+    m_jogSpd->setValue(100 * curMax);
 
 
+    m_jogDmp->setMinimum(0);
     m_jogDmp->setMaximum(30);
-    m_jogDmp->setValue(opts->jogDamp);
+    m_jogDmp->setValue((int) opts->jogDamp);
 
     m_curAxis = p_addr;
 
 }
 
-void JogControlManager::_jogMaxSpeedChange(double p_spd) {
+void JogControlManager::_jogMaxSpeedChange(int p_spd) {
     if( m_curAxis == 0 )
         return;
 
@@ -191,12 +190,14 @@ void JogControlManager::_jogMaxSpeedChange(double p_spd) {
 
     OMaxisOptions* opts = m_opts->getOptions(m_curAxis);
 
-    unsigned int steps = _jogSpeedToSteps(opts, p_spd);
-    double spd_pct = (double) steps / (double) opts->maxSteps;
+    double inPct = p_spd / 100.0;
 
-    qDebug() << "JCM: Steps =" << steps << "Percentage:" << spd_pct;
+    unsigned int steps = _jogSpeedToSteps(opts, inPct);
+    double spdPct = (double) steps / (double) opts->maxSteps;
 
-    m_scp->maxSpeed(spd_pct);
+    qDebug() << "JCM: Steps =" << steps << "Percentage:" << spdPct;
+
+    m_scp->maxSpeed(spdPct);
 
         // record and save new value
     opts->jogLimit = steps;
@@ -204,7 +205,7 @@ void JogControlManager::_jogMaxSpeedChange(double p_spd) {
 
 }
 
-void JogControlManager::_jogDampChange(double p_damp) {
+void JogControlManager::_jogDampChange(int p_damp) {
     if( m_curAxis == 0 )
         return;
 

@@ -41,6 +41,7 @@
 #include "core/Utilities/timeconverter.h"
 #include "core/Utilities/flickcharm.h"
 #include "core/Utilities/flicknumber.h"
+#include "core/Widgets/slidetoggle.h"
 
 #include "film/JogControlManager/jogcontrolpanel.h"
 #include "film/MotionArea/motionbase.h"
@@ -83,7 +84,7 @@ public slots:
 
     // cam control
 
-    void on_camControlCheckBox_stateChanged(int p_state);
+    void on_camControlSlider_selected(int p_val);
     void on_camSetBut_clicked();
 
     void on_plugJogButton_clicked();
@@ -165,6 +166,8 @@ private:
 
     void _redrawMotionOverlay();
     void _inputEnable(bool p_stat);
+
+    void _popTimeDisplay(QLabel* p_label, int p_time);
 };
 
 #endif // FILMWINDOW_H

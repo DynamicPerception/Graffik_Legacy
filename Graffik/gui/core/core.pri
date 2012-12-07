@@ -30,7 +30,8 @@ HEADERS                 +=  \
     core/Utilities/timeconverter.h \
     core/Dialogs/netbasedialog.h \
     core/Utilities/flickcharm.h \
-    core/Utilities/flicknumber.h
+    core/Utilities/flicknumber.h \
+    core/Widgets/slidetoggle.h
 
 			   
 SOURCES                 +=  \
@@ -56,7 +57,8 @@ SOURCES                 +=  \
     core/Utilities/timeconverter.cpp \
     core/Dialogs/netbasedialog.cpp \
     core/Utilities/flickcharm.cpp \
-    core/Utilities/flicknumber.cpp
+    core/Utilities/flicknumber.cpp \
+    core/Widgets/slidetoggle.cpp
 
 			   
 FORMS 			+=  \

@@ -30,6 +30,7 @@
 #include <QDial>
 #include <QComboBox>
 #include <QPushButton>
+#include <QSlider>
 
 #include "speedcontrolproxy.h"
 #include "livedevicemodel.h"
@@ -56,7 +57,7 @@ class JogControlManager : public QObject
 {
     Q_OBJECT
 public:
-    JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, LiveDeviceModel* c_ldm, QDial* c_jogDial, QDoubleSpinBox* c_jogSpd, QDoubleSpinBox* c_jogDmp, QPushButton* c_homeBut, QPushButton* c_endBut, QObject *parent = 0);
+    JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, LiveDeviceModel* c_ldm, QDial* c_jogDial, QSlider* c_jogSpd, QSlider* c_jogDmp, QPushButton* c_homeBut, QPushButton* c_endBut, QObject *parent = 0);
     ~JogControlManager();
 
 signals:
@@ -70,8 +71,8 @@ public slots:
     
 private slots:
     void _liveDeviceSelected(unsigned short p_addr);
-    void _jogMaxSpeedChange(double p_spd);
-    void _jogDampChange(double p_damp);
+    void _jogMaxSpeedChange(int p_spd);
+    void _jogDampChange(int p_damp);
     void _jogResChange(int p_idx);
     void _homeClicked();
     void _endClicked();
@@ -82,8 +83,8 @@ private:
     unsigned short m_curAxis;
     unsigned int m_curRes;
 
-    QDoubleSpinBox* m_jogSpd;
-    QDoubleSpinBox* m_jogDmp;
+    QSlider* m_jogSpd;
+    QSlider* m_jogDmp;
     QDial* m_jogDial;
     QComboBox* m_jogCombo;
     QPushButton* m_homeBut;

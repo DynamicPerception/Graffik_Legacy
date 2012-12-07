@@ -34,7 +34,7 @@ JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, FilmPara
     m_params = c_params;
 
     m_ldModel = new LiveDeviceModel(m_net, this);
-    m_jcm = new JogControlManager(m_net, m_opts, m_ldModel, ui->jogDial, ui->jogSpeedSpin, ui->jogDampSpin, ui->jogHomeButton, ui->jogEndButton, this);
+    m_jcm = new JogControlManager(m_net, m_opts, m_ldModel, ui->jogDial, ui->jogSpeedSlider, ui->jogDampSlider, ui->jogHomeButton, ui->jogEndButton, this);
 
         // connect the device list display to the live device model
     ui->devButtonList->setModel(m_ldModel);
