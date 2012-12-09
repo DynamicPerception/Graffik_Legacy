@@ -23,5 +23,14 @@
         <file alias="load-but-pressed.png">img/ui_images/load-but-pressed.png</file>
         <file alias="save-but-normal.png">img/ui_images/save-but-normal.png</file>
         <file alias="save-but-pressed.png">img/ui_images/save-but-pressed.png</file>
+        <file alias="axis-dist-bg.png">img/ui_images/axis-dist-bg.png</file>
+        <file alias="res-but-normal.png">img/ui_images/res-but-normal.png</file>
+        <file alias="res-but-pressed.png">img/ui_images/res-but-pressedl.png</file>
+        <file alias="scale-but-normal.png">img/ui_images/scale-but-normal.png</file>
+        <file alias="scale-but-pressed.png">img/ui_images/scale-but-pressed.png</file>
+        <file alias="accel-but-normal.png">img/ui_images/accel-but-normal.png</file>
+        <file alias="accel-but-pressed.png">img/ui_images/accel-but-pressed.png</file>
+        <file alias="mute-but-normal.png">img/ui_images/mute-but-normal.png</file>
+        <file alias="mute-but-pressed.png">img/ui_images/mute-but-pressed.png</file>
     </qresource>
 </RCC>

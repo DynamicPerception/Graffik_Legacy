@@ -80,8 +80,8 @@ JogControlManager::JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, Live
 
 
         // listen to jog spinners
-    QObject::connect(m_jogSpd, SIGNAL(valueChanged(double)), this, SLOT(_jogMaxSpeedChange(double)));
-    QObject::connect(m_jogDmp, SIGNAL(valueChanged(double)), this, SLOT(_jogDampChange(double)));
+    QObject::connect(m_jogSpd, SIGNAL(valueChanged(int)), this, SLOT(_jogMaxSpeedChange(int)));
+    QObject::connect(m_jogDmp, SIGNAL(valueChanged(int)), this, SLOT(_jogDampChange(int)));
 
         // tie the jog dial into the speed control proxy
     QObject::connect(m_jogDial, SIGNAL(sliderMoved(int)), m_scp, SLOT(speedPosChange(int)));

@@ -44,7 +44,7 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
     m_fcp = new FlickCharm;
 
     m_areaLayout = new QVBoxLayout;
-    m_areaLayout->setContentsMargins(0, 10, 10, 0);
+    m_areaLayout->setContentsMargins(0, 0, 0, 0);
     ui->visualSAContents->setLayout(m_areaLayout);
 
         // create our transparent overlay for drawing position line

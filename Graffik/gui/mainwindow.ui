@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>480</height>
+    <width>802</width>
+    <height>473</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>800</width>
-    <height>480</height>
+    <height>473</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -69,9 +69,11 @@ border: 0px transparent;
 }
 
 #optButton {
-margin-right: 10px;
+margin-right: 0px;
 border-image: url(:/core/set-but-normal.png);
 border: 0px transparent;
+margin: 0px;
+padding:0px;
 }
 
 #optButton:pressed {
@@ -98,16 +100,22 @@ border: 0px transparent;
       </property>
       <item row="0" column="0">
        <widget class="QFrame" name="headerFrame">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>30</height>
+          <height>45</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>40</height>
+          <height>45</height>
          </size>
         </property>
         <property name="frameShape">
@@ -139,8 +147,8 @@ border: 0px transparent;
            </property>
            <property name="minimumSize">
             <size>
-             <width>25</width>
-             <height>25</height>
+             <width>33</width>
+             <height>33</height>
             </size>
            </property>
            <property name="maximumSize">
@@ -157,15 +165,15 @@ border: 0px transparent;
          <item row="1" column="2">
           <widget class="QToolButton" name="globalSaveButton">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
            <property name="minimumSize">
             <size>
-             <width>25</width>
-             <height>25</height>
+             <width>33</width>
+             <height>33</height>
             </size>
            </property>
            <property name="maximumSize">
@@ -189,8 +197,8 @@ border: 0px transparent;
            </property>
            <property name="minimumSize">
             <size>
-             <width>99</width>
-             <height>25</height>
+             <width>131</width>
+             <height>33</height>
             </size>
            </property>
            <property name="maximumSize">
@@ -207,15 +215,15 @@ border: 0px transparent;
          <item row="1" column="5">
           <widget class="QPushButton" name="optButton">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
            <property name="minimumSize">
             <size>
-             <width>25</width>
-             <height>25</height>
+             <width>33</width>
+             <height>33</height>
             </size>
            </property>
            <property name="maximumSize">
@@ -263,6 +271,12 @@ border: 0px transparent;
       </item>
       <item row="1" column="0">
        <widget class="QStackedWidget" name="tabs">
+        <property name="minimumSize">
+         <size>
+          <width>800</width>
+          <height>405</height>
+         </size>
+        </property>
         <property name="layoutDirection">
          <enum>Qt::LeftToRight</enum>
         </property>
@@ -277,8 +291,8 @@ border: 0px transparent;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
-     <height>22</height>
+     <width>802</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
