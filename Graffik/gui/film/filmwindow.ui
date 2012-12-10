@@ -26,8 +26,61 @@
    <string>FilmWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">MotionArea {
-background-image: url(:/core/track-back.png);
+   <string notr="true">#forwardButton {
+border-image: url(:/core/fwd-end-normal.png);
+border:0px transparent;
+}
+
+#forwardButton:pressed {
+border-image: url(:/core/fwd--end-pressed.png);
+}
+
+#frameFwdButton {
+border-image: url(:/core/fwd-normal.png);
+border:0px transparent;
+}
+
+#frameFwdButton:pressed {
+border-image: url(:/core/fwd-pressed.png);
+}
+
+#rewindButton {
+border-image: url(:/core/rwd-home-normal.png);
+border:0px transparent;
+}
+
+#rewindButton:pressed {
+border-image: url(:/core/rwd-home-pressed.png);
+}
+
+#frameRwdButton {
+border-image: url(:/core/rwd-normal.png);
+border:0px transparent;
+}
+
+#frameRwdButton:pressed {
+border-image: url(:/core/rwd-pressed.png);
+}
+
+#playButton {
+border-image: url(:/core/pause-normal.png);
+border:0px transparent;
+}
+
+#playButton:pressed {
+border-image: url(:/core/pause-pressed.png);
+}
+
+#stopButton {
+border-image: url(:/core/stop-normal.png);
+border:0px transparent;
+}
+
+#stopButton:pressed {
+border-image: url(:/core/stop-pressed.png);
+}
+MotionArea {
+border-image: url(:/core/track-back.png);
 border: 0px transparent;
 border-color: #000000;
 }
@@ -175,6 +228,8 @@ padding-bottom:0px;
 #shuttleAreaFrame {
 border:1px solid;
 border-color:rgb(84, 84, 84);
+padding:0px;
+
 }
 #realTimeLabel, #filmLengthLabel {
 border-top-left-radius: 3px;
@@ -871,13 +926,25 @@ color:white;
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>27</width>
+            <height>27</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>54</width>
+            <height>55</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>10</pointsize>
            </font>
           </property>
           <property name="text">
-           <string>|&lt;&lt;</string>
+           <string/>
           </property>
          </widget>
         </item>
@@ -889,13 +956,25 @@ color:white;
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>27</width>
+            <height>27</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>54</width>
+            <height>54</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>10</pointsize>
            </font>
           </property>
           <property name="text">
-           <string>&lt;</string>
+           <string/>
           </property>
          </widget>
         </item>
@@ -907,13 +986,25 @@ color:white;
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>27</width>
+            <height>27</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>54</width>
+            <height>54</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>10</pointsize>
            </font>
           </property>
           <property name="text">
-           <string>Play</string>
+           <string/>
           </property>
          </widget>
         </item>
@@ -925,13 +1016,25 @@ color:white;
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>27</width>
+            <height>27</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>54</width>
+            <height>54</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>10</pointsize>
            </font>
           </property>
           <property name="text">
-           <string>Stop</string>
+           <string/>
           </property>
          </widget>
         </item>
@@ -943,13 +1046,25 @@ color:white;
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>27</width>
+            <height>27</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>54</width>
+            <height>54</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>10</pointsize>
            </font>
           </property>
           <property name="text">
-           <string>&gt;</string>
+           <string/>
           </property>
          </widget>
         </item>
@@ -961,15 +1076,40 @@ color:white;
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>27</width>
+            <height>27</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>54</width>
+            <height>54</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>10</pointsize>
            </font>
           </property>
           <property name="text">
-           <string>&gt;&gt;|</string>
+           <string/>
           </property>
          </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
         <item>
          <widget class="QLabel" name="curFramesLabel">
@@ -1092,7 +1232,7 @@ color:white;
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>708</width>
+          <width>598</width>
           <height>175</height>
          </rect>
         </property>
@@ -1383,9 +1523,7 @@ color:white;
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_2">
                <item>
-                <widget class="FlickNumber" name="filmHHSpin" native="true">
-                 <zorder>visualSA</zorder>
-                </widget>
+                <widget class="FlickNumber" name="filmHHSpin" native="true"/>
                </item>
                <item>
                 <widget class="FlickNumber" name="filmMMSpin" native="true">
@@ -1478,12 +1616,6 @@ color:white;
     </layout>
    </item>
   </layout>
-  <zorder>visualSA</zorder>
-  <zorder>shuttleAreaFrame</zorder>
-  <zorder>visualSA</zorder>
-  <zorder></zorder>
-  <zorder></zorder>
-  <zorder></zorder>
  </widget>
  <customwidgets>
   <customwidget>

@@ -84,7 +84,7 @@ win32 {
   EDIR = $$DDIR
   EDIR ~= s,\\\\,/,g
 
-  exists($$EDIR) {
+  exists($$DDIR) {
     help_copy.commands += @echo "Removing Directory $$EDIR" $$escape_expand(\\n\\t)
     help_copy.commands += rd /S /Q $$DDIR $$escape_expand(\\n\\t)
   }

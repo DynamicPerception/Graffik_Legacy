@@ -30,7 +30,7 @@
 
 
 MotionArea::MotionArea(FilmParameters *c_film, OMdeviceInfo *c_dev, AxisOptions* c_aopt, GlobalOptions *c_gopt, QWidget *parent) :
-    QWidget(parent),
+    QFrame(parent),
     ui(new Ui::MotionArea)
 {
     m_dev = c_dev;

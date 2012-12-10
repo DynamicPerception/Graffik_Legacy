@@ -33,5 +33,17 @@
         <file alias="mute-but-normal.png">img/ui_images/mute-but-normal.png</file>
         <file alias="mute-but-pressed.png">img/ui_images/mute-but-pressed.png</file>
         <file alias="track-back.png">img/ui_images/track-back.png</file>
+        <file alias="fwd-end-normal.png">img/ui_images/fwd-end-normal.png</file>
+        <file alias="fwd-end-pressed.png">img/ui_images/fwd-end-pressed.png</file>
+        <file alias="fwd-normal.png">img/ui_images/fwd-normal.png</file>
+        <file alias="fwd-pressed.png">img/ui_images/fwd-pressed.png</file>
+        <file alias="pause-normal.png">img/ui_images/pause-normal.png</file>
+        <file alias="pause-pressed.png">img/ui_images/pause-pressed.png</file>
+        <file alias="rwd-home-normal.png">img/ui_images/rwd-home-normal.png</file>
+        <file alias="rwd-home-pressed.png">img/ui_images/rwd-home-pressed.png</file>
+        <file alias="rwd-normal.png">img/ui_images/rwd-normal.png</file>
+        <file alias="rwd-pressed.png">img/ui_images/rwd-pressed.png</file>
+        <file alias="stop-normal.png">img/ui_images/stop-normal.png</file>
+        <file alias="stop-pressed.png">img/ui_images/stop-pressed.png</file>
     </qresource>
 </RCC>

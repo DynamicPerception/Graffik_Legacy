@@ -25,6 +25,7 @@
 #define MOTIONAREA_H
 
 #include <QWidget>
+#include <QFrame>
 #include <QPainter>
 #include <QPaintEvent>
 #include <QRect>
@@ -85,7 +86,7 @@ class MotionArea;
   C. A. Church
   */
 
-class MotionArea : public QWidget
+class MotionArea : public QFrame
 {
     Q_OBJECT
     
