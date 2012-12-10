@@ -32,5 +32,6 @@
         <file alias="accel-but-pressed.png">img/ui_images/accel-but-pressed.png</file>
         <file alias="mute-but-normal.png">img/ui_images/mute-but-normal.png</file>
         <file alias="mute-but-pressed.png">img/ui_images/mute-but-pressed.png</file>
+        <file alias="track-back.png">img/ui_images/track-back.png</file>
     </qresource>
 </RCC>

@@ -280,7 +280,7 @@ void MotionArea::paintEvent(QPaintEvent *e) {
     QPainter painter(this);
     QRect eventRect = e->rect();
 
-    painter.fillRect(eventRect, QColor(m_bgCol));
+   // painter.fillRect(eventRect, QColor(m_bgCol));
     painter.drawPath(*m_path->getPath(eventRect));
 
         // let everyone know where our left and right sides are, so tied elements can line up

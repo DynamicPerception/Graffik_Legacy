@@ -26,13 +26,13 @@
    <string>FilmWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">#visualSA {
-padding:0px;
-margin:0px;
+   <string notr="true">MotionArea {
+background-image: url(:/core/track-back.png);
+border: 0px transparent;
+border-color: #000000;
 }
 
-MotionArea {
-
+#visualSA {
 padding:0px;
 margin:0px;
 }

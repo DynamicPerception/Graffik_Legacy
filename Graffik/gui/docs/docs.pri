@@ -82,7 +82,7 @@ win32 {
 
     # exists does not like backslashes
   EDIR = $$DDIR
-  EDIR ~= s,\\\,/,g
+  EDIR ~= s,\\\\,/,g
 
   exists($$EDIR) {
     help_copy.commands += @echo "Removing Directory $$EDIR" $$escape_expand(\\n\\t)
