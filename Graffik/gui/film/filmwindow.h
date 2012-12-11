@@ -139,6 +139,7 @@ private:
     JogControlPanel* m_jcp;
     FlickCharm* m_fcp;
 
+    QWidget* m_areaViewPort;
     QVBoxLayout* m_areaLayout;
     QHash<unsigned short, MotionBase*> m_areaBlocks;
 

@@ -42,6 +42,9 @@ MotionArea::MotionArea(FilmParameters *c_film, OMdeviceInfo *c_dev, AxisOptions*
     m_mute  = MA_MUTE_NA;
     m_sane  = true;
 
+    m_lineWidth = 1;
+    m_lineColor = Qt::black;
+
     m_pstat = false;
 
     ui->setupUi(this);
@@ -77,6 +80,22 @@ MotionArea::~MotionArea()
     delete m_timer;
 }
 
+
+QColor MotionArea::color() {
+    return m_lineColor;
+}
+
+void MotionArea::setColor(QColor p_color) {
+    m_lineColor = p_color;
+}
+
+int MotionArea::lineWidth() {
+    return m_lineWidth;
+}
+
+void MotionArea::setLineWidth(int p_width) {
+    m_lineWidth = p_width;
+}
 
  /** Return a pointer to the MotionPathPainter object
 
@@ -279,8 +298,18 @@ void MotionArea::mouseReleaseEvent(QMouseEvent *) {
 void MotionArea::paintEvent(QPaintEvent *e) {
     QPainter painter(this);
     QRect eventRect = e->rect();
+    QBrush brush(m_lineColor);
+    QPen   pen(m_lineColor);
+
+    pen.setWidth(m_lineWidth);
+  //  pen.setBrush(brush);
+
+    painter.setRenderHint(QPainter::Antialiasing);
 
    // painter.fillRect(eventRect, QColor(m_bgCol));
+    painter.setPen(pen);
+  //  painter.setBrush(brush);
+
     painter.drawPath(*m_path->getPath(eventRect));
 
         // let everyone know where our left and right sides are, so tied elements can line up
@@ -301,6 +330,7 @@ void MotionArea::paintEvent(QPaintEvent *e) {
 
          // draw drag points for start and end time
         if( m_path->isDrawn() && QWidget::underMouse() ) {
+            painter.setBrush(brush);
             painter.drawEllipse(m_mvStart);
             painter.drawEllipse(m_mvEnd);
             painter.drawEllipse(m_acEnd);

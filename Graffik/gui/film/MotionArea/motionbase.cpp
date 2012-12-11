@@ -33,10 +33,10 @@ MotionBase::MotionBase(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions 
     ui->setupUi(this);
 
     m_area = new MotionArea(c_film, c_dev, c_aopts, c_gopts, this);
-    ui->horizontalLayout->addWidget(m_area);
-    ui->horizontalLayout->setContentsMargins(0,0,0,0);
-    ui->horizontalLayout->setMargin(0);
-    ui->horizontalLayout->setSpacing(0);
+    ui->gridLayout->addWidget(m_area, 1, 2, 2, 1);
+   // ui->horizontalLayout->setContentsMargins(0,0,0,0);
+   // ui->horizontalLayout->setMargin(0);
+   // ui->horizontalLayout->setSpacing(0);
 
     m_film = c_film;
     m_dev = c_dev;

@@ -89,7 +89,9 @@ class MotionArea;
 class MotionArea : public QFrame
 {
     Q_OBJECT
-    
+    Q_PROPERTY(int lineWidth READ lineWidth WRITE setLineWidth DESIGNABLE true)
+    Q_PROPERTY(QColor color READ color WRITE setColor DESIGNABLE true)
+
 public:
     MotionArea(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions* c_aopt, GlobalOptions* c_gopt, QWidget *parent);
     ~MotionArea();
@@ -103,7 +105,12 @@ public:
     MotionPathPainter* getPathPainter();
     QList<QString> convertValue(float p_val);
 
-    
+
+    QColor color();
+    int lineWidth();
+    void setColor(QColor p_color);
+    void setLineWidth(int p_width);
+
 public slots:
     void filmUpdated();
     void scaleChange();
@@ -138,6 +145,9 @@ private:
     QRect m_dcStart;
 
     QString m_bgCol;
+
+    QColor m_lineColor;
+    int m_lineWidth;
 
     int m_moveItem;
     int m_curPx;

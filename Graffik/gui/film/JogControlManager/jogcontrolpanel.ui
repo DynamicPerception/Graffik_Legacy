@@ -26,7 +26,11 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QPushButton#jogHomeButton {
+   <string notr="true">#jogDial {
+qproperty-backgroundImage: url(:/core/dial-back.png);
+}
+
+QPushButton#jogHomeButton {
 
 border-image: url(:/core/set-home-normal.png);
  border: 0px transparent;
@@ -200,7 +204,7 @@ color:rgb(255,255,255);
       </widget>
      </item>
      <item row="2" column="0">
-      <widget class="QDial" name="jogDial">
+      <widget class="SkinnedDial" name="jogDial">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -210,7 +214,7 @@ color:rgb(255,255,255);
        <property name="minimumSize">
         <size>
          <width>100</width>
-         <height>125</height>
+         <height>100</height>
         </size>
        </property>
        <property name="maximumSize">
@@ -219,9 +223,15 @@ color:rgb(255,255,255);
          <height>16777215</height>
         </size>
        </property>
+       <property name="sizeIncrement">
+        <size>
+         <width>1</width>
+         <height>1</height>
+        </size>
+       </property>
        <property name="baseSize">
         <size>
-         <width>311</width>
+         <width>150</width>
          <height>150</height>
         </size>
        </property>
@@ -244,7 +254,7 @@ color:rgb(255,255,255);
         <double>20.000000000000000</double>
        </property>
        <property name="notchesVisible">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -569,6 +579,13 @@ color:rgb(255,255,255);
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SkinnedDial</class>
+   <extends>QDial</extends>
+   <header>core/Widgets/skinneddial.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

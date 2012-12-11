@@ -6,6 +6,7 @@
 class SlideToggle : public QSlider
 {
     Q_OBJECT
+
 public:
     explicit SlideToggle(QWidget *parent = 0);
     SlideToggle(Qt::Orientation orientation, QWidget *parent = 0);

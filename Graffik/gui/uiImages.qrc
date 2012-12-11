@@ -45,5 +45,7 @@
         <file alias="rwd-pressed.png">img/ui_images/rwd-pressed.png</file>
         <file alias="stop-normal.png">img/ui_images/stop-normal.png</file>
         <file alias="stop-pressed.png">img/ui_images/stop-pressed.png</file>
+        <file alias="track-div-back.png">img/ui_images/track-div-back.png</file>
+        <file alias="dial-back.png">img/ui_images/dial-back.png</file>
     </qresource>
 </RCC>

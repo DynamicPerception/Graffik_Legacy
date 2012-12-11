@@ -147,7 +147,6 @@ unsigned int JogControlManager::_jogSpeedToSteps(OMaxisOptions *p_opts, double p
         setMove = 1.0;
 
     return( ((p_speed / 60.0) / (setMove / p_opts->ratio)) * m_curRes );
-
 }
 
 void JogControlManager::_prepJogInputs(unsigned short p_addr) {
@@ -166,15 +165,17 @@ void JogControlManager::_prepJogInputs(unsigned short p_addr) {
         setMove = 1.0;
 
     float curMax  = _stepsToJogSpeed(opts, jog_limit);
+    float dispMax = _stepsToJogSpeed(opts, max_jog);
 
     qDebug() << "JCM: Setting current speed max value to" << curMax;
 
     m_jogSpd->setMinimum(1);
-    m_jogSpd->setMaximum(100);
-    m_jogSpd->setValue(100 * curMax);
+    m_jogSpd->setMaximum(dispMax);
+    m_jogSpd->setValue(curMax);
 
+    _jogMaxSpeedChange(curMax);
 
-    m_jogDmp->setMinimum(0);
+    m_jogDmp->setMinimum(1);
     m_jogDmp->setMaximum(30);
     m_jogDmp->setValue((int) opts->jogDamp);
 
@@ -190,9 +191,8 @@ void JogControlManager::_jogMaxSpeedChange(int p_spd) {
 
     OMaxisOptions* opts = m_opts->getOptions(m_curAxis);
 
-    double inPct = p_spd / 100.0;
+    unsigned int steps = _jogSpeedToSteps(opts, p_spd);
 
-    unsigned int steps = _jogSpeedToSteps(opts, inPct);
     double spdPct = (double) steps / (double) opts->maxSteps;
 
     qDebug() << "JCM: Steps =" << steps << "Percentage:" << spdPct;

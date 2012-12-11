@@ -47,21 +47,28 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
     m_areaLayout->setContentsMargins(0, 0, 0, 0);
     m_areaLayout->setSpacing(0);
 
-    ui->visualSAContents->setLayout(m_areaLayout);
+    m_areaViewPort = new QWidget;
+    m_areaViewPort->setLayout(m_areaLayout);
+
+    //ui->visualSAContents->setLayout(m_areaLayout);
+    ui->visualSA->setWidget(m_areaViewPort);
 
         // create our transparent overlay for drawing position line
         // this must be done after the layout is added to visualSAContents,
         // as this class attempts to access that layout
 
-    m_motion = new MotionSection(m_exec, m_params, ui->visualSAContents);
+//    m_motion = new MotionSection(m_exec, m_params, ui->visualSAContents);
+    m_motion = new MotionSection(m_exec, m_params, m_areaViewPort);
     m_filter = new SectionResizeFilter(m_motion, this);
 
     m_motion->show();
 
         // need to capture resize events to resize our transparent overlay
-    ui->visualSAContents->installEventFilter(m_filter);
+//    ui->visualSAContents->installEventFilter(m_filter);
+    m_areaViewPort->installEventFilter(m_filter);
 
-    m_tape = new MotionTape(m_params, ui->visualSAContents, this);
+//    m_tape = new MotionTape(m_params, ui->visualSAContents, this);
+    m_tape = new MotionTape(m_params, m_areaViewPort, this);
     ui->tapeVLayout->addWidget(m_tape);
 
     ui->pluginStackedWidget->addWidget(m_jcp);
@@ -98,6 +105,7 @@ FilmWindow::~FilmWindow() {
 
     delete m_tape;
     delete m_areaLayout;
+   // delete m_areaViewPort;
     delete m_motion;
     delete m_filter;
 
@@ -616,13 +624,16 @@ void FilmWindow::_popTimeDisplay(QLabel *p_label, int p_time) {
 }
 
 void FilmWindow::_redrawMotionOverlay() {
-    ui->visualSAContents->removeEventFilter(m_filter);
+ //   ui->visualSAContents->removeEventFilter(m_filter);
+    m_areaViewPort->removeEventFilter(m_filter);
     delete m_motion;
-    m_motion = new MotionSection(m_exec, m_params, ui->visualSAContents);
+//    m_motion = new MotionSection(m_exec, m_params, ui->visualSAContents);
+    m_motion = new MotionSection(m_exec, m_params, m_areaViewPort);
     m_motion->show();
     delete m_filter;
     m_filter = new SectionResizeFilter(m_motion, this);
-    ui->visualSAContents->installEventFilter(m_filter);
+//    ui->visualSAContents->installEventFilter(m_filter);
+    m_areaViewPort->installEventFilter(m_filter);
     connect(this, SIGNAL(motionAreaBorders(int,int)), m_motion, SLOT(setBorders(int,int)));
 
 }

@@ -26,7 +26,8 @@
    <string>FilmWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">#forwardButton {
+   <string notr="true">
+#forwardButton {
 border-image: url(:/core/fwd-end-normal.png);
 border:0px transparent;
 }
@@ -79,6 +80,7 @@ border:0px transparent;
 #stopButton:pressed {
 border-image: url(:/core/stop-pressed.png);
 }
+
 MotionArea {
 border-image: url(:/core/track-back.png);
 border: 0px transparent;
@@ -113,11 +115,10 @@ margin:0px;
 
 SlideToggle::groove:horizontal {
  border-image: url(:/core/toggle-bg.png); 
-/* border-left: -9px transparent;
+ border-left: -9px transparent;
  border-right: -8px transparent;
  border-bottom: -5px transparent;
- border-top: 0px transparent;*/
- border: 0px transparent;
+ border-top: 0px transparent;
  padding: 0px;
  margin: 0px;
 }
@@ -125,7 +126,7 @@ SlideToggle::groove:horizontal {
 SlideToggle::handle:horizontal {
 margin:0px;
 padding:0px;
- image: url(:/core/slider-handle-dark.png);
+image: url(:/core/slider-handle-dark.png);
 }
 
 SlideToggle {
@@ -192,11 +193,17 @@ border-bottom-left-radius: 3px;
 #runTimeDispSSLabel, #filmTimeDispSSLabel {
 border-bottom-right-radius: 3px;
 }
+
+
 MotionTape {
 qproperty-background: rgb(143, 143, 143);
 qproperty-color: white;
 }
 
+MotionArea {
+qproperty-lineWidth: 2;
+qproperty-color: rgb(77, 154, 205);
+}
 
 
 #curFrameDispLabel, #totalFrameDispLabel {
@@ -209,9 +216,13 @@ border-color:rgb(84, 84, 84);
 
 
 
-#realTimeLabel, #filmLengthLabel, #shuttleAreaFrame, #curFramesLabel, #totalFramesLabel, #timeHeaderFrame {
+#realTimeLabel, #filmLengthLabel, #shuttleAreaFrame, #timeHeaderFrame {
  background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0.541872 rgba(104, 104, 104, 255), stop:1 rgba(74, 74, 74, 255));
  color:white;
+}
+
+#curFramesLabel, #totalFramesLabel {
+color:white;
 }
 
 #timeHeaderFrame {
@@ -264,19 +275,390 @@ color:white;
 
 }</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_8">
-   <property name="margin">
-    <number>0</number>
-   </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
     <number>0</number>
    </property>
-   <item row="0" column="0">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
     <layout class="QGridLayout" name="mainGridLayout">
      <property name="spacing">
       <number>0</number>
      </property>
-     <item row="0" column="3" colspan="2">
+     <item row="3" column="2" colspan="2">
+      <widget class="QFrame" name="shuttleAreaFrame">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>33</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>55</height>
+        </size>
+       </property>
+       <property name="baseSize">
+        <size>
+         <width>0</width>
+         <height>55</height>
+        </size>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <property name="spacing">
+         <number>3</number>
+        </property>
+        <property name="margin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="curFramesLabel">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Current Frame</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="curFrameDispLabel">
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>Lucida Sans</family>
+           </font>
+          </property>
+          <property name="text">
+           <string>0</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="totalFramesLabel">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Total Frames</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="totalFrameDispLabel">
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>0</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>5</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="rewindButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>27</width>
+            <height>27</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>54</width>
+            <height>55</height>
+           </size>
+          </property>
+          <property name="sizeIncrement">
+           <size>
+            <width>1</width>
+            <height>1</height>
+           </size>
+          </property>
+          <property name="baseSize">
+           <size>
+            <width>54</width>
+            <height>54</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="frameRwdButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>27</width>
+            <height>27</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>54</width>
+            <height>54</height>
+           </size>
+          </property>
+          <property name="sizeIncrement">
+           <size>
+            <width>1</width>
+            <height>1</height>
+           </size>
+          </property>
+          <property name="baseSize">
+           <size>
+            <width>54</width>
+            <height>54</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="playButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>27</width>
+            <height>27</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>54</width>
+            <height>54</height>
+           </size>
+          </property>
+          <property name="sizeIncrement">
+           <size>
+            <width>1</width>
+            <height>1</height>
+           </size>
+          </property>
+          <property name="baseSize">
+           <size>
+            <width>54</width>
+            <height>54</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="stopButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>27</width>
+            <height>27</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>54</width>
+            <height>54</height>
+           </size>
+          </property>
+          <property name="sizeIncrement">
+           <size>
+            <width>1</width>
+            <height>1</height>
+           </size>
+          </property>
+          <property name="baseSize">
+           <size>
+            <width>54</width>
+            <height>54</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="frameFwdButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>27</width>
+            <height>27</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>54</width>
+            <height>54</height>
+           </size>
+          </property>
+          <property name="sizeIncrement">
+           <size>
+            <width>1</width>
+            <height>1</height>
+           </size>
+          </property>
+          <property name="baseSize">
+           <size>
+            <width>54</width>
+            <height>54</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="forwardButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>27</width>
+            <height>27</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>54</width>
+            <height>54</height>
+           </size>
+          </property>
+          <property name="sizeIncrement">
+           <size>
+            <width>1</width>
+            <height>1</height>
+           </size>
+          </property>
+          <property name="baseSize">
+           <size>
+            <width>54</width>
+            <height>54</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="0" column="2" colspan="2">
       <spacer name="hSpacerLeftPanel">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -292,7 +674,7 @@ color:white;
        </property>
       </spacer>
      </item>
-     <item row="7" column="3" colspan="2">
+     <item row="6" column="2" colspan="2">
       <layout class="QHBoxLayout" name="TimeDispHLayout">
        <property name="spacing">
         <number>0</number>
@@ -300,7 +682,7 @@ color:white;
        <item>
         <widget class="QFrame" name="timeDispContainerFrame">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -657,23 +1039,7 @@ color:white;
        </item>
       </layout>
      </item>
-     <item row="1" column="1" rowspan="4">
-      <spacer name="verticalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Minimum</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>0</width>
-         <height>211</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="6" column="3" colspan="2">
+     <item row="5" column="2" colspan="2">
       <widget class="QFrame" name="timeHeaderFrame">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
@@ -743,7 +1109,7 @@ color:white;
        </layout>
       </widget>
      </item>
-     <item row="1" column="6" rowspan="7">
+     <item row="1" column="5" rowspan="6">
       <layout class="QGridLayout" name="pluginPanelGridLayout">
        <property name="sizeConstraint">
         <enum>QLayout::SetFixedSize</enum>
@@ -779,16 +1145,28 @@ color:white;
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>37</height>
+          </size>
+         </property>
          <property name="maximumSize">
           <size>
            <width>187</width>
            <height>37</height>
           </size>
          </property>
+         <property name="sizeIncrement">
+          <size>
+           <width>5</width>
+           <height>1</height>
+          </size>
+         </property>
          <property name="baseSize">
           <size>
-           <width>55</width>
-           <height>22</height>
+           <width>187</width>
+           <height>37</height>
           </size>
          </property>
          <property name="font">
@@ -847,7 +1225,7 @@ color:white;
        </item>
       </layout>
      </item>
-     <item row="0" column="5" rowspan="8">
+     <item row="0" column="4" rowspan="7">
       <widget class="Line" name="separatorLine">
        <property name="minimumSize">
         <size>
@@ -869,313 +1247,7 @@ color:white;
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
-      <spacer name="verticalSpacer_11">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Maximum</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>0</width>
-         <height>80</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="4" column="3" colspan="2">
-      <widget class="QFrame" name="shuttleAreaFrame">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <property name="spacing">
-         <number>0</number>
-        </property>
-        <property name="margin">
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QPushButton" name="rewindButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>27</width>
-            <height>27</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>54</width>
-            <height>55</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="frameRwdButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>27</width>
-            <height>27</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>54</width>
-            <height>54</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="playButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>27</width>
-            <height>27</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>54</width>
-            <height>54</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="stopButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>27</width>
-            <height>27</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>54</width>
-            <height>54</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="frameFwdButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>27</width>
-            <height>27</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>54</width>
-            <height>54</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="forwardButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>27</width>
-            <height>27</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>54</width>
-            <height>54</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QLabel" name="curFramesLabel">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Current Frame</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="curFrameDispLabel">
-          <property name="minimumSize">
-           <size>
-            <width>50</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <family>Lucida Sans</family>
-           </font>
-          </property>
-          <property name="text">
-           <string>0</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="totalFramesLabel">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Total Frames</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="totalFrameDispLabel">
-          <property name="minimumSize">
-           <size>
-            <width>50</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>0</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="1" column="0" rowspan="5">
+     <item row="1" column="0" rowspan="4">
       <spacer name="verticalSpacer_12">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -1186,12 +1258,12 @@ color:white;
        <property name="sizeHint" stdset="0">
         <size>
          <width>0</width>
-         <height>291</height>
+         <height>315</height>
         </size>
        </property>
       </spacer>
      </item>
-     <item row="6" column="0" rowspan="2">
+     <item row="5" column="0" rowspan="2">
       <spacer name="verticalSpacer_13">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -1202,12 +1274,12 @@ color:white;
        <property name="sizeHint" stdset="0">
         <size>
          <width>0</width>
-         <height>40</height>
+         <height>90</height>
         </size>
        </property>
       </spacer>
      </item>
-     <item row="3" column="3" colspan="2">
+     <item row="2" column="2" colspan="2">
       <widget class="QScrollArea" name="visualSA">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
@@ -1218,8 +1290,23 @@ color:white;
        <property name="minimumSize">
         <size>
          <width>0</width>
+         <height>186</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="baseSize">
+        <size>
+         <width>0</width>
          <height>165</height>
         </size>
+       </property>
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAsNeeded</enum>
        </property>
        <property name="widgetResizable">
         <bool>true</bool>
@@ -1233,7 +1320,7 @@ color:white;
           <x>0</x>
           <y>0</y>
           <width>598</width>
-          <height>175</height>
+          <height>184</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -1251,7 +1338,7 @@ color:white;
        </widget>
       </widget>
      </item>
-     <item row="1" column="3" colspan="2">
+     <item row="1" column="2" colspan="2">
       <widget class="QFrame" name="tapeFrame">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -1268,6 +1355,12 @@ color:white;
        <property name="maximumSize">
         <size>
          <width>16777215</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="baseSize">
+        <size>
+         <width>0</width>
          <height>16</height>
         </size>
        </property>
@@ -1303,8 +1396,20 @@ color:white;
        </layout>
       </widget>
      </item>
-     <item row="5" column="3" colspan="2">
+     <item row="4" column="2" colspan="2">
       <widget class="QFrame" name="timeAdjustFrame">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>120</height>
+        </size>
+       </property>
+       <property name="baseSize">
+        <size>
+         <width>0</width>
+         <height>100</height>
+        </size>
+       </property>
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
        </property>
@@ -1351,7 +1456,7 @@ color:white;
           <property name="maximumSize">
            <size>
             <width>450</width>
-            <height>80</height>
+            <height>100</height>
            </size>
           </property>
           <property name="frameShape">
@@ -1393,10 +1498,10 @@ color:white;
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_4">
                <item>
-                <widget class="FlickNumber" name="realMMSpin" native="true"/>
+                <widget class="FlickNumber" name="realHHSpin" native="true"/>
                </item>
                <item>
-                <widget class="FlickNumber" name="realHHSpin" native="true">
+                <widget class="FlickNumber" name="realMMSpin" native="true">
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
@@ -1467,7 +1572,7 @@ color:white;
         <item>
          <widget class="QFrame" name="filmLenFrame">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+           <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -1481,7 +1586,7 @@ color:white;
           <property name="maximumSize">
            <size>
             <width>450</width>
-            <height>80</height>
+            <height>100</height>
            </size>
           </property>
           <property name="frameShape">
