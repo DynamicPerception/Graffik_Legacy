@@ -28,6 +28,8 @@
   <property name="styleSheet">
    <string notr="true">#jogDial {
 qproperty-backgroundImage: url(:/core/dial-back.png);
+qproperty-needleImage: url(:/core/dial-pointer.png);
+qproperty-maxAngle: 140;
 }
 
 QPushButton#jogHomeButton {
