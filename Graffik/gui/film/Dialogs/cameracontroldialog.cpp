@@ -43,24 +43,24 @@ CameraControlDialog::~CameraControlDialog()
     delete ui;
 }
 
-void CameraControlDialog::on_bulbCheck_stateChanged(int p_state) {
-    if( p_state == Qt::Unchecked )
-        ui->bulbSpin->setEnabled(false);
-    else
+void CameraControlDialog::on_bulbExpToggle_selected(int p_val) {
+    if( p_val == 1 )
         ui->bulbSpin->setEnabled(true);
-}
-
-void CameraControlDialog::on_focusCheck_stateChanged(int p_state) {
-    if( p_state == Qt::Unchecked )
-        ui->focusSpin->setEnabled(false);
     else
-        ui->focusSpin->setEnabled(true);
+        ui->bulbSpin->setEnabled(false);
 }
 
-void CameraControlDialog::on_intervalCheck_stateChanged(int p_state) {
+void CameraControlDialog::on_focusConToggle_selected(int p_val) {
+    if( p_val == 1 )
+        ui->focusSpin->setEnabled(true);
+    else
+        ui->focusSpin->setEnabled(false);
+}
+
+void CameraControlDialog::on_manIntToggle_selected(int p_val) {
     bool state = true;
 
-    if( p_state == Qt::Unchecked )
+    if( p_val == 0 )
         state = false;
 
     ui->hhSpinBox->setEnabled(state);
@@ -69,18 +69,18 @@ void CameraControlDialog::on_intervalCheck_stateChanged(int p_state) {
 
 }
 
-void CameraControlDialog::on_autoCheck_stateChanged(int p_state) {
+void CameraControlDialog::on_filmLenToggle_selected(int p_val) {
     bool state = false;
 
-    if( p_state == Qt::Unchecked )
+    if( p_val == 0 )
         state = true;
 
-    ui->intervalCheck->setEnabled(state);
+    ui->manIntToggle->setEnabled(state);
 
-    if( state == true && ui->intervalCheck->isChecked() ) {
-        ui->hhSpinBox->setEnabled(true);
-        ui->mmSpinBox->setEnabled(true);
-        ui->ssSpinBox->setEnabled(true);
+    if( state == true && ui->manIntToggle->value() == 1 ) {
+        ui->hhSpinBox->setEnabled(state);
+        ui->mmSpinBox->setEnabled(state);
+        ui->ssSpinBox->setEnabled(state);
     }
     else {
         ui->hhSpinBox->setEnabled(false);
@@ -105,7 +105,7 @@ void CameraControlDialog::_setupInputs() {
     bool sms  = params.filmMode == FILM_MODE_SMS ? true : false;
 
 
-    ui->autoCheck->setChecked(aFPS);
+    ui->filmLenToggle->setValue(aFPS);
 
     bool enManControls = aFPS ? false : man ? true : false;
     // bool enFPS = enManControls ? false : aFPS ? false : true;
@@ -115,18 +115,18 @@ void CameraControlDialog::_setupInputs() {
     unsigned long imm = TimeConverter::freeMinutes(cam->interval);
     unsigned long iss = TimeConverter::freeSeconds(cam->interval);
 
-    ui->intervalCheck->setChecked(enManControls);
+    ui->manIntToggle->setValue(enManControls);
     ui->hhSpinBox->setEnabled(enManControls);
+    ui->hhSpinBox->setCount(99);
     ui->hhSpinBox->setValue(ihh);
-    ui->hhSpinBox->setMaximum(999);
 
     ui->mmSpinBox->setEnabled(enManControls);
+    ui->mmSpinBox->setCount(59);
     ui->mmSpinBox->setValue(imm);
-    ui->mmSpinBox->setMaximum(59);
 
     ui->ssSpinBox->setEnabled(enManControls);
+    ui->ssSpinBox->setCount(59);
     ui->ssSpinBox->setValue(iss);
-    ui->ssSpinBox->setMaximum(59);
 
     ui->fpsSpin->setValue( params.fps );
 
@@ -137,16 +137,16 @@ void CameraControlDialog::_setupInputs() {
     ui->focusSpin->setMaximum(CAM_MAX_FOCUS);
     ui->delaySpin->setMaximum(CAM_MAX_DELAY);
 
-    ui->bulbCheck->setChecked(bulb);
+    ui->bulbExpToggle->setValue(bulb);
     ui->bulbSpin->setEnabled(bulb);
     ui->bulbSpin->setValue( (float) TimeConverter::seconds(cam->shutterMS) );
 
-    ui->focusCheck->setChecked(foc);
+    ui->focusConToggle->setValue(foc);
     ui->focusSpin->setEnabled(foc);
     ui->focusSpin->setValue( (float) TimeConverter::seconds(cam->focusMS) );
 
-    ui->lockCheck->setChecked(lck);
-    ui->smsCheck->setChecked(sms);
+    ui->focLocToggle->setValue(lck);
+    ui->smsToggle->setValue(sms);
 
     ui->delaySpin->setValue( (float) TimeConverter::seconds(cam->delayMS) );
 
@@ -159,10 +159,10 @@ void CameraControlDialog::accept() {
 
     OMfilmCamParams* cam = parmRef->camParams;
 
-    cam->bulb = ui->bulbCheck->isChecked();
-    cam->focus = ui->focusCheck->isChecked();
-    cam->focLock = ui->lockCheck->isChecked();
-    cam->autoFPS = ui->autoCheck->isChecked();
+    cam->bulb = ui->bulbExpToggle->value();
+    cam->focus = ui->focusConToggle->value();
+    cam->focLock = ui->focLocToggle->value();
+    cam->autoFPS = ui->filmLenToggle->value();
 
     if( cam->bulb )
         cam->shutterMS = TimeConverter::msFromSeconds(ui->bulbSpin->value());
@@ -177,10 +177,10 @@ void CameraControlDialog::accept() {
 
     cam->delayMS = TimeConverter::msFromSeconds(ui->delaySpin->value());
 
-    parmRef->filmMode = ui->smsCheck->isChecked() == true ? FILM_MODE_SMS : FILM_MODE_CONT;
+    parmRef->filmMode = ui->smsToggle->value() == 1 ? FILM_MODE_SMS : FILM_MODE_CONT;
 
 
-    cam->manInterval = ui->intervalCheck->isChecked();
+    cam->manInterval = ui->manIntToggle->value();
 
         // set new interval time, if manual interval selected
     if( cam->manInterval ) {

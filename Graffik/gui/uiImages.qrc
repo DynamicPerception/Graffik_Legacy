@@ -48,5 +48,14 @@
         <file alias="track-div-back.png">img/ui_images/track-div-back.png</file>
         <file alias="dial-back.png">img/ui_images/dial-back.png</file>
         <file alias="dial-pointer.png">img/ui_images/dial-pointer.png</file>
+        <file alias="kinetic-wheel.png">img/ui_images/kinetic-wheel.png</file>
+        <file alias="kinetic-bg.png">img/ui_images/kinetic-bg.png</file>
+        <file alias="kinetic-sm-bg.png">img/ui_images/kinetic-sm-bg.png</file>
+        <file alias="kinetic-sm-wheel.png">img/ui_images/kinetic-sm-wheel.png</file>
+        <file alias="scroll-spin-bg.png">img/ui_images/scroll-spin-bg.png</file>
+        <file alias="scroll-spin-down.png">img/ui_images/scroll-spin-down.png</file>
+        <file alias="scroll-spin-up.png">img/ui_images/scroll-spin-up.png</file>
+        <file alias="slider-handle-blue.png">img/ui_images/slider-handle-blue.png</file>
+        <file alias="scroll-spin-bg-dis.png">img/ui_images/scroll-spin-bg-dis.png</file>
     </qresource>
 </RCC>

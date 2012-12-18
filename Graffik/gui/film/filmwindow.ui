@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>405</height>
+    <height>409</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -26,14 +26,48 @@
    <string>FilmWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">
+   <string notr="true">FlickNumber #wheelLabel {
+border-image:url(:/core/kinetic-wheel.png);
+border:0px transparent;
+padding: 0px;
+margin:0px;
+}
+
+FlickNumber QListWidget {
+show-decoration-selected: 1;
+font: 30pt &quot;Lucida Sans&quot;;
+}
+
+
+FlickNumber QListWidget::item {
+color:rgb(81,82,85);
+ border-image: url(:/core/kinetic-bg.png);
+ border: 0px transparent;
+padding: 0px;
+margin: 0px;
+background-color: transparent;
+}
+
+FlickNumber QListWidget::item:selected {
+color:rgb(81,82,85);
+ border-image: url(:/core/kinetic-bg.png);
+ border: 0px transparent;
+padding: 0px;
+margin: 0px;
+background-color: transparent;
+}
+
+FlickNumber QListWidgetItem {
+text-align: center;
+}
+
 #forwardButton {
 border-image: url(:/core/fwd-end-normal.png);
 border:0px transparent;
 }
 
 #forwardButton:pressed {
-border-image: url(:/core/fwd--end-pressed.png);
+border-image: url(:/core/fwd-end-pressed.png);
 }
 
 #frameFwdButton {
@@ -115,11 +149,11 @@ margin:0px;
 
 SlideToggle::groove:horizontal {
  border-image: url(:/core/toggle-bg.png); 
-/* border-left: -9px transparent;
+ border-left: -9px transparent;
  border-right: -8px transparent;
  border-bottom: -5px transparent;
- border-top: 0px transparent;*/
-border: 0px transparent;
+ border-top: 0px transparent;
+/*border: 0px transparent;*/
  padding: 0px;
  margin: 0px;
 }
@@ -169,7 +203,8 @@ background-color:rgb(189,189,189);
 background-color: white;
 border-color:rgb(86,86,86);
 border:1px solid;
-color:black;
+color:rgb(81,82,85);
+font: 40pt &quot;Lucida Sans&quot;;
 }
 
 #filmHHLabel, #runHHLabel {
@@ -273,7 +308,8 @@ margin-bottom: 10px;
 #rtHHLabel, #rtMMLabel, #rtSSLabel, #filmLenHHLabel, #filmLenMMLabel, #filmLenSSLabel {
 
 color:white;
-
+font: 12pt &quot;Lucida Sans&quot;;
+padding-right: 28px;
 }</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -299,7 +335,7 @@ color:white;
        <property name="minimumSize">
         <size>
          <width>0</width>
-         <height>33</height>
+         <height>30</height>
         </size>
        </property>
        <property name="maximumSize">
@@ -432,8 +468,8 @@ color:white;
           </property>
           <property name="baseSize">
            <size>
-            <width>54</width>
-            <height>54</height>
+            <width>27</width>
+            <height>27</height>
            </size>
           </property>
           <property name="font">
@@ -474,8 +510,8 @@ color:white;
           </property>
           <property name="baseSize">
            <size>
-            <width>54</width>
-            <height>54</height>
+            <width>27</width>
+            <height>27</height>
            </size>
           </property>
           <property name="font">
@@ -516,8 +552,8 @@ color:white;
           </property>
           <property name="baseSize">
            <size>
-            <width>54</width>
-            <height>54</height>
+            <width>27</width>
+            <height>27</height>
            </size>
           </property>
           <property name="font">
@@ -558,8 +594,8 @@ color:white;
           </property>
           <property name="baseSize">
            <size>
-            <width>54</width>
-            <height>54</height>
+            <width>27</width>
+            <height>27</height>
            </size>
           </property>
           <property name="font">
@@ -600,8 +636,8 @@ color:white;
           </property>
           <property name="baseSize">
            <size>
-            <width>54</width>
-            <height>54</height>
+            <width>27</width>
+            <height>27</height>
            </size>
           </property>
           <property name="font">
@@ -642,8 +678,8 @@ color:white;
           </property>
           <property name="baseSize">
            <size>
-            <width>54</width>
-            <height>54</height>
+            <width>27</width>
+            <height>27</height>
            </size>
           </property>
           <property name="font">
@@ -697,7 +733,7 @@ color:white;
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>140</height>
+           <height>120</height>
           </size>
          </property>
          <property name="frameShape">
@@ -1457,7 +1493,7 @@ color:white;
           <property name="maximumSize">
            <size>
             <width>450</width>
-            <height>100</height>
+            <height>120</height>
            </size>
           </property>
           <property name="frameShape">
@@ -1480,6 +1516,12 @@ color:white;
              </property>
              <item>
               <widget class="QLabel" name="realTimeLabel">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="font">
                 <font>
                  <family>Lucida Sans</family>
@@ -1498,8 +1540,18 @@ color:white;
              </item>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_4">
+               <property name="spacing">
+                <number>5</number>
+               </property>
                <item>
-                <widget class="FlickNumber" name="realHHSpin" native="true"/>
+                <widget class="FlickNumber" name="realHHSpin" native="true">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>43</height>
+                  </size>
+                 </property>
+                </widget>
                </item>
                <item>
                 <widget class="FlickNumber" name="realMMSpin" native="true">
@@ -1509,10 +1561,23 @@ color:white;
                    <height>20</height>
                   </size>
                  </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>43</height>
+                  </size>
+                 </property>
                 </widget>
                </item>
                <item>
-                <widget class="FlickNumber" name="realSSSpin" native="true"/>
+                <widget class="FlickNumber" name="realSSSpin" native="true">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>43</height>
+                  </size>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
@@ -1522,7 +1587,11 @@ color:white;
                 <widget class="QLabel" name="rtHHLabel">
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <family>Lucida Sans</family>
+                   <pointsize>12</pointsize>
+                   <weight>50</weight>
+                   <italic>false</italic>
+                   <bold>false</bold>
                   </font>
                  </property>
                  <property name="text">
@@ -1537,7 +1606,11 @@ color:white;
                 <widget class="QLabel" name="rtMMLabel">
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <family>Lucida Sans</family>
+                   <pointsize>12</pointsize>
+                   <weight>50</weight>
+                   <italic>false</italic>
+                   <bold>false</bold>
                   </font>
                  </property>
                  <property name="text">
@@ -1552,7 +1625,11 @@ color:white;
                 <widget class="QLabel" name="rtSSLabel">
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <family>Lucida Sans</family>
+                   <pointsize>12</pointsize>
+                   <weight>50</weight>
+                   <italic>false</italic>
+                   <bold>false</bold>
                   </font>
                  </property>
                  <property name="text">
@@ -1587,7 +1664,7 @@ color:white;
           <property name="maximumSize">
            <size>
             <width>450</width>
-            <height>100</height>
+            <height>120</height>
            </size>
           </property>
           <property name="frameShape">
@@ -1610,6 +1687,12 @@ color:white;
              </property>
              <item>
               <widget class="QLabel" name="filmLengthLabel">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="font">
                 <font>
                  <family>Lucida Sans</family>
@@ -1628,8 +1711,18 @@ color:white;
              </item>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_2">
+               <property name="spacing">
+                <number>5</number>
+               </property>
                <item>
-                <widget class="FlickNumber" name="filmHHSpin" native="true"/>
+                <widget class="FlickNumber" name="filmHHSpin" native="true">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>43</height>
+                  </size>
+                 </property>
+                </widget>
                </item>
                <item>
                 <widget class="FlickNumber" name="filmMMSpin" native="true">
@@ -1639,10 +1732,23 @@ color:white;
                    <height>20</height>
                   </size>
                  </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>43</height>
+                  </size>
+                 </property>
                 </widget>
                </item>
                <item>
-                <widget class="FlickNumber" name="filmSSSpin" native="true"/>
+                <widget class="FlickNumber" name="filmSSSpin" native="true">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>43</height>
+                  </size>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
@@ -1652,7 +1758,11 @@ color:white;
                 <widget class="QLabel" name="filmLenHHLabel">
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <family>Lucida Sans</family>
+                   <pointsize>12</pointsize>
+                   <weight>50</weight>
+                   <italic>false</italic>
+                   <bold>false</bold>
                   </font>
                  </property>
                  <property name="text">
@@ -1667,7 +1777,11 @@ color:white;
                 <widget class="QLabel" name="filmLenMMLabel">
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <family>Lucida Sans</family>
+                   <pointsize>12</pointsize>
+                   <weight>50</weight>
+                   <italic>false</italic>
+                   <bold>false</bold>
                   </font>
                  </property>
                  <property name="text">
@@ -1682,7 +1796,11 @@ color:white;
                 <widget class="QLabel" name="filmLenSSLabel">
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <family>Lucida Sans</family>
+                   <pointsize>12</pointsize>
+                   <weight>50</weight>
+                   <italic>false</italic>
+                   <bold>false</bold>
                   </font>
                  </property>
                  <property name="text">
@@ -1727,7 +1845,7 @@ color:white;
   <customwidget>
    <class>FlickNumber</class>
    <extends>QWidget</extends>
-   <header>core/Utilities/flicknumber.h</header>
+   <header location="global">core/Utilities/flicknumber.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

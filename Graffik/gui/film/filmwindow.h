@@ -150,6 +150,7 @@ private:
     static const int s_Play     = 4;
 
     bool m_error;
+    bool m_spinsPrepped;
 
     void _displayCamControl();
     void _enableCamControl(bool p_en = true);

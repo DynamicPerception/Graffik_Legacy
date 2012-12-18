@@ -55,10 +55,14 @@ signals:
     void fpsChanged(unsigned short p_fps);
 
 public slots:
-    void on_bulbCheck_stateChanged(int p_state);
-    void on_focusCheck_stateChanged(int p_state);
-    void on_intervalCheck_stateChanged(int p_state);
-    void on_autoCheck_stateChanged(int p_state);
+    void on_bulbExpToggle_selected(int p_val);
+    void on_filmLenToggle_selected(int p_val);
+    void on_manIntToggle_selected(int p_val);
+    void on_focusConToggle_selected(int p_val);
+
+    //void on_intervalCheck_stateChanged(int p_state);
+    // void on_focusCheck_stateChanged(int p_state);
+    //void on_autoCheck_stateChanged(int p_state);
 
     void accept();
 

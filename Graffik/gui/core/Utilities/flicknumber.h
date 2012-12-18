@@ -26,12 +26,12 @@
 
 #include <QWidget>
 #include <QString>
-#include <QImage>
-#include <QPainter>
-#include <QIcon>
-
+#include <QResizeEvent>
+#include <QScrollBar>
+#include <QListWidgetItem>
 
 #include "flickcharm.h"
+
 
 namespace Ui {
 class FlickNumber;
@@ -59,6 +59,9 @@ public:
     void setValue(unsigned int p_val);
     unsigned int value();
     
+    void resizeEvent(QResizeEvent* p_evt);
+    void setEnabled(bool p_en);
+
 public slots:
     void flickSettled();
 
@@ -73,7 +76,6 @@ private:
     unsigned int m_cnt;
 
     void _setFlick();
-    QImage _genIconImage(unsigned int p_val);
 };
 
 #endif // FLICKNUMBER_H

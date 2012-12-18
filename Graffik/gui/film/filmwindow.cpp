@@ -36,6 +36,7 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
     m_gopts = c_gopts;
 
     m_error = false;
+    m_spinsPrepped = false;
 
     m_params = new FilmParameters(m_net, this);
     m_exec = new FilmExec(m_net, m_params, m_opts, m_gopts, this);
@@ -50,24 +51,20 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
     m_areaViewPort = new QWidget;
     m_areaViewPort->setLayout(m_areaLayout);
 
-    //ui->visualSAContents->setLayout(m_areaLayout);
     ui->visualSA->setWidget(m_areaViewPort);
 
         // create our transparent overlay for drawing position line
         // this must be done after the layout is added to visualSAContents,
         // as this class attempts to access that layout
 
-//    m_motion = new MotionSection(m_exec, m_params, ui->visualSAContents);
     m_motion = new MotionSection(m_exec, m_params, m_areaViewPort);
     m_filter = new SectionResizeFilter(m_motion, this);
 
     m_motion->show();
 
         // need to capture resize events to resize our transparent overlay
-//    ui->visualSAContents->installEventFilter(m_filter);
     m_areaViewPort->installEventFilter(m_filter);
 
-//    m_tape = new MotionTape(m_params, ui->visualSAContents, this);
     m_tape = new MotionTape(m_params, m_areaViewPort, this);
     ui->tapeVLayout->addWidget(m_tape);
 
@@ -105,14 +102,15 @@ FilmWindow::~FilmWindow() {
 
     delete m_tape;
     delete m_areaLayout;
-   // delete m_areaViewPort;
     delete m_motion;
     delete m_filter;
+   // delete m_areaViewPort;
 
     delete m_exec;
     delete m_jcp;
     delete m_fcp;
     delete m_params;
+    delete m_areaViewPort;
     delete ui;
 }
 
@@ -267,17 +265,22 @@ void FilmWindow::_showFilmTime() {
 
 void FilmWindow::_prepInputs() {
 
+    if( ! m_spinsPrepped ) {
+        ui->filmHHSpin->setCount(999);
+        ui->filmMMSpin->setCount(59);
+        ui->filmSSSpin->setCount(59);
+
+        ui->realHHSpin->setCount(999);
+        ui->realMMSpin->setCount(59);
+        ui->realSSSpin->setCount(59);
+
+        m_spinsPrepped = true;
+    }
+
     _displayCamControl();
     _inputEnable(true);
     _showFilmTime();
 
-    ui->filmHHSpin->setCount(999);
-    ui->filmMMSpin->setCount(59);
-    ui->filmSSSpin->setCount(59);
-
-    ui->realHHSpin->setCount(999);
-    ui->realMMSpin->setCount(59);
-    ui->realSSSpin->setCount(59);
 
 }
 

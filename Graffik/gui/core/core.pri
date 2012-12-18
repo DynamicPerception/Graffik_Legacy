@@ -32,7 +32,8 @@ HEADERS                 +=  \
     core/Utilities/flickcharm.h \
     core/Utilities/flicknumber.h \
     core/Widgets/slidetoggle.h \
-    core/Widgets/skinneddial.h
+    core/Widgets/skinneddial.h \
+    core/Utilities/flicknumberitem.h
 
 			   
 SOURCES                 +=  \
@@ -60,7 +61,8 @@ SOURCES                 +=  \
     core/Utilities/flickcharm.cpp \
     core/Utilities/flicknumber.cpp \
     core/Widgets/slidetoggle.cpp \
-    core/Widgets/skinneddial.cpp
+    core/Widgets/skinneddial.cpp \
+    core/Utilities/flicknumberitem.cpp
 
 			   
 FORMS 			+=  \
@@ -78,7 +80,8 @@ FORMS 			+=  \
     core/Dialogs/aboutdialog.ui \
     core/Options/globaloptionsdialog.ui \
     core/Dialogs/netbasedialog.ui \
-    core/Utilities/flicknumber.ui
+    core/Utilities/flicknumber.ui \
+    core/Utilities/flicknumberitem.ui
 
 	   
 

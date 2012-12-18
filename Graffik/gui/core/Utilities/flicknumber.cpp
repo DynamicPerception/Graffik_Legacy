@@ -26,7 +26,7 @@
 
 
 #include <QDebug>
-#include <QScrollBar>
+
 
 FlickNumber::FlickNumber(unsigned int c_count, QWidget *parent) : QWidget(parent), ui(new Ui::FlickNumber) {
     ui->setupUi(this);
@@ -52,11 +52,12 @@ FlickNumber::~FlickNumber()
     delete ui;
     delete m_fcp;
 
+
 }
 
 void FlickNumber::setCount(unsigned int p_count) {
 
-    int rowCnt = ui->listWidget->count() - 1;
+    unsigned int rowCnt = ui->listWidget->count() - 1;
 
     if( rowCnt == p_count )
         return;
@@ -64,15 +65,25 @@ void FlickNumber::setCount(unsigned int p_count) {
     for( int i = rowCnt; i >= 0; i--) {
         QListWidgetItem* item = ui->listWidget->takeItem(i);
         delete item;
-
     }
 
     for( unsigned int i = 0; i <= p_count; i++ ) {
-          ui->listWidget->addItem(QString::number(i));
-          //      QImage img = _genIconImage(i);
-         //       QListWidgetItem* itm = new QListWidgetItem();
-         //       itm->setIcon(QIcon(QPixmap::fromImage(img)));
-         //       ui->listWidget->addItem(itm);
+
+        QString first;
+        QString second;
+
+        if(i < 10 ) {
+            first = "0";
+            second = QString::number(i);
+        }
+        else {
+            first = QString::number(i / 10);
+            second = QString::number( i - ((i / 10) * 10));
+        }
+
+        QListWidgetItem* widg = new QListWidgetItem(first + "  " + second);
+        widg->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+        ui->listWidget->addItem(widg);
 
     }
 
@@ -83,6 +94,7 @@ void FlickNumber::_setFlick() {
     m_fcp->activateOn(ui->listWidget);
 
     connect(m_fcp, SIGNAL(flickSettled()), this, SLOT(flickSettled()));
+
 }
 
 void FlickNumber::flickSettled() {
@@ -91,6 +103,7 @@ void FlickNumber::flickSettled() {
 
     ui->listWidget->setCurrentRow(val);
     emit valueChanged(val);
+   // _setLabels(val);
 }
 
 void FlickNumber::setValue(unsigned int p_val) {
@@ -98,6 +111,7 @@ void FlickNumber::setValue(unsigned int p_val) {
         return;
 
     ui->listWidget->setCurrentRow(p_val);
+   // _setLabels(p_val);
 }
 
 unsigned int FlickNumber::value() {
@@ -108,20 +122,26 @@ unsigned int FlickNumber::value() {
 
 }
 
-QImage FlickNumber::_genIconImage(unsigned int p_val) {
 
-    QString fileBase = ":/numbers/number-%1.png";
+void FlickNumber::resizeEvent(QResizeEvent* p_evt) {
 
-    if( p_val < 10 ) {
-        fileBase = fileBase.arg(QString::number(p_val), 0, QLatin1Char( ' ' ));
-        qDebug() << "FlN: _gII: File" << fileBase;
-        QImage img(fileBase);
-        return img;
+    QSize sz = p_evt->size();
+
+    for( int i = (ui->listWidget->count() - 1); i >= 0; i--) {
+        QListWidgetItem* item = ui->listWidget->item(i);
+        item->setSizeHint(sz);
+    }
+}
+
+void FlickNumber::setEnabled(bool p_en) {
+    ui->listWidget->setEnabled(p_en);
+
+    if( p_en == true ) {
+        m_fcp->activateOn(ui->listWidget);
+        connect(m_fcp, SIGNAL(flickSettled()), this, SLOT(flickSettled()));
     }
     else {
-        QImage img;
-        return img;
+        m_fcp->deactivateFrom(ui->listWidget);
+        disconnect(m_fcp, SIGNAL(flickSettled()), this, SLOT(flickSettled()));
     }
-
-
 }
