@@ -43,8 +43,7 @@ DeviceAssignDialog::DeviceAssignDialog(OMNetwork *c_net, QString c_bus, QString 
     _initInputs(m_type);
 
     QObject::connect(m_net, SIGNAL(complete(int,OMCommandBuffer*)), this, SLOT(_commandComplete(int,OMCommandBuffer*)), Qt::QueuedConnection);
-    QObject::connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-    QObject::connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+
 }
 
 DeviceAssignDialog::~DeviceAssignDialog()
@@ -77,9 +76,8 @@ void DeviceAssignDialog::_initInputs(QString p_type) {
 
 }
 
-void DeviceAssignDialog::accept() {
+void DeviceAssignDialog::on_saveButton_clicked() {
 
-    qDebug() << "DAD: Got accept signal";
 
     m_newAddr = ui->addrCombo->currentText().toUShort();
     m_newName = ui->nameLine->text();
@@ -109,6 +107,10 @@ void DeviceAssignDialog::accept() {
 
 }
 
+void DeviceAssignDialog::on_cancelButton_clicked() {
+    done(QDialog::Rejected);
+}
+
 void DeviceAssignDialog::_commandComplete(int p_id, OMCommandBuffer *p_cmd) {
     if( p_id != m_cmdId )
         return;
@@ -132,7 +134,7 @@ void DeviceAssignDialog::_commandComplete(int p_id, OMCommandBuffer *p_cmd) {
 
     _postInit(m_bus, m_newAddr, m_type, m_newName);
 
-    done(1);
+    done(QDialog::Accepted);
 }
 
 // Perform any required post-initialization steps (blind)

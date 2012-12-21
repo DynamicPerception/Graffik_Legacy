@@ -1,39 +1,80 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>NetworkManager</class>
- <widget class="QDialog" name="NetworkManager">
+ <widget class="QWidget" name="NetworkManager">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>536</width>
-    <height>339</height>
+    <width>500</width>
+    <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Network Manager</string>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">#netTreeView {
+alternate-background-color:rgb(238,243,254);
+padding: 0px;
+margin:0px;
+}
+
+#netTreeView::item {
+
+min-height: 30px;
+max-height: 30px;
+   font: bold 10pt &quot;Lucida Sans&quot;;
+}
+
+#netTreeView QHeaderView::section {
+     background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0.541872 rgba(104, 104, 104, 255), stop:1 rgba(74, 74, 74, 255));
+     color: white;
+     padding-left: 4px;
+     border: 1px solid #6c6c6c;
+	 min-height: 20px; 
+	max-height: 20px;
+   font: 10pt &quot;Lucida Sans&quot;;
+ }
+
+
+#addBusButton, #addDevButton, #delBusButton, #delDevButton {
+
+background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(171, 171, 171, 255), stop:0.571429 rgba(146, 146, 146, 255));
+color: white;
+border: 1px solid;
+border-color: rgb(86,86,86);
+min-height: 21px;
+max-height: 21px;
+}
+
+NetworkManager {
+qproperty-editIcon: url(:/core/edit-icon-sm.png);
+}
+
+
+</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0" colspan="2">
-    <spacer name="horizontalSpacer_3">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="0" column="0" colspan="7">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <item row="0" column="1" colspan="4">
     <widget class="QTreeView" name="netTreeView">
      <property name="styleSheet">
       <string notr="true">background-color: rgb(255, 255, 255)</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="lineWidth">
+      <number>0</number>
      </property>
      <property name="editTriggers">
       <set>QAbstractItemView::NoEditTriggers</set>
@@ -53,80 +94,43 @@
        <height>35</height>
       </size>
      </property>
-     <property name="headerHidden">
+     <property name="indentation">
+      <number>25</number>
+     </property>
+     <property name="uniformRowHeights">
       <bool>true</bool>
      </property>
-     <attribute name="headerVisible">
+     <property name="sortingEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="animated">
+      <bool>true</bool>
+     </property>
+     <property name="headerHidden">
       <bool>false</bool>
+     </property>
+     <attribute name="headerVisible">
+      <bool>true</bool>
      </attribute>
      <attribute name="headerCascadingSectionResizes">
-      <bool>false</bool>
+      <bool>true</bool>
+     </attribute>
+     <attribute name="headerDefaultSectionSize">
+      <number>120</number>
+     </attribute>
+     <attribute name="headerStretchLastSection">
+      <bool>true</bool>
      </attribute>
     </widget>
    </item>
-   <item row="2" column="1">
-    <spacer name="verticalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="2" column="0">
-    <spacer name="verticalSpacer_3">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="3" column="0" colspan="6">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="3" column="6">
-    <widget class="QPushButton" name="pushButton">
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
-     <property name="text">
-      <string>Done</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="6">
+   <item row="1" column="4">
     <widget class="QPushButton" name="delDevButton">
      <property name="text">
       <string>Delete Device</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="4">
+   <item row="1" column="2">
     <widget class="QPushButton" name="addDevButton">
      <property name="styleSheet">
       <string notr="true"/>
@@ -136,7 +140,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="3">
+   <item row="1" column="1">
     <widget class="QPushButton" name="addBusButton">
      <property name="styleSheet">
       <string notr="true"/>
@@ -146,7 +150,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="5">
+   <item row="1" column="3">
     <widget class="QPushButton" name="delBusButton">
      <property name="text">
       <string>Delete Bus</string>
@@ -156,22 +160,5 @@
   </layout>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>pushButton</sender>
-   <signal>clicked()</signal>
-   <receiver>NetworkManager</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>289</x>
-     <y>321</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>285</x>
-     <y>344</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

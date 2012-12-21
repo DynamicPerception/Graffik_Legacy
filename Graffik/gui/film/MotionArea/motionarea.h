@@ -91,6 +91,8 @@ class MotionArea : public QFrame
     Q_OBJECT
     Q_PROPERTY(int lineWidth READ lineWidth WRITE setLineWidth DESIGNABLE true)
     Q_PROPERTY(QColor color READ color WRITE setColor DESIGNABLE true)
+    Q_PROPERTY(int muted READ muted DESIGNABLE true)
+
 
 public:
     MotionArea(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions* c_aopt, GlobalOptions* c_gopt, QWidget *parent);
@@ -110,6 +112,7 @@ public:
     int lineWidth();
     void setColor(QColor p_color);
     void setLineWidth(int p_width);
+    int muted();
 
 public slots:
     void filmUpdated();
@@ -157,6 +160,7 @@ private:
     bool m_pstat;
 
 
+    void _refreshStylesheet();
 };
 
 #endif // MOTIONAREA_H

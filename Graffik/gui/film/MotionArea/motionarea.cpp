@@ -352,20 +352,14 @@ void MotionArea::moveSane(bool p_sane) {
             // set to error by this function
         if( m_mute == MA_MUTE_ER  || m_mute == MA_MUTE_NA ) {
             m_mute = MA_MUTE_NA;
-            m_bgCol = MA_BG_COLOR;
-        }
-        else {
-                // leave muted if the mute wasn't triggered by error
-            m_bgCol = MA_MT_COLOR;
+            _refreshStylesheet();
         }
 
     }
-    else {
-        m_bgCol = MA_ER_COLOR;
-            // do not change mute setting if track already muted
-        if( m_mute != MA_MUTE_MT )
-            m_mute = MA_MUTE_ER;
-
+    else if( m_mute != MA_MUTE_MT ) {
+            // do not mute as error if track already muted
+       m_mute = MA_MUTE_ER;
+       _refreshStylesheet();
     }
 
         // inform other components that this track is either
@@ -484,15 +478,30 @@ void MotionArea::mute() {
     if( m_sane ) {
         if( m_mute == MA_MUTE_NA ) {
             m_mute = MA_MUTE_MT;
-            m_bgCol = MA_MT_COLOR;
+            _refreshStylesheet();
         }
         else if( m_mute != MA_MUTE_ER ) {
             m_mute = MA_MUTE_NA;
-            m_bgCol = MA_BG_COLOR;
+            _refreshStylesheet();
         }
     }
 
     emit muted(m_mute);
+}
+
+int MotionArea::muted() {
+    if( m_mute == MA_MUTE_MT )
+        return 1;
+    else if( m_mute == MA_MUTE_ER )
+        return 2;
+    else
+        return 0;
+}
+
+void MotionArea::_refreshStylesheet() {
+    style()->unpolish(this);
+    style()->polish(this);
+    update();
 }
 
 /** Slot for Setting Current Play Status

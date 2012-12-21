@@ -27,7 +27,7 @@
 #include <QObject>
 
 #include "deviceassigndialog.h"
-#include "devicescandialog.h"
+#include "devicescanwidget.h"
 #include "MoCoBus/omnetwork.h"
 #include "Devices/nanoMoCo/omaxis.h"
 
@@ -41,7 +41,8 @@
   by scanning the complete address range, or for a specific device when constructed
   with an address argument.
 
-  Instances should be destroyed when scanning is complete.
+  Instances should be destroyed when scanning is complete, do not attempt to use the same
+  instance for scanning twice.
 
   @author
   C. A. Church
@@ -52,9 +53,12 @@ class DeviceScanner : public QObject
     Q_OBJECT
 public:
 
-    DeviceScanner(OMNetwork* c_net, QObject *parent = 0);
-    DeviceScanner(OMNetwork *c_net, unsigned short c_addr, QObject *parent = 0);
+    DeviceScanner(OMNetwork* c_net, bool c_start = false, QObject *parent = 0);
+    DeviceScanner(OMNetwork *c_net, unsigned short c_addr, bool c_start = false, QObject *parent = 0);
     ~DeviceScanner();
+
+    DeviceScanWidget* getWidget();
+    bool startScan();
 
 signals:
 
@@ -81,10 +85,12 @@ private:
 
     OMNetwork* m_net;
     OMCommandManager* m_cmd;
-    DeviceScanDialog* m_scanDialog;
+    DeviceScanWidget* m_scanWidget;
         // list contains address sent to, and type (id or name)
     QHash<int, QList<unsigned short> > m_cmdSent;
     QHash<unsigned short, QString> m_addrType;
+
+    bool m_scanStarted;
 
     QHash<int, QString> m_cmdSentBus;
     QList<devInfo> m_foundDevs;

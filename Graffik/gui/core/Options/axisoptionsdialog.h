@@ -27,6 +27,7 @@
 #include <QDialog>
 
 #include "axisoptions.h"
+#include "core/Widgets/slidetoggle.h"
 
 #define AOD_STR_MAST    "By setting this device as the timing master, you will automatically unset any existing master device. Do you want to do this?"
 #define AOD_STR_UNMAST  "If you unset this device as the timing master, you must manually select and edit another device and configure it as timing master for synchronization to work. Do you want to do this?"
@@ -58,9 +59,12 @@ public:
     AxisOptionsDialog(AxisOptions* c_opts, unsigned short c_addr, QWidget *parent = 0);
     ~AxisOptionsDialog();
     
+public slots:
+    void on_saveButton_clicked();
+    void on_cancelButton_clicked();
+
 private slots:
     void _defaultComboChange(int p_idx);
-    void _accept();
 
 private:
     Ui::AxisOptionsDialog* ui;

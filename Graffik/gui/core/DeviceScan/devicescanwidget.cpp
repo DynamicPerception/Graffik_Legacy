@@ -21,26 +21,23 @@
 
     */
 
-#include "devicescandialog.h"
-#include "ui_devicescandialog.h"
+#include "devicescanwidget.h"
+#include "ui_devicescanwidget.h"
 
-DeviceScanDialog::DeviceScanDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::DeviceScanDialog)
+DeviceScanWidget::DeviceScanWidget(QWidget *parent) : QWidget(parent), ui(new Ui::DeviceScanWidget)
 {
     ui->setupUi(this);
-    ui->doneButton->setText("Done");
+    ui->doneButton->hide();
 }
 
-DeviceScanDialog::~DeviceScanDialog()
+DeviceScanWidget::~DeviceScanWidget()
 {
     delete ui;
 }
 
-void DeviceScanDialog::enableConfirm(bool p_enable) {
+void DeviceScanWidget::enableConfirm(bool p_enable) {
     if( p_enable ) {
         ui->doneButton->setEnabled(true);
-        ui->cancelButton->setDefault(false);
         ui->doneButton->setDefault(true);
     }
     else {
@@ -48,32 +45,34 @@ void DeviceScanDialog::enableConfirm(bool p_enable) {
     }
 }
 
-void DeviceScanDialog::addNote(QString p_note) {
+void DeviceScanWidget::addNote(QString p_note) {
     ui->statusText->append(p_note);
 }
 
 
-void DeviceScanDialog::totalNodes(int p_nodes) {
+void DeviceScanWidget::totalNodes(int p_nodes) {
     ui->progressBar->setMaximum(p_nodes);
     ui->progressBar->setMinimum(0);
 }
 
-void DeviceScanDialog::scannedNodes(int p_nodes) {
+void DeviceScanWidget::scannedNodes(int p_nodes) {
     ui->progressBar->setValue(p_nodes);
 }
 
 
-void DeviceScanDialog::nodesFound(bool p_found) {
-    if( p_found == true )
+void DeviceScanWidget::nodesFound(bool p_found) {
+    if( p_found == true ) {
         ui->doneButton->setText("Next");
+        ui->doneButton->show();
+    }
     else
-        ui->doneButton->setText("Done");
+        ui->doneButton->hide();
 }
 
-void DeviceScanDialog::on_cancelButton_clicked() {
-    reject();
-}
+/*void DeviceScanWidget::on_cancelButton_clicked() {
+    emit rejected();
+}*/
 
-void DeviceScanDialog::on_doneButton_clicked() {
-    accept();
+void DeviceScanWidget::on_doneButton_clicked() {
+   emit accepted();
 }

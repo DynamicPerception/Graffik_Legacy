@@ -57,5 +57,16 @@
         <file alias="scroll-spin-up.png">img/ui_images/scroll-spin-up.png</file>
         <file alias="slider-handle-blue.png">img/ui_images/slider-handle-blue.png</file>
         <file alias="scroll-spin-bg-dis.png">img/ui_images/scroll-spin-bg-dis.png</file>
+        <file alias="edit-icon-sm.png">img/ui_images/edit-icon-sm.png</file>
+        <file alias="black-but-normal.png">img/ui_images/black-but-normal.png</file>
+        <file alias="black-but-pressed.png">img/ui_images/black-but-pressed.png</file>
+        <file alias="affirmative-big-button-normal.png">img/ui_images/affirmative-big-button-normal.png</file>
+        <file alias="affirmative-big-button-pressed.png">img/ui_images/affirmative-big-button-pressed.png</file>
+        <file alias="drop-down-sm-black.png">img/ui_images/drop-down-sm-black.png</file>
+        <file alias="small-blue-but-normal.png">img/ui_images/small-blue-but-normal.png</file>
+        <file alias="small-gray-but-normal.png">img/ui_images/small-gray-but-normal.png</file>
+        <file alias="drop-down-sm-blue.png">img/ui_images/drop-down-sm-blue.png</file>
+        <file alias="track-back-mute.png">img/ui_images/track-back-mute.png</file>
+        <file alias="track-back-error.png">img/ui_images/track-back-error.png</file>
     </qresource>
 </RCC>

@@ -20,7 +20,22 @@
    <string>Dynamic Perception Graffik</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">#tabs {
+   <string notr="true">#screenSelCombo:drop-down {
+border-image: url(:/core/drop-down-sm-black.png);
+border: 0px transparent;
+}
+
+#screenSelCombo {
+min-height: 33px;
+min-width: 100px;
+}
+
+/*#screenSelCombo:on {
+padding-top:3px;
+padding-left: 4px;
+}*/
+
+#tabs {
 background:rgb(253,253,253);
 
 }

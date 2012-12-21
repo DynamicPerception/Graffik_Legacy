@@ -13,6 +13,74 @@
   <property name="windowTitle">
    <string>Configure New Device</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QComboBox:drop-down {
+border-image: url(:/core/drop-down-sm-blue.png);
+border: 0px transparent;
+}
+
+QComboBox {
+min-height: 33px;
+min-width: 100px;
+}
+
+#AxisOptionsDialog {
+background-color:qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(253, 253, 253, 255), stop:1 rgba(208, 208, 208, 255));
+}
+
+QLabel {
+font: 14pt &quot;Lucida Sans&quot;;
+}
+
+SlideToggle {
+min-width: 66px;
+max-width: 66px;
+min-height: 34px;
+max-height: 34px;
+}
+
+SlideToggle::groove:horizontal {
+ border-image: url(:/core/toggle-bg.png); 
+border: 0px transparent;
+ border-left: -9px transparent;
+ border-right: -8px transparent;
+ border-bottom: -5px transparent;
+ border-top: 0px transparent;
+/* border: 0px transparent;*/
+ padding: 0px;
+ margin: 0px;
+}
+
+SlideToggle::handle:horizontal {
+margin:0px;
+padding:0px;
+image: url(:/core/slider-handle-blue.png);
+}
+
+SlideToggle {
+margin:4px;
+}
+
+
+#cancelButton, #saveButton {
+padding:10px;
+color: rgb(255,255,255);
+font: 12px &quot;Lucida Sans&quot;;
+max-width:75px;
+max-height: 24px;
+}
+
+#cancelButton {
+border-image: url(:/core/small-gray-but-normal.png);
+border: 0px transparent;
+}
+
+#saveButton {
+border-image: url(:/core/small-blue-but-normal.png);
+border: 0px transparent;
+}
+</string>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <widget class="QLabel" name="label">
@@ -23,13 +91,6 @@
    </item>
    <item row="0" column="1" colspan="2">
     <widget class="QComboBox" name="addrCombo"/>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>New Device Name</string>
-     </property>
-    </widget>
    </item>
    <item row="1" column="1" rowspan="2" colspan="2">
     <widget class="QLineEdit" name="nameLine"/>
@@ -86,10 +147,24 @@
      </property>
     </spacer>
    </item>
-   <item row="4" column="1" colspan="2">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   <item row="4" column="2">
+    <widget class="QPushButton" name="saveButton">
+     <property name="text">
+      <string>Save</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QPushButton" name="cancelButton">
+     <property name="text">
+      <string>Cancel</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>New Device Name</string>
      </property>
     </widget>
    </item>

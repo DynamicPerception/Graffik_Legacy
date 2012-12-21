@@ -29,14 +29,24 @@
 #include "core/Options/axisoptionsdialog.h"
 
 
-NetworkManager::NetworkManager(NetworkModel *c_net, AxisOptions* c_opts, QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::NetworkManager)
-{
-    ui->setupUi(this);
+/** Constructor
+
+   Create a new NetworkManager widget for display.
+
+   @param c_net
+   A pointer to the NetworkModel to use
+
+   @param c_opts
+   A pointer to the AxisOptions object to use
+
+*/
+
+NetworkManager::NetworkManager(NetworkModel *c_net, AxisOptions* c_opts, QWidget *parent) : QWidget(parent), ui(new Ui::NetworkManager) {
 
     _netMod = c_net;
     _opts = c_opts;
+
+    ui->setupUi(this);
 
     ui->netTreeView->setModel(c_net);
 
@@ -92,3 +102,11 @@ void NetworkManager::onRowClick(QModelIndex p_idx) {
     }
 }
 
+void NetworkManager::setEditIcon(QPixmap p_img) {
+    qDebug() << "NM: Got Edit Icon" << p_img.width() << p_img.height();
+    _netMod->setEditIcon(p_img);
+}
+
+QPixmap NetworkManager::editIcon() {
+    return _netMod->editIcon();
+}

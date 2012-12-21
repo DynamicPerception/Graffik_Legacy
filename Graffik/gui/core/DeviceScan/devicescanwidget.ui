@@ -1,23 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DeviceScanDialog</class>
- <widget class="QDialog" name="DeviceScanDialog">
+ <class>DeviceScanWidget</class>
+ <widget class="QWidget" name="DeviceScanWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>188</height>
+    <height>192</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Network Device Scan</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">#doneButton {
+
+border-image: url(:/core/small-blue-but-normal.png);
+border: 0px transparent;
+max-width:75px;
+max-height: 24px;
+min-width:75px;
+min-height: 24px;
+color: rgb(255,255,255);
+font: 12px &quot;Lucida Sans&quot;;
+}</string>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" colspan="3">
+   <item row="0" column="0" colspan="2">
     <widget class="QLabel" name="scanLabel">
      <property name="font">
       <font>
+       <family>Lucida Sans</family>
        <pointsize>18</pointsize>
       </font>
      </property>
@@ -26,14 +40,14 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="3">
+   <item row="1" column="0" colspan="2">
     <widget class="QProgressBar" name="progressBar">
      <property name="value">
       <number>24</number>
      </property>
     </widget>
    </item>
-   <item row="2" column="0" colspan="3">
+   <item row="2" column="0" colspan="2">
     <widget class="QTextBrowser" name="statusText"/>
    </item>
    <item row="3" column="0">
@@ -50,13 +64,6 @@
     </spacer>
    </item>
    <item row="3" column="1">
-    <widget class="QPushButton" name="cancelButton">
-     <property name="text">
-      <string>Cancel</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="2">
     <widget class="QPushButton" name="doneButton">
      <property name="text">
       <string>Done</string>

@@ -43,7 +43,7 @@ AxisOptionsDialog::AxisOptionsDialog(AxisOptions* c_opts, unsigned short c_addr,
         // this object may be gone by the time the signal is handled.
 
     QObject::connect(ui->defaultCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(_defaultComboChange(int)));
-    QObject::connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(_accept()));
+
 
 }
 
@@ -75,7 +75,7 @@ void AxisOptionsDialog::_initInputs() {
     ui->ratioLine->setText(QString::number(m_opts->ratio));
     ui->maxLine->setText(QString::number(m_opts->maxSteps));
 
-    ui->masterCheck->setChecked(m_opts->master);
+    ui->masterToggle->setValue(m_opts->master);
 
         // disable inputs if one of the pre-defined types
     if( m_opts->axisType != AXIS_CUSTOM ) {
@@ -128,10 +128,13 @@ void AxisOptionsDialog::_defaultComboChange(int p_idx) {
 
 }
 
-    // slot connected to accept signal from buttonbox
+
+void AxisOptionsDialog::on_cancelButton_clicked() {
+    done(QDialog::Rejected);
+}
     // save dialog values
 
-void AxisOptionsDialog::_accept() {
+void AxisOptionsDialog::on_saveButton_clicked() {
 
     qDebug() << "AFODia: User Saved Values";
 
@@ -143,7 +146,7 @@ void AxisOptionsDialog::_accept() {
     m_opts->jogLimit = m_opts->maxSteps;
     m_opts->jogDamp = OM_OPT_JOGDAMP;
 
-    if( m_opts->master != ui->masterCheck->isChecked() ) {
+    if( m_opts->master != ui->masterToggle->value() ) {
             // changing the timing master flag has implications, force the user to confirm
             // do nothing if they do not confirm
         if( m_opts->master == false ) {
@@ -168,5 +171,7 @@ void AxisOptionsDialog::_accept() {
         // after we muck with the contents
 
     m_optObj->setOptions(m_addr, m_opts);
+
+    done(QDialog::Accepted);
 
 }

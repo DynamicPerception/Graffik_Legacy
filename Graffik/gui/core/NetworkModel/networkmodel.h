@@ -25,6 +25,7 @@
 #define NETWORKMODEL_H
 
 #include <QStandardItemModel>
+#include <QPixmap>
 
 #include "MoCoBus/omnetwork.h"
 
@@ -34,7 +35,8 @@
 
 /** Network Model Class
 
-  This class creates a model for display of network elements.
+  This class creates a model for display of network elements, primarily used for the
+  NetworkManager class.
 
   @author
   C. A. Church
@@ -42,11 +44,20 @@
 class NetworkModel : public QStandardItemModel
 {
     Q_OBJECT
+    /** Icon Image Property
+
+      Sets the icon image for the edit icon for each device displayed
+      */
+    Q_PROPERTY(QPixmap editIcon READ editIcon WRITE setEditIcon DESIGNABLE true)
+
 public:
     NetworkModel(OMNetwork* c_net, QObject *parent = 0);
     ~NetworkModel();
 
     OMNetwork* net();
+
+    QPixmap editIcon();
+    void setEditIcon(QPixmap p_img);
 
 signals:
     
@@ -59,6 +70,7 @@ public slots:
 
 private:
     OMNetwork* m_net;
+    QPixmap* m_icon;
 
     void _setHeaders();
 };

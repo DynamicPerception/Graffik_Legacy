@@ -53,7 +53,8 @@ public:
     ~DeviceAssignDialog();
     
 public slots:
-    void accept();
+    void on_saveButton_clicked();
+    void on_cancelButton_clicked();
 
 private slots:
     void _commandComplete(int p_id, OMCommandBuffer* p_cmd);

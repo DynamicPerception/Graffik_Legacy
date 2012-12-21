@@ -6,15 +6,27 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>342</width>
-    <height>625</height>
+    <width>340</width>
+    <height>700</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>700</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Camera Control Parameters</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QDoubleSpinBox, QSpinBox {
+   <string notr="true">#manIntShowFrame {
+
+min-height: 100px;
+max-height: 100px;
+}
+
+QDoubleSpinBox, QSpinBox {
 padding-left: 10px;
 padding-right: 29px;
 border-image:url(:/core/scroll-spin-bg.png);
@@ -133,7 +145,7 @@ min-height: 40px;
 #bulbExpFrame {
 padding: 5px;
 max-height: 120px;
-min-height: 100px;
+min-height: 40px;
 }
 #SMSFrame {
 max-height:75px;
@@ -186,14 +198,14 @@ margin:0px;
 margin: 0px;
 }</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_7">
-   <property name="margin">
-    <number>0</number>
-   </property>
+  <layout class="QVBoxLayout" name="verticalLayout_3">
    <property name="spacing">
     <number>0</number>
    </property>
-   <item row="0" column="0">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
     <layout class="QGridLayout" name="gridLayout_6">
      <property name="spacing">
       <number>0</number>
@@ -450,50 +462,6 @@ margin: 0px;
         <property name="margin">
          <number>0</number>
         </property>
-        <item row="4" column="0" colspan="3">
-         <layout class="QGridLayout" name="gridLayout">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <item row="2" column="0">
-           <widget class="QLabel" name="hhSpinLabel">
-            <property name="text">
-             <string>HH</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLabel" name="mmSpinLabel">
-            <property name="text">
-             <string>MM</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QLabel" name="ssSpinLabel">
-            <property name="text">
-             <string>SS</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="FlickNumber" name="hhSpinBox" native="true"/>
-          </item>
-          <item row="1" column="1">
-           <widget class="FlickNumber" name="mmSpinBox" native="true">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="FlickNumber" name="ssSpinBox" native="true"/>
-          </item>
-         </layout>
-        </item>
         <item row="1" column="0" colspan="2">
          <widget class="QLabel" name="fpsLabel">
           <property name="text">
@@ -555,15 +523,18 @@ margin: 0px;
           </layout>
          </widget>
         </item>
-        <item row="3" column="0" colspan="3">
-         <widget class="QFrame" name="manIntFrame">
+        <item row="3" column="0">
+         <widget class="QFrame" name="manIntShowFrame">
           <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+           <enum>QFrame::NoFrame</enum>
           </property>
           <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
+           <enum>QFrame::Plain</enum>
           </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <property name="lineWidth">
+           <number>0</number>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
            <property name="spacing">
             <number>0</number>
            </property>
@@ -571,31 +542,93 @@ margin: 0px;
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="maIntLabel">
-             <property name="text">
-              <string>Manual Interval</string>
+            <widget class="QFrame" name="manIntFrame">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
              </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_7">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <property name="margin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="maIntLabel">
+                <property name="text">
+                 <string>Manual Interval</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_6">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>96</width>
+                  <height>19</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="SlideToggle" name="manIntToggle">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </item>
            <item>
-            <spacer name="horizontalSpacer_6">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+            <layout class="QGridLayout" name="gridLayout">
+             <property name="spacing">
+              <number>0</number>
              </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>96</width>
-               <height>19</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="SlideToggle" name="manIntToggle">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
+             <item row="2" column="0">
+              <widget class="QLabel" name="hhSpinLabel">
+               <property name="text">
+                <string>HH</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QLabel" name="mmSpinLabel">
+               <property name="text">
+                <string>MM</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="2">
+              <widget class="QLabel" name="ssSpinLabel">
+               <property name="text">
+                <string>SS</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="FlickNumber" name="hhSpinBox" native="true"/>
+             </item>
+             <item row="1" column="1">
+              <widget class="FlickNumber" name="mmSpinBox" native="true">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <widget class="FlickNumber" name="ssSpinBox" native="true"/>
+             </item>
+            </layout>
            </item>
           </layout>
          </widget>

@@ -468,13 +468,11 @@ margin:0px;
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
-       <zorder>horizontalLayoutWidget</zorder>
       </widget>
      </item>
     </layout>
    </item>
   </layout>
-  <zorder>gridLayoutWidget_2</zorder>
   <zorder>dispLCDFrame</zorder>
   <zorder>dispLCDFrame</zorder>
   <zorder>dispLCDFrame</zorder>

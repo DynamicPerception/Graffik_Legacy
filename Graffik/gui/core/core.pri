@@ -20,7 +20,7 @@ HEADERS                 +=  \
     core/Options/axisoptionsdialog.h \
     core/Options/axisoptions.h \
     core/Dialogs/deletebusdialog.h \ 
-    core/DeviceScan/devicescandialog.h \
+    core/DeviceScan/devicescanwidget.h \
     core/DeviceScan/devicescanner.h \
     core/DeviceScan/deviceassigndialog.h \
     core/Dialogs/aboutdialog.h \
@@ -33,7 +33,8 @@ HEADERS                 +=  \
     core/Utilities/flicknumber.h \
     core/Widgets/slidetoggle.h \
     core/Widgets/skinneddial.h \
-    core/Utilities/flicknumberitem.h
+    core/Utilities/flicknumberitem.h \
+    core/Dialogs/NetWidgets/adddevicenetwidget.h
 
 			   
 SOURCES                 +=  \
@@ -50,7 +51,7 @@ SOURCES                 +=  \
     core/Options/axisoptionsdialog.cpp \
     core/Options/axisoptions.cpp \
     core/Dialogs/deletebusdialog.cpp \ 
-    core/DeviceScan/devicescandialog.cpp \
+    core/DeviceScan/devicescanwidget.cpp \
     core/DeviceScan/devicescanner.cpp \
     core/DeviceScan/deviceassigndialog.cpp \
     core/Dialogs/aboutdialog.cpp \
@@ -62,7 +63,8 @@ SOURCES                 +=  \
     core/Utilities/flicknumber.cpp \
     core/Widgets/slidetoggle.cpp \
     core/Widgets/skinneddial.cpp \
-    core/Utilities/flicknumberitem.cpp
+    core/Utilities/flicknumberitem.cpp \
+    core/Dialogs/NetWidgets/adddevicenetwidget.cpp
 
 			   
 FORMS 			+=  \
@@ -75,13 +77,14 @@ FORMS 			+=  \
     core/Dialogs/deletebusdialog.ui \
 	core/Dialogs/errordialog.ui \
    core/Dialogs/addnetdialog.ui \ 
-    core/DeviceScan/devicescandialog.ui \
+    core/DeviceScan/devicescanwidget.ui \
     core/DeviceScan/deviceassigndialog.ui \
     core/Dialogs/aboutdialog.ui \
     core/Options/globaloptionsdialog.ui \
     core/Dialogs/netbasedialog.ui \
     core/Utilities/flicknumber.ui \
-    core/Utilities/flicknumberitem.ui
+    core/Utilities/flicknumberitem.ui \
+    core/Dialogs/NetWidgets/adddevicenetwidget.ui
 
 	   
 

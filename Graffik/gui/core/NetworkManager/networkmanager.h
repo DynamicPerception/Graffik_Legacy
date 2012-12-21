@@ -24,7 +24,8 @@
 #ifndef NETWORKMANAGER_H
 #define NETWORKMANAGER_H
 
-#include <QDialog>
+#include <QWidget>
+#include <QPixmap>
 
 #include "MoCoBus/omnetwork.h"
 
@@ -49,14 +50,22 @@ class NetworkManager;
   C. A. Church
   */
 
-class NetworkManager : public QDialog
+class NetworkManager : public QWidget
 {
     Q_OBJECT
-    
+    /** Icon Image Property
+
+      Sets the icon image for the edit icon for each device displayed
+      */
+    Q_PROPERTY(QPixmap editIcon READ editIcon WRITE setEditIcon DESIGNABLE true)
+
 public:
-    NetworkManager(NetworkModel* c_net, AxisOptions* c_opts, QWidget *parent = 0);
+    NetworkManager(NetworkModel* c_net, AxisOptions* c_opts, QWidget *parent = false);
     ~NetworkManager();
     
+    QPixmap editIcon();
+    void setEditIcon(QPixmap p_img);
+
 private:
     Ui::NetworkManager *ui;
     NetworkModel* _netMod;

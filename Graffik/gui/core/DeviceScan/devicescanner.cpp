@@ -36,12 +36,22 @@
   Note that the scanner will -not- scan any address that has already been added as a device, and will only scan if
   a bus has been added to the network.
 
+  Scanning will automatically begin, unless this behavior is controlled via the c_start parameter.  If scanning
+  is set to not automatically begin, you must call startScan() when you are ready.
+
+  @param c_net
+  A pointer to the OMNetwork object that the scan will happen against.
+
+  @param c_start
+  Whether or not to start scanning at object creation, defaults to true
+
   */
 
-DeviceScanner::DeviceScanner(OMNetwork *c_net, QObject *parent) : QObject(parent) {
+DeviceScanner::DeviceScanner(OMNetwork *c_net, bool c_start, QObject *parent) : QObject(parent) {
 
     _initScanner(c_net, 0);
-    _scan(m_findAddr);
+    if( c_start )
+        _scan(m_findAddr);
 }
 
 /**
@@ -53,18 +63,57 @@ DeviceScanner::DeviceScanner(OMNetwork *c_net, QObject *parent) : QObject(parent
   information.
 */
 
-DeviceScanner::DeviceScanner(OMNetwork *c_net, unsigned short c_addr, QObject *parent) : QObject(parent) {
+DeviceScanner::DeviceScanner(OMNetwork *c_net, unsigned short c_addr, bool c_start, QObject *parent) : QObject(parent) {
 
     _initScanner(c_net, c_addr);
 
         // we don't do squat if the address is already in-use
-    if( _validateAddress(c_addr) )
-        _scan(m_findAddr);
+    if( c_start )
+        if( _validateAddress(c_addr) )
+            _scan(m_findAddr);
 }
 
 
 DeviceScanner::~DeviceScanner() {
-    delete m_scanDialog;
+    delete m_scanWidget;
+}
+
+
+/** Start Scanning Now
+
+  If the instance is created without automatic start of scanning, then you must call this method
+  to begin scanning when ready.
+
+  @return
+  True if the scan was initiated, false if not.
+  */
+
+bool DeviceScanner::startScan() {
+    if(m_scanStarted) {
+        return false;
+    }
+    if( m_findAddr != 0 && _validateAddress(m_findAddr) ) {
+        _scan(m_findAddr);
+        return true;
+    }
+    else if( m_findAddr == 0 ) {
+        _scan(m_findAddr);
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+/** Get the Display Widget
+
+  Returns a pointer to the current display widget.  This widget will only be valid for as long as
+  the DeviceScanner object is in existence.  You must discard this pointer immediately after destroying
+  the DeviceScanner instance that provided it to you.
+  */
+
+DeviceScanWidget* DeviceScanner::getWidget() {
+    return m_scanWidget;
 }
 
 bool DeviceScanner::_validateAddress(unsigned short p_addr) {
@@ -81,9 +130,9 @@ bool DeviceScanner::_validateAddress(unsigned short p_addr) {
 void DeviceScanner::_initScanner(OMNetwork *c_net, unsigned short p_addr) {
     m_net = c_net;
     m_cmd = m_net->getManager();
-    m_scanDialog = new DeviceScanDialog();
-    m_scanDialog->setModal(true);
+    m_scanWidget = new DeviceScanWidget();
     m_findAddr = p_addr;
+    m_scanStarted = false;
 
         // we need to listen for our commands to see if something is alive out there..
     QObject::connect(m_net, SIGNAL(complete(int, OMCommandBuffer*)), this, SLOT(_commandCompleted(int, OMCommandBuffer*)), Qt::QueuedConnection);
@@ -99,6 +148,7 @@ void DeviceScanner::_scan(unsigned short p_addr) {
 
     m_foundCount = 0;
     m_respCount = 0;
+    m_scanStarted = true;
 
     QList<QString> buses = m_net->getBuses();
 
@@ -111,20 +161,21 @@ void DeviceScanner::_scan(unsigned short p_addr) {
 
     QHash<unsigned short, OMdeviceInfo*> allKnownDevs = m_net->getDevices();
 
-    m_scanDialog->enableConfirm(false);
+    m_scanWidget->enableConfirm(false);
 
         // Listen for the done button being clicked
-    QObject::connect(m_scanDialog, SIGNAL(accepted()), this, SLOT(_scanAccepted()));
+    QObject::connect(m_scanWidget, SIGNAL(accepted()), this, SLOT(_scanAccepted()));
 
     if( p_addr != 0) {
         if( allKnownDevs.contains(p_addr) ) {
+            qDebug() << allKnownDevs;
             ErrorDialog er;
             er.setError("A device already exists at address " + QString::number(p_addr) + ", Please remove that device before scanning that address");
             er.exec();
             return;
         }
 
-        m_scanDialog->show();
+        m_scanWidget->show();
 
         foreach( QString bus, buses ) {
             _sendRequest(bus, p_addr);
@@ -133,7 +184,7 @@ void DeviceScanner::_scan(unsigned short p_addr) {
         return;
     }
 
-    m_scanDialog->show();
+    m_scanWidget->show();
 
     for(int i = 2; i < 256; i++) {
         if( ! allKnownDevs.contains(i) ) {
@@ -180,7 +231,7 @@ void DeviceScanner::_sendRequest(QString p_bus, unsigned short p_addr) {
     m_cmdSent.insert(id, cmdList);
     m_cmdSentBus.insert(id, p_bus);
 
-    m_scanDialog->totalNodes(m_cmdSent.count());
+    m_scanWidget->totalNodes(m_cmdSent.count());
 }
 
  /** Handles commands completed from the bus
@@ -197,7 +248,7 @@ void DeviceScanner::_commandCompleted(int p_id, OMCommandBuffer *p_com) {
 
 
         // update progress bar
-    m_scanDialog->scannedNodes(m_respCount);
+    m_scanWidget->scannedNodes(m_respCount);
 
 
 
@@ -259,14 +310,14 @@ void DeviceScanner::_commandCompleted(int p_id, OMCommandBuffer *p_com) {
         done = true;
 
         QString foundMsg("Found name for device at address " + QString::number(addr) + " : " + name + "\n");
-        m_scanDialog->addNote(foundMsg);
+        m_scanWidget->addNote(foundMsg);
     }
 
 
         // add a message for all device types found...
     if( isName == OMDS_IDQ ) {
         QString foundMsg("Found new device on bus " + bus + ", address: " + QString::number(addr) + ", Type: " + resStr + "\n");
-        m_scanDialog->addNote(foundMsg);
+        m_scanWidget->addNote(foundMsg);
     }
 
         // if we're done probing the device, then
@@ -275,7 +326,7 @@ void DeviceScanner::_commandCompleted(int p_id, OMCommandBuffer *p_com) {
         m_net->deleteDevice(bus, addr, false);
         m_foundCount++;
 
-        m_scanDialog->nodesFound(true);
+        m_scanWidget->nodesFound(true);
 
         qDebug() << "DS: Creating Device Template " << bus << addr << resStr << name;
 
@@ -292,7 +343,7 @@ void DeviceScanner::_commandCompleted(int p_id, OMCommandBuffer *p_com) {
   */
 
 void DeviceScanner::_scanAccepted() {
-    m_scanDialog->hide();
+    m_scanWidget->hide();
 
 
     if( m_findAddr == 0 ) {
@@ -322,11 +373,11 @@ void DeviceScanner::_checkDone() {
         // are we done?
     if( m_respCount >= m_cmdSent.count() ) {
             // enable 'Done' button
-        m_scanDialog->enableConfirm(true);
+        m_scanWidget->enableConfirm(true);
         if( m_foundCount <= 0 )
-            m_scanDialog->addNote("No New Devices Were Found");
+            m_scanWidget->addNote("No New Devices Were Found");
         else
-            m_scanDialog->addNote("Found " + QString::number(m_foundCount) + " New Devices");
+            m_scanWidget->addNote("Found " + QString::number(m_foundCount) + " New Devices");
 
     }
 }

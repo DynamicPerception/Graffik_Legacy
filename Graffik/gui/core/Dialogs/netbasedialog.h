@@ -25,6 +25,7 @@
 #define NETBASEDIALOG_H
 
 #include <QDialog>
+#include <QVBoxLayout>
 
 #include "MoCoBus/omnetwork.h"
 
@@ -40,7 +41,10 @@ class NetBaseDialog;
 
 /** Net Base Class
 
-  This dialog displays basic device operations.
+  This dialog displays basic device operations, such as scanning, managing, initializing, etc.
+
+  This is a dialog that is expected to have one or more sub-widgets displayed within a frame contained
+  in the dialog.
 
   @author
   C. A. Church
@@ -58,6 +62,10 @@ public slots:
     void on_scanButton_clicked();
     void on_initButton_clicked();
     void on_manageButton_clicked();
+    void on_doneButton_clicked();
+
+private slots:
+
 
 private:
     Ui::NetBaseDialog *ui;
@@ -66,6 +74,18 @@ private:
     DeviceScanner* m_scan;
     AxisOptions* m_opts;
     NetworkModel* m_model;
+    NetworkManager* m_netMan;
+
+    QWidget* m_curWidget;
+
+    QVBoxLayout* m_frameLayout;
+
+    void _swapWidget(QWidget* p_widg);
+
+    enum curState { SCAN, INIT, MANAGE };
+
+    curState m_curState;
+
 };
 
 #endif // NETBASEDIALOG_H

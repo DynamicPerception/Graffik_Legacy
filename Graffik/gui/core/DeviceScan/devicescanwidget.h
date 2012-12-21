@@ -21,34 +21,34 @@
 
     */
 
-#ifndef DEVICESCANDIALOG_H
-#define DEVICESCANDIALOG_H
+#ifndef DEVICESCANWIDGET_H
+#define DEVICESCANWIDGET_H
 
-#include <QDialog>
+#include <QWidget>
 #include <QString>
 
 
 namespace Ui {
-class DeviceScanDialog;
+class DeviceScanWidget;
 }
 
 
-/** Device Scan Dialog Class
+/** Device Scan Widget Class
 
-  This dialog is shown when scanning for new devices, to be controlled
+  This widget is shown when scanning for new devices, to be controlled
   by the DeviceScanner
 
   @author
   C. A. Church
   */
 
-class DeviceScanDialog : public QDialog
+class DeviceScanWidget : public QWidget
 {
     Q_OBJECT
     
 public:
-    explicit DeviceScanDialog(QWidget *parent = 0);
-    ~DeviceScanDialog();
+    explicit DeviceScanWidget(QWidget *parent = 0);
+    ~DeviceScanWidget();
 
     void enableConfirm(bool p_enable);
     void addNote(QString p_note);
@@ -58,10 +58,13 @@ public:
 
 public slots:
     void on_doneButton_clicked();
-    void on_cancelButton_clicked();
         
+signals:
+    void accepted();
+    void rejected();
+
 private:
-    Ui::DeviceScanDialog *ui;
+    Ui::DeviceScanWidget *ui;
 };
 
-#endif // DEVICESCANDIALOG_H
+#endif // DEVICESCANWIDGET_H

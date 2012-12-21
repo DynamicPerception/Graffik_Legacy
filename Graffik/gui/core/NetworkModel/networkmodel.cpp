@@ -27,13 +27,11 @@
 
 #include "networkmodel.h"
 
-NetworkModel::NetworkModel(OMNetwork* c_net, QObject *parent) :
-    QStandardItemModel(parent)
-{
+NetworkModel::NetworkModel(OMNetwork* c_net, QObject *parent) : QStandardItemModel(parent) {
     m_net = c_net;
-
-
     _setHeaders();
+
+    m_icon = new QPixmap;
 
         // listen in for buses or devices being added to the network, so that we
         // may automatically add them to the model
@@ -56,7 +54,7 @@ void NetworkModel::_setHeaders() {
     headerLabels << "Name";
     headerLabels << "Address";
     headerLabels << "Type";
-    headerLabels << "Actions";
+    headerLabels << "Configure";
 
     this->setHorizontalHeaderLabels(headerLabels);
 
@@ -103,7 +101,7 @@ void NetworkModel::addDevice(QString p_port, unsigned short p_addr) {
     display.append(new QStandardItem(dev->name));
     display.append(new QStandardItem(addr));
     display.append(new QStandardItem(dev->type));
-    display.append(new QStandardItem(QIcon(":icons/img/configure.png"), ""));
+    display.append(new QStandardItem(QIcon(*m_icon), ""));
 
 
         // prevent editing
@@ -168,3 +166,32 @@ void NetworkModel::busDeleted(QString p_port, QString p_name) {
 
 }
 
+QPixmap NetworkModel::editIcon() {
+    return *m_icon;
+}
+
+void NetworkModel::setEditIcon(QPixmap p_img) {
+    qDebug() << "NWM: SetEditIcon";
+
+    *m_icon = p_img;
+
+    // We must replace all existing configure icons from the model
+
+    int rows = rowCount();
+
+    if( rows < 1)
+        return;
+
+    for(int i = 0; i < rows; i++ ) {
+
+        QStandardItem* rowItem = item(i);
+
+        for( int f = 0; f < rowItem->rowCount(); f++ ) {
+            qDebug() << "NWM: Set icon for" << i << f;
+           // QStandardItem* curItem = rowItem->child(f, 3);
+           // delete curItem;
+            rowItem->setChild(f, 3, new QStandardItem(QIcon(*m_icon), ""));
+        }
+    }
+
+}

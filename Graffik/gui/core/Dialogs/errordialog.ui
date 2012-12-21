@@ -19,6 +19,11 @@
   <property name="windowTitle">
    <string>Error</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">#ErrorDialog {
+background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(253, 253, 253, 255), stop:1 rgba(208, 208, 208, 255));
+}</string>
+  </property>
   <widget class="QLabel" name="headingLabel">
    <property name="geometry">
     <rect>
@@ -43,7 +48,7 @@
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>290</x>
+     <x>330</x>
      <y>110</y>
      <width>75</width>
      <height>23</height>

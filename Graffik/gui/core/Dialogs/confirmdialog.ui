@@ -19,6 +19,11 @@
   <property name="windowTitle">
    <string>Confirm</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">#ConfirmDialog {
+background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(253, 253, 253, 255), stop:1 rgba(208, 208, 208, 255));
+}</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLabel" name="headingLabel">
