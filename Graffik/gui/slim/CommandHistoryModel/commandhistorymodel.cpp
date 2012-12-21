@@ -23,15 +23,24 @@
 
 #include "commandhistorymodel.h"
 #include <QDebug>
-#include <QBrush>
-#include <QMetaType>
-#include <QIcon>
+
 
 
 CommandHistoryModel::CommandHistoryModel(OMNetwork *c_net, QObject *parent) :
     QAbstractTableModel(parent)
 {
     m_net = c_net;
+
+    m_resQueued = new QString("Queued");
+    m_resBcast  = new QString("Broadcast");
+
+    m_createdStrings.append(m_resQueued);
+    m_createdStrings.append(m_resBcast);
+
+    m_queLed = new QPixmap;
+    m_errLed = new QPixmap;
+    m_okLed  = new QPixmap;
+    m_bcLed  = new QPixmap;
 
     qRegisterMetaType<slimCommand>("slimCommand");
 
@@ -41,6 +50,14 @@ CommandHistoryModel::CommandHistoryModel(OMNetwork *c_net, QObject *parent) :
 }
 
 CommandHistoryModel::~CommandHistoryModel() {
+
+    foreach(QString* str, m_createdStrings)
+        delete str;
+
+    delete m_queLed;
+    delete m_errLed;
+    delete m_okLed;
+    delete m_bcLed;
 }
 
 int CommandHistoryModel::rowCount(const QModelIndex &) const {
@@ -48,7 +65,7 @@ int CommandHistoryModel::rowCount(const QModelIndex &) const {
  }
 
  int CommandHistoryModel::columnCount(const QModelIndex &) const {
-     return 4; // 4 columns in slimCommand for display
+     return 5; // 5 columns in slimCommand for display
  }
 
  QVariant CommandHistoryModel::headerData(int section, Qt::Orientation orientation, int role) const {
@@ -57,13 +74,15 @@ int CommandHistoryModel::rowCount(const QModelIndex &) const {
          if( orientation == Qt::Horizontal ) {
              switch(section) {
                 case 0:
-                 return QVariant("Bus");
-                case 1:
-                 return QVariant("Stat");
-                case 2:
                  return QVariant("Device");
-                case 3:
+                case 1:
                  return QVariant("Command");
+                case 2:
+                 return QVariant("Bus");
+                case 3:
+                 return QVariant("Stat");
+                case 4:
+                 return QVariant("Response");
                 default:
                  return QVariant();
              }
@@ -90,39 +109,43 @@ int CommandHistoryModel::rowCount(const QModelIndex &) const {
 
      if (role == Qt::DisplayRole) {
 
-        if( index.column() == 0 ) {
+        if( index.column() == 2 ) {
             // get bus name
             return QVariant(_cmdHist.at(index.row()).bus);
         }
 
-        else if( index.column() == 2 ) {
+        else if( index.column() == 0 ) {
             // get device name
             return QVariant(_cmdHist.at(index.row()).deviceName);
         }
-        else if( index.column() == 3 ) {
+        else if( index.column() == 1 ) {
             // command issued
             return QVariant(_cmdHist.at(index.row()).command);
+        }
+        else if( index.column() == 4 ) {
+            // result text
+            return QVariant(*_cmdHist.at(index.row()).commandResult);
         }
 
      }
      else if( role == Qt::DecorationRole ) {
-         if( index.column() == 1 ) {
-                 // result/status
+         if( index.column() == 3 ) {
+                 // result/status light
 
                     // broadcast always succeeds...
             if( _cmdHist.at(index.row()).broadcast ) {
-                return QVariant(QIcon(":/icons/img/greenled.png"));
+                return QVariant(QIcon(*m_bcLed));
 
              }
              else {
                  if( _cmdHist.at(index.row()).status == OMC_QUEUED )
-                     return QVariant(QIcon(":/icons/img/blueled.png"));
+                     return QVariant(QIcon(*m_queLed));
                  else if( _cmdHist.at(index.row()).status == OMC_FAILURE )
-                     return QVariant(QIcon(":/icons/img/redled.png"));
+                     return QVariant(QIcon(*m_errLed));
                  else if( _cmdHist.at(index.row()).status == OMC_SUCCESS )
-                     return QVariant(QIcon(":/icons/img/greenled.png"));
+                     return QVariant(QIcon(*m_okLed));
                  else
-                     return QVariant(QIcon(":/icons/img/redled.png"));
+                     return QVariant(QIcon(*m_errLed));
              }
 
          }
@@ -140,24 +163,27 @@ int CommandHistoryModel::rowCount(const QModelIndex &) const {
 
      QString bName;
      QString dName;
+     QString* res;
      unsigned short dAddr;
 
         // use default strings and values for broadcast commands
      if(p_com.broadcast) {
          bName = "broadcast";
          dName = "broadcast";
+         res   = m_resBcast;
          dAddr = 0;
      }
      else {
          bName = m_net->busInfo(p_com.network)->name;
          dName = m_net->deviceInfo(p_com.network, p_com.address)->name;
          dAddr = p_com.address;
+         res   = m_resQueued;
      }
 
      QString cmd = p_com.command + " " + p_com.arguments.join(" ");
 
 
-     slimHistoryEntry ent(p_com, bName, dName, dAddr, OMC_QUEUED, cmd, p_com.broadcast);
+     slimHistoryEntry ent(p_com, bName, dName, dAddr, OMC_QUEUED, cmd, p_com.broadcast, res);
 
      _cmdHist.append(ent);
 
@@ -204,17 +230,110 @@ int CommandHistoryModel::rowCount(const QModelIndex &) const {
 
      qDebug() << "SCHM: Command Result Size: " << p_buf->resultSize();
 
-        // let the view(s) know that we changed some data here (perhaps)
-     emit dataChanged(createIndex(thsRow, 0), createIndex(thsRow, 4));
+        // display resulting response
+     _processResults(thsRow, p_buf);
 
-        // if it's a command with a result value, then emit it for display
-     if( p_buf->resultSize() > 0 ) {
-         qDebug() << "SCHM: Command has result data bytes: " << p_buf->resultSize();
-         emit commandResults(_cmdHist.at(thsRow));
-     }
+     emit dataChanged(createIndex(thsRow, 0), createIndex(thsRow, 5));
 
  }
 
  slimHistoryEntry CommandHistoryModel::getCommand(int p_row) {
      return _cmdHist.at(p_row);
+ }
+
+ void CommandHistoryModel::_processResults(int p_row, OMCommandBuffer *p_buf) {
+
+
+
+     unsigned int resSize = p_buf->resultSize();
+
+     QString* resStr = new QString();
+
+     if( p_buf->status() == OMC_FAILURE ) {
+         *resStr = QString("Failed");
+     }
+     else if( resSize > 0 ) {
+
+         char* res = new char[resSize];
+         p_buf->result(res, resSize);
+
+
+         int resType = p_buf->resultType();
+
+             // convert response data type
+
+         if( resType == R_BYTE ) {
+             resStr->setNum(res[0]);
+         }
+         else if( resType == R_UINT) {
+             qint16 foo = qFromBigEndian<qint16>((uchar*) res);
+             resStr->setNum((unsigned short) foo);
+         }
+         else if( resType == R_INT) {
+             qint16 foo = qFromBigEndian<qint16>((uchar*) res);
+             resStr->setNum((short) foo);
+
+         }
+         else if( resType == R_ULONG ) {
+             qint32 foo = qFromBigEndian<qint32>((uchar*)res);
+             resStr->setNum((unsigned long) foo);
+         }
+         else if( resType == R_LONG ) {
+             qint32 foo = qFromBigEndian<qint32>((uchar*)res);
+             resStr->setNum((long) foo);
+         }
+         else if( resType == R_FLOAT ) {
+             qint32 foo = qFromBigEndian<qint32>((uchar*)res);
+             resStr->setNum((float) foo);
+         }
+         else if( resType == R_STRING) {
+             *resStr = QString::fromAscii(res, resSize);
+         }
+
+         delete res;
+
+     }
+     else {
+         *resStr = QString("OK");
+     }
+
+     _cmdHist.at(p_row).commandResult = resStr;
+
+     m_createdStrings.append(resStr);
+
+     qDebug() << "SCHM: Response Data from command " << *resStr;
+
+ }
+
+ QPixmap CommandHistoryModel::errLED() {
+     return *m_errLed;
+ }
+
+ QPixmap CommandHistoryModel::okLED() {
+     return *m_okLed;
+ }
+
+ QPixmap CommandHistoryModel::bcastLED() {
+     return *m_bcLed;
+ }
+
+ QPixmap CommandHistoryModel::queueLED() {
+     return *m_queLed;
+ }
+
+ void CommandHistoryModel::setErrLED(QPixmap p_pix) {
+     qDebug() << "SCHM: Got Err LED";
+     *m_errLed = p_pix;
+ }
+
+ void CommandHistoryModel::setOkLED(QPixmap p_pix) {
+     *m_okLed = p_pix;
+ }
+
+ void CommandHistoryModel::setBcastLED(QPixmap p_pix) {
+     *m_bcLed = p_pix;
+ }
+
+ void CommandHistoryModel::setQueueLED(QPixmap p_pix) {
+     *m_queLed = p_pix;
  }

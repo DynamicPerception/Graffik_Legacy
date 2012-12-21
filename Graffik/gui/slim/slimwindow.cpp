@@ -26,15 +26,9 @@
 
 
 #include <QDebug>
-#include <QtEndian>
-
-#include "core/Dialogs/errordialog.h"
 
 
-SlimWindow::SlimWindow(OMNetwork* net, CommandHistoryModel* hist, SlimCommandParser* parse, QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::SlimWindow)
-{
+SlimWindow::SlimWindow(OMNetwork* net, CommandHistoryModel* hist, SlimCommandParser* parse, QWidget *parent) : QWidget(parent), ui(new Ui::SlimWindow) {
 
     ui->setupUi(this);
 
@@ -43,10 +37,11 @@ SlimWindow::SlimWindow(OMNetwork* net, CommandHistoryModel* hist, SlimCommandPar
     _cmdHist = hist;
 
     ui->historyTableView->setModel(_cmdHist);
-
-    QObject::connect(_cmdHist, SIGNAL(commandResults(slimHistoryEntry)), this, SLOT(onCmdResult(slimHistoryEntry)));
-
-
+    ui->historyTableView->horizontalHeader()->show();
+        // we need to re-apply css
+    ui->historyTableView->style()->unpolish(ui->historyTableView);
+    ui->historyTableView->style()->polish(ui->historyTableView);
+    ui->historyTableView->update();
 }
 
 SlimWindow::~SlimWindow()
@@ -102,65 +97,6 @@ void SlimWindow::onCmdEntry() {
      ui->historyTableView->scrollToBottom();
 
 }
-
-void SlimWindow::onCmdResult(slimHistoryEntry p_cmd) {
-    QString com = p_cmd.command;
-
-    OMCommandBuffer* buf = p_cmd.cmdObject.buf;
-    unsigned int resSize = buf->resultSize();
-
-    QString resStr;
-
-    if( resSize > 0 ) {
-
-        char* res = new char[resSize];
-        buf->result(res, resSize);
-
-
-        int resType = buf->resultType();
-
-            // convert response data type
-
-        if( resType == R_BYTE ) {
-            resStr.setNum(res[0]);
-        }
-        else if( resType == R_UINT) {
-            qint16 foo = qFromBigEndian<qint16>((uchar*) res);
-            resStr.setNum((unsigned short) foo);
-        }
-        else if( resType == R_INT) {
-            qint16 foo = qFromBigEndian<qint16>((uchar*) res);
-            resStr.setNum((short) foo);
-
-        }
-        else if( resType == R_ULONG ) {
-            qint32 foo = qFromBigEndian<qint32>((uchar*)res);
-            resStr.setNum((unsigned long) foo);
-        }
-        else if( resType == R_LONG ) {
-            qint32 foo = qFromBigEndian<qint32>((uchar*)res);
-            resStr.setNum((long) foo);
-        }
-        else if( resType == R_FLOAT ) {
-            qint32 foo = qFromBigEndian<qint32>((uchar*)res);
-            resStr.setNum((float) foo);
-        }
-        else if( resType == R_STRING) {
-            resStr = QString::fromAscii(res, resSize);
-        }
-
-        delete res;
-
-    }
-
-    ui->commandResults->append(com);
-    ui->commandResults->append("    " + resStr);
-
-
-    qDebug() << "SW: Response Data from command " << com;
-
-}
-
 
 
 void SlimWindow::registerNewDevice(OMbusInfo *p_bus, OMdeviceInfo *p_dev) {

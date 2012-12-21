@@ -28,6 +28,9 @@
 #include <QString>
 #include <QFileDialog>
 
+
+#include "core/Dialogs/errordialog.h"
+
 #include "MoCoBus/omcommandbuffer.h"
 #include "MoCoBus/omnetwork.h"
 #include "Slim/slimcommandparser.h"
@@ -57,7 +60,6 @@ public:
 
 private slots:
     void onCmdEntry();
-    void onCmdResult(slimHistoryEntry);
 
 public slots:
         void registerNewDevice(OMbusInfo* p_bus, OMdeviceInfo* p_dev);

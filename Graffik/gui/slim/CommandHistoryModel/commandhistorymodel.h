@@ -27,6 +27,11 @@
 #include <QAbstractTableModel>
 #include <QString>
 #include <QList>
+#include <QtEndian>
+#include <QBrush>
+#include <QMetaType>
+#include <QIcon>
+#include <QPixmap>
 
 #include "Slim/slimcommandparser.h"
 #include "MoCoBus/omnetwork.h"
@@ -48,9 +53,11 @@ struct slimHistoryEntry {
     QString command;
         /** Broadcast command ? */
     bool broadcast;
+        /** Result Text String */
+    mutable QString* commandResult;
 
         /** constructor */
-    slimHistoryEntry(slimCommand c_cmd, QString c_bus, QString c_devName, unsigned short c_devAddr, int c_stat, QString c_com, bool p_bcast) {
+    slimHistoryEntry(slimCommand c_cmd, QString c_bus, QString c_devName, unsigned short c_devAddr, int c_stat, QString c_com, bool p_bcast, QString* c_res) {
         cmdObject = c_cmd;
         bus = c_bus;
         deviceName = c_devName;
@@ -58,6 +65,7 @@ struct slimHistoryEntry {
         status = c_stat;
         command = c_com;
         broadcast = p_bcast;
+        commandResult = c_res;
     }
 };
 
@@ -72,6 +80,7 @@ struct slimHistoryEntry {
 class CommandHistoryModel : public QAbstractTableModel
 {
     Q_OBJECT
+
 public:
     CommandHistoryModel(OMNetwork*, QObject *parent);
     ~CommandHistoryModel();
@@ -84,6 +93,17 @@ public:
     slimHistoryEntry getCommand(int p_row);
 
     bool insertRow(slimCommand);
+
+    QPixmap errLED();
+    QPixmap okLED();
+    QPixmap queueLED();
+    QPixmap bcastLED();
+
+    void setErrLED(QPixmap p_pix);
+    void setOkLED(QPixmap p_pix);
+    void setQueueLED(QPixmap p_pix);
+    void setBcastLED(QPixmap p_pix);
+
 
 signals:
 
@@ -100,6 +120,18 @@ private:
 
     OMNetwork* m_net;
     QString m_headers;
+
+    QString* m_resQueued;
+    QString* m_resBcast;
+
+    QPixmap* m_errLed;
+    QPixmap* m_okLed;
+    QPixmap* m_queLed;
+    QPixmap* m_bcLed;
+
+    QList<QString*> m_createdStrings;
+
+    void _processResults(int p_row, OMCommandBuffer *p_buf);
 };
 
 #endif // COMMANDHISTORYMODEL_H

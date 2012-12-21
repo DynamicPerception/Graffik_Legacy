@@ -17,16 +17,66 @@
    <string>DP Graffik Scripting Engine</string>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">
+
+#historyTableView {
+qproperty-colWidth0: 100;
+qproperty-colWidth1: 225;
+qproperty-colWidth2: 100;
+qproperty-colWidth3: 50;
+qproperty-colWidth4: 125;
+qproperty-errLED: url(:/core/stat-led-red.png);
+qproperty-queueLED: url(:/core/stat-led-grey.png);
+qproperty-bcastLED: url(:/core/stat-led-blue.png);
+qproperty-okLED: url(:/core/stat-led-green.png);
+background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(253, 253, 253, 255), stop:1 rgba(208, 208, 208, 255));
+alternate-background-color:rgb(197, 197, 197);
+}
+
+#historyTableView QHeaderView::section {
+ background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(172, 172, 172, 255), stop:1 rgba(146, 146, 146, 255));
+color: rgb(255,255,255);
+font: 14pt &quot;Lucida Sans&quot;;
+border: 1px solid rgb(86,86,86);
+min-height: 40px;
+}
+
+#SlimWindow {
+background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(253, 253, 253, 255), stop:1 rgba(208, 208, 208, 255));
+}
+
+#commandFrame {
+border: 1px solid rgb(86,86,86);
+background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(253, 253, 253, 255), stop:1 rgba(208, 208, 208, 255));
+}
+
+#commandFrame QLineEdit {
+border: 1px solid rgb(86,86,86);
+border-radius: 3px;
+min-height: 25px;
+font: 14pt &quot;Lucida Sans&quot;;
+}
+
+#goButton {
+border-image: url(:/core/small-blue-but-normal.png);
+border: 0px transparent;
+max-width:75px;
+max-height: 29px;
+min-width:75px;
+min-height: 29px;
+color: rgb(255,255,255);
+font: 12px &quot;Lucida Sans&quot;;
+}
+</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
-   <property name="margin">
-    <number>0</number>
-   </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
     <number>0</number>
    </property>
-   <item row="0" column="0">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
     <layout class="QGridLayout" name="gridLayout">
      <property name="horizontalSpacing">
       <number>0</number>
@@ -34,58 +84,7 @@
      <property name="verticalSpacing">
       <number>6</number>
      </property>
-     <item row="3" column="2" rowspan="3">
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <property name="spacing">
-        <number>6</number>
-       </property>
-       <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>5</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="commandInputLine">
-         <property name="toolTip">
-          <string>Enter Command</string>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="goButton">
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-          </font>
-         </property>
-         <property name="toolTip">
-          <string>Press to Send Command</string>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="text">
-          <string>Go</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="2" column="2">
+     <item row="1" column="2">
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <property name="sizeConstraint">
         <enum>QLayout::SetDefaultConstraint</enum>
@@ -94,7 +93,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QTableView" name="historyTableView">
+        <widget class="CommandHistoryView" name="historyTableView">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -125,6 +124,9 @@
          <property name="showDropIndicator" stdset="0">
           <bool>false</bool>
          </property>
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
          <property name="showGrid">
           <bool>false</bool>
          </property>
@@ -132,10 +134,10 @@
           <bool>false</bool>
          </property>
          <attribute name="horizontalHeaderVisible">
-          <bool>true</bool>
+          <bool>false</bool>
          </attribute>
          <attribute name="horizontalHeaderDefaultSectionSize">
-          <number>40</number>
+          <number>60</number>
          </attribute>
          <attribute name="horizontalHeaderMinimumSectionSize">
           <number>0</number>
@@ -160,100 +162,67 @@
          </attribute>
         </widget>
        </item>
-       <item>
-        <widget class="QTextEdit" name="commandResults">
-         <property name="maximumSize">
-          <size>
-           <width>200</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="textInteractionFlags">
-          <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-         </property>
-        </widget>
-       </item>
       </layout>
      </item>
-     <item row="0" column="2">
-      <layout class="QHBoxLayout" name="horizontalLayout_5">
-       <property name="spacing">
-        <number>15</number>
+     <item row="2" column="2">
+      <widget class="QFrame" name="commandFrame">
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
        </property>
-       <property name="topMargin">
-        <number>10</number>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
        </property>
-       <item>
-        <widget class="QPushButton" name="loadButton">
-         <property name="minimumSize">
-          <size>
-           <width>45</width>
-           <height>15</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>45</width>
-           <height>15</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>8</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Load</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="saveButton">
-         <property name="minimumSize">
-          <size>
-           <width>45</width>
-           <height>15</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>45</width>
-           <height>15</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>8</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Save</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>1</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>20</number>
+        </property>
+        <item>
+         <widget class="QLineEdit" name="commandInputLine">
+          <property name="toolTip">
+           <string>Enter Command</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="goButton">
+          <property name="font">
+           <font>
+            <family>Lucida Sans</family>
+            <pointsize>-1</pointsize>
+            <weight>50</weight>
+            <italic>false</italic>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="toolTip">
+           <string>Press to Send Command</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>Enter</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </item>
     </layout>
    </item>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>CommandHistoryView</class>
+   <extends>QTableView</extends>
+   <header>slim/CommandHistoryView/commandhistoryview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

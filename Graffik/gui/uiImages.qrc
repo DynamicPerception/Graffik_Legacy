@@ -68,5 +68,9 @@
         <file alias="drop-down-sm-blue.png">img/ui_images/drop-down-sm-blue.png</file>
         <file alias="track-back-mute.png">img/ui_images/track-back-mute.png</file>
         <file alias="track-back-error.png">img/ui_images/track-back-error.png</file>
+        <file alias="stat-led-blue.png">img/ui_images/stat-led-blue.png</file>
+        <file alias="stat-led-green.png">img/ui_images/stat-led-green.png</file>
+        <file alias="stat-led-grey.png">img/ui_images/stat-led-grey.png</file>
+        <file alias="stat-led-red.png">img/ui_images/stat-led-red.png</file>
     </qresource>
 </RCC>
