@@ -14,7 +14,30 @@
    <string>Delete Device</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">#DeleteDeviceDialog {
+   <string notr="true">QPushButton {
+border: 0px transparent;
+max-width:120px;
+max-height: 40px;
+min-width:120px;
+min-height: 40px;
+color: rgb(255,255,255);
+font: 12px &quot;Lucida Sans&quot;;
+}
+
+#okButton {
+border-image: url(:/core/small-blue-but-normal.png);
+}
+
+#cancelButton {
+border-image: url(:/core/small-gray-but-normal.png);
+}
+
+QComboBox:drop-down {
+border-image: url(:/core/drop-down-sm-blue.png);
+border: 0px transparent;
+}
+
+#DeleteDeviceDialog {
 background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(253, 253, 253, 255), stop:1 rgba(208, 208, 208, 255));
 }</string>
   </property>
@@ -42,23 +65,10 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgb
      </property>
     </spacer>
    </item>
-   <item row="3" column="0">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>193</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item row="3" column="2">
     <widget class="QPushButton" name="okButton">
      <property name="text">
-      <string>OK</string>
+      <string>Delete Device</string>
      </property>
     </widget>
    </item>

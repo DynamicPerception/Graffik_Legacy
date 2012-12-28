@@ -72,5 +72,7 @@
         <file alias="stat-led-green.png">img/ui_images/stat-led-green.png</file>
         <file alias="stat-led-grey.png">img/ui_images/stat-led-grey.png</file>
         <file alias="stat-led-red.png">img/ui_images/stat-led-red.png</file>
+        <file alias="play-normal.png">img/ui_images/play-normal.png</file>
+        <file alias="play-pressed.png">img/ui_images/play-pressed.png</file>
     </qresource>
 </RCC>

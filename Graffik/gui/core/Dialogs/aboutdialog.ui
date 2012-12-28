@@ -14,7 +14,19 @@
    <string>About</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">#AboutDialog {
+   <string notr="true">#buttonBox QPushButton {
+
+border-image: url(:/core/small-blue-but-normal.png);
+border: 0px transparent;
+max-width:75px;
+max-height: 24px;
+min-width:75px;
+min-height: 24px;
+color: rgb(255,255,255);
+font: 12px &quot;Lucida Sans&quot;;
+}
+
+#AboutDialog {
 background-color:qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(253, 253, 253, 255), stop:1 rgba(208, 208, 208, 255));
 }</string>
   </property>

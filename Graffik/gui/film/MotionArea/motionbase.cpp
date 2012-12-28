@@ -43,6 +43,8 @@ MotionBase::MotionBase(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions 
 
     ui->nameLabel->setText(c_dev->name);
     ui->resButton->setText(" R "); // default is rapid mode
+    ui->scaleButton->setText(" P ");
+
     ui->dispLCD->setToolTip(MB_STR_POS);
 
         // pass through click signal
@@ -65,9 +67,9 @@ MotionBase::~MotionBase()
 
 void MotionBase::curScale(bool p_scale) {
     if( p_scale == true )
-        ui->scaleButton->setText("REL");
+        ui->scaleButton->setText(" R ");
     else
-        ui->scaleButton->setText("PRO");
+        ui->scaleButton->setText(" P ");
 }
 
 void MotionBase::on_easeButton_clicked() {
@@ -117,7 +119,7 @@ void MotionBase::on_resButton_clicked() {
     }
     else if( curRes == 8 ){
         curRes = 16;
-        ui->resButton->setText("VF ");
+        ui->resButton->setText(" X ");
     }
     else {
         curRes = 1;

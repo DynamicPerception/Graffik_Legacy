@@ -108,6 +108,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ui->screenSelCombo->setCurrentIndex(0);
     ui->tabs->setCurrentWidget(_filmWindow);
+    m_curScreen = FILM_SCREEN;
 
 }
 
@@ -155,24 +156,18 @@ void MainWindow::on_actionAbout_Graffik_triggered() {
     about.exec();
 }
 
-/*void MainWindow::on_filmButton_clicked() {
-    ui->tabs->setCurrentWidget(_filmWindow);
-  //  ui->filmButton->setDown(true);
-  //  ui->scriptButton->setDown(false);
-}
-
-void MainWindow::on_scriptButton_clicked() {
-    ui->tabs->setCurrentWidget(_slimWindow);
-  //  ui->filmButton->setDown(false);
-  //  ui->scriptButton->setDown(true);
-}*/
 
 
 void MainWindow::on_screenSelCombo_currentIndexChanged(const QString p_str) {
-    if( p_str == MW_STR_SCRIPT )
+    if( p_str == MW_STR_SCRIPT ) {
         ui->tabs->setCurrentWidget(_slimWindow);
-    else if( p_str == MW_STR_FILM )
+        m_curScreen = SLIM_SCREEN;
+    }
+    else if( p_str == MW_STR_FILM ) {
         ui->tabs->setCurrentWidget(_filmWindow);
+        m_curScreen = FILM_SCREEN;
+    }
+
 }
 
 void MainWindow::on_netButton_clicked() {
@@ -184,4 +179,16 @@ void MainWindow::on_optButton_clicked() {
     on_actionSettings_triggered();
 }
 
+void MainWindow::on_globalLoadButton_clicked() {
+    if( m_curScreen == FILM_SCREEN )
+        _filmWindow->load();
+    else if( m_curScreen = SLIM_SCREEN)
+        _slimWindow->load();
+}
 
+void MainWindow::on_globalSaveButton_clicked() {
+    if( m_curScreen == FILM_SCREEN )
+        _filmWindow->save();
+    else if( m_curScreen == SLIM_SCREEN )
+        _slimWindow->save();
+}

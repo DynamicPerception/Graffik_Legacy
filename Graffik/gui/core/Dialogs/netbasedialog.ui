@@ -48,6 +48,7 @@ min-width: 146px;
 max-width: 146px;
 min-height: 41px;
 max-height: 41px;
+font: 12pt &quot;Lucida Sans&quot;
 }
 
 #initButton:pressed, #manageButton:pressed, #scanButton:pressed {

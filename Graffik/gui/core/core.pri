@@ -34,7 +34,8 @@ HEADERS                 +=  \
     core/Widgets/slidetoggle.h \
     core/Widgets/skinneddial.h \
     core/Utilities/flicknumberitem.h \
-    core/Dialogs/NetWidgets/adddevicenetwidget.h
+    core/Dialogs/NetWidgets/adddevicenetwidget.h \
+    core/Widgets/statefulbutton.h
 
 			   
 SOURCES                 +=  \
@@ -64,7 +65,8 @@ SOURCES                 +=  \
     core/Widgets/slidetoggle.cpp \
     core/Widgets/skinneddial.cpp \
     core/Utilities/flicknumberitem.cpp \
-    core/Dialogs/NetWidgets/adddevicenetwidget.cpp
+    core/Dialogs/NetWidgets/adddevicenetwidget.cpp \
+    core/Widgets/statefulbutton.cpp
 
 			   
 FORMS 			+=  \

@@ -364,6 +364,31 @@ unsigned long FilmExec::filmTime() {
 }
 
 
+/** Return Minimum Achievable Interval
+
+  Returns the minimum achievable interval based on current film
+  parameters, in milliseconds.
+
+  @param p_film
+  A pointer to the OMfilmParams to analyze
+  */
+
+unsigned long FilmExec::minInterval(OMfilmParams *p_film) {
+
+    unsigned long shutMs = p_film->camParams->shutterMS;
+    unsigned long delayMs = p_film->camParams->delayMS;
+    unsigned long focMs   = p_film->camParams->focusMS;
+
+    bool focus      = p_film->camParams->focus;
+
+    unsigned long ival = shutMs + delayMs;
+
+    if( focus )
+        ival += focMs;
+
+    return(ival);
+}
+
 /** Return the Actual Interval for the Supplied Film Parameters
 
   Given a reference to a film parameters structure, returns the
@@ -381,13 +406,9 @@ unsigned long FilmExec::filmTime() {
 unsigned long FilmExec::interval(OMfilmParams* p_film) {
     bool autoFPS    = p_film->camParams->autoFPS;
     bool manInt     = p_film->camParams->manInterval;
-    bool focus      = p_film->camParams->focus;
 
     int fps         = p_film->fps;
 
-    unsigned long shutMs = p_film->camParams->shutterMS;
-    unsigned long delayMs = p_film->camParams->delayMS;
-    unsigned long focMs   = p_film->camParams->focusMS;
 
     unsigned long iv      = p_film->camParams->interval;
 
@@ -397,29 +418,29 @@ unsigned long FilmExec::interval(OMfilmParams* p_film) {
     // determine minimum amount of interval
     // time based on input values...
 
-    float minInterval = shutMs + delayMs;
-
-    if( focus )
-        minInterval += focMs;
-
+    unsigned long minInt = minInterval(p_film);
 
     // qDebug() << "FEX: IV:" << iv << "MIV:" << minInterval;
 
-    if( manInt && iv < minInterval ) {
+    if( manInt && iv < minInt ) {
             // manual interval, lock to minimum achievable interval
-        iv = minInterval;
+        iv = minInt;
     }
     else if( autoFPS ) {
             // auto fps - determine interval from
             // film length
-        iv = (float) realTm / (float) filmTm / (float) fps;
+        iv = (float) realTm / ((float) filmTm / (float) fps);
 
-        if( iv < minInterval )
-            iv = minInterval;
+        qDebug() << "FEX: Using Film Time Pre-iv =" << iv << realTm << filmTm << fps;
+
+        if( iv < minInt )
+            iv = minInt;
+
+        qDebug() << "FEX: Using Film Time, iv =" << iv << minInt;
     }
     else if( ! manInt ) {
             // only FPS specified, interval is minimum interval
-        iv = minInterval;
+        iv = minInt;
     }
 
 

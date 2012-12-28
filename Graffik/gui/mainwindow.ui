@@ -20,7 +20,14 @@
    <string>Dynamic Perception Graffik</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">#screenSelCombo:drop-down {
+   <string notr="true">QToolTip {
+background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(99, 165, 209, 255), stop:1 rgba(64, 141, 196, 255));
+color: rgb(255,255,255);
+opacity:150;
+text-align: center;
+}
+
+#screenSelCombo:drop-down {
 border-image: url(:/core/drop-down-sm-black.png);
 border: 0px transparent;
 }

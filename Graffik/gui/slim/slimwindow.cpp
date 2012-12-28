@@ -124,13 +124,23 @@ void SlimWindow::removeDevice(OMbusInfo *p_bus, unsigned short p_addr) {
 }
 
 
-void SlimWindow::on_loadButton_clicked() {
+/** Trigger Slim File Load Slot
+
+  Displays a dialog to load a slim file
+  */
+
+void SlimWindow::load() {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open Script"), "", tr("Slim Scripts (*.slim)"));
     qDebug() << "SW: SlimOpen Got File: " << fileName;
     SlimFileHandler::readFile(fileName, _parser, _cmdHist, true);
 }
 
-void SlimWindow::on_saveButton_clicked() {
+/** Trigger Slim File Save Slot
+
+  Displays a dialog to save a slim file
+  */
+
+void SlimWindow::save() {
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save Script"), "", tr("Slim Script (*.slim)"));
     qDebug() << "SW: SlimSave Got File: " << fileName;
     SlimFileHandler::writeFile(fileName, _cmdHist, true);

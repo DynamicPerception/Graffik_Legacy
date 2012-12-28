@@ -37,7 +37,7 @@ GlobalOptionsDialog::~GlobalOptionsDialog()
     delete ui;
 }
 
-void GlobalOptionsDialog::accept() {
+void GlobalOptionsDialog::on_okButton_clicked() {
     bool stop = ui->stopCheckBox->isChecked();
     int disp  = ui->displayCombo->currentIndex();
 
@@ -50,7 +50,11 @@ void GlobalOptionsDialog::accept() {
     else if( disp == 2 )
         m_opts->display(Options::Steps);
 
-    QDialog::accept();
+    this->done(QDialog::Accepted);
+}
+
+void GlobalOptionsDialog::on_cancelButton_clicked() {
+    this->done(QDialog::Rejected);
 }
 
 void GlobalOptionsDialog::_setupInputs() {

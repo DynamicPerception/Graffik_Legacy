@@ -109,23 +109,23 @@ int CommandHistoryModel::rowCount(const QModelIndex &) const {
 
      if (role == Qt::DisplayRole) {
 
-        if( index.column() == 2 ) {
-            // get bus name
+        if( index.column() == 2 )             // get bus name
             return QVariant(_cmdHist.at(index.row()).bus);
-        }
-
-        else if( index.column() == 0 ) {
-            // get device name
+        else if( index.column() == 0 )        // get device name
             return QVariant(_cmdHist.at(index.row()).deviceName);
-        }
-        else if( index.column() == 1 ) {
-            // command issued
+        else if( index.column() == 1 )        // command issued
             return QVariant(_cmdHist.at(index.row()).command);
-        }
-        else if( index.column() == 4 ) {
-            // result text
+        else if( index.column() == 4 )        // result text
             return QVariant(*_cmdHist.at(index.row()).commandResult);
-        }
+
+     }
+     else if( role == Qt::TextAlignmentRole ) {
+         if( index.column() == 0 )
+            return Qt::AlignRight;
+         else if(index.column() == 3 || index.column() == 2 )
+             return Qt::AlignCenter;
+         else
+             return Qt::AlignLeft;
 
      }
      else if( role == Qt::DecorationRole ) {
@@ -210,7 +210,7 @@ int CommandHistoryModel::rowCount(const QModelIndex &) const {
      return(true);
  }
 
- void CommandHistoryModel::_commandCompleted(int p_id, OMCommandBuffer * p_buf) {
+ void CommandHistoryModel::_commandCompleted(int p_id, OMCommandBuffer* p_buf) {
 
 
         // strange, we have no record of that command! (Must've come from someone else)
@@ -241,7 +241,7 @@ int CommandHistoryModel::rowCount(const QModelIndex &) const {
      return _cmdHist.at(p_row);
  }
 
- void CommandHistoryModel::_processResults(int p_row, OMCommandBuffer *p_buf) {
+ void CommandHistoryModel::_processResults(int p_row, OMCommandBuffer* p_buf) {
 
 
 
@@ -251,6 +251,9 @@ int CommandHistoryModel::rowCount(const QModelIndex &) const {
 
      if( p_buf->status() == OMC_FAILURE ) {
          *resStr = QString("Failed");
+     }
+     else if( p_buf->status() == OMC_TIMEOUT ) {
+         *resStr = QString("Timed Out");
      }
      else if( resSize > 0 ) {
 

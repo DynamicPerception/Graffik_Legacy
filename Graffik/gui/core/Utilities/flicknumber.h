@@ -66,14 +66,19 @@ public slots:
     void flickSettled();
 
 
+
 signals:
     void valueChanged(unsigned int p_val);
+
+private slots:
+    void _rowChanged(int p_row);
 
 private:
     Ui::FlickNumber *ui;
     FlickCharm* m_fcp;
 
     unsigned int m_cnt;
+    unsigned int m_cur;
 
     void _setFlick();
 };

@@ -79,6 +79,26 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+public slots:
+    void on_actionHelp_Contents_triggered();
+    void on_actionSettings_triggered();
+    void on_actionAbout_Graffik_triggered();
+
+    void on_netButton_clicked();
+    void on_optButton_clicked();
+
+    void on_globalLoadButton_clicked();
+    void on_globalSaveButton_clicked();
+
+    void on_screenSelCombo_currentIndexChanged(const QString p_str);
+
+private slots:
+
+    void globalOptionsChanged();
+
+signals:
+    void globalOptionsChanged(GlobalOptions* p_opts);
+
 
 private:
     Ui::MainWindow *ui;
@@ -94,25 +114,9 @@ private:
     CommandHistoryModel* _cmdHist;
     GlobalOptions* _globalOpts;
 
-public slots:
-    void on_actionHelp_Contents_triggered();
-    void on_actionSettings_triggered();
-    void on_actionAbout_Graffik_triggered();
+    enum CurScreenSel { FILM_SCREEN, SLIM_SCREEN };
 
-//    void on_filmButton_clicked();
-//    void on_scriptButton_clicked();
-    void on_netButton_clicked();
-    void on_optButton_clicked();
-
-    void on_screenSelCombo_currentIndexChanged(const QString p_str);
-
-private slots:
-
-    void globalOptionsChanged();
-
-signals:
-    void globalOptionsChanged(GlobalOptions* p_opts);
-
+    CurScreenSel m_curScreen;
 };
 
 #endif // MAINWINDOW_H

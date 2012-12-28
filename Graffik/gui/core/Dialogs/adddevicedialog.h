@@ -56,7 +56,9 @@ public:
     void updateBuses();
 
 public slots:
-    void accept();
+
+    void on_okButton_clicked();
+    void on_cancelButton_clicked();
 
 private:
     Ui::AddDeviceDialog *ui;

@@ -26,7 +26,9 @@
    <string>FilmWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">FlickNumber #wheelLabel {
+   <string notr="true">
+
+FlickNumber #wheelLabel {
 border-image:url(:/core/kinetic-wheel.png);
 border:0px transparent;
 padding: 0px;
@@ -55,6 +57,10 @@ color:rgb(81,82,85);
 padding: 0px;
 margin: 0px;
 background-color: transparent;
+}
+
+FlickNumber QListWidget::item:disabled {
+color:rgb(184, 184, 184);
 }
 
 FlickNumber QListWidgetItem {
@@ -98,14 +104,21 @@ border-image: url(:/core/rwd-pressed.png);
 }
 
 #playButton {
-border-image: url(:/core/pause-normal.png);
+border-image: url(:/core/play-normal.png);
 border:0px transparent;
 }
 
 #playButton:pressed {
-border-image: url(:/core/pause-pressed.png);
+border-image: url(:/core/play-pressed.png);
 }
 
+#playButton[state=&quot;1&quot;] {
+border-image: url(:/core/pause-normal.png);
+}
+
+#playButton:pressed[state=&quot;1&quot;] {
+border-image: url(:/core/pause-pressed.png);
+}
 #stopButton {
 border-image: url(:/core/stop-normal.png);
 border:0px transparent;
@@ -536,7 +549,7 @@ padding-right: 28px;
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="playButton">
+         <widget class="StatefulButton" name="playButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -574,6 +587,9 @@ padding-right: 28px;
           </property>
           <property name="text">
            <string/>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
@@ -1165,7 +1181,7 @@ padding-right: 28px;
        <property name="spacing">
         <number>0</number>
        </property>
-       <item row="4" column="1" colspan="2">
+       <item row="3" column="1" colspan="2">
         <widget class="QStackedWidget" name="pluginStackedWidget">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -1226,9 +1242,6 @@ padding-right: 28px;
           <string/>
          </property>
         </widget>
-       </item>
-       <item row="3" column="1" colspan="2">
-        <widget class="QComboBox" name="comboBox"/>
        </item>
        <item row="0" column="2">
         <widget class="SlideToggle" name="camControlSlider">
@@ -1863,6 +1876,11 @@ padding-right: 28px;
    <class>SlideToggle</class>
    <extends>QSlider</extends>
    <header>core/Widgets/slidetoggle.h</header>
+  </customwidget>
+  <customwidget>
+   <class>StatefulButton</class>
+   <extends>QPushButton</extends>
+   <header>core/Widgets/statefulbutton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

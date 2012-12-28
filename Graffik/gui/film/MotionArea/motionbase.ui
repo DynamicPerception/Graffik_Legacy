@@ -106,6 +106,10 @@ border-image: url(:/core/res-but-pressed.png);
 #scaleButton {
 border-image: url(:/core/scale-but-normal.png);
 border: 0px transparent;
+color:white;
+text-align:right;
+padding-top:10%;
+padding-right:3%;
 }
 
 #scaleButton:pressed {
@@ -321,8 +325,8 @@ margin:0px;
            </property>
            <property name="font">
             <font>
-             <family>Courier</family>
-             <pointsize>6</pointsize>
+             <family>Microsoft Sans Serif</family>
+             <pointsize>8</pointsize>
             </font>
            </property>
            <property name="toolTip">
@@ -473,11 +477,6 @@ margin:0px;
     </layout>
    </item>
   </layout>
-  <zorder>dispLCDFrame</zorder>
-  <zorder>dispLCDFrame</zorder>
-  <zorder>dispLCDFrame</zorder>
-  <zorder>nameLabel</zorder>
-  <zorder>dispLCD</zorder>
  </widget>
  <resources/>
  <connections/>

@@ -86,6 +86,7 @@ public:
     unsigned long filmTime();
 
     unsigned long interval(OMfilmParams* p_film);
+    unsigned long minInterval(OMfilmParams* p_film);
 
 
 signals:

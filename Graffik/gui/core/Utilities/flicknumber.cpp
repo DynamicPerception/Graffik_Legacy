@@ -91,9 +91,18 @@ void FlickNumber::setCount(unsigned int p_count) {
 
 void FlickNumber::_setFlick() {
     m_fcp = new FlickCharm;
-    m_fcp->activateOn(ui->listWidget);
+   // m_fcp->activateOn(ui->listWidget);
 
-    connect(m_fcp, SIGNAL(flickSettled()), this, SLOT(flickSettled()));
+   // connect(m_fcp, SIGNAL(flickSettled()), this, SLOT(flickSettled()));
+
+    ui->listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->listWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    m_cur = 0;
+
+    QScrollBar* vsb = ui->listWidget->verticalScrollBar();
+
+    connect(vsb, SIGNAL(valueChanged(int)), this, SLOT(_rowChanged(int)));
 
 }
 
@@ -101,9 +110,13 @@ void FlickNumber::flickSettled() {
 
     unsigned int val = ui->listWidget->verticalScrollBar()->sliderPosition();
 
+    if( val == m_cur )
+        return;
+
+    m_cur = val;
+
     ui->listWidget->setCurrentRow(val);
     emit valueChanged(val);
-   // _setLabels(val);
 }
 
 void FlickNumber::setValue(unsigned int p_val) {
@@ -111,7 +124,12 @@ void FlickNumber::setValue(unsigned int p_val) {
         return;
 
     ui->listWidget->setCurrentRow(p_val);
-   // _setLabels(p_val);
+    m_cur = p_val;
+}
+
+void FlickNumber::_rowChanged(int p_row) {
+    qDebug() << "FN: Got Row Changed";
+    flickSettled();
 }
 
 unsigned int FlickNumber::value() {
@@ -136,12 +154,12 @@ void FlickNumber::resizeEvent(QResizeEvent* p_evt) {
 void FlickNumber::setEnabled(bool p_en) {
     ui->listWidget->setEnabled(p_en);
 
-    if( p_en == true ) {
+ /*   if( p_en == true ) {
         m_fcp->activateOn(ui->listWidget);
         connect(m_fcp, SIGNAL(flickSettled()), this, SLOT(flickSettled()));
     }
     else {
         m_fcp->deactivateFrom(ui->listWidget);
         disconnect(m_fcp, SIGNAL(flickSettled()), this, SLOT(flickSettled()));
-    }
+    }*/
 }

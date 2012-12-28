@@ -32,6 +32,7 @@
 #include <QProgressDialog>
 #include <QFileDialog>
 
+
 #include "MoCoBus/omnetwork.h"
 
 #include "core/Options/axisoptions.h"
@@ -89,9 +90,6 @@ public slots:
 
     void on_plugJogButton_clicked();
 
-    void on_loadFilmButton_clicked();
-    void on_saveFilmButton_clicked();
-
     void on_rewindButton_clicked();
     void on_forwardButton_clicked();
 
@@ -107,6 +105,10 @@ public slots:
     void error(QString p_err);
 
     void filmParamsChanged();
+
+    // handling global save/load buttons
+    void load();
+    void save();
 
 private slots:
     void _drawNewAxis(OMdeviceInfo* p_dev);
@@ -148,9 +150,11 @@ private:
     static const int s_Disable  = 2;
     static const int s_Pause    = 3;
     static const int s_Play     = 4;
+    static const int s_DisPres  = 5;
 
     bool m_error;
     bool m_spinsPrepped;
+    bool m_ignoreUpdate;
 
     void _displayCamControl();
     void _enableCamControl(bool p_en = true);

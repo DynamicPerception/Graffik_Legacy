@@ -153,7 +153,7 @@ void AddDeviceDialog::updateBuses() {
 
 }
 
-void AddDeviceDialog::accept() {
+void AddDeviceDialog::on_okButton_clicked() {
     QString port = ui->busList->itemData(ui->busList->currentIndex()).toString();
     QString type = ui->deviceTypeList->itemText(ui->deviceTypeList->currentIndex());
     QString name = ui->devName->text();
@@ -197,7 +197,12 @@ void AddDeviceDialog::accept() {
         er.exec();
     }
     else {
-        this->done(1);
+        this->done(QDialog::Accepted);
     }
 
 }
+
+void AddDeviceDialog::on_cancelButton_clicked() {
+    this->done(QDialog::Rejected);
+}
+

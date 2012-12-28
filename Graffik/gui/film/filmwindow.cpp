@@ -37,6 +37,7 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
 
     m_error = false;
     m_spinsPrepped = false;
+    m_ignoreUpdate = false;
 
     m_params = new FilmParameters(m_net, this);
     m_exec = new FilmExec(m_net, m_params, m_opts, m_gopts, this);
@@ -192,8 +193,10 @@ void FilmWindow::_displayCamControl() {
     ui->camSetBut->setEnabled(en);
 
         // disable film time spinners unless auto fps is enabled
-    if( autoFPS && en )
+    if( autoFPS && en ) {
         en = true;
+        _checkFilmTimeConstraint();
+    }
     else
         en = false;
 
@@ -223,8 +226,10 @@ void FilmWindow::on_camSetBut_clicked() {
         // based on FPS or manual interval
     if( ! autoFPS )
         _calcAutoFilmTime();
-    else
+    else {
+        _checkFilmTimeConstraint();
         en = true;
+    }
 
     qDebug() << "FW: Auto Time: " << autoFPS << en;
 
@@ -238,6 +243,9 @@ void FilmWindow::on_camSetBut_clicked() {
 }
 
 void FilmWindow::_showFilmTime() {
+
+    qDebug() << "FW: Show Film Time";
+
     OMfilmParams* params = m_params->getParams();
     unsigned long wallTm = params->realLength;
     unsigned long filmTm = params->length;
@@ -253,6 +261,9 @@ void FilmWindow::_showFilmTime() {
     unsigned long fmm = TimeConverter::freeMinutes(filmTm);
     unsigned long fss = TimeConverter::freeSeconds(filmTm);
 
+
+    m_ignoreUpdate = true;
+
     ui->filmHHSpin->setValue(fhh);
     ui->filmMMSpin->setValue(fmm);
     ui->filmSSSpin->setValue(fss);
@@ -260,6 +271,8 @@ void FilmWindow::_showFilmTime() {
     ui->realHHSpin->setValue(whh);
     ui->realMMSpin->setValue(wmm);
     ui->realSSSpin->setValue(wss);
+
+    m_ignoreUpdate = false;
 
 }
 
@@ -289,6 +302,7 @@ void FilmWindow::_changeTime(int p_which, int p_pos, int p_val) {
 
     int hh; int mm; int ss;
 
+
     if( p_which == 1 ) {
         hh = ui->filmHHSpin->value();
         mm = ui->filmMMSpin->value();
@@ -298,6 +312,7 @@ void FilmWindow::_changeTime(int p_which, int p_pos, int p_val) {
         hh = ui->realHHSpin->value();
         mm = ui->realMMSpin->value();
         ss = ui->realSSSpin->value();
+
 
         qDebug() << "FW: _cT:" << hh << mm << ss;
     }
@@ -311,16 +326,21 @@ void FilmWindow::_changeTime(int p_which, int p_pos, int p_val) {
 
         // can't have less than one second of real time, we just wouldn't know
         // what to do with ourselves!
-    if( p_which != 1 ) {
-        if( hh == 0 && mm == 0 && ss == 0 ) {
+
+    if( hh == 0 && mm == 0 && ss == 0 ) {
             ss = 1;
-            ui->realSSSpin->setValue(1);
-        }
-    }
+            if( p_which == 2 )
+                ui->realSSSpin->setValue(1);
+            else
+                ui->filmSSSpin->setValue(1);
+     }
 
     unsigned long mS = TimeConverter::msFromHours(hh) + TimeConverter::msFromMinutes(mm) + TimeConverter::msFromSeconds(ss);
-
     OMfilmParams* params = m_params->getParams();
+
+    bool autoFPS = params->camParams->autoFPS;
+    bool camEn   = params->camParams->camControl;
+    bool showUpdate = false;
 
     if( p_which == 1 )
         params->length = mS;
@@ -328,6 +348,12 @@ void FilmWindow::_changeTime(int p_which, int p_pos, int p_val) {
         unsigned long oldTm = params->realLength;
 
         params->realLength = mS;
+
+        if( ! camEn ) {
+            qDebug() << "FW: Cam not enabled, set film time to same as real time";
+            params->length = mS;
+            showUpdate = true;
+        }
 
         float timeDiff = (float) mS / (float) oldTm;
 
@@ -357,24 +383,45 @@ void FilmWindow::_changeTime(int p_which, int p_pos, int p_val) {
 
     m_params->releaseParams();
 
+        // if we updated the film time based on real time changes..
+    if( showUpdate )
+        _showFilmTime();
+    else if( camEn && autoFPS ) {
+        qDebug() << "FW: Force Time Constraints";
+        _checkFilmTimeConstraint(); // update time constraints
+    }
+    else if( camEn && ! autoFPS )
+        _calcAutoFilmTime(); // update film time
+
+
+
+
 }
 
  // apply constraints to film length, and update display as needed
 void FilmWindow::_checkFilmTimeConstraint() {
 
-        // TODO: Calculate maximum film time when auto FPS is used
-        // instead of intervalometer
+     qDebug() << "FW: Checking Time Constraints";
 
         // TODO: Add UI indicator that limitation has
         // been placed...
 
     OMfilmParams* params = m_params->getParams();
 
-    if( params->length > params->realLength ) {
-        params->length = params->realLength;
+    unsigned long minInt = m_exec->minInterval(params);
+
+    unsigned long maxFrames = params->realLength / minInt;
+    unsigned long maxTime   = (maxFrames / params->fps) * 1000;
+
+    maxTime = maxTime < 1000 ? 1000 : maxTime;
+
+    qDebug() << "FW: TimeConstraint: MT=" << maxTime << "LN=" << params->length;
+
+    if( params->length > maxTime ) {
+        params->length = maxTime;
         m_params->releaseParams();
         _showFilmTime();
-        qDebug() << "FW: Constraining maximum film time to real time";
+        qDebug() << "FW: Constraining maximum film time";
     }
     else {
         m_params->releaseParams(false);
@@ -383,33 +430,50 @@ void FilmWindow::_checkFilmTimeConstraint() {
 }
 
 void FilmWindow::on_filmHHSpin_valueChanged(unsigned int p_val) {
-    _changeTime(1, 1, p_val);
-    _checkFilmTimeConstraint();
+    if( ! m_ignoreUpdate ) {
+        qDebug() << "FW: on_filmHHSpin_valueChanged";
+        _changeTime(1, 1, p_val);
+        _checkFilmTimeConstraint();
+    }
 }
 
 void FilmWindow::on_filmMMSpin_valueChanged(unsigned int p_val) {
-    _changeTime(1, 2, p_val);
-    _checkFilmTimeConstraint();}
+    if( ! m_ignoreUpdate ) {
+        qDebug() << "FW: on_filmMMSpin_valueChanged";
+        _changeTime(1, 2, p_val);
+        _checkFilmTimeConstraint();
+    }
+}
 
 void FilmWindow::on_filmSSSpin_valueChanged(unsigned int p_val) {
-    _changeTime(1, 3, p_val);
-    _checkFilmTimeConstraint();
+    if( ! m_ignoreUpdate ) {
+        qDebug() << "FW: on_filmSSSpin_valueChanged";
+        _changeTime(1, 3, p_val);
+        _checkFilmTimeConstraint();
+    }
 }
 
 void FilmWindow::on_realHHSpin_valueChanged(unsigned int p_val) {
-    _changeTime(2, 1, p_val);
+    if( ! m_ignoreUpdate ) {
+        _changeTime(2, 1, p_val);
+    }
 }
 
 void FilmWindow::on_realMMSpin_valueChanged(unsigned int p_val) {
-    qDebug() << "FW: Got MMSpin: " << p_val;
-    _changeTime(2, 2, p_val);
+    if( ! m_ignoreUpdate ) {
+        _changeTime(2, 2, p_val);
+    }
 }
 
 void FilmWindow::on_realSSSpin_valueChanged(unsigned int p_val) {
-    _changeTime(2, 3, p_val);
+    if( ! m_ignoreUpdate ) {
+        _changeTime(2, 3, p_val);
+    }
 }
 
 void FilmWindow::_calcAutoFilmTime() {
+
+    qDebug() << "FW: Calc Auto Film Time";
 
     OMfilmParams* params = m_params->getParams();
     unsigned long interval = m_exec->interval(params);
@@ -476,7 +540,7 @@ void FilmWindow::on_playButton_clicked() {
         if( mode == FILM_MODE_SMS )
             _setPlayButtonStatus(s_Pause);
         else
-            _setPlayButtonStatus(s_Disable);
+            _setPlayButtonStatus(s_DisPres);
     }
     else if( bstat == 2 ) {
         _setPlayButtonStatus(s_Play);
@@ -531,19 +595,34 @@ void FilmWindow::on_forwardButton_clicked() {
 }
 
 void FilmWindow::_setPlayButtonStatus(int p_stat) {
+
+    if( p_stat == s_DisPres ) {
+        ui->playButton->setEnabled(false);
+        ui->playButton->setDown(true);
+    }
     if( p_stat == s_Disable ) {
         ui->playButton->setEnabled(false);
-        return;
     }
     else {
         ui->playButton->setEnabled(true);
     }
 
-    if( p_stat == s_Play ) {
-        ui->playButton->setText("Play");
+
+   if( p_stat == s_Play ) {
+       ui->playButton->setDown(false);
+       ui->playButton->setState(0);
+        // need to update stylesheet as it reads a custom property for border-image
+        // selection
+       ui->playButton->style()->unpolish(ui->playButton);
+       ui->playButton->style()->polish(ui->playButton);
+       this->update();
     }
     else if( p_stat == s_Pause ) {
-        ui->playButton->setText("Pause");
+       ui->playButton->setDown(false);
+       ui->playButton->setState(1);
+       ui->playButton->style()->unpolish(ui->playButton);
+       ui->playButton->style()->polish(ui->playButton);
+       this->update();
     }
 }
 
@@ -627,16 +706,16 @@ void FilmWindow::_popTimeDisplay(QLabel *p_label, int p_time) {
 }
 
 void FilmWindow::_redrawMotionOverlay() {
- //   ui->visualSAContents->removeEventFilter(m_filter);
     m_areaViewPort->removeEventFilter(m_filter);
+
     delete m_motion;
-//    m_motion = new MotionSection(m_exec, m_params, ui->visualSAContents);
     m_motion = new MotionSection(m_exec, m_params, m_areaViewPort);
     m_motion->show();
+
     delete m_filter;
     m_filter = new SectionResizeFilter(m_motion, this);
-//    ui->visualSAContents->installEventFilter(m_filter);
     m_areaViewPort->installEventFilter(m_filter);
+
     connect(this, SIGNAL(motionAreaBorders(int,int)), m_motion, SLOT(setBorders(int,int)));
 
 }
@@ -723,13 +802,23 @@ void FilmWindow::on_plugJogButton_clicked() {
    // ui->plugJogButton->setDown(true);
 }
 
-void FilmWindow::on_loadFilmButton_clicked() {
+/** Trigger Film File Load Slot
+
+  Triggers a load file dialog
+  */
+
+void FilmWindow::load() {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open Film"), "", tr("Film Files (*.film)"));
     qDebug() << "FW: FilmOpen Got File: " << fileName;
     FilmFileHandler::readFile(fileName, m_params, m_net);
 }
 
-void FilmWindow::on_saveFilmButton_clicked() {
+/** Trigger Film File Save Slot
+
+  Triggers a save file dialog
+  */
+
+void FilmWindow::save() {
 
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save Film"), "", tr("Film Files (*.film)"));
     qDebug() << "FW: FilmSave Got File: " << fileName;

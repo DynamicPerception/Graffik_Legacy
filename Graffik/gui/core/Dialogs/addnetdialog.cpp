@@ -33,10 +33,7 @@
 
 #include "core/Dialogs/errordialog.h"
 
-AddNetDialog::AddNetDialog(OMNetwork *c_net, QWidget *c_parent) :
-    QDialog(c_parent),
-    ui(new Ui::AddNetDialog)
-{
+AddNetDialog::AddNetDialog(OMNetwork *c_net, QWidget *c_parent) : QDialog(c_parent), ui(new Ui::AddNetDialog) {
     ui->setupUi(this);
 
     _parent = c_parent;
@@ -49,8 +46,7 @@ AddNetDialog::AddNetDialog(OMNetwork *c_net, QWidget *c_parent) :
     QWidget::setTabOrder(ui->portCombo, ui->netName);
 }
 
-AddNetDialog::~AddNetDialog()
-{
+AddNetDialog::~AddNetDialog() {
 
     delete ui;
 }
@@ -88,7 +84,7 @@ void AddNetDialog::on_portCombo_currentIndexChanged(int p_idx) {
 }
 
 
-void AddNetDialog::accept() {
+void AddNetDialog::on_okButton_clicked() {
     QString port = ui->portCombo->itemText(ui->portCombo->currentIndex());
     QString name = ui->netName->text();
 
@@ -124,10 +120,11 @@ void AddNetDialog::accept() {
     }
     else {
 
-        // qDebug() << "Accepting dialog";
-        setResult(QDialog::Accepted);
-        QDialog::done(QDialog::Accepted);
-        QDialog::accept();
+        this->done(QDialog::Accepted);
     }
 
+}
+
+void AddNetDialog::on_cancelButton_clicked() {
+    this->done(QDialog::Rejected);
 }

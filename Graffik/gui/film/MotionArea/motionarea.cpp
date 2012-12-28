@@ -29,10 +29,7 @@
 #include <QDebug>
 
 
-MotionArea::MotionArea(FilmParameters *c_film, OMdeviceInfo *c_dev, AxisOptions* c_aopt, GlobalOptions *c_gopt, QWidget *parent) :
-    QFrame(parent),
-    ui(new Ui::MotionArea)
-{
+MotionArea::MotionArea(FilmParameters *c_film, OMdeviceInfo *c_dev, AxisOptions* c_aopt, GlobalOptions *c_gopt, QWidget *parent) : QFrame(parent), ui(new Ui::MotionArea) {
     m_dev = c_dev;
     m_film = c_film;
     m_aopt = c_aopt;
@@ -458,11 +455,6 @@ void MotionArea::_tooltipTimer() {
     QString timeText = QString("%1").arg((unsigned int)TimeConverter::hours(curMs), 2, 10, QChar('0')) + "'"
             + QString("%1").arg((unsigned int)TimeConverter::freeMinutes(curMs), 2, 10, QChar('0')) + "\""
             + QString("%1").arg((unsigned int)TimeConverter::freeSeconds(curMs), 2, 10, QChar('0'));
-
-        // tooltip text
-/*    QString descText = MA_STR_POS + QString::number(curPos, 'f', 2) + dLabel + "\n"
-            + MA_STR_SPD + QString::number(curSpd, 'f', 2) + dLabel + MA_STR_MOD + "\n"
-            + MA_STR_TIM + timeText; */
 
     QString descText = MA_STR_POS + posDisp[0] + posDisp[1] + "\n"
             + MA_STR_SPD + spdDisp[0] + spdDisp[1] + MA_STR_MOD + "\n"

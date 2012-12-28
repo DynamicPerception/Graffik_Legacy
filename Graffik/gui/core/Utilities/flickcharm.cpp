@@ -279,7 +279,7 @@ void FlickCharm::timerEvent(QTimerEvent *event)
 
     if (!count) {
         d->ticker.stop();
-        qDebug() << "Flicka: No more!";
+        qDebug() << "FlickCharm: End";
         emit flickSettled();
     }
 

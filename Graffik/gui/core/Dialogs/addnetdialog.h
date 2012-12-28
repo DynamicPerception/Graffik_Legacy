@@ -56,11 +56,11 @@ private:
 
 
 public slots:
-    void accept();
-
+    void on_okButton_clicked();
+    void on_cancelButton_clicked();
+    void on_rescanButton_clicked();
 
 private slots:
-    void on_rescanButton_clicked();
     void on_portCombo_currentIndexChanged(int);
 
 };
