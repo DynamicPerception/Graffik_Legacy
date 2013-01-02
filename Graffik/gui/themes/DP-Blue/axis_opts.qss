@@ -1,0 +1,80 @@
+QComboBox:drop-down {
+    border-image: url(themes/DP-Blue/img/drop-down-sm-blue.png);
+    border: 0px transparent;
+}
+
+QComboBox {
+    min-height: 33px;
+    min-width: 100px;
+}
+
+#AxisOptionsDialog {
+    background-color:qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(253, 253, 253, 255), stop:1 rgba(208, 208, 208, 255));
+}
+
+
+SlideToggle {
+    min-width: 66px;
+    max-width: 66px;
+    min-height: 34px;
+    max-height: 34px;
+}
+
+SlideToggle::groove:horizontal {
+     border-image: url(themes/DP-Blue/img/toggle-bg.png);
+    border: 0px transparent;
+     border-left: -9px transparent;
+     border-right: -8px transparent;
+     border-bottom: -5px transparent;
+     border-top: 0px transparent;
+    /* border: 0px transparent;*/
+     padding: 0px;
+     margin: 0px;
+}
+
+SlideToggle::handle:horizontal {
+    margin:0px;
+    padding:0px;
+    image: url(themes/DP-Blue/img/slider-handle-blue.png);
+}
+
+SlideToggle {
+    margin:4px;
+}
+
+#masterFrame {
+    /*background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(172, 172, 172, 255), stop:1 rgba(146, 146, 146, 255));*/
+     background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(172, 172, 172, 255), stop:1 rgba(146, 146, 146, 255));
+    border: 1px solid rgb(0,0,0);
+    border-radius: 6px;
+    max-height: 40px;
+    padding: 5px;
+}
+
+#masterFrame QLabel {
+    color: rgb(255,255,255);
+    font: 12pt "Lucida Sans";
+}
+
+#buttonFrame {
+    border: 0px;
+}
+
+#buttonFrame QPushButton {
+    padding:10px;
+    color: rgb(255,255,255);
+    font: 12px "Lucida Sans";
+    max-width:75px;
+    max-height: 24px;
+}
+
+#cancelButton {
+    border-image: url(themes/DP-Blue/img/small-gray-but-normal.png);
+    border: 0px transparent;
+}
+
+#saveButton {
+    border-image: url(themes/DP-Blue/img/small-blue-but-normal.png);
+    border: 0px transparent;
+}
+

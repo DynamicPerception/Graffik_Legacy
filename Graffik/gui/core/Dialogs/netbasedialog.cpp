@@ -45,6 +45,8 @@ NetBaseDialog::NetBaseDialog(OMNetwork *c_net, NetworkModel *c_model, AxisOption
     m_netMan = new NetworkManager(m_model, m_opts, this);
 
     on_manageButton_clicked();
+
+    setStyleSheet(SingleThemer::getStyleSheet("net_base"));
 }
 
 NetBaseDialog::~NetBaseDialog()

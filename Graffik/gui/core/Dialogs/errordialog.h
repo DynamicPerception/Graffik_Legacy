@@ -27,6 +27,8 @@
 #include <QDialog>
 #include <QString>
 
+#include "core/Themer/singlethemer.h"
+
 namespace Ui {
     class ErrorDialog;
 }

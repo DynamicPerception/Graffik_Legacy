@@ -1,0 +1,86 @@
+#jogDial {
+    qproperty-backgroundImage: url(themes/DP-Blue/img/dial-back.png);
+    qproperty-needleImage: url(themes/DP-Blue/img/dial-pointer.png);
+    qproperty-maxAngle: 140;
+}
+
+QPushButton#jogHomeButton {
+    border-image: url(themes/DP-Blue/img/set-home-normal.png);
+     border: 0px transparent;
+    padding:5px;
+    margin:5px;
+}
+
+QPushButton#jogEndButton {
+    border-image: url(themes/DP-Blue/img/set-end-normal.png);
+     border: 0px transparent;
+    padding:5px;
+    margin:5px;
+}
+
+QPushButton#jogHomeButton:pressed {
+    border-image: url(themes/DP-Blue/img/set-home-sel.png);
+}
+
+QPushButton#jogEndButton:pressed {
+    border-image: url(themes/DP-Blue/img/set-end-sel.png);
+}
+
+
+#jogButFrame, #jogSliderFrame {
+    border-left: 0px;
+    border-right: 0px;
+    border-top: 1px solid;
+    border-bottom: 0px;
+    border-color: rgb(125,125,125);
+    background-color:qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:0.636, stop:0 rgba(241, 241, 241, 255), stop:1 rgba(214, 214, 214, 255));
+}
+
+#jogSliderFrame {
+    padding-left: 10px;
+    padding-right:10px;
+}
+
+#jogDampSlider::groove:horizontal, #jogSpeedSlider::groove:horizontal {
+    border-image: url(themes/DP-Blue/img/slider-back.png);
+     border-left: 0px transparent;
+     border-right: 0px transparent;
+     border-bottom: -3px transparent;
+     border-top: 0px transparent;
+     padding: 0px;
+     margin: 0px;
+}
+
+#jogDampSlider::handle:horizontal, #jogSpeedSlider::handle:horizontal {
+    margin:0px;
+    padding:0px;
+     image: url(themes/DP-Blue/img/slider-handle.png);
+}
+
+#jogDampSlider::sub-page:horizontal, #jogSpeedSlider::sub-page:horizontal {
+    background-image: url(themes/DP-Blue/img/slider-back-gray.png);
+    background-clip:content;
+    background-repeat:no-repeat;
+     border-left: 0px transparent;
+     border-right: 0px transparent;
+     border-bottom: -3px transparent;
+     border-top: 0px transparent;
+     padding: 0px;
+     margin: 0px;
+}
+
+#devButtonlist {
+    border-radius:3px;
+    border: 1px solid #000000;
+}
+
+#devButtonList::item {
+    border-bottom: 1px solid;
+    border-color:rgb(200, 200, 200);
+}
+
+#devButtonList::item:selected{
+    border-image: url(themes/DP-Blue/img/sel-list-bg.png);
+    border: 0px transparent;
+    color:rgb(255,255,255);
+}

@@ -26,10 +26,7 @@
 
 #include <QDebug>
 
-DeleteDeviceDialog::DeleteDeviceDialog(OMNetwork *c_net, QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::DeleteDeviceDialog)
-{
+DeleteDeviceDialog::DeleteDeviceDialog(OMNetwork *c_net, QWidget *parent) : QDialog(parent), ui(new Ui::DeleteDeviceDialog) {
     ui->setupUi(this);
 
     m_net = c_net;
@@ -52,6 +49,8 @@ DeleteDeviceDialog::DeleteDeviceDialog(OMNetwork *c_net, QWidget *parent) :
             ui->devListCombo->addItem(m_net->deviceInfo(bus, addr)->name);
         }
     }
+
+    setStyleSheet(SingleThemer::getStyleSheet("delete_device"));
 
 }
 

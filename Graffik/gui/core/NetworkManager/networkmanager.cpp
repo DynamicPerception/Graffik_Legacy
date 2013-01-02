@@ -54,6 +54,7 @@ NetworkManager::NetworkManager(NetworkModel *c_net, AxisOptions* c_opts, QWidget
 
     QObject::connect(ui->netTreeView, SIGNAL(clicked(QModelIndex)), this, SLOT(onRowClick(QModelIndex)), Qt::QueuedConnection);
 
+    setStyleSheet(SingleThemer::getStyleSheet("net_man"));
 }
 
 NetworkManager::~NetworkManager()

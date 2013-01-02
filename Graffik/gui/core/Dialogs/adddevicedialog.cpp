@@ -51,6 +51,7 @@ AddDeviceDialog::AddDeviceDialog(OMNetwork *c_net, QWidget *parent) : QDialog(pa
     QWidget::setTabOrder(ui->deviceTypeList, ui->devAddr);
     QWidget::setTabOrder(ui->devAddr, ui->devName);
 
+    setStyleSheet(SingleThemer::getStyleSheet("add_device"));
 }
 
 /** Constructor for adding a specific, known, device

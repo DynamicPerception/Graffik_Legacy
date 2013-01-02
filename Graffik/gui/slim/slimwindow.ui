@@ -17,57 +17,7 @@
    <string>DP Graffik Scripting Engine</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">
-
-#historyTableView {
-qproperty-colWidth0: 100;
-qproperty-colWidth1: 225;
-qproperty-colWidth2: 100;
-qproperty-colWidth3: 50;
-qproperty-colWidth4: 125;
-qproperty-errLED: url(:/core/stat-led-red.png);
-qproperty-queueLED: url(:/core/stat-led-grey.png);
-qproperty-bcastLED: url(:/core/stat-led-blue.png);
-qproperty-okLED: url(:/core/stat-led-green.png);
-background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(253, 253, 253, 255), stop:1 rgba(208, 208, 208, 255));
-alternate-background-color:rgb(197, 197, 197);
-}
-
-#historyTableView QHeaderView::section {
- background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(172, 172, 172, 255), stop:1 rgba(146, 146, 146, 255));
-color: rgb(255,255,255);
-font: 14pt &quot;Lucida Sans&quot;;
-border: 1px solid rgb(86,86,86);
-min-height: 40px;
-}
-
-#SlimWindow {
-background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(253, 253, 253, 255), stop:1 rgba(208, 208, 208, 255));
-}
-
-#commandFrame {
-border: 1px solid rgb(86,86,86);
-background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(253, 253, 253, 255), stop:1 rgba(208, 208, 208, 255));
-}
-
-#commandFrame QLineEdit {
-border: 1px solid rgb(86,86,86);
-border-radius: 3px;
-min-height: 25px;
-font: 14pt &quot;Lucida Sans&quot;;
-}
-
-#goButton {
-border-image: url(:/core/small-blue-but-normal.png);
-border: 0px transparent;
-max-width:75px;
-max-height: 29px;
-min-width:75px;
-min-height: 29px;
-color: rgb(255,255,255);
-font: 12px &quot;Lucida Sans&quot;;
-}
-</string>
+   <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -131,7 +81,7 @@ font: 12px &quot;Lucida Sans&quot;;
           <bool>false</bool>
          </property>
          <attribute name="horizontalHeaderVisible">
-          <bool>true</bool>
+          <bool>false</bool>
          </attribute>
          <attribute name="horizontalHeaderDefaultSectionSize">
           <number>60</number>
@@ -188,7 +138,6 @@ font: 12px &quot;Lucida Sans&quot;;
           <property name="font">
            <font>
             <family>Lucida Sans</family>
-            <pointsize>-1</pointsize>
             <weight>50</weight>
             <italic>false</italic>
             <bold>false</bold>

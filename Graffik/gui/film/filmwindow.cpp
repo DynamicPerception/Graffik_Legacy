@@ -92,6 +92,8 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
 
     _prepInputs();
 
+    setStyleSheet(SingleThemer::getStyleSheet("film"));
+
 }
 
 FilmWindow::~FilmWindow() {

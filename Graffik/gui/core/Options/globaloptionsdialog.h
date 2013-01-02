@@ -27,6 +27,7 @@
 #include <QDialog>
 
 #include "globaloptions.h"
+#include "core/Themer/singlethemer.h"
 
 #define GOD_IMP_LABEL   "Imperial"
 #define GOD_MET_LABEL   "Metric"

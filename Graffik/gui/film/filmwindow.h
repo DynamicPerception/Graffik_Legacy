@@ -35,6 +35,8 @@
 
 #include "MoCoBus/omnetwork.h"
 
+#include "core/Themer/singlethemer.h"
+
 #include "core/Options/axisoptions.h"
 #include "core/Options/globaloptions.h"
 #include "core/Dialogs/errordialog.h"

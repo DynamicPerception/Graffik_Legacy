@@ -57,6 +57,7 @@ MotionBase::MotionBase(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions 
     connect(m_area, SIGNAL(globalPosition(int,int)), this, SIGNAL(areaBorders(int,int)));
     connect(this, SIGNAL(playStatus(bool)), m_area, SLOT(playStatus(bool)));
 
+    setStyleSheet(SingleThemer::getStyleSheet("motionbase"));
 }
 
 MotionBase::~MotionBase()

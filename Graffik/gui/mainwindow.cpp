@@ -26,11 +26,7 @@
 
 
 #include <QDebug>
-#include <QFileDialog>
 
-#include "Slim/SlimFileHandler/slimfilehandler.h"
-#include "docs/helpwindow.h"
-#include "core/DeviceScan/devicescanner.h"
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -44,6 +40,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     _filmWindow = new FilmWindow(_net, _axisOpts, _globalOpts, this);
     _slimWindow =  new SlimWindow(_net, _cmdHist, _parser, ui->tabs);
     _uData = new UserData(this);
+
+
 
     ui->tabs->addWidget(_filmWindow);
     ui->tabs->addWidget(_slimWindow);
@@ -110,6 +108,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->tabs->setCurrentWidget(_filmWindow);
     m_curScreen = FILM_SCREEN;
 
+        // themeing
+
+    setStyleSheet(SingleThemer::getStyleSheet("main"));
 }
 
 MainWindow::~MainWindow() {
@@ -182,7 +183,7 @@ void MainWindow::on_optButton_clicked() {
 void MainWindow::on_globalLoadButton_clicked() {
     if( m_curScreen == FILM_SCREEN )
         _filmWindow->load();
-    else if( m_curScreen = SLIM_SCREEN)
+    else if( m_curScreen == SLIM_SCREEN)
         _slimWindow->load();
 }
 

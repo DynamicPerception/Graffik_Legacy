@@ -41,6 +41,7 @@
 #include "core/Options/axisoptions.h"
 #include "core/Options/globaloptions.h"
 #include "core/Utilities/timeconverter.h"
+#include "core/Themer/singlethemer.h"
 
 #include "film/FilmParameters/filmparameters.h"
 

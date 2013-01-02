@@ -26,6 +26,8 @@
 
 #include <QDialog>
 
+#include "core/Themer/singlethemer.h"
+
 namespace Ui {
 class AboutDialog;
 }

@@ -36,6 +36,7 @@
 #include "core/Dialogs/deletedevicedialog.h"
 #include "core/Dialogs/deletebusdialog.h"
 #include "core/Options/axisoptions.h"
+#include "core/Themer/singlethemer.h"
 
 namespace Ui {
 class NetworkManager;

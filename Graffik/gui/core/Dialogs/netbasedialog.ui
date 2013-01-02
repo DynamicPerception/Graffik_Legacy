@@ -32,52 +32,7 @@
    <string>Devices</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">#NetBaseDialog {
-background-color:qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(253, 253, 253, 255), stop:1 rgba(208, 208, 208, 255));
-}
-
-#topFrame {
-background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0.541872 rgba(104, 104, 104, 255), stop:1 rgba(74, 74, 74, 255));
-}
-
-#initButton, #manageButton, #scanButton {
-border-image:url(:/core/black-but-normal.png);
-border: 0px transparent;
-color: rgb(255,255,255);
-min-width: 146px;
-max-width: 146px;
-min-height: 41px;
-max-height: 41px;
-font: 12pt &quot;Lucida Sans&quot;
-}
-
-#initButton:pressed, #manageButton:pressed, #scanButton:pressed {
-border-image:url(:/core/black-but-pressed.png);
-}
-
-#doneButton {
-color:rgb(255,255,255);
-border-image:url(:/core/affirmative-big-button-normal.png);
-border: 0px transparent;
-min-width:136px;
-min-height: 42px;
-max-width:136px;
-max-height: 42px;
-}
-
-#doneButton:pressed {
-border-image:url(:/core/affirmative-big-button-pressed.png);
-
-}
-
-#actionFrame {
-margin: 10px;
-}
-
-#buttonFrame {
-border:0px;
-margin-top:0px;
-}</string>
+   <string notr="true"/>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="margin">

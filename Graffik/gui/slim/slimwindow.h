@@ -30,6 +30,7 @@
 
 
 #include "core/Dialogs/errordialog.h"
+#include "core/Themer/singlethemer.h"
 
 #include "MoCoBus/omcommandbuffer.h"
 #include "MoCoBus/omnetwork.h"

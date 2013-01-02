@@ -30,10 +30,11 @@ GlobalOptionsDialog::GlobalOptionsDialog(GlobalOptions *c_opts, QWidget *parent)
     m_opts = c_opts;
 
     _setupInputs();
+
+    setStyleSheet(SingleThemer::getStyleSheet("global_opts"));
 }
 
-GlobalOptionsDialog::~GlobalOptionsDialog()
-{
+GlobalOptionsDialog::~GlobalOptionsDialog() {
     delete ui;
 }
 

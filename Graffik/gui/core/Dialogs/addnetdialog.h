@@ -28,6 +28,12 @@
 
 #include "MoCoBus/omnetwork.h"
 
+#include "core/Themer/singlethemer.h"
+#include "core/Dialogs/errordialog.h"
+
+#include "qextserialenumerator.h"
+
+
 namespace Ui {
     class AddNetDialog;
 }

@@ -28,13 +28,12 @@
 #define GRAFFIK_VERSION 0.0
 #endif
 
-AboutDialog::AboutDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::AboutDialog)
-{
+AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent), ui(new Ui::AboutDialog) {
     ui->setupUi(this);
-
     ui->versionLabel->setText(QString::number(GRAFFIK_VERSION));
+
+        // apply themeing
+    setStyleSheet(SingleThemer::getStyleSheet("about"));
 }
 
 AboutDialog::~AboutDialog()

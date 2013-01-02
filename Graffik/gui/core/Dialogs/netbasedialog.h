@@ -35,6 +35,8 @@
 #include "core/NetworkManager/networkmanager.h"
 #include "core/NetworkModel/networkmodel.h"
 
+#include "core/Themer/singlethemer.h"
+
 namespace Ui {
 class NetBaseDialog;
 }

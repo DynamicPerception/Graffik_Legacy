@@ -1,0 +1,45 @@
+#netFrame {
+    padding: 0px;
+    margin:0px;
+}
+
+#netTreeView {
+    alternate-background-color:rgb(238,243,254);
+    padding: 0px;
+    margin:0px;
+}
+
+#netTreeView::item {
+    min-height: 30px;
+    max-height: 30px;
+    font: bold 10pt "Lucida Sans";
+}
+
+#netTreeView QHeaderView {
+    margin: 0px;
+    padding: 0px;
+}
+
+#netTreeView QHeaderView::section {
+     background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0.541872 rgba(104, 104, 104, 255), stop:1 rgba(74, 74, 74, 255));
+     color: white;
+     padding-left: 4px;
+     border: 1px solid #6c6c6c;
+	 min-height: 20px; 
+	max-height: 20px;
+   font: 10pt "Lucida Sans";
+ }
+
+
+#addBusButton, #addDevButton, #delBusButton, #delDevButton {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(171, 171, 171, 255), stop:0.571429 rgba(146, 146, 146, 255));
+    color: rgb(255,255,255);
+    border: 1px solid;
+    border-color: rgb(86,86,86);
+    min-height: 21px;
+    max-height: 21px;
+}
+
+NetworkManager {
+    qproperty-editIcon: url(themes/DP-Blue/img/edit-icon-sm.png);
+}

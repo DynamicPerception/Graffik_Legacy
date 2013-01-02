@@ -27,6 +27,7 @@
 #include <QDialog>
 
 #include "core/Utilities/timeconverter.h"
+#include "core/Themer/singlethemer.h"
 
 #include "film/FilmParameters/filmparameters.h"
 

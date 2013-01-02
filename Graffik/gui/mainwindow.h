@@ -25,8 +25,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QFileDialog>
 
 #include "MoCoBus/omnetwork.h"
+
+#include "core/Themer/singlethemer.h"
 
 #include "core/UserData/userdata.h"
 
@@ -48,6 +51,7 @@
 
 #include "slim/CommandHistoryModel/commandhistorymodel.h"
 
+#include "docs/helpwindow.h"
 
 #include "film/filmwindow.h"
 #include "slim/slimwindow.h"

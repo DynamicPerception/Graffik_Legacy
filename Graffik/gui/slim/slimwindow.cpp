@@ -38,6 +38,8 @@ SlimWindow::SlimWindow(OMNetwork* net, CommandHistoryModel* hist, SlimCommandPar
 
     ui->historyTableView->setModel(_cmdHist);
     ui->historyTableView->horizontalHeader()->show();
+
+    setStyleSheet(SingleThemer::getStyleSheet("slim"));
         // we need to re-apply css
     ui->historyTableView->style()->unpolish(ui->historyTableView);
     ui->historyTableView->style()->polish(ui->historyTableView);

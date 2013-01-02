@@ -26,15 +26,14 @@
 
 #include <QDebug>
 
-CameraControlDialog::CameraControlDialog(FilmParameters *c_params, QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::CameraControlDialog)
-{
+CameraControlDialog::CameraControlDialog(FilmParameters *c_params, QWidget *parent) : QDialog(parent), ui(new Ui::CameraControlDialog) {
     ui->setupUi(this);
 
     m_params = c_params;
 
     _setupInputs();
+
+    setStyleSheet(SingleThemer::getStyleSheet("camera_opts"));
 
 }
 

@@ -27,10 +27,7 @@
 #include <QDebug>
 
 
-DeleteBusDialog::DeleteBusDialog(OMNetwork *c_net, QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::DeleteBusDialog)
-{
+DeleteBusDialog::DeleteBusDialog(OMNetwork *c_net, QWidget *parent) : QDialog(parent), ui(new Ui::DeleteBusDialog) {
     ui->setupUi(this);
     m_net = c_net;
 
@@ -43,6 +40,7 @@ DeleteBusDialog::DeleteBusDialog(OMNetwork *c_net, QWidget *parent) :
     }
 
 
+    setStyleSheet(SingleThemer::getStyleSheet("delete_bus"));
 }
 
 DeleteBusDialog::~DeleteBusDialog()

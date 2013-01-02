@@ -71,6 +71,7 @@ include(core/core.pri)
 include(film/film.pri)
 include(slim/slim.pri)
 include(docs/docs.pri)
+include(themes/themes.pri)
 
 
 
@@ -81,16 +82,7 @@ RESOURCES += \
     uiImages.qrc
 
 
-# WIN32-Specific Build Instructions
-
-win32 {
-    CONFIG(debug, debug|release) {
-        DEPDIR = $$OUT_PWD/debug
-    }
-    CONFIG(release, debug|release) {
-        DEPDIR = $$OUT_PWD/release
-    }
-    DEPDIR ~= s,/,\\,g
+# theme files
 
 
 
@@ -110,7 +102,16 @@ defineTest(deployFiles) {
     export(DEPFILECOPY)
 }
 
+# WIN32-Specific Build Instructions
 
+win32 {
+    CONFIG(debug, debug|release) {
+        DEPDIR = $$OUT_PWD/debug
+    }
+    CONFIG(release, debug|release) {
+        DEPDIR = $$OUT_PWD/release
+    }
+    DEPDIR ~= s,/,\\,g
 
 
 

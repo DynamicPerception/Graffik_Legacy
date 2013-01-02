@@ -35,7 +35,10 @@ HEADERS                 +=  \
     core/Widgets/skinneddial.h \
     core/Utilities/flicknumberitem.h \
     core/Dialogs/NetWidgets/adddevicenetwidget.h \
-    core/Widgets/statefulbutton.h
+    core/Widgets/statefulbutton.h \
+    core/Themer/themer.h \
+    core/Utilities/singleton.h \
+    core/Themer/singlethemer.h
 
 			   
 SOURCES                 +=  \
@@ -66,7 +69,9 @@ SOURCES                 +=  \
     core/Widgets/skinneddial.cpp \
     core/Utilities/flicknumberitem.cpp \
     core/Dialogs/NetWidgets/adddevicenetwidget.cpp \
-    core/Widgets/statefulbutton.cpp
+    core/Widgets/statefulbutton.cpp \
+    core/Themer/themer.cpp \
+    core/Themer/singlethemer.cpp
 
 			   
 FORMS 			+=  \

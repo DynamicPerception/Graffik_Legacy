@@ -29,9 +29,6 @@
 #include "addnetdialog.h"
 #include "ui_addnetdialog.h"
 
-#include "qextserialenumerator.h"
-
-#include "core/Dialogs/errordialog.h"
 
 AddNetDialog::AddNetDialog(OMNetwork *c_net, QWidget *c_parent) : QDialog(c_parent), ui(new Ui::AddNetDialog) {
     ui->setupUi(this);
@@ -44,6 +41,8 @@ AddNetDialog::AddNetDialog(OMNetwork *c_net, QWidget *c_parent) : QDialog(c_pare
     updateSerialPorts();
 
     QWidget::setTabOrder(ui->portCombo, ui->netName);
+
+    setStyleSheet(SingleThemer::getStyleSheet("add_net"));
 }
 
 AddNetDialog::~AddNetDialog() {

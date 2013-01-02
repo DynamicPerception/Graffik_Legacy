@@ -65,7 +65,9 @@ MotionArea::MotionArea(FilmParameters *c_film, OMdeviceInfo *c_dev, AxisOptions*
     connect(m_timer, SIGNAL(timeout()), this, SLOT(_tooltipTimer()));
 
         // enable mouse tracking so we can draw grab points
-    this->setMouseTracking(true);
+    setMouseTracking(true);
+
+    setStyleSheet(SingleThemer::getStyleSheet("motionarea"));
 }
 
 MotionArea::~MotionArea()

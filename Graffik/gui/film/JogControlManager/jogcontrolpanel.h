@@ -30,6 +30,8 @@
 #include "livedevicemodel.h"
 
 #include "core/Options/axisoptions.h"
+#include "core/Themer/singlethemer.h"
+
 #include "film/FilmParameters/filmparameters.h"
 #include "MoCoBus/omnetwork.h"
 

@@ -28,10 +28,7 @@
 
 #include "core/Dialogs/confirmdialog.h"
 
-AxisOptionsDialog::AxisOptionsDialog(AxisOptions* c_opts, unsigned short c_addr, QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::AxisOptionsDialog)
-{
+AxisOptionsDialog::AxisOptionsDialog(AxisOptions* c_opts, unsigned short c_addr, QWidget *parent) : QDialog(parent), ui(new Ui::AxisOptionsDialog) {
     ui->setupUi(this);
     m_opts = c_opts->getOptions(c_addr);
     m_optObj = c_opts;
@@ -44,11 +41,11 @@ AxisOptionsDialog::AxisOptionsDialog(AxisOptions* c_opts, unsigned short c_addr,
 
     QObject::connect(ui->defaultCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(_defaultComboChange(int)));
 
+    setStyleSheet(SingleThemer::getStyleSheet("axis_opts"));
 
 }
 
-AxisOptionsDialog::~AxisOptionsDialog()
-{
+AxisOptionsDialog::~AxisOptionsDialog() {
     delete ui;
 }
 

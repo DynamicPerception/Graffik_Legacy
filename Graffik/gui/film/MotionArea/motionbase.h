@@ -30,6 +30,7 @@
 #include "MoCoBus/omnetwork.h"
 #include "core/Options/axisoptions.h"
 #include "core/Options/globaloptions.h"
+#include "core/Themer/singlethemer.h"
 #include "film/FilmParameters/filmparameters.h"
 
 #define MB_STR_POS  "Position:"

@@ -29,6 +29,7 @@
 
 #include "MoCoBus/omnetwork.h"
 
+#include "core/Themer/singlethemer.h"
 
 namespace Ui {
     class AddDeviceDialog;
