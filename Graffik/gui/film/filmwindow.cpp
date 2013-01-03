@@ -249,8 +249,6 @@ void FilmWindow::on_camSetBut_clicked() {
     ui->filmMMSpin->setEnabled(en);
     ui->filmSSSpin->setEnabled(en);
 
-
-
     delete control;
 }
 
@@ -347,12 +345,16 @@ void FilmWindow::_changeTime(int p_which, int p_pos, int p_val) {
                 ui->filmSSSpin->setValue(1);
      }
 
+
     unsigned long mS = TimeConverter::msFromHours(hh) + TimeConverter::msFromMinutes(mm) + TimeConverter::msFromSeconds(ss);
     OMfilmParams* params = m_params->getParams();
 
-    bool autoFPS = params->camParams->autoFPS;
-    bool camEn   = params->camParams->camControl;
-    bool showUpdate = false;
+    bool           autoFPS = params->camParams->autoFPS;
+    bool             camEn = params->camParams->camControl;
+    unsigned long  realLen = params->realLength;
+    unsigned long      fps = params->fps;
+    unsigned long interval = m_exec->interval(params);
+    bool        showUpdate = false;
 
     if( p_which == 1 )
         params->length = mS;
@@ -405,9 +407,10 @@ void FilmWindow::_changeTime(int p_which, int p_pos, int p_val) {
     else if( camEn && ! autoFPS )
         _calcAutoFilmTime(); // update film time
 
-
-
-
+    if( ! camEn )
+        _showTotalFrames(realLen, fps);
+    else
+        _showTotalFrames(realLen, interval, true);
 }
 
  // apply constraints to film length, and update display as needed
@@ -665,7 +668,17 @@ void FilmWindow::_playStatus(bool p_stat, unsigned long p_time) {
     wasStat = p_stat;
 }
 
- // update time displays as status data comes back from FilmExec
+
+ // update the total frames display
+
+void FilmWindow::_showTotalFrames(unsigned long p_len, unsigned long p_val, bool p_type) {
+    if( ! p_type )
+        ui->totalFrameDispLabel->setText(QString::number((int) (p_len / 1000) * p_val));
+    else
+        ui->totalFrameDispLabel->setText(QString::number((int) p_len / p_val));
+}
+
+// update time displays as status data comes back from FilmExec
 
 void FilmWindow::_filmTimeDisplay(unsigned long p_ms) {
 
@@ -687,7 +700,7 @@ void FilmWindow::_filmTimeDisplay(unsigned long p_ms) {
         _popTimeDisplay(ui->filmSSLabel, rss);
 
         ui->curFrameDispLabel->setText(QString::number((int) ((float) p_ms * ((float) parms->fps / 1000.0))));
-        ui->totalFrameDispLabel->setText(QString::number((int) (parms->realLength / 1000) * parms->fps));
+        _showTotalFrames(parms->realLength, parms->fps);
 
     }
     else {
@@ -699,6 +712,7 @@ void FilmWindow::_filmTimeDisplay(unsigned long p_ms) {
 
         unsigned long interval = m_exec->interval(parms);
         ui->curFrameDispLabel->setText(QString::number((int) (p_ms / interval)));
+        _showTotalFrames(parms->realLength, interval, true);
         ui->totalFrameDispLabel->setText(QString::number((int) (parms->realLength / interval) ));
     }
 

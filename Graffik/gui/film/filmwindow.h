@@ -163,6 +163,7 @@ private:
     void _enableCamControl(bool p_en = true);
     void _showFilmTime();
     void _prepInputs();
+    void _showTotalFrames(unsigned long p_len, unsigned long p_val, bool p_type = false);
 
     void _changeTime(int p_which, int p_pos, int p_val);
     void _calcAutoFilmTime();
