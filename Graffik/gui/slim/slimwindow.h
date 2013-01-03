@@ -61,6 +61,7 @@ public:
 
 private slots:
     void onCmdEntry();
+    void _themeChanged();
 
 public slots:
         void registerNewDevice(OMbusInfo* p_bus, OMdeviceInfo* p_dev);

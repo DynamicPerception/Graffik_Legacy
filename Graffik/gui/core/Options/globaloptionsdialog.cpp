@@ -51,6 +51,8 @@ void GlobalOptionsDialog::on_okButton_clicked() {
     else if( disp == 2 )
         m_opts->display(Options::Steps);
 
+    m_opts->theme(ui->themeCombo->currentText());
+
     this->done(QDialog::Accepted);
 }
 
@@ -60,8 +62,22 @@ void GlobalOptionsDialog::on_cancelButton_clicked() {
 
 void GlobalOptionsDialog::_setupInputs() {
 
-    ui->stopCheckBox->setChecked(m_opts->stopOnErr());
     int dispTyp = m_opts->display();
+
+        // populate theme list
+    QString curTheme = m_opts->theme();
+
+    Themer* themer = &Singleton<Themer>::Instance();
+    QList<QString> themeList = themer->themes();
+
+    for( int i = 0; i < themeList.length(); i++ ) {
+        ui->themeCombo->addItem(themeList.at(i));
+        if( themeList.at(i) == curTheme )
+            ui->themeCombo->setCurrentIndex(i);
+    }
+
+    ui->stopCheckBox->setChecked(m_opts->stopOnErr());
+
 
     ui->displayCombo->addItem(GOD_IMP_LABEL);
     ui->displayCombo->addItem(GOD_MET_LABEL);

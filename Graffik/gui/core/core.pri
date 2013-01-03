@@ -9,8 +9,6 @@ CONFIG(release, debug|release) {
 HEADERS                 +=  \
 			   core/Dialogs/errordialog.h \
 			   core/Dialogs/addnetdialog.h \ 
-    core/NetworkStatusDisplay/networkstatusdisplay.h \
-    core/NetworkStatusDisplay/networkstatusgrid.h \
     core/Dialogs/adddevicedialog.h \
     core/NetworkManager/networkmanager.h \
     core/NetworkModel/networkmodel.h \
@@ -34,7 +32,6 @@ HEADERS                 +=  \
     core/Widgets/slidetoggle.h \
     core/Widgets/skinneddial.h \
     core/Utilities/flicknumberitem.h \
-    core/Dialogs/NetWidgets/adddevicenetwidget.h \
     core/Widgets/statefulbutton.h \
     core/Themer/themer.h \
     core/Utilities/singleton.h \
@@ -44,8 +41,6 @@ HEADERS                 +=  \
 SOURCES                 +=  \
                            core/Dialogs/errordialog.cpp \
                            core/Dialogs/addnetdialog.cpp \
-    core/NetworkStatusDisplay/networkstatusdisplay.cpp \
-    core/NetworkStatusDisplay/networkstatusgrid.cpp \
     core/Dialogs/adddevicedialog.cpp \
     core/NetworkManager/networkmanager.cpp \
     core/NetworkModel/networkmodel.cpp \
@@ -68,14 +63,12 @@ SOURCES                 +=  \
     core/Widgets/slidetoggle.cpp \
     core/Widgets/skinneddial.cpp \
     core/Utilities/flicknumberitem.cpp \
-    core/Dialogs/NetWidgets/adddevicenetwidget.cpp \
     core/Widgets/statefulbutton.cpp \
     core/Themer/themer.cpp \
     core/Themer/singlethemer.cpp
 
 			   
 FORMS 			+=  \
-    core/NetworkStatusDisplay/networkstatusdisplay.ui \
     core/NetworkManager/networkmanager.ui \
     core/Options/axisoptionsdialog.ui \
     core/Dialogs/adddevicedialog.ui \
@@ -90,9 +83,7 @@ FORMS 			+=  \
     core/Options/globaloptionsdialog.ui \
     core/Dialogs/netbasedialog.ui \
     core/Utilities/flicknumber.ui \
-    core/Utilities/flicknumberitem.ui \
-    core/Dialogs/NetWidgets/adddevicenetwidget.ui
-
+    core/Utilities/flicknumberitem.ui
 	   
 
 OTHER_FILES +=

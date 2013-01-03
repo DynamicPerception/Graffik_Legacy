@@ -28,6 +28,8 @@
 #include <QMutex>
 
 
+#include "core/Themer/themer.h"
+#include "core/Utilities/singleton.h"
 #include "optiontypes.h"
 
 /** Global Options Class
@@ -52,6 +54,9 @@ public:
 
     int display();
     void display(int p_mode);
+
+    QString theme();
+    void theme(QString p_theme);
     
 signals:
     void optionsChanged();
@@ -61,6 +66,7 @@ public slots:
 private:
     bool m_stopErr;
     int m_display;
+    QString m_theme;
 
     QMutex* m_mutex;
 };

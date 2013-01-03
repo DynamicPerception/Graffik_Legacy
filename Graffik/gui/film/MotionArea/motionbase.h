@@ -64,6 +64,9 @@ public slots:
     void statusChange(bool p_stat);
     void currentPlayStatus(bool p_stat, unsigned long p_runTime);
 
+private slots:
+    void _themeChanged();
+
 signals:
 
         /** Reflected signal from Motion Area, indicates the left X and right X borders

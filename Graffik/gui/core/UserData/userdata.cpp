@@ -111,6 +111,7 @@ void UserData::globalOptionsChanged(GlobalOptions *p_opts) {
 
     m_qset->setValue("stop", p_opts->stopOnErr());
     m_qset->setValue("display", p_opts->display());
+    m_qset->setValue("theme", p_opts->theme());
 
     m_qset->endGroup();
 }
@@ -126,11 +127,13 @@ void UserData::recoverGlobalOptions(GlobalOptions *p_opts) {
 
     m_qset->beginGroup("global/options");
 
-    bool stop = m_qset->value("stop").toBool();
-    int  disp = m_qset->value("display").toInt();
+    bool     stop = m_qset->value("stop").toBool();
+    int      disp = m_qset->value("display").toInt();
+    QString theme = m_qset->value("theme").toString();
 
     p_opts->stopOnErr(stop);
     p_opts->display(disp);
+    p_opts->theme(theme);
 
     m_qset->endGroup();
 }

@@ -92,8 +92,12 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
 
     _prepInputs();
 
-    setStyleSheet(SingleThemer::getStyleSheet("film"));
+    // theming
 
+    Themer* theme = &Singleton<Themer>::Instance();
+    connect(theme, SIGNAL(themeChanged()), this, SLOT(_themeChanged()));
+
+    setStyleSheet(theme->getThemeCSS("film"));
 }
 
 FilmWindow::~FilmWindow() {
@@ -117,6 +121,12 @@ FilmWindow::~FilmWindow() {
     delete ui;
 }
 
+void FilmWindow::_themeChanged() {
+    setStyleSheet(SingleThemer::getStyleSheet("film"));
+    style()->unpolish(this);
+    style()->polish(this);
+    update();
+}
 
 void FilmWindow::_drawNewAxis(OMdeviceInfo *p_dev) {
 

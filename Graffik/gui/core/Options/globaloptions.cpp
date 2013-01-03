@@ -23,13 +23,12 @@
 
 #include "globaloptions.h"
 
-GlobalOptions::GlobalOptions(QObject *parent) :
-    QObject(parent)
-{
+GlobalOptions::GlobalOptions(QObject *parent) : QObject(parent) {
 
     m_mutex = new QMutex;
     m_stopErr = true;
     m_display = Options::Imperial;
+    m_theme = Singleton<Themer>::Instance().theme();
 
 }
 
@@ -98,4 +97,31 @@ bool GlobalOptions::stopOnErr() {
     bool ret = m_stopErr;
     m_mutex->unlock();
     return ret;
+}
+
+
+/** Return Current Theme Name
+
+  This method is thread-safe, as long as no other
+  object attempts to interact with the themer directly
+  */
+QString GlobalOptions::theme() {
+    m_mutex->lock();
+    QString theme = m_theme;
+    m_mutex->unlock();
+    return theme;
+}
+
+/** Set Current Theme Name
+
+  This method is thread-safe, as long as no other
+  object attempts to interact with the themer directly
+  */
+void GlobalOptions::theme(QString p_theme) {
+    m_mutex->lock();
+    Themer* themer = &Singleton<Themer>::Instance();
+    themer->theme(p_theme);
+    m_theme = p_theme;
+    m_mutex->unlock();
+    emit optionsChanged();
 }

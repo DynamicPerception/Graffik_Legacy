@@ -27,6 +27,9 @@
 #include <QDialog>
 
 #include "globaloptions.h"
+
+#include "core/Themer/themer.h"
+#include "core/Utilities/singleton.h"
 #include "core/Themer/singlethemer.h"
 
 #define GOD_IMP_LABEL   "Imperial"

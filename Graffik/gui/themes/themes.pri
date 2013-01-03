@@ -38,10 +38,13 @@ defineTest(copyThemeFiles) {
     export(THEMEFILECOPY)
 }
 
+# list all theme directories which should be included as part of the base build
 THEME_FILES = \
         DP-Blue
 
+
 OTHER_FILES += \
+       themes/README.txt \
        themes/DP-Blue/about.qss \
        themes/DP-Blue/add_device.qss \
        themes/DP-Blue/add_net.qss \

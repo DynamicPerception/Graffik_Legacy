@@ -25,9 +25,7 @@
 
 #include <QDebug>
 
-AxisOptions::AxisOptions(QObject *parent) :
-    QObject(parent)
-{
+AxisOptions::AxisOptions(QObject *parent) : QObject(parent) {
 
     // allow us to serialize OMaxisOptions structures
     // and use OMaxisOptions structures in arguments to

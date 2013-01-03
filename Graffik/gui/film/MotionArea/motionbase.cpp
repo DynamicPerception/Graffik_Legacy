@@ -57,13 +57,26 @@ MotionBase::MotionBase(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions 
     connect(m_area, SIGNAL(globalPosition(int,int)), this, SIGNAL(areaBorders(int,int)));
     connect(this, SIGNAL(playStatus(bool)), m_area, SLOT(playStatus(bool)));
 
-    setStyleSheet(SingleThemer::getStyleSheet("motionbase"));
+    // theming
+
+    Themer* theme = &Singleton<Themer>::Instance();
+    connect(theme, SIGNAL(themeChanged()), this, SLOT(_themeChanged()));
+
+    setStyleSheet(theme->getThemeCSS("motionbase"));
+
 }
 
 MotionBase::~MotionBase()
 {
     delete m_area;
     delete ui;
+}
+
+void MotionBase::_themeChanged() {
+    setStyleSheet(SingleThemer::getStyleSheet("motionbase"));
+    style()->unpolish(this);
+    style()->polish(this);
+    update();
 }
 
 void MotionBase::curScale(bool p_scale) {

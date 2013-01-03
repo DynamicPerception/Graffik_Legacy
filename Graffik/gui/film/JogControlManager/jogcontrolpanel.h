@@ -58,6 +58,7 @@ public:
 private slots:
     void _endSet(unsigned short p_addr, long p_dist);
     void _jogMotorChangeDenied(unsigned short p_oldAddr);
+    void _themeChanged();
 
 private:
     Ui::JogControlPanel *ui;

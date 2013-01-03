@@ -3,6 +3,10 @@
 
 #include <QObject>
 
+/** Singleton Template Helper Class
+
+  Reference implementation from Qt.
+  */
 template <class T>
 class Singleton
 {

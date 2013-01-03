@@ -108,9 +108,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->tabs->setCurrentWidget(_filmWindow);
     m_curScreen = FILM_SCREEN;
 
-        // themeing
+        // themeing, watch for changes
 
-    setStyleSheet(SingleThemer::getStyleSheet("main"));
+    Themer* theme = &Singleton<Themer>::Instance();
+    connect(theme, SIGNAL(themeChanged()), this, SLOT(themeChanged()));
+
+    setStyleSheet(theme->getThemeCSS("main"));
 }
 
 MainWindow::~MainWindow() {
@@ -136,6 +139,12 @@ void MainWindow::globalOptionsChanged() {
     emit globalOptionsChanged(_globalOpts);
 }
 
+void MainWindow::themeChanged() {
+    setStyleSheet(SingleThemer::getStyleSheet("main"));
+    style()->unpolish(this);
+    style()->polish(this);
+    update();
+}
 
  // TODO: Fix leak
 void MainWindow::on_actionHelp_Contents_triggered() {

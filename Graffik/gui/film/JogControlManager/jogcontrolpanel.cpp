@@ -45,7 +45,12 @@ JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, FilmPara
     connect(m_jcm, SIGNAL(motorChangeDenied(unsigned short)), this, SLOT(_jogMotorChangeDenied(unsigned short)));
     connect(m_jcm, SIGNAL(endPosition(unsigned short,long)), this, SLOT(_endSet(unsigned short,long)));
 
-    setStyleSheet(SingleThemer::getStyleSheet("jog"));
+    // theming
+
+    Themer* theme = &Singleton<Themer>::Instance();
+    connect(theme, SIGNAL(themeChanged()), this, SLOT(_themeChanged()));
+
+    setStyleSheet(theme->getThemeCSS("jog"));
 
 }
 
@@ -56,6 +61,13 @@ JogControlPanel::~JogControlPanel()
     delete m_ldModel;
 }
 
+
+void JogControlPanel::_themeChanged() {
+    setStyleSheet(SingleThemer::getStyleSheet("jog"));
+    style()->unpolish(this);
+    style()->polish(this);
+    update();
+}
 
 void JogControlPanel::_jogMotorChangeDenied(unsigned short p_oldAddr) {
     qDebug() << "JCP: Motor change was denied, re-setting devButtonList selection" << p_oldAddr;

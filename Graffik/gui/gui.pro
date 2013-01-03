@@ -74,14 +74,6 @@ include(docs/docs.pri)
 include(themes/themes.pri)
 
 
-
-# load resources
-
-RESOURCES += \
-    icons.qrc \
-    uiImages.qrc
-
-
 # theme files
 
 

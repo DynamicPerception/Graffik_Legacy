@@ -119,6 +119,7 @@ private slots:
     void _filmStarted();
     void _busyCanceled();
     void _shuttleComplete();
+    void _themeChanged();
 
 signals:
         /** This signal is reflected from the drawn motion areas to indicate

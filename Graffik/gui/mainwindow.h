@@ -99,6 +99,7 @@ public slots:
 private slots:
 
     void globalOptionsChanged();
+    void themeChanged();
 
 signals:
     void globalOptionsChanged(GlobalOptions* p_opts);

@@ -3,7 +3,7 @@
 #include <QDebug>
 
 
-Themer::Themer() {
+Themer::Themer(QObject* parent) : QObject(parent) {
         // default theme path
     m_themePath = QCoreApplication::applicationDirPath() + "/themes";
     m_themeList = new QHash<QString, QString>;
@@ -50,6 +50,7 @@ void Themer::theme(QString p_theme) {
     qDebug() << "Themer: Set theme" << p_theme;
 
     m_curTheme = p_theme;
+    emit themeChanged();
 }
 
 /** Get Theme
@@ -105,7 +106,10 @@ void Themer::_getThemeList() {
 
     QStringList dirs = themeDir.entryList();
 
+    qDebug() << dirs;
+
     foreach(QString dir, dirs) {
+        qDebug() << "Themer: Found Directory" << dir;
         QString path = m_themePath + "/" + dir;
         _loadTheme(path);
     }
