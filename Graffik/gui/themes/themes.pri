@@ -27,13 +27,21 @@ defineTest(copyThemeFiles) {
 
 
     for(FILE, files) {
+        ORIG_FILE = $$FILE
         FILE = $$PWD/$$FILE
-        MYFILECOPY += @echo "Copying $$FILE" $$escape_expand(\\n\\t)
+        THEMEFILECOPY += @echo "Copying $$FILE" $$escape_expand(\\n\\t)
         # Replace slashes in paths with backslashes for Windows
         win32:FILE ~= s,/,\\,g
 
 
-        THEMEFILECOPY += $$QMAKE_COPY -R $$quote($$FILE) $$quote($$DDIR) $$escape_expand(\\n\\t)
+        macx {
+            THEMEFILECOPY += $$QMAKE_COPY -R $$quote($$FILE) $$quote($$DDIR) $$escape_expand(\\n\\t)
+        }
+
+        win32 {
+            THEMEFILECOPY += xcopy /Y /E /I $$quote($$FILE) $$quote($$DDIR\\$$ORIG_FILE) $$escape_expand(\\n\\t)
+        }
+
     }
     export(THEMEFILECOPY)
 }
@@ -50,11 +58,13 @@ OTHER_FILES += \
        themes/DP-Blue/add_net.qss \
        themes/DP-Blue/axis_opts.qss \
        themes/DP-Blue/camera_opts.qss \
+       themes/DP-Blue/camera_opts_osx.qss \
        themes/DP-Blue/confirm.qss \
        themes/DP-Blue/delete_bus.qss \
        themes/DP-Blue/delete_device.qss \
        themes/DP-Blue/error.qss \
        themes/DP-Blue/film.qss \
+       themes/DP-Blue/film_osx.qss \
        themes/DP-Blue/global_opts.qss \
        themes/DP-Blue/img/accel-but-normal.png \
        themes/DP-Blue/img/accel-but-pressed.png \

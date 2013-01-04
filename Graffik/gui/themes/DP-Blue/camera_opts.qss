@@ -111,11 +111,7 @@ SlideToggle {
 
 SlideToggle::groove:horizontal {
      border-image: url(themes/DP-Blue/img/toggle-bg.png);
-     border-left: -9px transparent;
-     border-right: -8px transparent;
-     border-bottom: -5px transparent;
-     border-top: 0px transparent;
-    /*border: 0px transparent;*/
+     border: 0px transparent;
      padding: 0px;
      margin: 0px;
 }

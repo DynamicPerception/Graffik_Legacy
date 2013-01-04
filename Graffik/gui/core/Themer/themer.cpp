@@ -98,6 +98,8 @@ QString Themer::getThemeCSS(QString p_which) {
 
 void Themer::_getThemeList() {
 
+    qDebug() << "Themer: Using Theme Directory" << m_themePath;
+
     m_themeList->clear();
 
     QDir themeDir(m_themePath);
@@ -184,6 +186,11 @@ QString Themer::_fileContents(QString p_path) {
         ret.append(in.readLine());
 
     contents.close();
+
+    // hack for windows, QSS doesn't like the relative urls for images
+#ifdef Q_WS_WIN
+    ret.replace("url(", "url(" + QCoreApplication::applicationDirPath() + "/");
+#endif
 
     return ret;
 }

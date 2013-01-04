@@ -1,0 +1,5 @@
+SlideToggle::groove:horizontal {
+     border-left: -9px transparent !important;
+     border-right: -8px transparent !important;
+     border-bottom: -5px transparent !important;
+}

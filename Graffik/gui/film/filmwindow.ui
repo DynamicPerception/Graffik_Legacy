@@ -896,7 +896,7 @@
        <item row="0" column="1">
         <widget class="QToolButton" name="camSetBut">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -904,13 +904,13 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>37</height>
+           <height>0</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>187</width>
-           <height>37</height>
+           <width>16777215</width>
+           <height>16777215</height>
           </size>
          </property>
          <property name="sizeIncrement">
@@ -938,20 +938,20 @@
        <item row="0" column="2">
         <widget class="SlideToggle" name="camControlSlider">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
          <property name="minimumSize">
           <size>
-           <width>66</width>
-           <height>34</height>
+           <width>0</width>
+           <height>0</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>66</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
