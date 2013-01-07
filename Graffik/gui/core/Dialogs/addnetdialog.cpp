@@ -68,9 +68,10 @@ void AddNetDialog::updateSerialPorts() {
         }
 
         ui->portCombo->addItem(port.portName, QVariant(port.friendName));
+        ui->portHintLabel->setText(port.friendName);
     }
 
-    ui->portHintLabel->setText(ports[0].friendName);
+
 }
 
 void AddNetDialog::on_rescanButton_clicked() {
@@ -79,7 +80,6 @@ void AddNetDialog::on_rescanButton_clicked() {
 
 void AddNetDialog::on_portCombo_currentIndexChanged(int p_idx) {
     ui->portHintLabel->setText(ui->portCombo->itemData(p_idx).toString());
-
 }
 
 

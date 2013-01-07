@@ -58,13 +58,11 @@ OTHER_FILES += \
        themes/DP-Blue/add_net.qss \
        themes/DP-Blue/axis_opts.qss \
        themes/DP-Blue/camera_opts.qss \
-       themes/DP-Blue/camera_opts_osx.qss \
        themes/DP-Blue/confirm.qss \
        themes/DP-Blue/delete_bus.qss \
        themes/DP-Blue/delete_device.qss \
        themes/DP-Blue/error.qss \
        themes/DP-Blue/film.qss \
-       themes/DP-Blue/film_osx.qss \
        themes/DP-Blue/global_opts.qss \
        themes/DP-Blue/img/accel-but-normal.png \
        themes/DP-Blue/img/accel-but-pressed.png \
@@ -103,7 +101,7 @@ OTHER_FILES += \
        themes/DP-Blue/img/play-normal.png \
        themes/DP-Blue/img/play-pressed.png \
        themes/DP-Blue/img/res-but-normal.png \
-       themes/DP-Blue/img/res-but-pressedl.png \
+       themes/DP-Blue/img/res-but-pressed.png \
        themes/DP-Blue/img/rwd-home-normal.png \
        themes/DP-Blue/img/rwd-home-pressed.png \
        themes/DP-Blue/img/rwd-normal.png \
@@ -147,6 +145,7 @@ OTHER_FILES += \
        themes/DP-Blue/jog.qss \
        themes/DP-Blue/main.qss \
        themes/DP-Blue/motionbase.qss \
+       themes/DP-Blue/motionbase_osx.qss \
        themes/DP-Blue/net_base.qss \
        themes/DP-Blue/net_man.qss \
        themes/DP-Blue/slim.qss \
@@ -163,13 +162,13 @@ win32 {
   EDIR = $$DDIR
   EDIR ~= s,\\\\,/,g
 
-  exists($$DDIR) {
-    theme_copy.commands += @echo "Removing Directory $$EDIR" $$escape_expand(\\n\\t)
-    theme_copy.commands += rd /S /Q $$DDIR $$escape_expand(\\n\\t)
-  }
+#  exists($$DDIR) {
+#    theme_copy.commands += md $$DDIR $$escape_expand(\\n\\t)
+#    theme_copy.commands += @echo "Removing Directory $$DDIR" $$escape_expand(\\n\\t)
+#    theme_copy.commands += rd /S /Q $$DDIR $$escape_expand(\\n\\t)
+#  }
 
   theme_copy.commands += @echo "Creating Theme Directory: $$DDIR ($$EDIR)" $$escape_expand(\\n\\t)
-  theme_copy.commands += md $$DDIR $$escape_expand(\\n\\t)
   theme_copy.commands += $$THEMEFILECOPY
 
 }

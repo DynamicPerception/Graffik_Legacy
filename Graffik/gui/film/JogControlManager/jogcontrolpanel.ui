@@ -166,6 +166,9 @@
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
+       <property name="wrapping">
+        <bool>false</bool>
+       </property>
        <property name="notchTarget">
         <double>20.000000000000000</double>
        </property>

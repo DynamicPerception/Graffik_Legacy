@@ -26,20 +26,23 @@
 
 #include <QDebug>
 
-MotionBase::MotionBase(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions *c_aopts, GlobalOptions *c_gopts, QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::MotionBase)
-{
+MotionBase::MotionBase(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions *c_aopts, GlobalOptions *c_gopts, QWidget *parent) : QWidget(parent), ui(new Ui::MotionBase) {
     ui->setupUi(this);
 
     m_area = new MotionArea(c_film, c_dev, c_aopts, c_gopts, this);
     ui->gridLayout->addWidget(m_area, 0, 2, 1, 1);
-   // ui->horizontalLayout->setContentsMargins(0,0,0,0);
-   // ui->horizontalLayout->setMargin(0);
-   // ui->horizontalLayout->setSpacing(0);
 
     m_film = c_film;
     m_dev = c_dev;
+
+    // OSX has issues laying out these buttons w/o overlap,
+    // this is a work-around
+#ifdef Q_WS_MAC
+    ui->scaleButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+    ui->resButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+    ui->easeButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+    ui->muteButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+#endif
 
     ui->nameLabel->setText(c_dev->name);
     ui->resButton->setText(" R "); // default is rapid mode
@@ -66,8 +69,7 @@ MotionBase::MotionBase(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions 
 
 }
 
-MotionBase::~MotionBase()
-{
+MotionBase::~MotionBase() {
     delete m_area;
     delete ui;
 }
@@ -79,12 +81,16 @@ void MotionBase::_themeChanged() {
     update();
 }
 
+/** Set Scale Ratio Slot */
+
 void MotionBase::curScale(bool p_scale) {
     if( p_scale == true )
         ui->scaleButton->setText(" R ");
     else
         ui->scaleButton->setText(" P ");
 }
+
+/** Easing Button Clicked Slot */
 
 void MotionBase::on_easeButton_clicked() {
     OMfilmParams* parms = m_film->getParams();
@@ -110,6 +116,8 @@ void MotionBase::on_easeButton_clicked() {
     m_film->releaseParams();
 
 }
+
+/** Resolution Button Clicked Slot */
 
 void MotionBase::on_resButton_clicked() {
 

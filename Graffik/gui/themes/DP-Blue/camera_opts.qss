@@ -13,10 +13,6 @@
     font: 12px "Lucida Sans";
 }
 
-#manIntShowFrame {
-    min-height: 100px;
-    max-height: 100px;
-}
 
 QDoubleSpinBox, QSpinBox {
     padding-left: 10px;
@@ -39,7 +35,7 @@ QDoubleSpinBox:disabled, QSpinBox:disabled {
 QDoubleSpinBox::up-button, QSpinBox::up-button {
     border-image:url(themes/DP-Blue/img/scroll-spin-up.png);
     border: 0px transparent;
-    border-radius-top-right:16px;
+   /* border-radius-top-right:16px; */
     min-height: 21px;
     max-height: 21px;
     min-width:29px;
@@ -55,29 +51,38 @@ QDoubleSpinBox::down-button, QSpinBox::down-button {
     max-width:29px;
 }
 
+FlickNumber {
+ max-height: 35px;
+ min-height: 30px;
+
+}
+
 FlickNumber #wheelLabel {
     border-image:url(themes/DP-Blue/img/kinetic-sm-wheel.png);
     border:0px transparent;
     padding: 0px;
     margin:0px;
-    max-height: 30px;
-    min-height: 30px;
+    max-height: 35px;
+    min-height: 35px;
 }
 
 FlickNumber QListWidget {
     show-decoration-selected: 1;
-    font: 20pt "Lucida Sans";
-    max-height: 30px;
-    min-height: 30px;
+    border-image: url(themes/DP-Blue/img/kinetic-sm-bg.png);
+    font: 14pt "Lucida Sans";
+    border: 0px transparent;
+    max-height: 35px;
+    min-height: 35px;
     min-width:67px;
     max-width:67px;
+    margin:0px;
 }
 
 
 FlickNumber QListWidget::item {
     color:rgb(81,82,85);
-     border-image: url(themes/DP-Blue/img/kinetic-sm-bg.png);
-     border: 0px transparent;
+    border: 0px transparent;
+    border-radius: 3px;
     padding: 0px;
     margin: 0px;
     background-color: transparent;
@@ -92,17 +97,20 @@ FlickNumber QListWidget::item:selected {
     background-color: transparent;
 }
 
-FlickNumber QListWidgetItem {
-    text-align: center;
-}
-
 FlickNumber QListWidget::item:disabled {
     color:rgb(184, 184, 184);
 }
 
+FlickNumber QListWidgetItem {
+    text-align: center;
+}
+
+
+
 
 
 SlideToggle {
+    margin: 4px;
     min-width: 66px;
     max-width: 66px;
     min-height: 34px;
@@ -114,32 +122,33 @@ SlideToggle::groove:horizontal {
      border: 0px transparent;
      padding: 0px;
      margin: 0px;
+     width: 66px;
+     height: 34px;
 }
 
 SlideToggle::handle:horizontal {
-    margin:0px;
+    margin:-2px -4px -4px -4px;
     padding:0px;
+    width:40px;
+    height:40px;
     image: url(themes/DP-Blue/img/slider-handle-blue.png);
 }
 
-SlideToggle {
-    margin:4px;
-}
 
 #expDelayLabel {
     max-height:15px;
 }
 
-#SMSInnerFrame, #focLocFrame, #focusConFrame, #manIntFrame, #filmLenFrame {
+#manIntShowFrame {
+    min-height: 100px;
+    max-height: 100px;
+}
+
+#SMSInnerFrame, #focLocFrame, #focusConFrame, #manIntFrame, #filmLenFrame, #bulbExpFrame {
     max-height: 50px;
     min-height: 40px;
 }
 
-#bulbExpFrame {
-    padding: 5px;
-    max-height: 50px;
-    min-height: 40px;
-}
 
 #SMSFrame {
     max-height:75px;
@@ -157,7 +166,7 @@ SlideToggle {
     font: 16pt "Lucida Sans";
 }
 
-#SMSInnerFrame QLabel, #filmLenFrame QLabel, #focLocFrame QLabel, #focusConFrame QLabel, #manIntFrame QLabel {
+#SMSInnerFrame QLabel, #filmLenFrame QLabel, #focLocFrame QLabel, #focusConFrame QLabel, #manIntFrame QLabel, #bulbExpFrame QLabel {
     margin-left: 5px;
 }
 
@@ -188,7 +197,4 @@ SlideToggle {
     margin:0px;
 }
 
-#exposureFrame, #focusFrame, #filmDefFrame {
-    margin: 0px;
-}
 

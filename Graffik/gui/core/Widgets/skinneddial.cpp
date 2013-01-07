@@ -21,6 +21,7 @@ SkinnedDial::SkinnedDial(QWidget *parent) : QDial(parent) {
     m_cacheWidth      = 0;
     m_cacheHeight     = 0;
 
+    setWrapping(true);
 }
 
  /** Constructor

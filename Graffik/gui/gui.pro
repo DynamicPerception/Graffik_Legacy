@@ -110,16 +110,32 @@ win32 {
     # only copy dlls and destroy source files for release versions
  CONFIG(release, debug|release) {
 
-DEP_FILES = \
-    $$[QT_INSTALL_BINS]\\QtCore4.dll \
-    $$[QT_INSTALL_BINS]\\QtGui4.dll \
-    $$[QT_INSTALL_BINS]\\QtHelp4.dll \
-    $$[QT_INSTALL_BINS]\\QtCLucene4.dll \
-    $$[QT_INSTALL_BINS]\\QtSql4.dll \
-    $$[QT_INSTALL_BINS]\\QtNetwork4.dll \
-    $$[QT_INSTALL_BINS]\\mingwm10.dll \
-    $$[QT_INSTALL_BINS]\\libgcc_s_dw2-1.dll \
-    $$OUT_PWD\\..\\libs\\qextserialport\\src\\build\\qextserialport1.dll
+ contains(QT_VERSION, "4.8.1") {
+    DEP_FILES = \
+       $$[QT_INSTALL_BINS]\\QtCore4.dll \
+       $$[QT_INSTALL_BINS]\\QtGui4.dll \
+       $$[QT_INSTALL_BINS]\\QtHelp4.dll \
+      $$[QT_INSTALL_BINS]\\QtCLucene4.dll \
+      $$[QT_INSTALL_BINS]\\QtSql4.dll \
+      $$[QT_INSTALL_BINS]\\QtNetwork4.dll \
+      $$[QT_INSTALL_BINS]\\..\\..\\..\\..\\..\\mingw\\bin\\mingwm10.dll \
+      $$[QT_INSTALL_BINS]\\..\\..\\..\\..\\..\\mingw\\bin\\libgcc_s_dw2-1.dll \
+      $$OUT_PWD\\..\\libs\\qextserialport\\src\\build\\qextserialport1.dll
+ }
+
+ !contains(QT_VERSION, "4.8.1") {
+
+    DEP_FILES = \
+       $$[QT_INSTALL_BINS]\\QtCore4.dll \
+      $$[QT_INSTALL_BINS]\\QtGui4.dll \
+      $$[QT_INSTALL_BINS]\\QtHelp4.dll \
+      $$[QT_INSTALL_BINS]\\QtCLucene4.dll \
+      $$[QT_INSTALL_BINS]\\QtSql4.dll \
+      $$[QT_INSTALL_BINS]\\QtNetwork4.dll \
+      $$[QT_INSTALL_BINS]\\mingwm10.dll \
+      $$[QT_INSTALL_BINS]\\libgcc_s_dw2-1.dll \
+      $$OUT_PWD\\..\\libs\\qextserialport\\src\\build\\qextserialport1.dll
+  }
 
 
     deployFiles($$DEP_FILES)

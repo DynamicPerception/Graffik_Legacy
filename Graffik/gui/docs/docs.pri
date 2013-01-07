@@ -37,8 +37,12 @@ defineTest(copyHelpFiles) {
         # Replace slashes in paths with backslashes for Windows
         win32:FILE ~= s,/,\\,g
 
-
-        MYFILECOPY += $$QMAKE_COPY $$quote($$FILE) $$quote($$DDIR) $$escape_expand(\\n\\t)
+        macx {
+            MYFILECOPY += $$QMAKE_COPY $$quote($$FILE) $$quote($$DDIR) $$escape_expand(\\n\\t)
+        }
+        win32 {
+            MYFILECOPY += xcopy /Y /I $$quote($$FILE) $$quote($$DDIR) $$escape_expand(\\n\\t)
+        }
     }
     export(MYFILECOPY)
 }
@@ -84,13 +88,9 @@ win32 {
   EDIR = $$DDIR
   EDIR ~= s,\\\\,/,g
 
-  exists($$DDIR) {
-    help_copy.commands += @echo "Removing Directory $$EDIR" $$escape_expand(\\n\\t)
-    help_copy.commands += rd /S /Q $$DDIR $$escape_expand(\\n\\t)
-  }
 
-  help_copy.commands += @echo "Creating Docs Directory: $$DDIR ($$EDIR)" $$escape_expand(\\n\\t)
-  help_copy.commands += md $$DDIR $$escape_expand(\\n\\t)
+ # help_copy.commands += @echo "Creating Docs Directory: $$DDIR ($$EDIR)" $$escape_expand(\\n\\t)
+ # help_copy.commands += md $$DDIR $$escape_expand(\\n\\t)
   help_copy.commands += $$MYFILECOPY
   help_copy.commands += @echo "Running qhelpgenerator" $$escape_expand(\\n\\t)
   help_copy.commands += $$[QT_INSTALL_BINS]\\qhelpgenerator $$DDIR\\docs.qhp -o $$DDIR\\docs.qch $$escape_expand(\\n\\t)

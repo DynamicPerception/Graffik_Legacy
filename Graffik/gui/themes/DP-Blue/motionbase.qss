@@ -8,30 +8,52 @@
     margin:0px;
 }
 
+#infoFrame {
+ max-width:225px;
+ border: 0px;
+}
+
 #dispLCD {
     border-image: url(themes/DP-Blue/img/axis-dist-bg.png);
     border: 0px transparent;
     margin: 3px;
+    max-width: 200px;
 }
 
 #dispLCDFrame {
     background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(190, 190, 190, 255), stop:1 rgba(130, 130, 130, 255));
     margin:0px;
+    padding: 0px;
+    max-width:225px;
 }
 
 #nameLabel {
     background-color:qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(69, 140, 187, 255), stop:1 rgba(43, 110, 159, 255));
     color: white;
     margin:0px;
+    max-width:225px;
+    max-height:35px;
+    padding: 0px;
+    margin:0px;
 }
 
-#easeButton {
+#easeButton, #muteButton, #resButton, #scaleButton {
     color:white;
     text-align:right;
     padding-top:10%;
     padding-right:3%;
-    border-image: url(themes/DP-Blue/img/accel-but-normal.png);
     border: 0px transparent;
+    margin: 0px;
+    min-width: 54px;
+    min-height: 38px;
+    max-width: 54px;
+    max-height: 38px;
+    width:54px;
+    height: 38px;
+}
+
+#easeButton {
+    border-image: url(themes/DP-Blue/img/accel-but-normal.png);
 }
 
 #easeButton:pressed {
@@ -40,7 +62,6 @@
 
 #muteButton {
     border-image: url(themes/DP-Blue/img/mute-but-normal.png);
-    border: 0px transparent;
 }
 
 #muteButton:pressed {
@@ -49,12 +70,7 @@
 
 
 #resButton {
-    color:white;
-    text-align:right;
-    padding-top:10%;
-    padding-right:3%;
     border-image: url(themes/DP-Blue/img/res-but-normal.png);
-    border: 0px transparent;
 }
 
 #resButton:pressed {
@@ -63,11 +79,6 @@
 
 #scaleButton {
     border-image: url(themes/DP-Blue/img/scale-but-normal.png);
-    border: 0px transparent;
-    color:white;
-    text-align:right;
-    padding-top:10%;
-    padding-right:3%;
 }
 
 #scaleButton:pressed {
@@ -77,4 +88,5 @@
 #motionSepLine {
     padding:0px;
     margin:0px;
+    width:1px;
 }

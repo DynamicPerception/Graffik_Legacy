@@ -3,17 +3,27 @@ FlickNumber #wheelLabel {
     border:0px transparent;
     padding: 0px;
     margin:0px;
+    margin-top: 3px;
+}
+
+FlickNumber {
+ max-height: 45px;
 }
 
 FlickNumber QListWidget {
     show-decoration-selected: 1;
-    font: 30pt "Lucida Sans";
+    border-image: url(themes/DP-Blue/img/kinetic-bg.png);
+    font: 26pt "Lucida Sans";
+    border:0px transparent;
+  /*  border-radius: 5px;*/
+    padding: 0px;
+    margin: 0px;
+    margin-top:3px;
 }
 
 
 FlickNumber QListWidget::item {
     color:rgb(81,82,85);
-     border-image: url(themes/DP-Blue/img/kinetic-bg.png);
      border: 0px transparent;
     padding: 0px;
     margin: 0px;
@@ -125,6 +135,7 @@ MotionArea[muted="2"] {
      border-image: url(themes/DP-Blue/img/camset-but-normal.png);
      border: 0px transparent;
      margin-top:2px;
+     margin-left:5px;
      min-width:150px;
      max-width:187px;
      min-height: 37px;
@@ -143,9 +154,15 @@ MotionArea[muted="2"] {
      margin-top:2px;
 }
 
-SlideToggle::groove:horizontal {
+#camControlSlider {
+
+ margin-left: 10px;
+ margin-top: -2px;
+ margin-right: 10px;
+}
+
+#camControlSlider::groove:horizontal {
      border-image: url(themes/DP-Blue/img/toggle-bg.png);
-    /*image: url(themes/DP-Blue/img/toggle-bg.png);*/
      padding: 0px;
      margin: 0px;
      height: 35px;
@@ -153,21 +170,14 @@ SlideToggle::groove:horizontal {
 
 }
 
-SlideToggle::handle:horizontal {
-    margin:-2px -4px -4px -4px;
+#camControlSlider::handle:horizontal {
+    margin:-2px 0px -2px 0px;
     padding:0px;
     height: 42px;
     width:42px;
-   /* min-width: 42px;
-    max-width: 42px;
-    min-height: 42px;
-    max-height: 42px; */
     image: url(themes/DP-Blue/img/slider-handle-dark.png);
 }
 
-SlideToggle {
-    margin:4px;
-}
 
 #pluginStackedWidget {
     padding: 0px;
