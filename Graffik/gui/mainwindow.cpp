@@ -98,11 +98,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(_axisOpts, SIGNAL(deviceOptionsChanged(OMaxisOptions*,unsigned short)), _uData, SLOT(deviceOptionsChanged(OMaxisOptions*,unsigned short)));
     connect(_axisOpts, SIGNAL(deviceOptionsRemoved(unsigned short)), _uData, SLOT(deviceOptionsRemoved(unsigned short)));
 
-    connect(_globalOpts, SIGNAL(optionsChanged()), this, SLOT(globalOptionsChanged()));
+    connect(_globalOpts, SIGNAL(optionsChanged()), this, SLOT(_globalOptionsChanged()));
     connect(this, SIGNAL(globalOptionsChanged(GlobalOptions*)), _uData, SLOT(globalOptionsChanged(GlobalOptions*)));
 
-    // simulate pressing the film button to default to film screen
-    //on_filmButton_clicked();
+    // default to film screen
 
     ui->screenSelCombo->setCurrentIndex(0);
     ui->tabs->setCurrentWidget(_filmWindow);
@@ -111,9 +110,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         // themeing, watch for changes
 
     Themer* theme = &Singleton<Themer>::Instance();
-    connect(theme, SIGNAL(themeChanged()), this, SLOT(themeChanged()));
+    connect(theme, SIGNAL(themeChanged()), this, SLOT(_themeChanged()));
 
     setStyleSheet(theme->getThemeCSS("main"));
+
+        // if the application has not yet been configured, prompt a welcome screen
+    if( ! _uData->exists() ) {
+        WelcomeDialog welcome(this);
+        connect(&welcome, SIGNAL(addBus()), this, SLOT(_welcomeAddBus()));
+        welcome.exec();
+        disconnect(&welcome, SIGNAL(addBus()), this, SLOT(_welcomeAddBus()));
+    }
 }
 
 MainWindow::~MainWindow() {
@@ -135,15 +142,29 @@ MainWindow::~MainWindow() {
 }
 
 
-void MainWindow::globalOptionsChanged() {
+void MainWindow::_globalOptionsChanged() {
     emit globalOptionsChanged(_globalOpts);
 }
 
-void MainWindow::themeChanged() {
+void MainWindow::_optionsCleared() {
+    ConfirmDialog dia("WARNING: Clearing All Settings Cannot Be Undone, Continue?", this);
+    int res = dia.exec();
+    if( res == QDialog::Accepted ) {
+        _uData->clear();
+    }
+}
+
+void MainWindow::_themeChanged() {
     setStyleSheet(SingleThemer::getStyleSheet("main"));
     style()->unpolish(this);
     style()->polish(this);
     update();
+}
+
+void MainWindow::_welcomeAddBus() {
+
+    AddNetDialog addnet(_net, this);
+    addnet.exec();
 }
 
  // TODO: Fix leak
@@ -157,7 +178,12 @@ void MainWindow::on_actionHelp_Contents_triggered() {
 void MainWindow::on_actionSettings_triggered() {
     qDebug() << "MW: Settings Triggered";
     GlobalOptionsDialog options(_globalOpts);
+
+    connect(&options, SIGNAL(optionsCleared()), this, SLOT(_optionsCleared()));
+
     options.exec();
+
+    disconnect(&options, SIGNAL(optionsCleared()), this, SLOT(_optionsCleared()));
 }
 
 void MainWindow::on_actionAbout_Graffik_triggered() {

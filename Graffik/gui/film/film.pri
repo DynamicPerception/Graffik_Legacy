@@ -26,7 +26,8 @@ HEADERS += \
     film/MotionArea/sectionresizefilter.h \
     film/JogControlManager/jogcontrolpanel.h \
     film/FilmFileHandler/filmfilehandler.h \
-    film/FilmFileHandler/addressnotfounddialog.h
+    film/FilmFileHandler/addressnotfounddialog.h \
+    film/Dialogs/trackinfodialog.h
 
 
 SOURCES += \
@@ -48,7 +49,8 @@ SOURCES += \
     film/MotionArea/sectionresizefilter.cpp \
     film/JogControlManager/jogcontrolpanel.cpp \
     film/FilmFileHandler/filmfilehandler.cpp \
-    film/FilmFileHandler/addressnotfounddialog.cpp
+    film/FilmFileHandler/addressnotfounddialog.cpp \
+    film/Dialogs/trackinfodialog.cpp
 
 FORMS += \
     film/filmwindow.ui \
@@ -57,4 +59,5 @@ FORMS += \
     film/Dialogs/cameracontroldialog.ui \
     film/MotionArea/motiontape.ui \
     film/JogControlManager/jogcontrolpanel.ui \
-    film/FilmFileHandler/addressnotfounddialog.ui
+    film/FilmFileHandler/addressnotfounddialog.ui \
+    film/Dialogs/trackinfodialog.ui

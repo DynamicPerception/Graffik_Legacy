@@ -35,7 +35,6 @@ QDoubleSpinBox:disabled, QSpinBox:disabled {
 QDoubleSpinBox::up-button, QSpinBox::up-button {
     border-image:url(themes/DP-Blue/img/scroll-spin-up.png);
     border: 0px transparent;
-   /* border-radius-top-right:16px; */
     min-height: 21px;
     max-height: 21px;
     min-width:29px;
@@ -51,50 +50,58 @@ QDoubleSpinBox::down-button, QSpinBox::down-button {
     max-width:29px;
 }
 
-FlickNumber {
- max-height: 35px;
- min-height: 30px;
 
-}
 
 FlickNumber #wheelLabel {
-    border-image:url(themes/DP-Blue/img/kinetic-sm-wheel.png);
+    border-image:url(themes/DP-Blue/img/kinetic-sm-wheel.png) stretch;
     border:0px transparent;
     padding: 0px;
     margin:0px;
+    margin-top: 3px;
     max-height: 35px;
     min-height: 35px;
+}
+
+FlickNumber {
+    max-height: 40px;
+    min-height: 40px;
+    max-width: 100px;
+    min-width: 100px;
+   /* margin-right: 2px;*/
 }
 
 FlickNumber QListWidget {
     show-decoration-selected: 1;
-    border-image: url(themes/DP-Blue/img/kinetic-sm-bg.png);
-    font: 14pt "Lucida Sans";
-    border: 0px transparent;
+    border-image: url(themes/DP-Blue/img/kinetic-sm-bg.png) stretch;
+    font: 20pt "Lucida Sans";
+    border:0px transparent;
+    padding: 0px;
+    margin: 0px;
+    margin-top:3px;
     max-height: 35px;
     min-height: 35px;
-    min-width:67px;
-    max-width:67px;
-    margin:0px;
 }
 
 
 FlickNumber QListWidget::item {
     color:rgb(81,82,85);
-    border: 0px transparent;
-    border-radius: 3px;
-    padding: 0px;
-    margin: 0px;
-    background-color: transparent;
-}
-
-FlickNumber QListWidget::item:selected {
-    color:rgb(81,82,85);
-     border-image: url(themes/DP-Blue/img/kinetic-bg.png);
      border: 0px transparent;
     padding: 0px;
     margin: 0px;
     background-color: transparent;
+    max-height: 35px;
+    min-height: 35px;
+}
+
+FlickNumber QListWidget::item:selected {
+    color:rgb(81,82,85);
+     border-image: url(themes/DP-Blue/img/kinetic-sm-bg.png) stretch;
+     border: 0px transparent;
+    padding: 0px;
+    margin: 0px;
+    background-color: transparent;
+    max-height: 35px;
+    min-height: 35px;
 }
 
 FlickNumber QListWidget::item:disabled {
@@ -104,7 +111,6 @@ FlickNumber QListWidget::item:disabled {
 FlickNumber QListWidgetItem {
     text-align: center;
 }
-
 
 
 

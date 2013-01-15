@@ -44,7 +44,7 @@ MotionBase::MotionBase(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions 
     ui->muteButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
 #endif
 
-    ui->nameLabel->setText(c_dev->name);
+    ui->nameButton->setText(c_dev->name);
     ui->resButton->setText(" R "); // default is rapid mode
     ui->scaleButton->setText(" P ");
 
@@ -221,4 +221,13 @@ void MotionBase::currentPlayStatus(bool p_stat, unsigned long p_runTime) {
         ui->dispLCD->display(disp[0]);
         ui->dispLCD->setToolTip(MB_STR_POS + disp[1]);
     }
+}
+
+void MotionBase::on_nameButton_clicked() {
+    OMfilmParams parms = m_film->getParamsCopy();
+
+    OMfilmAxisParams* axis = parms.axes.value(m_dev->device->address());
+
+    TrackInfoDialog dia(axis, this);
+    dia.exec();
 }

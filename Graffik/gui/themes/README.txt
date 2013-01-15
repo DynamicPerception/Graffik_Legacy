@@ -36,6 +36,7 @@ add_device	The "Add Device" dialog
 add_net		The "Add Bus" dialog
 delete_device	The "Delete Device" dialog
 delete_net	The "Delete Bus" dialog
+device_scan	The device scan sub-dialog
 error		The error dialog
 confirm		The confirm dialog
 
@@ -45,6 +46,7 @@ film		The Film workflow sub-window
 camera_opts	The Camera Control dialog
 jog		The jog plugin panel
 motionbase	The motion area widget, and its children
+trackinfo	The track information dialog
 
 > Slim Scripting Workflow Elements
 
@@ -73,4 +75,9 @@ You can include disk-based resource files, such as images, direct from disk.  To
 make sure to use the relative path, from the root application directory.  e.g.:
 
 border-image: url(themes/DP-Blue/img/set-but-normal.png);
+
+Do NOT use full-paths to the files, and do not place the image files in a remote
+location.  The theme management system will automatically convert to full paths
+for any OS which requires it, and this will break if you place the images
+anywhere but in a directory relative to the root application.
 

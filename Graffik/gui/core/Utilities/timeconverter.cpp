@@ -88,6 +88,17 @@ unsigned int TimeConverter::freeSeconds(unsigned long p_ms) {
     return rss;
 }
 
+/** Get Free MilliSeconds from mS
+
+  Free milliseconds are the count of milliseconds not used by full seconds
+  in the specified time.
+  */
+
+unsigned int TimeConverter::freeMilliSeconds(unsigned long p_ms) {
+    int rss = p_ms - msFromSeconds(seconds(p_ms));
+    return rss;
+}
+
 
 unsigned long TimeConverter::msFromDays(unsigned int p_days) {
     return( (unsigned long) p_days * 60 * 60 * 24 * 1000);
@@ -103,4 +114,27 @@ unsigned long TimeConverter::msFromMinutes(unsigned int p_minutes) {
 
 unsigned long TimeConverter::msFromSeconds(unsigned long p_seconds) {
     return( p_seconds * 1000 );
+}
+
+/** Create A String Representing Time
+
+  Returns a QString representing the time as follows:
+
+  HH'MM"SS.ssss
+
+  E.g.:
+
+  01'15"05.354
+
+  milliseconds are represented with as many digits as needed.
+
+  */
+
+QString TimeConverter::stringify(unsigned long p_ms) {
+    QString timeText = QString("%1").arg((unsigned int)hours(p_ms), 2, 10, QChar('0')) + "'"
+            + QString("%1").arg((unsigned int)freeMinutes(p_ms), 2, 10, QChar('0')) + "\""
+            + QString("%1").arg((unsigned int)freeSeconds(p_ms), 2, 10, QChar('0')) + "."
+            + QString("%1").arg((unsigned int)freeMilliSeconds(p_ms));
+
+    return timeText;
 }

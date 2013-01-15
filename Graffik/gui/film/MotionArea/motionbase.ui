@@ -143,30 +143,18 @@
          </spacer>
         </item>
         <item>
-         <widget class="QLabel" name="nameLabel">
+         <widget class="QPushButton" name="nameButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>16777215</height>
-           </size>
-          </property>
           <property name="text">
-           <string>TextLabel</string>
+           <string>PushButton</string>
           </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
+          <property name="flat">
+           <bool>true</bool>
           </property>
          </widget>
         </item>

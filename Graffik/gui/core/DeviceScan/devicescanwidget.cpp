@@ -24,14 +24,14 @@
 #include "devicescanwidget.h"
 #include "ui_devicescanwidget.h"
 
-DeviceScanWidget::DeviceScanWidget(QWidget *parent) : QWidget(parent), ui(new Ui::DeviceScanWidget)
-{
+DeviceScanWidget::DeviceScanWidget(QWidget *parent) : QWidget(parent), ui(new Ui::DeviceScanWidget) {
     ui->setupUi(this);
     ui->doneButton->hide();
+
+    setStyleSheet(SingleThemer::getStyleSheet("device_scan"));
 }
 
-DeviceScanWidget::~DeviceScanWidget()
-{
+DeviceScanWidget::~DeviceScanWidget() {
     delete ui;
 }
 

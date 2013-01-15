@@ -115,6 +115,7 @@ AddDeviceDialog::AddDeviceDialog(OMNetwork *c_net, QString c_bus, QString c_type
 
     ui->devName->setText(c_name);
     ui->devAddr->setEnabled(false);
+    setStyleSheet(SingleThemer::getStyleSheet("add_device"));
 
 }
 

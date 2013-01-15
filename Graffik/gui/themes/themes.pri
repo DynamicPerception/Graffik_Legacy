@@ -25,6 +25,9 @@ macx {
 defineTest(copyThemeFiles) {
     files = $$1
 
+    macx {
+        files += README.txt
+    }
 
     for(FILE, files) {
         ORIG_FILE = $$FILE
@@ -43,6 +46,13 @@ defineTest(copyThemeFiles) {
         }
 
     }
+
+    win32 {
+        NEWFILE = $$PWD/README.txt
+        NEWFILE ~= s,/,\\,g
+        THEMEFILECOPY += $$QMAKE_COPY /Y $$quote($$NEWFILE) $$quote($$DIR\\$$ORIG_FILE) $$escape_expand(\\n\\t)
+    }
+
     export(THEMEFILECOPY)
 }
 
@@ -61,8 +71,10 @@ OTHER_FILES += \
        themes/DP-Blue/confirm.qss \
        themes/DP-Blue/delete_bus.qss \
        themes/DP-Blue/delete_device.qss \
+       themes/DP-Blue/device_scan.qss \
        themes/DP-Blue/error.qss \
        themes/DP-Blue/film.qss \
+       themes/DP-Blue/film_win.qss \
        themes/DP-Blue/global_opts.qss \
        themes/DP-Blue/img/accel-but-normal.png \
        themes/DP-Blue/img/accel-but-pressed.png \
@@ -144,12 +156,16 @@ OTHER_FILES += \
        themes/DP-Blue/img/Untitled-25.png \
        themes/DP-Blue/jog.qss \
        themes/DP-Blue/main.qss \
+       themes/DP-Blue/main_win.qss \
        themes/DP-Blue/motionbase.qss \
        themes/DP-Blue/motionbase_osx.qss \
        themes/DP-Blue/net_base.qss \
+       themes/DP-Blue/net_base_win.qss \
        themes/DP-Blue/net_man.qss \
        themes/DP-Blue/slim.qss \
-       themes/DP-Blue/theme.ini
+       themes/DP-Blue/theme.ini \
+       themes/DP-Blue/trackinfo.qss \
+       themes/DP-Blue/welcome.qss
 
 copyThemeFiles($$THEME_FILES)
 
@@ -158,19 +174,7 @@ theme_copy.commands = @echo "Copying Theme files to $$DDIR"  $$escape_expand(\\n
 
 win32 {
 
-    # exists does not like backslashes
-  EDIR = $$DDIR
-  EDIR ~= s,\\\\,/,g
-
-#  exists($$DDIR) {
-#    theme_copy.commands += md $$DDIR $$escape_expand(\\n\\t)
-#    theme_copy.commands += @echo "Removing Directory $$DDIR" $$escape_expand(\\n\\t)
-#    theme_copy.commands += rd /S /Q $$DDIR $$escape_expand(\\n\\t)
-#  }
-
-  theme_copy.commands += @echo "Creating Theme Directory: $$DDIR ($$EDIR)" $$escape_expand(\\n\\t)
   theme_copy.commands += $$THEMEFILECOPY
-
 }
 
 macx {

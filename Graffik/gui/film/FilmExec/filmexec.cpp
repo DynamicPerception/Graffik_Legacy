@@ -524,15 +524,21 @@ void FilmExec::_sendNodeMovements(OMfilmParams *p_film, OMAxis *p_axis) {
 
     long end   = parms->endDist;
     bool dir   = end < 0 ? false : true;
-        // multiply end point by microsteps, we jog in rapid
-    end = abs(end * parms->ms);
 
+        // multiply end point by microsteps, we jog in rapid
+    end = end * parms->ms;
+    end = end < 0 ? end * -1 : end;
 
         // if no end time specified, arrive at end of film
     unsigned long arrive = parms->endTm > 0 ? parms->endTm : p_film->realLength;
+
     unsigned long accel = parms->accelTm;
     unsigned long decel = parms->decelTm;
 
+        // we store when the movement ends, but the
+        // value we need to transmit is how long the total
+        // move takes, so we subtract any start time from it
+    arrive = arrive - parms->startTm;
 
     if( which ) {
         // in sms mode, we go by shots - not walltime

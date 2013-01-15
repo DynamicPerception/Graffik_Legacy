@@ -1146,6 +1146,12 @@
                <property name="spacing">
                 <number>5</number>
                </property>
+               <property name="leftMargin">
+                <number>5</number>
+               </property>
+               <property name="rightMargin">
+                <number>5</number>
+               </property>
                <item>
                 <widget class="FlickNumber" name="realHHSpin" native="true">
                  <property name="maximumSize">
@@ -1186,6 +1192,12 @@
              </item>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <property name="leftMargin">
+                <number>5</number>
+               </property>
+               <property name="rightMargin">
+                <number>5</number>
+               </property>
                <item>
                 <widget class="QLabel" name="rtHHLabel">
                  <property name="font">
@@ -1317,6 +1329,12 @@
                <property name="spacing">
                 <number>5</number>
                </property>
+               <property name="leftMargin">
+                <number>5</number>
+               </property>
+               <property name="rightMargin">
+                <number>5</number>
+               </property>
                <item>
                 <widget class="FlickNumber" name="filmHHSpin" native="true">
                  <property name="maximumSize">
@@ -1357,6 +1375,12 @@
              </item>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout">
+               <property name="leftMargin">
+                <number>5</number>
+               </property>
+               <property name="rightMargin">
+                <number>5</number>
+               </property>
                <item>
                 <widget class="QLabel" name="filmLenHHLabel">
                  <property name="font">
@@ -1618,8 +1642,6 @@
          </layout>
         </item>
        </layout>
-       <zorder></zorder>
-       <zorder></zorder>
       </widget>
      </item>
     </layout>

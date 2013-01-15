@@ -16,6 +16,7 @@ CONFIG(release, debug|release) {
     DEFINES *= QT_NO_DEBUG_OUTPUT
 }
 
+DEFINES *= QT_NO_DEBUG_OUTPUT
 
  # enable debugging in OM serial manager?
  # comment this line out to disable, then make clean and run qmake

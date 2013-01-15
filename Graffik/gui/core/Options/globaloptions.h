@@ -42,8 +42,7 @@
   C. A. Church
   */
 
-class GlobalOptions : public QObject
-{
+class GlobalOptions : public QObject {
     Q_OBJECT
 public:
     explicit GlobalOptions(QObject *parent = 0);

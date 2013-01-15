@@ -35,7 +35,8 @@ HEADERS                 +=  \
     core/Widgets/statefulbutton.h \
     core/Themer/themer.h \
     core/Utilities/singleton.h \
-    core/Themer/singlethemer.h
+    core/Themer/singlethemer.h \
+    core/Dialogs/welcomedialog.h
 
 			   
 SOURCES                 +=  \
@@ -65,7 +66,8 @@ SOURCES                 +=  \
     core/Utilities/flicknumberitem.cpp \
     core/Widgets/statefulbutton.cpp \
     core/Themer/themer.cpp \
-    core/Themer/singlethemer.cpp
+    core/Themer/singlethemer.cpp \
+    core/Dialogs/welcomedialog.cpp
 
 			   
 FORMS 			+=  \
@@ -83,7 +85,8 @@ FORMS 			+=  \
     core/Options/globaloptionsdialog.ui \
     core/Dialogs/netbasedialog.ui \
     core/Utilities/flicknumber.ui \
-    core/Utilities/flicknumberitem.ui
+    core/Utilities/flicknumberitem.ui \
+    core/Dialogs/welcomedialog.ui
 	   
 
 OTHER_FILES +=

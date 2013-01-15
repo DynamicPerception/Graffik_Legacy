@@ -26,9 +26,7 @@
 #include <QDebug>
 #include <QLayout>
 
-MotionSection::MotionSection(FilmExec *c_exec, FilmParameters *c_film, QWidget *parent) :
-    QWidget(parent)
-{
+MotionSection::MotionSection(FilmExec *c_exec, FilmParameters *c_film, QWidget *parent) : QWidget(parent) {
     m_path = new QPainterPath;
     m_film = c_film;
     m_exec = c_exec;
@@ -61,11 +59,13 @@ MotionSection::~MotionSection() {
 void MotionSection::paintEvent(QPaintEvent * p_event) {
      QPainter painter(this);
 
+     QRect curRect = rect();
+
      if( m_width != (m_rightX - m_leftX) ||
             m_curPos != m_wasPos ) {
 
         m_width  = m_rightX - m_leftX;
-        m_height = p_event->rect().height();
+        m_height = curRect.height();
         m_wasPos = m_curPos;
         _updatePath();
     }
@@ -81,7 +81,6 @@ void MotionSection::paramsChanged() {
 
     if( params.realLength == m_length )
         return;
-
 
     m_length = params.realLength;
     _updatePath();
@@ -103,7 +102,7 @@ void MotionSection::_updatePath() {
     delete m_path;
     m_path = new QPainterPath;
 
-    int curXpos = ((float) m_curPos / (float) m_length) * (float) m_width;
+    int curXpos = (((float) m_curPos / (float) m_length) * (float) m_width);
 
     m_path->moveTo(m_leftX + curXpos, 0);
     m_path->lineTo(m_leftX + curXpos, m_height);

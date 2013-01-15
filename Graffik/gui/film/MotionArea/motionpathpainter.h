@@ -39,6 +39,9 @@
 
 #define MPP_DEF_MAX_PTS     2500
 
+    // buffer area above and below maximum line drawing,
+    // as a fraction of the whole height
+#define MPP_HEIGHT_BUF         0.95
 
 /** Motion Path Painer
 
@@ -76,7 +79,7 @@ public:
     bool isDrawn();
     bool hasChanged();
 
-    unsigned long getFilmTime(int p_x);
+    float getFilmTime(int p_x);
     float getSpeed(unsigned long p_x);
     float getPosition(unsigned long p_x);
     int getX(int p_time);
@@ -153,6 +156,8 @@ private:
 
     float _getScale();
     unsigned long _getMaxPoints();
+
+    bool _inFloatRange(float p_left, float p_right);
 
 };
 

@@ -27,14 +27,18 @@
     max-width:225px;
 }
 
-#nameLabel {
+#nameButton:flat {
     background-color:qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(69, 140, 187, 255), stop:1 rgba(43, 110, 159, 255));
-    color: white;
+}
+
+#nameButton {
+    color: rgb(255,255,255);
+    border:0px;
     margin:0px;
     max-width:225px;
     max-height:35px;
+    min-height:20px;
     padding: 0px;
-    margin:0px;
 }
 
 #easeButton, #muteButton, #resButton, #scaleButton {

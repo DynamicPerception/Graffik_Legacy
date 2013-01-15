@@ -37,6 +37,8 @@
 #include "core/Dialogs/adddevicedialog.h"
 #include "core/Dialogs/aboutdialog.h"
 #include "core/Dialogs/netbasedialog.h"
+#include "core/Dialogs/confirmdialog.h"
+#include "core/Dialogs/welcomedialog.h"
 
 
 #include "core/NetworkModel/networkmodel.h"
@@ -96,10 +98,13 @@ public slots:
 
     void on_screenSelCombo_currentIndexChanged(const QString p_str);
 
+
 private slots:
 
-    void globalOptionsChanged();
-    void themeChanged();
+    void _globalOptionsChanged();
+    void _themeChanged();
+    void _optionsCleared();
+    void _welcomeAddBus();
 
 signals:
     void globalOptionsChanged(GlobalOptions* p_opts);

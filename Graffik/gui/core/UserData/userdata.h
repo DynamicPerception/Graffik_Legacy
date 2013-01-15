@@ -50,8 +50,7 @@
 
   */
 
-class UserData : public QObject
-{
+class UserData : public QObject {
     Q_OBJECT
 public:
     explicit UserData(QWidget* parent = 0);
@@ -62,6 +61,8 @@ public:
     void recoverGlobalOptions(GlobalOptions* p_opts);
 
     bool exists();
+
+    void clear();
 
 public slots:
     void busAdded(OMbusInfo* p_bus);

@@ -24,6 +24,8 @@
 #ifndef TIMECONVERTER_H
 #define TIMECONVERTER_H
 
+#include <QString>
+
 /** Time Conversion Utilities
 
   Provides basic time conversion functions (milliseconds to minutes, hours, etc.)
@@ -34,8 +36,8 @@
   C. A. Church
   */
 
-class TimeConverter
-{
+class TimeConverter {
+
 public:
     TimeConverter();
 
@@ -47,11 +49,14 @@ public:
     static unsigned int freeHours(unsigned long p_ms);
     static unsigned int freeMinutes(unsigned long p_ms);
     static unsigned int freeSeconds(unsigned long p_ms);
+    static unsigned int freeMilliSeconds(unsigned long p_ms);
 
     static unsigned long msFromSeconds(unsigned long p_seconds);
     static unsigned long msFromDays(unsigned int p_days);
     static unsigned long msFromHours(unsigned int p_hours);
     static unsigned long msFromMinutes(unsigned int p_minutes);
+
+    static QString stringify(unsigned long p_ms);
 
 };
 

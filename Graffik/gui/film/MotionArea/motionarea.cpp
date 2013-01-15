@@ -70,8 +70,7 @@ MotionArea::MotionArea(FilmParameters *c_film, OMdeviceInfo *c_dev, AxisOptions*
     setStyleSheet(SingleThemer::getStyleSheet("motionarea"));
 }
 
-MotionArea::~MotionArea()
-{
+MotionArea::~MotionArea() {
     delete ui;
     delete m_path;
 
@@ -173,8 +172,6 @@ void MotionArea::mousePressEvent(QMouseEvent *p_event) {
 
 void MotionArea::mouseMoveEvent(QMouseEvent *p_event) {
 
-
-
     if( m_moveItem == MA_PT_NONE ) {
         this->update();
         return;
@@ -186,12 +183,19 @@ void MotionArea::mouseMoveEvent(QMouseEvent *p_event) {
 
     int newX = p_event->pos().x();
 
-    if( m_moveItem == MA_PT_START ) {
-        unsigned long startTm = m_path->getFilmTime(newX);
-        unsigned long acTm = m_path->getFilmTime(m_path->getAcEndPx());
-        unsigned long dcTm = m_path->getFilmTime(m_path->getDcStartPx());
+        // sanity check
+    if( newX < 0 || newX > rect().width() )
+        return;
 
-        OMfilmParams* parms = m_film->getParams();
+    if( m_moveItem == MA_PT_START ) {
+
+
+            // user is moving start time
+        unsigned long startTm = m_path->getFilmTime(newX);
+        unsigned long    acTm = m_path->getFilmTime(m_path->getAcEndPx());
+        unsigned long    dcTm = m_path->getFilmTime(m_path->getDcStartPx());
+
+        OMfilmParams*    parms = m_film->getParams();
         OMfilmAxisParams* axis = parms->axes.value(m_dev->device->address());
 
             // sanity check!
@@ -204,86 +208,69 @@ void MotionArea::mouseMoveEvent(QMouseEvent *p_event) {
         m_film->releaseParams();
     }
     else if( m_moveItem == MA_PT_END ) {
+            // user is moving end time
+
         unsigned long endTm = m_path->getFilmTime(newX);
-        unsigned long acTm = m_path->getFilmTime(m_path->getAcEndPx());
-        unsigned long dcTm = m_path->getFilmTime(m_path->getDcStartPx());
+        unsigned long  acTm = m_path->getFilmTime(m_path->getAcEndPx());
+        unsigned long  dcTm = m_path->getFilmTime(m_path->getDcStartPx());
 
         OMfilmParams* parms = m_film->getParams();
         OMfilmAxisParams* axis = parms->axes.value(m_dev->device->address());
 
 
         if( endTm < axis->endTm ) {
-            if( dcTm - (axis->endTm - endTm ) < acTm )
+            if( dcTm - (axis->endTm - endTm) < acTm )
                 endTm = axis->endTm;
         }
-
-        qDebug() << "MA: ET" << endTm << dcTm << axis->decelTm;
 
         axis->endTm = endTm;
         m_film->releaseParams();
     }
     else if( m_moveItem == MA_PT_ACE ) {
-        unsigned long acEnd = m_path->getFilmTime(newX);
-        unsigned long oldAc = m_path->getFilmTime(m_path->getAcEndPx());
+            // user is moving acceleration end time
+        float acEnd = m_path->getFilmTime(newX);
+        float  dcTm = m_path->getFilmTime(m_path->getDcStartPx());
 
-        unsigned long dcTm = m_path->getFilmTime(m_path->getDcStartPx());
 
-        OMfilmParams* parms = m_film->getParams();
+        OMfilmParams*    parms = m_film->getParams();
         OMfilmAxisParams* axis = parms->axes.value(m_dev->device->address());
 
-        long diff = acEnd - oldAc;
-
-            // limit move to decel start point
-        if( acEnd > dcTm ) {
-            acEnd = dcTm;
-            diff = 0;
+            // limit move to be rational to other points
+        if( acEnd >= dcTm ) {
+            acEnd = dcTm - 1;
         }
 
         if( acEnd <= axis->startTm ) {
             acEnd = axis->startTm + 100;
-            diff = 0;
         }
 
-
-
-        qDebug() << "MA: AC: " << acEnd << oldAc << dcTm << diff << axis->startTm << (axis->accelTm + diff) ;
-
-        axis->accelTm = axis->accelTm + diff;
+        axis->accelTm = acEnd - axis->startTm;
         m_film->releaseParams();
+
     }
     else if( m_moveItem == MA_PT_DCS ) {
+            // user is moving deceleration start time
         unsigned long dcStart = m_path->getFilmTime(newX);
-        unsigned long endTm   = m_path->getFilmTime(m_path->getEndPx());
-        unsigned long oldDc   = m_path->getFilmTime(m_path->getDcStartPx());
+        unsigned long    acTm = m_path->getFilmTime(m_path->getAcEndPx());
+        unsigned long   endTm = m_path->getFilmTime(m_path->getEndPx());
 
-        unsigned long acTm = m_path->getFilmTime(m_path->getAcEndPx());
-
-        OMfilmParams* parms = m_film->getParams();
+        OMfilmParams*    parms = m_film->getParams();
         OMfilmAxisParams* axis = parms->axes.value(m_dev->device->address());
 
-        long diff = dcStart - oldDc;
-
             // limit move the ac end point
-        if( dcStart < acTm ) {
-            dcStart = acTm;
-            diff = 0;
+        if( dcStart <= acTm ) {
+            dcStart = acTm + 1;
         }
 
-        if( axis->endTm > 0 && dcStart >= axis->endTm ) {
-            dcStart = axis->endTm - 100;
-            diff = 0;
+        if( dcStart >= endTm ) {
+            dcStart = endTm - 100;
         }
-
-
 
         axis->decelTm = endTm - dcStart;
-
-        qDebug() << "MA: DC: " << dcStart << endTm << axis->decelTm;
-
         m_film->releaseParams();
     }
 
-  //  this->update();
+    // this->update();
 }
 
 /** Handle mouse Release Events inside of widget */
@@ -295,19 +282,23 @@ void MotionArea::mouseReleaseEvent(QMouseEvent *) {
 /** Override Paint Event - Draw Motion Path */
 
 void MotionArea::paintEvent(QPaintEvent *e) {
+
     QPainter painter(this);
-    QRect eventRect = e->rect();
+
+        // we need the rectangle of the widget, not the
+        // event, so that our line drawing doesn't skew to
+        // a sub-section of the display area when it is
+        // partially hidden, such as when scrolling
+
+    QRect eventRect = rect();
+
     QBrush brush(m_lineColor);
     QPen   pen(m_lineColor);
 
     pen.setWidth(m_lineWidth);
-  //  pen.setBrush(brush);
 
     painter.setRenderHint(QPainter::Antialiasing);
-
-   // painter.fillRect(eventRect, QColor(m_bgCol));
     painter.setPen(pen);
-  //  painter.setBrush(brush);
 
     painter.drawPath(*m_path->getPath(eventRect));
 
@@ -321,8 +312,11 @@ void MotionArea::paintEvent(QPaintEvent *e) {
 
     if( m_pstat == false ) {
         if( m_path->hasChanged() ) {
-            m_mvStart.setRect(m_path->getStartPx() - 5, eventRect.bottom() - 5, 10, 10);
-            m_mvEnd.setRect(m_path->getEndPx() - 5, eventRect.bottom() - 5, 10, 10);
+
+            int baseline = eventRect.height() * MPP_HEIGHT_BUF;
+
+            m_mvStart.setRect(m_path->getStartPx() - 5, baseline  - 5, 10, 10);
+            m_mvEnd.setRect(m_path->getEndPx() - 5, baseline - 5, 10, 10);
             m_acEnd.setRect(m_path->getAcEndPx() - 5, m_path->getMaxHeight() - 5, 10, 10);
             m_dcStart.setRect(m_path->getDcStartPx() - 5, m_path->getMaxHeight() - 5, 10, 10);
         }
@@ -345,8 +339,6 @@ void MotionArea::moveSane(bool p_sane) {
 
         // handle mute check for bg color
     if( p_sane ) {
-
-
             // do not change mute setting on sane check, unless it was
             // set to error by this function
         if( m_mute == MA_MUTE_ER  || m_mute == MA_MUTE_NA ) {
@@ -454,9 +446,7 @@ void MotionArea::_tooltipTimer() {
 
         // create useful time string, with a minimum of two-digit numbers for hours, minutes, and seconds
 
-    QString timeText = QString("%1").arg((unsigned int)TimeConverter::hours(curMs), 2, 10, QChar('0')) + "'"
-            + QString("%1").arg((unsigned int)TimeConverter::freeMinutes(curMs), 2, 10, QChar('0')) + "\""
-            + QString("%1").arg((unsigned int)TimeConverter::freeSeconds(curMs), 2, 10, QChar('0'));
+    QString timeText = TimeConverter::stringify(curMs);
 
     QString descText = MA_STR_POS + posDisp[0] + posDisp[1] + "\n"
             + MA_STR_SPD + spdDisp[0] + spdDisp[1] + MA_STR_MOD + "\n"

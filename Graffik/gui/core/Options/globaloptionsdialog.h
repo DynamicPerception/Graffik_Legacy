@@ -47,8 +47,7 @@ namespace Ui {
   @author
   C. A. Church
   */
-class GlobalOptionsDialog : public QDialog
-{
+class GlobalOptionsDialog : public QDialog {
     Q_OBJECT
     
 public:
@@ -58,6 +57,11 @@ public:
 public slots:
     void on_okButton_clicked();
     void on_cancelButton_clicked();
+    void on_clearButton_clicked();
+
+signals:
+
+    void optionsCleared();
 
 private:
     Ui::GlobalOptionsDialog *ui;

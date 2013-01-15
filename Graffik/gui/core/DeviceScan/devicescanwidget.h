@@ -27,6 +27,7 @@
 #include <QWidget>
 #include <QString>
 
+#include "core/Themer/singlethemer.h"
 
 namespace Ui {
 class DeviceScanWidget;

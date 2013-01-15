@@ -86,13 +86,14 @@ int MotionPathPainter::getX(int p_time) {
 
   */
 
-unsigned long MotionPathPainter::getFilmTime(int p_x) {
+float MotionPathPainter::getFilmTime(int p_x) {
 
     OMfilmParams parms = m_film->getParamsCopy();
-    unsigned long filmTm = (((float) parms.realLength / (float)m_wasWidth) * (float)p_x);
+    float filmTm = (((float) parms.realLength / (float)m_wasWidth) * (float)p_x);
     filmTm = filmTm > parms.realLength ? parms.realLength : filmTm;
     return filmTm;
 }
+
 
 /**
     Return whether or not the PainterPath contents changed in the last
@@ -270,6 +271,8 @@ void MotionPathPainter::setMotionCurve() {
         return;
 
 
+    qDebug() << "MPP: Running new curve";
+
         // wipe out all saved points
 
     m_renderPoints.clear();
@@ -293,26 +296,27 @@ void MotionPathPainter::setMotionCurve() {
         return;
 
     unsigned long maxSpeed = m_aopt->getOptions(m_addr)->maxSteps;
-    bool sane = true;
-
-    m_curveAvail = true;
+    bool              sane = true;
+              m_curveAvail = true;
 
         // put upper boundary at 1 point per millisecond
     unsigned long actMaxPts = _getMaxPoints();
 
         // if no end time is specified, then the move ends when the film does
-    unsigned long endTm = m_axis->endTm > 0 ? m_axis->endTm : filmParams.realLength;
+    unsigned long endTm = axParms->endTm > 0 ? axParms->endTm : filmParams.realLength;
+    float      travelTm = endTm - axParms->startTm;
 
 
         // determine padding to add before and after move
 
-    float ms_per_xpt = (float) filmParams.realLength / (float) actMaxPts;
-    unsigned long jmpAhead = (float) m_axis->startTm / (float) ms_per_xpt;
-    unsigned long endPt    = endTm / (float) ms_per_xpt;
+    float       ms_per_xpt = (float) filmParams.realLength / (float) actMaxPts;
+    unsigned long jmpAhead = (float) axParms->startTm / (float) ms_per_xpt;
+    unsigned long    endPt = endTm / (float) ms_per_xpt;
+
+
     endPt = endPt > actMaxPts ? actMaxPts : endPt;
-    unsigned long leave = endPt > 0 ? actMaxPts - endPt : 0;
 
-
+    unsigned long   leave = endPt > 0 ? actMaxPts - endPt : 0;
     unsigned long plotPts = actMaxPts - jmpAhead - leave;
 
         // pad array prior to move
@@ -321,7 +325,10 @@ void MotionPathPainter::setMotionCurve() {
         m_stepsTaken.append(0);
     }
 
-    _initSpline(axParms->endDist, endTm, axParms->accelTm, axParms->decelTm, actMaxPts);
+
+//    qDebug() << "MPP: INIT:" << filmParams.realLength << axParms->startTm << axParms->accelTm << m_splinePlanned.acTm << travelTm << endTm << jmpAhead << leave << plotPts << m_wasWidth;
+
+    _initSpline(axParms->endDist, travelTm, axParms->accelTm, axParms->decelTm, plotPts);
 
     float totalSteps = 0.0;
 
@@ -386,6 +393,9 @@ QPainterPath* MotionPathPainter::getPath(QRect p_area) {
     int width = p_area.width();
     int height = p_area.height();
 
+        // set a new floor
+    height = height * MPP_HEIGHT_BUF;
+
     m_hasChanged = true;
     m_new = false;
     m_wasWidth = p_area.width();
@@ -416,8 +426,7 @@ QPainterPath* MotionPathPainter::getPath(QRect p_area) {
     }
     else {
             // set a limit at 95% high for proportional displa
-
-        spd_per_ypix = (height * 0.95) / (float) m_splinePlanned.topSpeed;
+        spd_per_ypix = (height * MPP_HEIGHT_BUF) / (float) m_splinePlanned.topSpeed;
     }
 
         // flush out the path, and create a new one
@@ -447,21 +456,22 @@ QPainterPath* MotionPathPainter::getPath(QRect p_area) {
 
         m_path->lineTo(i, hgt);
 
-            // find key pixel points in curve
+            // find key pixel points in curve and store them for
+            // querying later
 
         if( isMoving == 0 && curSpd > 0.0 ) {
             m_startPx = i;
             isMoving = 1;
         }
-        else if( isMoving == 1 && curSpd == m_splinePlanned.topSpeed) {
+        else if( isMoving == 1 && _inFloatRange(curSpd, m_splinePlanned.topSpeed)) {
             m_acEndPx = i;
             isMoving = 2;
         }
-        else if( isMoving == 2 && curSpd != m_splinePlanned.topSpeed) {
+        else if( isMoving == 2 && ! _inFloatRange(curSpd, m_splinePlanned.topSpeed)) {
             m_dcStartPx = i;
             isMoving = 3;
         }
-        else if( isMoving == 3 && curSpd == 0.0 ) {
+        else if( isMoving == 3 && curSpd <= 0.0 ) {
             m_endPx = i;
             isMoving = 4;
         }
@@ -496,6 +506,13 @@ void MotionPathPainter::paramsChanged() {
     setMotionCurve();
 }
 
+bool MotionPathPainter::_inFloatRange(float p_left, float p_right) {
+    if( p_left < p_right + 0.00000001 && p_left > p_right - 0.00000001 )
+        return true;
+
+    return false;
+}
+
 unsigned long MotionPathPainter::_getMaxPoints() {
     OMfilmParams filmParams = m_film->getParamsCopy();
     // put upper boundary at 1 point per millisecond
@@ -513,8 +530,6 @@ float MotionPathPainter::_getScale() {
 
 /* These methods are pulled from the OMMotor implementation on AVR, so that we model the
    same move algorithm */
-
-
 
 float MotionPathPainter::_linearEasing(float p_tmPos) {
 
@@ -582,8 +597,7 @@ void MotionPathPainter::_initSpline(unsigned long p_Steps, unsigned long p_Time,
 
 
    // voodoo
-   // TODO: Fix OMMotor, so that we don't use this
-   // voodoo.
+   // TODO: Fix OMMotor, so that we don't use this voodoo.
 
     if( m_axis->easing == OM_MOT_LINEAR )
       m_splinePlanned.travel = MPP_TRAVEL_LIN;
@@ -602,6 +616,6 @@ void MotionPathPainter::_initSpline(unsigned long p_Steps, unsigned long p_Time,
    m_splinePlanned.topSpeed = (velocity * m_splinePlanned.crTm) / ( p_totalSplines * m_splinePlanned.crTm );
 
 
-   // qDebug() << "MPP: IS: " << m_splinePlanned.acTm << m_splinePlanned.dcTm << m_splinePlanned.crTm << m_splinePlanned.dcStart << m_splinePlanned.topSpeed;
+  // qDebug() << "MPP: IS: " << m_splinePlanned.acTm << m_splinePlanned.dcTm << m_splinePlanned.crTm << m_splinePlanned.dcStart << m_splinePlanned.topSpeed;
 }
 

@@ -32,6 +32,7 @@
 #include "core/Options/globaloptions.h"
 #include "core/Themer/singlethemer.h"
 #include "film/FilmParameters/filmparameters.h"
+#include "film/Dialogs/trackinfodialog.h"
 
 #define MB_STR_POS  "Position:"
 
@@ -60,6 +61,7 @@ public slots:
     void muted(int p_muted);
     void on_easeButton_clicked();
     void on_resButton_clicked();
+    void on_nameButton_clicked();
 
     void statusChange(bool p_stat);
     void currentPlayStatus(bool p_stat, unsigned long p_runTime);

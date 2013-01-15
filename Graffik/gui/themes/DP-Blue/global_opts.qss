@@ -16,6 +16,14 @@ QPushButton {
     border-image: url(themes/DP-Blue/img/small-gray-but-normal.png);
 }
 
+#clearButton {
+    border-image: url(themes/DP-Blue/img/small-gray-but-normal.png);
+    max-width: 80px;
+    max-height: 30px;
+    min-width: 80px;
+    min-height: 30px;
+}
+
 QComboBox:drop-down {
     border-image: url(themes/DP-Blue/img/drop-down-sm-blue.png);
     border: 0px transparent;

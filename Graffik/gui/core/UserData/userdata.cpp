@@ -34,8 +34,7 @@
 
   */
 
-UserData::UserData(QWidget* parent) : QObject()
-{
+UserData::UserData(QWidget* parent) : QObject() {
     m_parent = parent;
 
     QCoreApplication::setOrganizationName("Dynamic Perception");
@@ -48,6 +47,17 @@ UserData::UserData(QWidget* parent) : QObject()
 
 UserData::~UserData() {
     delete m_qset;
+}
+
+
+ /** Clear All Settings
+
+   Wipes all settings data.  Does not broadcast a change in settings, user may
+   have to re-start application for changes to take effect.
+   */
+
+void UserData::clear() {
+    m_qset->clear();
 }
 
 /** Settings Exist
@@ -73,6 +83,7 @@ void UserData::busAdded(OMbusInfo *p_bus) {
     QString p_key = root_key + "port";
 
     m_qset->setValue(p_key, p_bus->bus->port());
+    _haveWritten(true);
 
 
 }
@@ -86,6 +97,7 @@ void UserData::deviceAdded(OMbusInfo *p_bus, OMdeviceInfo *p_dev) {
     m_qset->setValue("name", p_dev->name);
     m_qset->setValue("type", p_dev->type);
     m_qset->endGroup();
+    _haveWritten(true);
 
 }
 
@@ -101,6 +113,7 @@ void UserData::deviceOptionsChanged(OMaxisOptions *p_opts, unsigned short p_addr
         return;
 
     m_qset->setValue(key, QVariant::fromValue(*p_opts));
+    _haveWritten(true);
 }
 
 void UserData::globalOptionsChanged(GlobalOptions *p_opts) {
@@ -114,6 +127,7 @@ void UserData::globalOptionsChanged(GlobalOptions *p_opts) {
     m_qset->setValue("theme", p_opts->theme());
 
     m_qset->endGroup();
+    _haveWritten(true);
 }
 
 /** Recover Global Options
@@ -210,15 +224,18 @@ void UserData::recoverBuses(OMNetwork *p_net) {
 
             qDebug() << "UD:recoverBuses: Got error" << e;
             if( OM_ERR_SERAVAIL ) {
-                error.append("Serial device" + bus_port + " not found");
+                // error.append("Serial device " + bus_port + " not found");
+
+                // do not present an error when the bus port isn't found,
+                // as that can be quite frustrating
             }
             else {
-                error.append("Unknown error #");
+                error.append("Error #");
                 error.append(e);
+                ErrorDialog er(m_parent);
+                er.setError(error);
+                er.exec();
             }
-            ErrorDialog er(m_parent);
-            er.setError(error);
-            er.exec();
         }
 
          // get devices recovered as well (but only if we could connect to the bus)

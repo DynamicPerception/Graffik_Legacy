@@ -16,7 +16,8 @@ QToolTip {
 }
 
 #screenSelCombo:drop-down {
-    width:30px;
+    width:30pxls
+    ;
     min-width:30px;
     max-width:30px;
     border: 0px transparent;

@@ -15,7 +15,6 @@ FlickNumber QListWidget {
     border-image: url(themes/DP-Blue/img/kinetic-bg.png);
     font: 26pt "Lucida Sans";
     border:0px transparent;
-  /*  border-radius: 5px;*/
     padding: 0px;
     margin: 0px;
     margin-top:3px;
@@ -171,7 +170,7 @@ MotionArea[muted="2"] {
 }
 
 #camControlSlider::handle:horizontal {
-    margin:-2px 0px -2px 0px;
+    margin:-2px -4px -4px -4px;
     padding:0px;
     height: 42px;
     width:42px;

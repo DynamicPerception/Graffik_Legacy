@@ -77,6 +77,9 @@ QString Themer::theme() {
   */
 
 QString Themer::getThemeCSS(QString p_which) {
+
+    qDebug() << "Themer: Request for widget CSS" << p_which;
+
     QString basePath = m_themeList->value(m_curTheme);
 
     QString cssFile  = basePath + "/" + p_which + ".qss";

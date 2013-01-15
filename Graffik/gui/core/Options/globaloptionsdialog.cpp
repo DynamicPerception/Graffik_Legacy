@@ -53,11 +53,16 @@ void GlobalOptionsDialog::on_okButton_clicked() {
 
     m_opts->theme(ui->themeCombo->currentText());
 
-    this->done(QDialog::Accepted);
+    done(QDialog::Accepted);
 }
 
 void GlobalOptionsDialog::on_cancelButton_clicked() {
-    this->done(QDialog::Rejected);
+    done(QDialog::Rejected);
+}
+
+void GlobalOptionsDialog::on_clearButton_clicked() {
+    emit optionsCleared();
+    done(QDialog::Rejected);
 }
 
 void GlobalOptionsDialog::_setupInputs() {
