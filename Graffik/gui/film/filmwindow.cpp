@@ -90,6 +90,9 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
 
     connect(m_params, SIGNAL(paramsReleased()), this, SLOT(filmParamsChanged()));
 
+    connect(this, SIGNAL(playStatusChange(bool)), m_jcp, SIGNAL(playStatusChange(bool)));
+
+
     _prepInputs();
 
     // theming
@@ -223,7 +226,7 @@ void FilmWindow::_displayCamControl() {
 // handle clicking the camera settings button
 
 void FilmWindow::on_camSetBut_clicked() {
-    CameraControlDialog* control = new CameraControlDialog(m_params);
+    CameraControlDialog* control = new CameraControlDialog(m_params, m_net, m_opts);
     control->exec();
 
     OMfilmParams* params = m_params->getParams();

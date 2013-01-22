@@ -2,7 +2,7 @@
 
   Graffik Motion Control Application
 
-  Copyright (c) 2011-2012 Dynamic Perception
+  Copyright (c) 2011-2013 Dynamic Perception
 
  This file is part of Graffik.
 
@@ -36,20 +36,20 @@
 
  // some defaults and maximum values
 
-#define CAM_DEF_EXPOSURE    200
-#define CAM_DEF_DELAY       1000
-#define CAM_DEF_FOCUS       0
-#define CAM_DEF_INTERVAL    1000
+const int CAM_DEF_EXPOSURE =   200;
+const int CAM_DEF_DELAY    =   1000;
+const int CAM_DEF_FOCUS    =   0;
+const int CAM_DEF_INTERVAL =  1000;
 
-#define CAM_MAX_EXPOSURE    ULONG_MAX
-#define CAM_MAX_DELAY       ULONG_MAX
-#define CAM_MAX_FOCUS       ULONG_MAX
+const unsigned long CAM_MAX_EXPOSURE =   ULONG_MAX;
+const unsigned long CAM_MAX_DELAY    =   ULONG_MAX;
+const unsigned long CAM_MAX_FOCUS    =   ULONG_MAX;
 
  // change when you change structure of film parameters
  // to prevent crashes and other unhappiness when attempting
  // to load a saved film from an old version
 
-#define OM_FILM_FMT_VER      1
+const int OM_FILM_FMT_VER   =   1;
 
  /** Film Motion type */
 
@@ -181,7 +181,7 @@ Q_DECLARE_METATYPE(OMfilmAxisParams)
 
 inline QDataStream& operator<<(QDataStream& out, const OMfilmAxisParams& params) {
     out << params.bus;
-    out << quint32(params.endDist);
+    out << qint32(params.endDist);
     out << qint16(params.easing);
     out << quint32(params.accelTm);
     out << quint32(params.decelTm);
@@ -196,7 +196,7 @@ inline QDataStream& operator<<(QDataStream& out, const OMfilmAxisParams& params)
 inline QDataStream& operator>>(QDataStream& in, OMfilmAxisParams& options) {
 
 
-    quint32 endDist;
+    qint32 endDist;
     qint16 easing;
     quint32 accelTm;
     quint32 decelTm;

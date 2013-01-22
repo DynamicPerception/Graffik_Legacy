@@ -2,7 +2,7 @@
 
   Graffik Motion Control Application
 
-  Copyright (c) 2011-2012 Dynamic Perception
+  Copyright (c) 2011-2013 Dynamic Perception
 
  This file is part of Graffik.
 
@@ -25,6 +25,7 @@
 #define MOTIONTAPE_H
 
 #include <QWidget>
+#include <QString>
 
 #include "film/FilmParameters/filmparameters.h"
 
@@ -36,15 +37,15 @@
 #include <QWidget>
 #include <QColor>
 
-#define MT_LINE_MINSPC  5
-#define MT_FONT_SIZE    8
+const int MT_LINE_MINSPC = 5;
+const int MT_FONT_SIZE   = 8;
 
-#define MT_LABEL_SS "SS"
-#define MT_LABEL_MM "MM"
-#define MT_LABEL_HH "HH"
-#define MT_LABEL_DD "DD"
+const QString MT_LABEL_SS = "SS";
+const QString MT_LABEL_MM = "MM";
+const QString MT_LABEL_HH = "HH";
+const QString MT_LABEL_DD = "DD";
 
-#define MT_LABEL_FONT   "Courier"
+const QString MT_LABEL_FONT =  "Courier";
 
 
 namespace Ui {
@@ -63,8 +64,8 @@ class MotionTape;
 class MotionTape : public QWidget
 {
     Q_OBJECT
-    Q_PROPERTY(QColor background WRITE background DESIGNABLE true)
-    Q_PROPERTY(QColor color WRITE color DESIGNABLE true)
+    Q_PROPERTY(QColor background READ background WRITE setBackground DESIGNABLE true)
+    Q_PROPERTY(QColor color READ color WRITE setColor DESIGNABLE true)
 
 public:
     explicit MotionTape(FilmParameters* c_film, QWidget* c_scroll, QWidget *parent = 0);
@@ -72,8 +73,11 @@ public:
 
     void paintEvent(QPaintEvent* p_event);
     
-    void background(QColor p_col);
-    void color(QColor p_col);
+    QColor background();
+    void setBackground(QColor p_col);
+
+    QColor color();
+    void setColor(QColor p_col);
 
 public slots:
 
@@ -99,7 +103,7 @@ private:
     QColor m_fgCol;
 
     void _drawTime(QRect p_rect);
-    void _drawLines(QRect p_rect, int p_lines, int p_height, int p_fill = 0, int p_pad = 0);
+    void _drawLines(QRect p_rect, unsigned int p_lines, int p_height, int p_fill = 0, int p_pad = 0);
     float _calcSpacing(QRect p_rect, int p_lines, int p_fill = 0, int p_pad = 0);
 
 };

@@ -41,7 +41,7 @@ defineTest(copyHelpFiles) {
             MYFILECOPY += $$QMAKE_COPY $$quote($$FILE) $$quote($$DDIR) $$escape_expand(\\n\\t)
         }
         win32 {
-            MYFILECOPY += xcopy /Y /I $$quote($$FILE) $$quote($$DDIR) $$escape_expand(\\n\\t)
+            MYFILECOPY += $$QMAKE_COPY /Y $$quote($$FILE) $$quote($$DDIR) $$escape_expand(\\n\\t)
         }
     }
     export(MYFILECOPY)
@@ -60,6 +60,8 @@ OTHER_FILES += \
     docs/slim-scan1.png \
     docs/slim-scan2.png \
     docs/slim-scan3.png \
+    docs/GraffikIntro.html \
+    docs/film-ovr.png \
     docs/docs.qhp \
     docs/docs.qhcp
 
@@ -89,8 +91,13 @@ win32 {
   EDIR ~= s,\\\\,/,g
 
 
- # help_copy.commands += @echo "Creating Docs Directory: $$DDIR ($$EDIR)" $$escape_expand(\\n\\t)
- # help_copy.commands += md $$DDIR $$escape_expand(\\n\\t)
+  exists($$DDIR) {
+    help_copy.commands += @echo "Docs Dir Exists, Removing Docs Directory: $$DDIR" $$escape_expand(\\n\\t)
+    help_copy.commands += rd /S /Q $$DDIR $$escape_expand(\\n\\t)
+  }
+
+  help_copy.commands += @echo "Creating Docs Directory: $$DDIR ($$EDIR)" $$escape_expand(\\n\\t)
+  help_copy.commands += md $$DDIR $$escape_expand(\\n\\t)
   help_copy.commands += $$MYFILECOPY
   help_copy.commands += @echo "Running qhelpgenerator" $$escape_expand(\\n\\t)
   help_copy.commands += $$[QT_INSTALL_BINS]\\qhelpgenerator $$DDIR\\docs.qhp -o $$DDIR\\docs.qch $$escape_expand(\\n\\t)

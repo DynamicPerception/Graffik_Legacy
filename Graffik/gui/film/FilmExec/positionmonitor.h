@@ -2,7 +2,7 @@
 
   Graffik Motion Control Application
 
-  Copyright (c) 2011-2012 Dynamic Perception
+  Copyright (c) 2011-2013 Dynamic Perception
 
  This file is part of Graffik.
 
@@ -36,8 +36,8 @@
 #include "core/Options/globaloptions.h"
 
 
-#define HMM_PERIOD  500
-#define HMM_SLOP    10
+const int HMM_PERIOD = 500;
+const unsigned long HMM_SLOP   = 10;
 
 /** Position Monitor Class
 

@@ -108,7 +108,20 @@ FlickNumber QListWidgetItem {
     border-image: url(themes/DP-Blue/img/stop-pressed.png);
 }
 
+MotionTape {
+    qproperty-background: rgb(143, 143, 143);
+    qproperty-color: white;
+}
+
 MotionArea {
+    qproperty-lineWidth: 2; /* Width of drawn motion line */
+    qproperty-lineColor: rgb(77, 154, 205); /* Color of drawn motion line */
+    qproperty-fillColorStart: rgba(77, 154, 205, 175); /* Top color of the gradient below motion line */
+    qproperty-fillColorEnd: rgba(255, 255, 255, 100); /* Bottom color of the gradient below motion line */
+    qproperty-grabLineColor: rgba(77, 154, 205, 255); /* Grab handle line color */
+    qproperty-grabFillColor: rgba(255, 255, 255, 175); /* Grab handle fill color */
+
+/* qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(77, 154, 205, 255), stop:1 rgba(255, 255, 255, 175));  Fill gradient under the motion line */
     border-image: url(themes/DP-Blue/img/track-back.png);
     border: 0px transparent;
     border-color: #000000;
@@ -238,15 +251,7 @@ MotionArea[muted="2"] {
     border-bottom-right-radius: 3px;
 }
 
-MotionTape {
-    qproperty-background: rgb(143, 143, 143);
-    qproperty-color: white;
-}
 
-MotionArea {
-    qproperty-lineWidth: 2;
-    qproperty-color: rgb(77, 154, 205);
-}
 
 
 #curFrameDispLabel, #totalFrameDispLabel {

@@ -2,7 +2,7 @@
 
   Graffik Motion Control Application
 
-  Copyright (c) 2011-2012 Dynamic Perception
+  Copyright (c) 2011-2013 Dynamic Perception
 
  This file is part of Graffik.
 
@@ -37,7 +37,7 @@
 
     // timer period mS - changes speed every period during
     // damping
-#define SCP_TIME_PERIOD 100
+const int SCP_TIME_PERIOD = 100;
 
 /**
 

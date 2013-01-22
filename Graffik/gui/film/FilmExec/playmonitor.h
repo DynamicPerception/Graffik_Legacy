@@ -2,7 +2,7 @@
 
   Graffik Motion Control Application
 
-  Copyright (c) 2011-2012 Dynamic Perception
+  Copyright (c) 2011-2013 Dynamic Perception
 
  This file is part of Graffik.
 
@@ -37,7 +37,7 @@
 #include "film/FilmParameters/filmparameters.h"
 
 
-#define PM_TIMER_PERIOD 250
+const int PM_TIMER_PERIOD = 250;
 
 
 /** Play State Monitor

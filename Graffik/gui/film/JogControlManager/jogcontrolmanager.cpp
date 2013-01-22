@@ -61,38 +61,37 @@ JogControlManager::JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, Live
     m_scpThread = new QThread;
 
         // ensure the SCP knows when a new device has been added
-    QObject::connect(m_net, SIGNAL(deviceAdded(OMdeviceInfo*)), m_scp, SLOT(deviceAdded(OMdeviceInfo*)));
-    QObject::connect(m_net, SIGNAL(deviceDeleted(QString,unsigned short)), m_scp, SLOT(deviceRemoved(QString,unsigned short)));
+    connect(m_net, SIGNAL(deviceAdded(OMdeviceInfo*)), m_scp, SLOT(deviceAdded(OMdeviceInfo*)));
+    connect(m_net, SIGNAL(deviceDeleted(QString,unsigned short)), m_scp, SLOT(deviceRemoved(QString,unsigned short)));
 
         // we need to listen to some commands we issue
-    QObject::connect(m_net, SIGNAL(complete(int,OMCommandBuffer*)), this, SLOT(_cmdComplete(int,OMCommandBuffer*)), Qt::QueuedConnection);
+    connect(m_net, SIGNAL(complete(int,OMCommandBuffer*)), this, SLOT(_cmdComplete(int,OMCommandBuffer*)), Qt::QueuedConnection);
 
         // inform SCP of a new device selected for jog control (via livedevicemodel)
-    QObject::connect(m_ldm, SIGNAL(deviceSelected(unsigned short)), m_scp, SLOT(deviceChange(unsigned short)));
+    connect(m_ldm, SIGNAL(deviceSelected(unsigned short)), m_scp, SLOT(deviceChange(unsigned short)));
 
         // of course, SCP may not allow the change yet (still moving to target speed)
         // so we'll need to pass this signal up as needed
 
-    QObject::connect(m_scp, SIGNAL(motorNotReady(unsigned short)), this, SIGNAL(motorChangeDenied(unsigned short)));
+    connect(m_scp, SIGNAL(motorNotReady(unsigned short)), this, SIGNAL(motorChangeDenied(unsigned short)));
 
         // we need to know when a device is changed so that we can modify the jogspeed and jogdamp spin boxes as needed
-    QObject::connect(m_scp, SIGNAL(motorChangeAccepted(unsigned short)), this, SLOT(_liveDeviceSelected(unsigned short)));
+    connect(m_scp, SIGNAL(motorChangeAccepted(unsigned short)), this, SLOT(_liveDeviceSelected(unsigned short)));
 
 
         // listen to jog spinners
-    QObject::connect(m_jogSpd, SIGNAL(valueChanged(int)), this, SLOT(_jogMaxSpeedChange(int)));
-    QObject::connect(m_jogDmp, SIGNAL(valueChanged(int)), this, SLOT(_jogDampChange(int)));
+    connect(m_jogSpd, SIGNAL(valueChanged(int)), this, SLOT(_jogMaxSpeedChange(int)));
+    connect(m_jogDmp, SIGNAL(valueChanged(int)), this, SLOT(_jogDampChange(int)));
 
         // tie the jog dial into the speed control proxy
-    QObject::connect(m_jogDial, SIGNAL(sliderMoved(int)), m_scp, SLOT(speedPosChange(int)));
+    connect(m_jogDial, SIGNAL(sliderMoved(int)), m_scp, SLOT(speedPosChange(int)));
 
         // tie resolution change to us (we'll pass onto SCP)
-   // QObject::connect(m_jogCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(_jogResChange(int)));
+   // connect(m_jogCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(_jogResChange(int)));
 
         // tie home and end buttons
-    QObject::connect(m_homeBut, SIGNAL(clicked()), this, SLOT(_homeClicked()));
-    QObject::connect(m_endBut, SIGNAL(clicked()), this, SLOT(_endClicked()));
-
+    connect(m_homeBut, SIGNAL(clicked()), this, SLOT(_homeClicked()));
+    connect(m_endBut, SIGNAL(clicked()), this, SLOT(_endClicked()));
 
         // move speedcontrolproxy to thread and start it
     m_scp->moveToThread(m_scpThread);
@@ -115,6 +114,13 @@ JogControlManager::~JogControlManager() {
     delete m_scp;
 }
 
+void JogControlManager::playStatusChange(bool p_stat) {
+    Q_UNUSED(p_stat);
+        // any change to play status should immediately stop the
+        // speed control proxy
+    m_scp->speedPosChange(0);
+}
+
 void JogControlManager::_liveDeviceSelected(unsigned short p_addr) {
 
     qDebug() << "JCM: Received selection for device addr" << p_addr;
@@ -133,8 +139,6 @@ double JogControlManager::_stepsToJogSpeed(OMaxisOptions* p_opts, unsigned int p
         setMove = 1.0;
 
     double spd = ( ((setMove / p_opts->ratio ) * (float) p_steps) * 60.0 ) / m_curRes;
-
-
 
     return( spd );
 
@@ -224,6 +228,12 @@ void JogControlManager::_jogDampChange(int p_damp) {
 // anything about the combobox its self
 
 void JogControlManager::_jogResChange(int p_idx) {
+
+    // Temporarily disabled resolution changes from jog window
+    // perhaps to be restored in the future, keeping code for now
+
+    Q_UNUSED(p_idx);
+
    // unsigned int ms = m_jogCombo->itemData(p_idx).toUInt();
     unsigned int ms = 1; //m_jogCombo->itemData(p_idx).toUInt();
 

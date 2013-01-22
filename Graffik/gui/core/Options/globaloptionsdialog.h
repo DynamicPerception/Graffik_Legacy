@@ -2,7 +2,7 @@
 
   Graffik Motion Control Application
 
-  Copyright (c) 2011-2012 Dynamic Perception
+  Copyright (c) 2011-2013 Dynamic Perception
 
  This file is part of Graffik.
 
@@ -25,6 +25,7 @@
 #define GLOBALOPTIONSDIALOG_H
 
 #include <QDialog>
+#include <QString>
 
 #include "globaloptions.h"
 
@@ -32,9 +33,9 @@
 #include "core/Utilities/singleton.h"
 #include "core/Themer/singlethemer.h"
 
-#define GOD_IMP_LABEL   "Imperial"
-#define GOD_MET_LABEL   "Metric"
-#define GOD_STP_LABEL   "Steps"
+const QString GOD_IMP_LABEL =  "Imperial";
+const QString GOD_MET_LABEL =  "Metric";
+const QString GOD_STP_LABEL = "Steps";
 
 namespace Ui {
     class GlobalOptionsDialog;

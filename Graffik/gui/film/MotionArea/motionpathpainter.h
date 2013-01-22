@@ -2,7 +2,7 @@
 
   Graffik Motion Control Application
 
-  Copyright (c) 2011-2012 Dynamic Perception
+  Copyright (c) 2011-2013 Dynamic Perception
 
  This file is part of Graffik.
 
@@ -33,15 +33,15 @@
     // rough and dirty travel constants from
     // OMMotor (on AVR)
 
-#define MPP_TRAVEL_LIN      2.0
-#define MPP_TRAVEL_QUAD     2.9999985
-#define MPP_TRAVEL_QUADINV  1.5000597
+const double MPP_TRAVEL_LIN      = 2.0;
+const double MPP_TRAVEL_QUAD     = 2.9999985;
+const double MPP_TRAVEL_QUADINV  = 1.5000597;
 
-#define MPP_DEF_MAX_PTS     2500
+const int MPP_DEF_MAX_PTS        = 2500;
 
     // buffer area above and below maximum line drawing,
     // as a fraction of the whole height
-#define MPP_HEIGHT_BUF         0.95
+const double MPP_HEIGHT_BUF      = 0.95;
 
 /** Motion Path Painer
 
@@ -127,11 +127,11 @@ private:
 
     unsigned long m_wasStart;
     unsigned long m_wasEnd;
-    unsigned long m_wasDist;
+             long m_wasDist;
     unsigned long m_wasAcc;
     unsigned long m_wasDcc;
     unsigned long m_wasMax;
-    int m_wasEase;
+              int m_wasEase;
     unsigned long m_wasLength;
 
     QList<float> m_renderPoints;

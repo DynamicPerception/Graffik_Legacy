@@ -1,0 +1,26 @@
+QPushButton {
+    border: 0px transparent;
+    max-width:120px;
+    max-height: 40px;
+    min-width:120px;
+    min-height: 40px;
+    color: rgb(255,255,255);
+    font: 12px "Lucida Sans";
+}
+
+#saveButton {
+    border-image: url(themes/DP-Blue/img/small-blue-but-normal.png);
+}
+
+#cancelButton {
+    border-image: url(themes/DP-Blue/img/small-gray-but-normal.png);
+}
+
+QComboBox:drop-down {
+    border-image: url(themes/DP-Blue/img/drop-down-sm-blue.png);
+    border: 0px transparent;
+}
+
+#DeviceAssignDialog {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(253, 253, 253, 255), stop:1 rgba(208, 208, 208, 255));
+}

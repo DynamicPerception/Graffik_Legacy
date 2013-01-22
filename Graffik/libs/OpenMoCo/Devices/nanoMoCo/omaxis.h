@@ -155,6 +155,7 @@ public:
     const int move(bool, unsigned long, unsigned long, unsigned long, unsigned long);
     const int plan(bool which, bool dir, unsigned long step, unsigned long shots, unsigned long accel, unsigned long decel);
     const int delayMove(unsigned long ms);
+    const int backlash(unsigned char);
 
     const int easing(unsigned char);
 

@@ -30,6 +30,11 @@
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
+
+        // handle QGradient metatype registration for our property
+    qRegisterMetaType<QGradient>("QGradient");
+
+
     ui->setupUi(this);
     _net = new OMNetwork();
     _axisOpts = new AxisOptions(this);

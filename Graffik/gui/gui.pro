@@ -19,7 +19,7 @@ INCLUDEPATH  += ../libs/qextserialport/src/ \
 
  # set software version string
 
-DEFINES += "GRAFFIK_VERSION=1.013"
+DEFINES += "GRAFFIK_VERSION=1.0151"
 
 
  # link to openmoco libraries
@@ -158,6 +158,10 @@ win32 {
 # OSX-Specific Build Instructions
 
 macx {
+
+
+ QMAKE_INFO_PLIST = $$PWD/Info.plist
+ QMAKE_POST_LINK += @echo "Setting PLIST as $$PWD/Info.plist" $$escape_expand(\\n\\t)
 
  CONFIG(release, debug|release) {
 

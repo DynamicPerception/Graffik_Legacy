@@ -39,7 +39,7 @@ AxisOptionsDialog::AxisOptionsDialog(AxisOptions* c_opts, unsigned short c_addr,
         // do NOT use Qt::QueuedConnection here - you want a direct connection on the accept signal, otherwise
         // this object may be gone by the time the signal is handled.
 
-    QObject::connect(ui->defaultCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(_defaultComboChange(int)));
+    connect(ui->defaultCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(_defaultComboChange(int)));
 
     setStyleSheet(SingleThemer::getStyleSheet("axis_opts"));
 
@@ -74,12 +74,14 @@ void AxisOptionsDialog::_initInputs() {
 
     ui->masterToggle->setValue(m_opts->master);
 
+    ui->backlashLine->setText(QString::number(m_opts->backlash));
+
         // disable inputs if one of the pre-defined types
     if( m_opts->axisType != AXIS_CUSTOM ) {
         ui->maxLine->setDisabled(true);
         ui->ratioLine->setDisabled(true);
         ui->typeCombo->setDisabled(true);
-
+      //  ui->backlashLine->setDisabled(true);
     }
 
 }
@@ -139,6 +141,7 @@ void AxisOptionsDialog::on_saveButton_clicked() {
     m_opts->axisMove = ui->typeCombo->itemData(ui->typeCombo->currentIndex()).toUInt();
     m_opts->ratio = ui->ratioLine->text().toFloat();
     m_opts->maxSteps = ui->maxLine->text().toUInt();
+    m_opts->backlash = ui->backlashLine->text().toUShort();
 
     m_opts->jogLimit = m_opts->maxSteps;
     m_opts->jogDamp = OM_OPT_JOGDAMP;

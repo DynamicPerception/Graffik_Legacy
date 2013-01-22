@@ -45,6 +45,9 @@ JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, FilmPara
     connect(m_jcm, SIGNAL(motorChangeDenied(unsigned short)), this, SLOT(_jogMotorChangeDenied(unsigned short)));
     connect(m_jcm, SIGNAL(endPosition(unsigned short,long)), this, SLOT(_endSet(unsigned short,long)));
 
+        // forward this signal, so that we can inform the JCM when someone smashes the stop button!
+    connect(this, SIGNAL(playStatusChange(bool)), m_jcm, SLOT(playStatusChange(bool)));
+
     // theming
 
     Themer* theme = &Singleton<Themer>::Instance();
@@ -54,8 +57,7 @@ JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, FilmPara
 
 }
 
-JogControlPanel::~JogControlPanel()
-{
+JogControlPanel::~JogControlPanel() {
     delete ui;
     delete m_jcm;
     delete m_ldModel;

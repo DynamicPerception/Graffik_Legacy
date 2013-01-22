@@ -2,7 +2,7 @@
 
   Graffik Motion Control Application
 
-  Copyright (c) 2011-2012 Dynamic Perception
+  Copyright (c) 2011-2013 Dynamic Perception
 
  This file is part of Graffik.
 
@@ -35,6 +35,7 @@
 #include "film/FilmParameters/filmparameters.h"
 #include "MoCoBus/omnetwork.h"
 
+
 namespace Ui {
 class JogControlPanel;
 }
@@ -55,6 +56,10 @@ public:
     JogControlPanel(OMNetwork* c_net, AxisOptions* c_opts, FilmParameters* c_params, QWidget *parent = 0);
     ~JogControlPanel();
     
+signals:
+
+    void playStatusChange(bool p_stat);
+
 private slots:
     void _endSet(unsigned short p_addr, long p_dist);
     void _jogMotorChangeDenied(unsigned short p_oldAddr);

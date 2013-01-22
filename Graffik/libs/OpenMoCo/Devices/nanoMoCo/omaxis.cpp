@@ -339,6 +339,22 @@ const int OMAxis::easing(unsigned char p_ease) {
 
 }
 
+/** Set Backlash Amount
+
+ Sets the current backlash correction, in steps
+
+ @param p_steps
+ The number of steps
+
+ @return
+ The ID of the command
+ */
+
+const int OMAxis::backlash(unsigned char p_steps) {
+   return this->command(COMDATA, dataMot, motBack, (char) p_steps);
+
+}
+
 /** Delay a Planned Move
 
   Sets the delay time (in mS) for a planned move.  The motor will not

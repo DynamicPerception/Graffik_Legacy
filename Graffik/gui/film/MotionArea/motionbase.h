@@ -2,7 +2,7 @@
 
   Graffik Motion Control Application
 
-  Copyright (c) 2011-2012 Dynamic Perception
+  Copyright (c) 2011-2013 Dynamic Perception
 
  This file is part of Graffik.
 
@@ -25,6 +25,7 @@
 #define MOTIONBASE_H
 
 #include <QWidget>
+#include <QString>
 
 #include "motionarea.h"
 #include "MoCoBus/omnetwork.h"
@@ -34,7 +35,7 @@
 #include "film/FilmParameters/filmparameters.h"
 #include "film/Dialogs/trackinfodialog.h"
 
-#define MB_STR_POS  "Position:"
+const QString MB_STR_POS = "Position:";
 
 namespace Ui {
 class MotionBase;

@@ -25,9 +25,7 @@
 
 #include <QDebug>
 
-SpeedControlProxy::SpeedControlProxy(AxisOptions *c_opts) :
-    QObject()
-{
+SpeedControlProxy::SpeedControlProxy(AxisOptions *c_opts) : QObject() {
     m_optObj = c_opts;
     m_curDev = 0;
     m_maxpct = 1.0;

@@ -2,7 +2,7 @@
 
   Graffik Motion Control Application
 
-  Copyright (c) 2011-2012 Dynamic Perception
+  Copyright (c) 2011-2013 Dynamic Perception
 
  This file is part of Graffik.
 
@@ -25,9 +25,12 @@
 #define CAMERACONTROLDIALOG_H
 
 #include <QDialog>
+#include <QHash>
 
 #include "core/Utilities/timeconverter.h"
 #include "core/Themer/singlethemer.h"
+#include "core/Options/axisoptions.h"
+#include "MoCoBus/omnetwork.h"
 
 #include "film/FilmParameters/filmparameters.h"
 
@@ -48,7 +51,7 @@ class CameraControlDialog : public QDialog
     Q_OBJECT
     
 public:
-    CameraControlDialog(FilmParameters* c_params, QWidget *parent = 0);
+    CameraControlDialog(FilmParameters* c_params, OMNetwork* c_net, AxisOptions* c_opts, QWidget *parent = 0);
     ~CameraControlDialog();
 
 signals:
@@ -71,6 +74,10 @@ private:
     Ui::CameraControlDialog *ui;
 
     FilmParameters* m_params;
+    OMNetwork* m_net;
+    AxisOptions* m_opts;
+
+    int m_wasMaster;
 
     void _setupInputs();
 };

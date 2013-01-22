@@ -110,6 +110,16 @@
     <widget class="QLineEdit" name="maxLine"/>
    </item>
    <item>
+    <widget class="QLabel" name="backlashLabel">
+     <property name="text">
+      <string>Backlash Compensation</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="backlashLine"/>
+   </item>
+   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>

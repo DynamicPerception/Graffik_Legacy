@@ -28,10 +28,7 @@
 
 #include <QDebug>
 
-DeviceAssignDialog::DeviceAssignDialog(OMNetwork *c_net, QString c_bus, QString c_type, QString c_name, QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::DeviceAssignDialog)
-{
+DeviceAssignDialog::DeviceAssignDialog(OMNetwork *c_net, QString c_bus, QString c_type, QString c_name, QWidget *parent) : QDialog(parent), ui(new Ui::DeviceAssignDialog) {
     ui->setupUi(this);
 
     m_net = c_net;
@@ -42,12 +39,13 @@ DeviceAssignDialog::DeviceAssignDialog(OMNetwork *c_net, QString c_bus, QString 
 
     _initInputs(m_type);
 
-    QObject::connect(m_net, SIGNAL(complete(int,OMCommandBuffer*)), this, SLOT(_commandComplete(int,OMCommandBuffer*)), Qt::QueuedConnection);
+    connect(m_net, SIGNAL(complete(int,OMCommandBuffer*)), this, SLOT(_commandComplete(int,OMCommandBuffer*)), Qt::QueuedConnection);
+
+    setStyleSheet(SingleThemer::getStyleSheet("device_assign"));
 
 }
 
-DeviceAssignDialog::~DeviceAssignDialog()
-{
+DeviceAssignDialog::~DeviceAssignDialog() {
     delete ui;
 }
 

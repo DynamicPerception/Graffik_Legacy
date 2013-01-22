@@ -14,6 +14,34 @@
 }
 
 
+QComboBox:drop-down {
+    border-image: url(themes/DP-Blue/img/drop-down-sm-blue.png);
+    border: 0px transparent;
+    width:30px;
+    min-width:30px;
+    max-width:30px;
+    border: 0px transparent;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+   subcontrol-origin: content;
+   subcontrol-position: center right;
+}
+
+QComboBox {
+    min-height: 33px;
+    min-width: 100px;
+    font: 12px "Lucida Sans";
+    margin-left: 5px;
+    padding-left: 5px;
+    border-radius: 8px;
+    border-top-right-radius: 9px;
+    border-bottom-right-radius: 9px;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border: 1px solid;
+}
+
+
 QDoubleSpinBox, QSpinBox {
     padding-left: 10px;
     padding-right: 29px;
@@ -161,8 +189,8 @@ SlideToggle::handle:horizontal {
 }
 
 #SMSInnerFrame, #filmLenFrame, #bulbExpFrame, #focLocFrame, #focusConFrame, #manIntFrame {
-    /*background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(172, 172, 172, 255), stop:1 rgba(146, 146, 146, 255));*/
-     background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0.541872 rgba(104, 104, 104, 255), stop:1 rgba(74, 74, 74, 255));
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(172, 172, 172, 255), stop:1 rgba(146, 146, 146, 255));
+    /* background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0.541872 rgba(104, 104, 104, 255), stop:1 rgba(74, 74, 74, 255)); */
     border: 1px solid rgb(0,0,0);
     border-radius: 6px;
 }
@@ -182,11 +210,13 @@ SlideToggle::handle:horizontal {
     padding-right: 5px;
     padding-left: 5px;
     margin: 0px;
-    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(253, 253, 253, 255), stop:1 rgba(208, 208, 208, 255));
+    border: 0px;
+    background-color: transparent;
+/*    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(253, 253, 253, 255), stop:1 rgba(208, 208, 208, 255));
     border-top: 1px solid;
     border-right: 1px solid;
     border-left: 1px solid;
-    border-bottom: 1px solid;
+    border-bottom: 1px solid; */
 }
 
 #focusFrame {
@@ -203,4 +233,23 @@ SlideToggle::handle:horizontal {
     margin:0px;
 }
 
+QToolBox::tab {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0.541872 rgba(104, 104, 104, 255), stop:1 rgba(74, 74, 74, 255));
+    /*background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(136, 136, 136, 255), stop:1 rgba(255, 255, 255, 255));*/
+    color: rgb(255, 255, 255);
+    font: 14px "Lucida Sans";
+    margin: 0px;
+}
 
+QToolBox {
+    border: 0px;
+}
+
+#timingPage, #cameraPage {
+ /* background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(253, 253, 253, 255), stop:1 rgba(208, 208, 208, 255)); */
+    background: transparent;
+}
+
+#masterLabel {
+    font: 12pt "Lucida Sans";
+}

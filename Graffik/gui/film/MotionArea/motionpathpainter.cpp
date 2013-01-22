@@ -288,11 +288,16 @@ void MotionPathPainter::setMotionCurve() {
     m_new        = true;
     m_curveAvail = false;
 
+    long moveSteps = axParms->endDist;
+            // get absolute value
+         moveSteps = moveSteps < 0 ? moveSteps * -1 : moveSteps;
+
     if( filmParams.realLength == 0 )
         return;
 
+
         // no movement, so just walk away now
-    if( axParms->endDist < 1 )
+    if( moveSteps < 1 )
         return;
 
     unsigned long maxSpeed = m_aopt->getOptions(m_addr)->maxSteps;
@@ -328,7 +333,7 @@ void MotionPathPainter::setMotionCurve() {
 
 //    qDebug() << "MPP: INIT:" << filmParams.realLength << axParms->startTm << axParms->accelTm << m_splinePlanned.acTm << travelTm << endTm << jmpAhead << leave << plotPts << m_wasWidth;
 
-    _initSpline(axParms->endDist, travelTm, axParms->accelTm, axParms->decelTm, plotPts);
+    _initSpline(moveSteps, travelTm, axParms->accelTm, axParms->decelTm, plotPts);
 
     float totalSteps = 0.0;
 
@@ -390,8 +395,8 @@ QPainterPath* MotionPathPainter::getPath(QRect p_area) {
             aopts->maxSteps == m_wasMax )
         return m_path;
 
-    int width = p_area.width();
-    int height = p_area.height();
+    unsigned int width = p_area.width();
+    unsigned int height = p_area.height();
 
         // set a new floor
     height = height * MPP_HEIGHT_BUF;

@@ -26,10 +26,14 @@
 
 #include <QDebug>
 
-CameraControlDialog::CameraControlDialog(FilmParameters *c_params, QWidget *parent) : QDialog(parent), ui(new Ui::CameraControlDialog) {
+CameraControlDialog::CameraControlDialog(FilmParameters *c_params, OMNetwork *c_net, AxisOptions *c_opts, QWidget *parent) : QDialog(parent), ui(new Ui::CameraControlDialog) {
     ui->setupUi(this);
 
     m_params = c_params;
+       m_net = c_net;
+      m_opts = c_opts;
+
+    m_wasMaster = 0;
 
     _setupInputs();
 
@@ -37,8 +41,7 @@ CameraControlDialog::CameraControlDialog(FilmParameters *c_params, QWidget *pare
 
 }
 
-CameraControlDialog::~CameraControlDialog()
-{
+CameraControlDialog::~CameraControlDialog() {
     delete ui;
 }
 
@@ -177,6 +180,44 @@ void CameraControlDialog::_setupInputs() {
 
     ui->delaySpin->setValue( (float) TimeConverter::seconds(cam->delayMS) );
 
+        // populate list of master devices into drop-down
+    QHash<unsigned short, OMdeviceInfo*> devs = m_net->getDevices();
+
+    int i = 0;
+    bool mastFound = false;
+
+    foreach( unsigned short addr, devs.keys() ) {
+        OMdeviceInfo* thsDev = devs.value(addr);
+
+        qDebug() << "CamOpts:" << addr << thsDev->type;
+
+        if( thsDev->type == "OpenMoCo Axis" ) {
+            ui->masterCombo->addItem(thsDev->name, QVariant(thsDev->device->address()));
+
+            OMaxisOptions* opts = m_opts->getOptions(addr);
+
+            if( opts->master ) {
+                qDebug() << "CamOpts: Found Master" << addr;
+                ui->masterCombo->setCurrentIndex(i);
+                mastFound = true;
+                m_wasMaster = addr;
+            }
+
+            i++;
+
+        }
+
+    }
+
+        // if no master was found, but there were compatible nodes,
+        // then elect the first one as the master
+    if( ! mastFound && i > 0 ) {
+        qDebug() << "CamOpts: Forcing Master!";
+        int addr = ui->masterCombo->itemData(0).toInt();
+        m_opts->setMaster(addr);
+        ui->masterCombo->setCurrentIndex(0);
+        m_wasMaster = addr;
+    }
 
 }
 
@@ -226,6 +267,11 @@ void CameraControlDialog::accept() {
     parmRef->fps = ui->fpsSpin->value();
 
     m_params->releaseParams();
+
+    int newMaster = ui->masterCombo->itemData( ui->masterCombo->currentIndex() ).toInt();
+
+    if( newMaster != m_wasMaster )
+        m_opts->setMaster( newMaster );
 
     this->done(1);
 

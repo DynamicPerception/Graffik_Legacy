@@ -128,6 +128,7 @@ void FlickNumber::setValue(unsigned int p_val) {
 }
 
 void FlickNumber::_rowChanged(int p_row) {
+    Q_UNUSED(p_row);
     qDebug() << "FN: Got Row Changed";
     flickSettled();
 }

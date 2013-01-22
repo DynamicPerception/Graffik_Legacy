@@ -30,17 +30,24 @@
 
 
 MotionArea::MotionArea(FilmParameters *c_film, OMdeviceInfo *c_dev, AxisOptions* c_aopt, GlobalOptions *c_gopt, QWidget *parent) : QFrame(parent), ui(new Ui::MotionArea) {
+
+        // handle QGradient metatype registration for our property
+    qRegisterMetaType<QLinearGradient>("QLinearGradient");
+
     m_dev = c_dev;
     m_film = c_film;
     m_aopt = c_aopt;
     m_gopt = c_gopt;
 
-    m_bgCol = MA_BG_COLOR;
     m_mute  = MA_MUTE_NA;
     m_sane  = true;
 
     m_lineWidth = 1;
     m_lineColor = Qt::black;
+    m_fillStartColor = Qt::black;
+    m_fillEndColor = Qt::white;
+    m_grabLineColor = Qt::black;
+    m_grabFillColor = Qt::white;
 
     m_pstat = false;
 
@@ -68,6 +75,7 @@ MotionArea::MotionArea(FilmParameters *c_film, OMdeviceInfo *c_dev, AxisOptions*
     setMouseTracking(true);
 
     setStyleSheet(SingleThemer::getStyleSheet("motionarea"));
+
 }
 
 MotionArea::~MotionArea() {
@@ -79,12 +87,44 @@ MotionArea::~MotionArea() {
 }
 
 
-QColor MotionArea::color() {
+QColor MotionArea::lineColor() {
     return m_lineColor;
 }
 
-void MotionArea::setColor(QColor p_color) {
+void MotionArea::setLineColor(QColor p_color) {
     m_lineColor = p_color;
+}
+
+QColor MotionArea::fillColorStart() {
+    return m_fillStartColor;
+}
+
+void MotionArea::setFillColorStart(QColor p_color) {
+    m_fillStartColor = p_color;
+}
+
+QColor MotionArea::fillColorEnd() {
+    return m_fillEndColor;
+}
+
+void MotionArea::setFillColorEnd(QColor p_color) {
+    m_fillEndColor = p_color;
+}
+
+QColor MotionArea::grabLineColor() {
+    return m_grabLineColor;
+}
+
+void MotionArea::setGrabLineColor(QColor p_color) {
+    m_grabLineColor = p_color;
+}
+
+QColor MotionArea::grabFillColor() {
+    return m_grabFillColor;
+}
+
+void MotionArea::setGrabFillColor(QColor p_color) {
+    m_grabFillColor = p_color;
 }
 
 int MotionArea::lineWidth() {
@@ -94,6 +134,7 @@ int MotionArea::lineWidth() {
 void MotionArea::setLineWidth(int p_width) {
     m_lineWidth = p_width;
 }
+
 
  /** Return a pointer to the MotionPathPainter object
 
@@ -283,6 +324,8 @@ void MotionArea::mouseReleaseEvent(QMouseEvent *) {
 
 void MotionArea::paintEvent(QPaintEvent *e) {
 
+    Q_UNUSED(e);
+
     QPainter painter(this);
 
         // we need the rectangle of the widget, not the
@@ -292,13 +335,21 @@ void MotionArea::paintEvent(QPaintEvent *e) {
 
     QRect eventRect = rect();
 
-    QBrush brush(m_lineColor);
+    int baseline = eventRect.height() * MPP_HEIGHT_BUF;
+
+    QLinearGradient grad(QPointF(0, baseline / 2), QPointF(0, eventRect.height()));
+
+    grad.setColorAt(0, m_fillStartColor);
+    grad.setColorAt(1, m_fillEndColor);
+
+    QBrush brush(grad);
     QPen   pen(m_lineColor);
 
     pen.setWidth(m_lineWidth);
 
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setPen(pen);
+    painter.setBrush(brush);
 
     painter.drawPath(*m_path->getPath(eventRect));
 
@@ -313,8 +364,6 @@ void MotionArea::paintEvent(QPaintEvent *e) {
     if( m_pstat == false ) {
         if( m_path->hasChanged() ) {
 
-            int baseline = eventRect.height() * MPP_HEIGHT_BUF;
-
             m_mvStart.setRect(m_path->getStartPx() - 5, baseline  - 5, 10, 10);
             m_mvEnd.setRect(m_path->getEndPx() - 5, baseline - 5, 10, 10);
             m_acEnd.setRect(m_path->getAcEndPx() - 5, m_path->getMaxHeight() - 5, 10, 10);
@@ -323,7 +372,11 @@ void MotionArea::paintEvent(QPaintEvent *e) {
 
          // draw drag points for start and end time
         if( m_path->isDrawn() && QWidget::underMouse() ) {
-            painter.setBrush(brush);
+            QPen gPen(m_grabLineColor);
+            QBrush gBrush(m_grabFillColor);
+
+            painter.setPen(gPen);
+            painter.setBrush(gBrush);
             painter.drawEllipse(m_mvStart);
             painter.drawEllipse(m_mvEnd);
             painter.drawEllipse(m_acEnd);

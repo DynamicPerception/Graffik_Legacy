@@ -2,7 +2,7 @@
 
   Graffik Motion Control Application
 
-  Copyright (c) 2011-2012 Dynamic Perception
+  Copyright (c) 2011-2013 Dynamic Perception
 
  This file is part of Graffik.
 
@@ -34,6 +34,8 @@
 #include <QToolTip>
 #include <QPoint>
 #include <QPen>
+#include <QString>
+#include <QLinearGradient>
 
 
 #include "MoCoBus/omnetwork.h"
@@ -45,38 +47,41 @@
 
 #include "film/FilmParameters/filmparameters.h"
 
-
 #include "motionpathpainter.h"
 
-#define MA_BG_COLOR "#5999BC"
-#define MA_CL_COLOR "#FFFFFF"
-#define MA_ER_COLOR "#FF3333"
-#define MA_MT_COLOR "#CDC5BF"
 
-#define MA_STR_STEP " Steps"
-#define MA_STR_IMP  " In."
-#define MA_STR_MET  " cm."
-#define MA_STR_DEG  " Deg."
-#define MA_STR_POS  "Postion: "
-#define MA_STR_SPD  "Speed: "
-#define MA_STR_MOD  "/sec"
-#define MA_STR_TIM  "Time: "
+const QString MA_BG_COLOR = "#5999BC";
+const QString MA_CL_COLOR = "#FFFFFF";
+const QString MA_ER_COLOR = "#FF3333";
+const QString MA_MT_COLOR = "#CDC5BF";
 
-#define MA_PT_NONE  0
-#define MA_PT_START 1
-#define MA_PT_END   2
-#define MA_PT_ACE   3
-#define MA_PT_DCS   4
+const QString MA_STR_STEP = " Steps";
+const QString MA_STR_IMP  = " In.";
+const QString MA_STR_MET  = " cm.";
+const QString MA_STR_DEG  = " Deg.";
+const QString MA_STR_POS  = "Postion: ";
+const QString MA_STR_SPD  = "Speed: ";
+const QString MA_STR_MOD  = "/sec";
+const QString MA_STR_TIM  = "Time: ";
 
-#define MA_TT_TIMER 500
+const int MA_PT_NONE  = 0;
+const int MA_PT_START = 1;
+const int MA_PT_END   = 2;
+const int MA_PT_ACE   = 3;
+const int MA_PT_DCS   = 4;
 
-#define MA_MUTE_NA  0
-#define MA_MUTE_MT  1
-#define MA_MUTE_ER  2
+const int MA_TT_TIMER = 500;
+
+const int MA_MUTE_NA  = 0;
+const int MA_MUTE_MT  = 1;
+const int MA_MUTE_ER  = 2;
 
 namespace Ui {
 class MotionArea;
 }
+
+Q_DECLARE_METATYPE(QLinearGradient)
+
 
 /** Motion Area Widget
 
@@ -87,13 +92,15 @@ class MotionArea;
   C. A. Church
   */
 
-class MotionArea : public QFrame
-{
+class MotionArea : public QFrame {
     Q_OBJECT
     Q_PROPERTY(int lineWidth READ lineWidth WRITE setLineWidth DESIGNABLE true)
-    Q_PROPERTY(QColor color READ color WRITE setColor DESIGNABLE true)
+    Q_PROPERTY(QColor lineColor READ lineColor WRITE setLineColor DESIGNABLE true)
+    Q_PROPERTY(QColor fillColorStart READ fillColorStart WRITE setFillColorStart DESIGNABLE true)
+    Q_PROPERTY(QColor fillColorEnd READ fillColorEnd WRITE setFillColorEnd DESIGNABLE true)
+    Q_PROPERTY(QColor grabLineColor READ grabLineColor WRITE setGrabLineColor DESIGNABLE true)
+    Q_PROPERTY(QColor grabFillColor READ grabFillColor WRITE setGrabFillColor DESIGNABLE true)
     Q_PROPERTY(int muted READ muted DESIGNABLE true)
-
 
 public:
     MotionArea(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions* c_aopt, GlobalOptions* c_gopt, QWidget *parent);
@@ -109,10 +116,25 @@ public:
     QList<QString> convertValue(float p_val);
 
 
-    QColor color();
+
     int lineWidth();
-    void setColor(QColor p_color);
     void setLineWidth(int p_width);
+
+    QColor lineColor();
+    void setLineColor(QColor p_color);
+
+    QColor fillColorStart();
+    void setFillColorStart(QColor p_color);
+
+    QColor fillColorEnd();
+    void setFillColorEnd(QColor p_grad);
+
+    QColor grabLineColor();
+    void setGrabLineColor(QColor p_grad);
+
+    QColor grabFillColor();
+    void setGrabFillColor(QColor p_grad);
+
     int muted();
 
 public slots:
@@ -148,9 +170,12 @@ private:
     QRect m_acEnd;
     QRect m_dcStart;
 
-    QString m_bgCol;
-
     QColor m_lineColor;
+    QColor m_fillStartColor;
+    QColor m_fillEndColor;
+    QColor m_grabLineColor;
+    QColor m_grabFillColor;
+
     int m_lineWidth;
 
     int m_moveItem;

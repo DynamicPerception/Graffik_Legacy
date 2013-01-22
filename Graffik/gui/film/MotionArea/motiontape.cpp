@@ -68,19 +68,27 @@ MotionTape::~MotionTape()
 }
 
 
+QColor MotionTape::background() {
+    return m_bgCol;
+}
+
 /** Set Background Color
 
    For use in property access within stylesheets
    */
-void MotionTape::background(QColor p_col) {
+void MotionTape::setBackground(QColor p_col) {
     m_bgCol = p_col;
+}
+
+QColor MotionTape::color() {
+    return m_fgCol;
 }
 
 /** Set Foreground Color
 
    For use in property access within stylesheets
    */
-void MotionTape::color(QColor p_col) {
+void MotionTape::setColor(QColor p_col) {
     m_fgCol = p_col;
 }
 
@@ -184,7 +192,7 @@ void MotionTape::_drawTime(QRect p_rect) {
 
 }
 
-void MotionTape::_drawLines(QRect p_rect, int p_lines, int p_height, int p_fill, int p_pad) {
+void MotionTape::_drawLines(QRect p_rect, unsigned int p_lines, int p_height, int p_fill, int p_pad) {
 
     float pixStep = _calcSpacing(p_rect, p_lines, p_fill, p_pad);
     int wholeStep = int(pixStep);

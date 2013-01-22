@@ -2,7 +2,7 @@
 
   Graffik Motion Control Application
 
-  Copyright (c) 2011-2012 Dynamic Perception
+  Copyright (c) 2011-2013 Dynamic Perception
 
  This file is part of Graffik.
 
@@ -55,6 +55,7 @@
 #include "film/Dialogs/cameracontroldialog.h"
 #include "film/FilmExec/filmexec.h"
 #include "film/FilmFileHandler/filmfilehandler.h"
+
 
 namespace Ui {
     class FilmWindow;

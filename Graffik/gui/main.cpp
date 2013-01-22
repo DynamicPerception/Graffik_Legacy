@@ -24,8 +24,11 @@
 #include <QtGui/QApplication>
 #include "mainwindow.h"
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
+
+    QCoreApplication::setApplicationName("Graffik");
+    QCoreApplication::setOrganizationName("Dynamic Perception");
+    QCoreApplication::setOrganizationDomain("dynamicperception.com");
 
     QApplication a(argc, argv);
 
@@ -33,6 +36,7 @@ int main(int argc, char *argv[])
     w.show();
 
     return a.exec();
+
 }
 
 

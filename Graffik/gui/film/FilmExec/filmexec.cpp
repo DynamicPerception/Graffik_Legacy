@@ -245,9 +245,9 @@ void FilmExec::rewind() {
 
     foreach(OMAxis* axis, axes) {
 
-        unsigned short addr = axis->address();
+        unsigned short          addr = axis->address();
         unsigned long distanceToMove = m_film.axes.value(addr)->endDist;
-        bool mute           = m_film.axes.value(addr)->mute;
+        bool                    mute = m_film.axes.value(addr)->mute;
 
         if( distanceToMove != 0 && ! mute ) {
                 // only do this if moving
@@ -518,22 +518,20 @@ void FilmExec::_sendNodeMovements(OMfilmParams *p_film, OMAxis *p_axis) {
 
         // send movement parameters to axis node
 
-    unsigned short addr = p_axis->address();
+    unsigned short     addr = p_axis->address();
     OMfilmAxisParams* parms = p_film->axes.value(addr);
-    bool which = p_film->filmMode == FILM_MODE_SMS ? true : false;
-
-    long end   = parms->endDist;
-    bool dir   = end < 0 ? false : true;
+    bool              which = p_film->filmMode == FILM_MODE_SMS ? true : false;
+    long                end = parms->endDist;
+    bool                dir = end < 0 ? false : true;
+    // if no end time specified, arrive at end of film
+    unsigned long    arrive = parms->endTm > 0 ? parms->endTm : p_film->realLength;
+    unsigned long     accel = parms->accelTm;
+    unsigned long     decel = parms->decelTm;
+    OMaxisOptions*    aopts = m_opts->getOptions(addr);
 
         // multiply end point by microsteps, we jog in rapid
     end = end * parms->ms;
     end = end < 0 ? end * -1 : end;
-
-        // if no end time specified, arrive at end of film
-    unsigned long arrive = parms->endTm > 0 ? parms->endTm : p_film->realLength;
-
-    unsigned long accel = parms->accelTm;
-    unsigned long decel = parms->decelTm;
 
         // we store when the movement ends, but the
         // value we need to transmit is how long the total
@@ -557,9 +555,10 @@ void FilmExec::_sendNodeMovements(OMfilmParams *p_film, OMAxis *p_axis) {
         decel = dc_shots;
     }
 
-    qDebug() << "FE: Motor Params: " << which << dir << parms->startTm << end << arrive << accel << decel;
+    qDebug() << "FE: Motor Params: " << which << dir << parms->startTm << end << arrive << accel << decel << aopts->backlash;
 
     p_axis->motorEnable();
+    p_axis->backlash(aopts->backlash);
     p_axis->continuous(false);
     p_axis->delayMove(parms->startTm);
     p_axis->easing(parms->easing);

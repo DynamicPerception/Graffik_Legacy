@@ -57,6 +57,9 @@ MotionSection::~MotionSection() {
 }
 
 void MotionSection::paintEvent(QPaintEvent * p_event) {
+
+    Q_UNUSED(p_event);
+
      QPainter painter(this);
 
      QRect curRect = rect();

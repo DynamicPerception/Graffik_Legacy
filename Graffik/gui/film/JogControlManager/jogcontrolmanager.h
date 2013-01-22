@@ -2,7 +2,7 @@
 
   Graffik Motion Control Application
 
-  Copyright (c) 2011-2012 Dynamic Perception
+  Copyright (c) 2011-2013 Dynamic Perception
 
  This file is part of Graffik.
 
@@ -39,10 +39,10 @@
 #include "core/Options/axisoptions.h"
 
 
-#define OM_JOGRES_RAPID 1
-#define OM_JOGRES_COARSE 2
-#define OM_JOGRES_FINE 8
-#define OM_JOGRES_XFINE 16
+const int OM_JOGRES_RAPID   = 1;
+const int OM_JOGRES_COARSE  = 2;
+const int OM_JOGRES_FINE    = 8;
+const int OM_JOGRES_XFINE   = 16;
 
 /** Jog Controls Manager
 
@@ -68,7 +68,8 @@ signals:
     void endPosition(unsigned short p_addr, long p_end);
 
 public slots:
-    
+    void playStatusChange(bool p_stat);
+
 private slots:
     void _liveDeviceSelected(unsigned short p_addr);
     void _jogMaxSpeedChange(int p_spd);

@@ -2,7 +2,7 @@
 
   Graffik Motion Control Application
 
-  Copyright (c) 2011-2012 Dynamic Perception
+  Copyright (c) 2011-2013 Dynamic Perception
 
  This file is part of Graffik.
 
@@ -29,11 +29,8 @@
 #include <QApplication>
 
 #include "MoCoBus/omnetwork.h"
-
 #include "film/FilmParameters/filmparameters.h"
-
 #include "core/Dialogs/errordialog.h"
-
 #include "addressnotfounddialog.h"
 
 /** Film File Handler Class

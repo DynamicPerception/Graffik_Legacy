@@ -2,7 +2,7 @@
 
   Graffik Motion Control Application
 
-  Copyright (c) 2011-2012 Dynamic Perception
+  Copyright (c) 2011-2013 Dynamic Perception
 
  This file is part of Graffik.
 
@@ -25,21 +25,22 @@
 #define OMAXISFILMOPTIONSDIALOG_H
 
 #include <QDialog>
+#include <QString>
 
 #include "axisoptions.h"
 #include "core/Widgets/slidetoggle.h"
 #include "core/Themer/singlethemer.h"
 
-#define AOD_STR_MAST    "By setting this device as the timing master, you will automatically unset any existing master device. Do you want to do this?"
-#define AOD_STR_UNMAST  "If you unset this device as the timing master, you must manually select and edit another device and configure it as timing master for synchronization to work. Do you want to do this?"
+const QString AOD_STR_MAST   = "By setting this device as the timing master, you will automatically unset any existing master device. Do you want to do this?";
+const QString AOD_STR_UNMAST = "If you unset this device as the timing master, you must manually select and edit another device and configure it as timing master for synchronization to work. Do you want to do this?";
 
-#define AOD_STR_PAN     "VX1 Pan"
-#define AOD_STR_TILT    "VX1 Tilt"
-#define AOD_STR_SLIDE   "VX1 Slider"
-#define AOD_STR_CUST    "Custom"
+const QString AOD_STR_PAN   =  "VX1 Pan";
+const QString AOD_STR_TILT  =  "VX1 Tilt";
+const QString AOD_STR_SLIDE =  "VX1 Slider";
+const QString AOD_STR_CUST  =  "Custom";
 
-#define AOD_STR_ROT     "Rotary"
-#define AOD_STR_LIN     "Linear"
+const QString AOD_STR_ROT   =  "Rotary";
+const QString AOD_STR_LIN   =  "Linear";
 
 namespace Ui {
 class AxisOptionsDialog;

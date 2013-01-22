@@ -2,7 +2,7 @@
 
   Graffik Motion Control Application
 
-  Copyright (c) 2011-2012 Dynamic Perception
+  Copyright (c) 2011-2013 Dynamic Perception
 
  This file is part of Graffik.
 
@@ -30,6 +30,8 @@
 #include "MoCoBus/omnetwork.h"
 #include "Devices/nanoMoCo/omaxis.h"
 
+#include "core/Themer/singlethemer.h"
+
 namespace Ui {
 class DeviceAssignDialog;
 }
@@ -44,8 +46,7 @@ class DeviceAssignDialog;
   C. A. Church
   */
 
-class DeviceAssignDialog : public QDialog
-{
+class DeviceAssignDialog : public QDialog {
     Q_OBJECT
     
 public:

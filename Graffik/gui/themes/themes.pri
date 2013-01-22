@@ -72,6 +72,7 @@ OTHER_FILES += \
        themes/DP-Blue/delete_bus.qss \
        themes/DP-Blue/delete_device.qss \
        themes/DP-Blue/device_scan.qss \
+       themes/DP-Blue/device_assign.qss \
        themes/DP-Blue/error.qss \
        themes/DP-Blue/film.qss \
        themes/DP-Blue/film_win.qss \

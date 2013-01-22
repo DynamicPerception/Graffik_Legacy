@@ -2,7 +2,7 @@
 
   Graffik Motion Control Application
 
-  Copyright (c) 2011-2012 Dynamic Perception
+  Copyright (c) 2011-2013 Dynamic Perception
 
  This file is part of Graffik.
 
@@ -62,6 +62,7 @@ struct OMaxisOptions {
     unsigned int jogLimit;
     float jogDamp;
     unsigned int ms;
+    unsigned char backlash;
 
         // default construction
     OMaxisOptions() {
@@ -74,6 +75,7 @@ struct OMaxisOptions {
         jogLimit = OM_OPT_VX1MAXSTEPS;
         jogDamp = OM_OPT_JOGDAMP;
         ms = 1;
+        backlash = 0;
     }
 
         // construct new from old
@@ -86,6 +88,7 @@ struct OMaxisOptions {
         jogLimit = opts.jogLimit;
         jogDamp = opts.jogDamp;
         ms = opts.ms;
+        backlash = opts.backlash;
     }
 };
 
@@ -104,6 +107,7 @@ inline QDataStream& operator<<(QDataStream& out, const OMaxisOptions& options)
     out << quint32(options.jogLimit);
     out << QString::number(options.jogDamp);
     out << quint32(options.ms);
+    out << quint8(options.backlash);
 
 
     return out;
@@ -119,6 +123,7 @@ inline QDataStream& operator>>(QDataStream& in, OMaxisOptions& options)
     quint32 jogLimit;
     QString jogDamp;
     quint32 ms;
+    quint8  backlash;
 
     in >> type;
     in >> move;
@@ -128,6 +133,7 @@ inline QDataStream& operator>>(QDataStream& in, OMaxisOptions& options)
     in >> jogLimit;
     in >> jogDamp;
     in >> ms;
+    in >> backlash;
 
     options.axisMove = move;
     options.axisType = type;
@@ -137,6 +143,7 @@ inline QDataStream& operator>>(QDataStream& in, OMaxisOptions& options)
     options.jogLimit = jogLimit;
     options.jogDamp = jogDamp.toFloat();
     options.ms = ms;
+    options.backlash = backlash;
 
     return in;
 }

@@ -191,9 +191,9 @@ QString Themer::_fileContents(QString p_path) {
     contents.close();
 
     // hack for windows, QSS doesn't like the relative urls for images
-#ifdef Q_WS_WIN
+// #ifdef Q_WS_WIN
     ret.replace("url(", "url(" + QCoreApplication::applicationDirPath() + "/");
-#endif
+// #endif
 
     return ret;
 }

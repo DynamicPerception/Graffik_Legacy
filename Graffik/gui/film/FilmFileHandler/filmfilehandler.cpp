@@ -114,7 +114,7 @@ void FilmFileHandler::readFile(QString p_file, FilmParameters* p_params, OMNetwo
     if( filmFile.open(QIODevice::ReadOnly) ) {
         QDataStream data( &filmFile );
         OMfilmParams newParams;
-        quint32 fileVersion;
+        qint32 fileVersion;
 
         data >> fileVersion;
 
