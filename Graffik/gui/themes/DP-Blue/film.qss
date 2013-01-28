@@ -292,6 +292,7 @@ MotionArea[muted="2"] {
     margin-left: 5px;
     margin-top: 5px;
     margin-bottom: 5px;
+    min-width:75px;
 }
 
 

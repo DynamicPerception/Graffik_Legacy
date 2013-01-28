@@ -337,6 +337,8 @@ void MotionArea::paintEvent(QPaintEvent *e) {
 
     int baseline = eventRect.height() * MPP_HEIGHT_BUF;
 
+        // fill gradient
+
     QLinearGradient grad(QPointF(0, baseline / 2), QPointF(0, eventRect.height()));
 
     grad.setColorAt(0, m_fillStartColor);
@@ -352,6 +354,12 @@ void MotionArea::paintEvent(QPaintEvent *e) {
     painter.setBrush(brush);
 
     painter.drawPath(*m_path->getPath(eventRect));
+
+        // Filling the path above leaves a blank space in the buffer area, so
+        // fill area below line with gradient, for a better look
+
+    if( m_path->getMaxSpeed() > 0.0 )
+        painter.fillRect(0, baseline, eventRect.width(), eventRect.height() - baseline, brush);
 
         // let everyone know where our left and right sides are, so tied elements can line up
     emit globalPosition(mapToGlobal(QPoint(eventRect.topLeft().x(), 0)).x(), mapToGlobal(QPoint(eventRect.topRight().x(), 0)).x());

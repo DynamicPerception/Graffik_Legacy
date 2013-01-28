@@ -48,6 +48,8 @@ MotionPathPainter::MotionPathPainter(unsigned short c_addr, FilmParameters *c_pa
     m_acEndPx   = 0;
     m_dcStartPx = 0;
     m_maxHeight = 0;
+    m_wasMs     = 1;
+    m_maxSpeed  = 0.0;
 
     m_curveAvail    = false;
     m_new           = false;
@@ -142,6 +144,11 @@ int MotionPathPainter::getStartPx() {
 
 int MotionPathPainter::getEndPx() {
     return m_endPx;
+}
+
+/** Get the maximum speed reached in the profiled move */
+float MotionPathPainter::getMaxSpeed() {
+    return m_maxSpeed;
 }
 
 /** Set Display Scaling
@@ -267,6 +274,7 @@ void MotionPathPainter::setMotionCurve() {
             axParms->accelTm == m_wasAcc &&
             axParms->decelTm == m_wasDcc &&
             axParms->easing == m_wasEase &&
+            axParms->ms == m_wasMs &&
             filmParams.realLength == m_wasLength)
         return;
 
@@ -284,6 +292,7 @@ void MotionPathPainter::setMotionCurve() {
     m_wasAcc    = axParms->accelTm;
     m_wasDcc    = axParms->decelTm;
     m_wasEase   = axParms->easing;
+    m_wasMs     = axParms->ms;
 
     m_new        = true;
     m_curveAvail = false;
@@ -302,6 +311,7 @@ void MotionPathPainter::setMotionCurve() {
 
     unsigned long maxSpeed = m_aopt->getOptions(m_addr)->maxSteps;
     bool              sane = true;
+                m_maxSpeed = 0.0;
               m_curveAvail = true;
 
         // put upper boundary at 1 point per millisecond
@@ -350,8 +360,7 @@ void MotionPathPainter::setMotionCurve() {
           else
               curSpd = _qInvCalc(tmPos);
 
-          if( curSpd > ((float)maxSpeed / (1000.0 / ms_per_xpt)) )
-              sane = false;
+          m_maxSpeed = curSpd > m_maxSpeed ? curSpd : m_maxSpeed;
 
           m_renderPoints.append(curSpd);
 
@@ -364,6 +373,14 @@ void MotionPathPainter::setMotionCurve() {
     for( unsigned long i = 0; i < leave; i++ ) {
         m_renderPoints.append(0);
         m_stepsTaken.append(totalSteps);
+    }
+
+        // block movement of the axis if it tries to exceed its maximum speed,
+        // or the total step rate exceeds the ability of the driver
+
+    if( m_maxSpeed > ((float)maxSpeed / (1000.0 / ms_per_xpt)) || ( m_maxSpeed * (1000.0 / ms_per_xpt)) * m_wasMs > MPP_REAL_MAX ) {
+        qDebug() << "MPP: Motion Profile is not Sane";
+        sane = false;
     }
 
     emit moveSane(sane);

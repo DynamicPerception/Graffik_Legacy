@@ -43,6 +43,10 @@ const int MPP_DEF_MAX_PTS        = 2500;
     // as a fraction of the whole height
 const double MPP_HEIGHT_BUF      = 0.95;
 
+    // the real maximum step rate which the nanoMoCo driver can do
+const float MPP_REAL_MAX         = 5000.0;
+
+
 /** Motion Path Painer
 
   The Motion Path Painter does the heavy lifting of creating a painter path representing the
@@ -53,8 +57,7 @@ const double MPP_HEIGHT_BUF      = 0.95;
   C. A. Church
   */
 
-class MotionPathPainter : public QWidget
-{
+class MotionPathPainter : public QWidget {
     Q_OBJECT
 public:
     MotionPathPainter(unsigned short c_addr, FilmParameters* c_parms, AxisOptions* c_aopt, QWidget* parent);
@@ -72,6 +75,7 @@ public:
     int getAcEndPx();
     int getDcStartPx();
     int getMaxHeight();
+    float getMaxSpeed();
 
     void scaling(bool p_scale);
     bool scaling();
@@ -133,6 +137,7 @@ private:
     unsigned long m_wasMax;
               int m_wasEase;
     unsigned long m_wasLength;
+    unsigned  int m_wasMs;
 
     QList<float> m_renderPoints;
     QList<float> m_stepsTaken;
@@ -148,6 +153,7 @@ private:
     int m_dcStartPx;
     int m_acEndPx;
     int m_maxHeight;
+    float m_maxSpeed;
 
     void _initSpline(unsigned long p_Steps, unsigned long p_Time, unsigned long p_Accel, unsigned long p_Decel, unsigned long p_totalSplines);
     float _qInvCalc(float p_tmPos);
