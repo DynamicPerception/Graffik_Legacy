@@ -54,6 +54,17 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
 
     ui->visualSA->setWidget(m_areaViewPort);
 
+    // OSX has issues laying out these buttons w/o overlap,
+    // this is a work-around
+#ifdef Q_WS_MAC
+    ui->stopButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+    ui->playButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+    ui->forwardButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+    ui->rewindButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+    ui->frameFwdButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+    ui->frameRwdButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+#endif
+
         // create our transparent overlay for drawing position line
         // this must be done after the layout is added to visualSAContents,
         // as this class attempts to access that layout
@@ -303,6 +314,9 @@ void FilmWindow::_prepInputs() {
         m_spinsPrepped = true;
     }
 
+    _setStopButtonStatus(s_Disable);
+    _setPlayButtonStatus(s_Play);
+
     _displayCamControl();
     _inputEnable(true);
     _showFilmTime();
@@ -359,12 +373,12 @@ void FilmWindow::_changeTime(int p_which, int p_pos, int p_val) {
     unsigned long interval = m_exec->interval(params);
     bool        showUpdate = false;
 
-    if( p_which == 1 )
+    if( p_which == 1 ) {
         params->length = mS;
+    }
     else {
         unsigned long oldTm = params->realLength;
-
-        params->realLength = mS;
+         params->realLength = mS;
 
         if( ! camEn ) {
             qDebug() << "FW: Cam not enabled, set film time to same as real time";
@@ -609,6 +623,14 @@ void FilmWindow::on_forwardButton_clicked() {
     m_busy->show();
 
     m_exec->ffwd();
+
+}
+
+void FilmWindow::on_frameFwdButton_clicked() {
+
+}
+
+void FilmWindow::on_frameRwdButton_clicked() {
 
 }
 

@@ -46,5 +46,10 @@ bool SectionResizeFilter::eventFilter(QObject *p_obj, QEvent *p_event) {
         m_motion->update();
         return false;
     }
+    else if( p_event->type() == QEvent::Show ) {
+        m_motion->update();
+        return false;
+    }
+
     return QObject::eventFilter( p_obj, p_event );
 }

@@ -1292,7 +1292,7 @@ const int OMAxis::_slimPlan(QStringList& p_str) {
     if( p_str[0] == "sms" )
         which = true;
 
-    if( p_str[0] == "true" || p_str[0] == "1" )
+    if( p_str[1] == "true" || p_str[1] == "1" )
         dir = true;
 
         return plan( which, dir, p_str[2].toULong(), p_str[3].toULong(), p_str[4].toULong(), p_str[5].toULong() );

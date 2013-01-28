@@ -43,8 +43,7 @@ class DeviceScanWidget;
   C. A. Church
   */
 
-class DeviceScanWidget : public QWidget
-{
+class DeviceScanWidget : public QWidget {
     Q_OBJECT
     
 public:

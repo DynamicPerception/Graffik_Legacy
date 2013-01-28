@@ -46,6 +46,13 @@ FlickNumber QListWidgetItem {
     text-align: center;
 }
 
+#forwardButton, #rewindButton, #frameFwdButton, #frameRwdButton, #playButton, #stopButton {
+    margin-top: 2px;
+    margin-bottom: 2px;
+    margin:0px;
+    padding: 0px;
+}
+
 #forwardButton {
     border-image: url(themes/DP-Blue/img/fwd-end-normal.png);
     border:0px transparent;
@@ -53,6 +60,10 @@ FlickNumber QListWidgetItem {
 
 #forwardButton:pressed {
     border-image: url(themes/DP-Blue/img/fwd-end-pressed.png);
+}
+
+#forwardButton:disabled {
+    border-image: url(themes/DP-Blue/img/fwd-end-disable.png);
 }
 
 #frameFwdButton {
@@ -64,6 +75,10 @@ FlickNumber QListWidgetItem {
     border-image: url(themes/DP-Blue/img/fwd-pressed.png);
 }
 
+#frameFwdButton:disabled {
+    border-image: url(themes/DP-Blue/img/fwd-disable.png);
+}
+
 #rewindButton {
     border-image: url(themes/DP-Blue/img/rwd-home-normal.png);
     border:0px transparent;
@@ -71,6 +86,10 @@ FlickNumber QListWidgetItem {
 
 #rewindButton:pressed {
     border-image: url(themes/DP-Blue/img/rwd-home-pressed.png);
+}
+
+#rewindButton:disabled {
+    border-image: url(themes/DP-Blue/img/rwd-home-disable.png);
 }
 
 #frameRwdButton {
@@ -82,6 +101,10 @@ FlickNumber QListWidgetItem {
     border-image: url(themes/DP-Blue/img/rwd-pressed.png);
 }
 
+#frameRwdButton:disabled {
+    border-image: url(themes/DP-Blue/img/rwd-disable.png);
+}
+
 #playButton {
     border-image: url(themes/DP-Blue/img/play-normal.png);
     border:0px transparent;
@@ -89,6 +112,10 @@ FlickNumber QListWidgetItem {
 
 #playButton:pressed {
     border-image: url(themes/DP-Blue/img/play-pressed.png);
+}
+
+#playButton:disabled {
+    border-image: url(themes/DP-Blue/img/play-disable.png);
 }
 
 #playButton[state="1"] {
@@ -108,6 +135,10 @@ FlickNumber QListWidgetItem {
     border-image: url(themes/DP-Blue/img/stop-pressed.png);
 }
 
+#stopButton:disabled {
+    border-image: url(themes/DP-Blue/img/stop-disable.png);
+}
+
 MotionTape {
     qproperty-background: rgb(143, 143, 143);
     qproperty-color: white;
@@ -120,8 +151,6 @@ MotionArea {
     qproperty-fillColorEnd: rgba(255, 255, 255, 100); /* Bottom color of the gradient below motion line */
     qproperty-grabLineColor: rgba(77, 154, 205, 255); /* Grab handle line color */
     qproperty-grabFillColor: rgba(255, 255, 255, 175); /* Grab handle fill color */
-
-/* qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(77, 154, 205, 255), stop:1 rgba(255, 255, 255, 175));  Fill gradient under the motion line */
     border-image: url(themes/DP-Blue/img/track-back.png);
     border: 0px transparent;
     border-color: #000000;
@@ -260,6 +289,9 @@ MotionArea[muted="2"] {
     border-radius:4px;
     border: 1px solid;
     border-color:rgb(84, 84, 84);
+    margin-left: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 
@@ -271,6 +303,7 @@ MotionArea[muted="2"] {
 
 #curFramesLabel, #totalFramesLabel {
     color:white;
+    margin-left: 5px;
 }
 
 #timeHeaderFrame {

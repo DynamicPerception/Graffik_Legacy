@@ -492,10 +492,10 @@ void MotionArea::_tooltipTimer() {
     float curSpd = m_path->getSpeed(m_curPx);
     unsigned long curMs = m_path->getFilmTime(m_curPx);
 
+        // Convert absolute step values into correct deg/distance as required
+
     QList<QString> posDisp = convertValue(curPos);
     QList<QString> spdDisp = convertValue(curSpd);
-
-        // Convert absolute step values into correct deg/distance as required
 
         // create useful time string, with a minimum of two-digit numbers for hours, minutes, and seconds
 

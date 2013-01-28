@@ -258,3 +258,7 @@ void SpeedControlProxy::setResolution(unsigned int p_ms) {
     m_curDev->microSteps(p_ms);
 
 }
+
+float SpeedControlProxy::curSpeed() {
+    return m_curSpd;
+}

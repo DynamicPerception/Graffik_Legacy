@@ -85,6 +85,10 @@ public slots:
 
     void on_playButton_clicked();
     void on_stopButton_clicked();
+    void on_rewindButton_clicked();
+    void on_forwardButton_clicked();
+    void on_frameRwdButton_clicked();
+    void on_frameFwdButton_clicked();
 
     // cam control
 
@@ -93,8 +97,6 @@ public slots:
 
     void on_plugJogButton_clicked();
 
-    void on_rewindButton_clicked();
-    void on_forwardButton_clicked();
 
     // spinbox handlers
 

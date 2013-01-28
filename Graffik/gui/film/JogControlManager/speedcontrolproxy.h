@@ -68,6 +68,7 @@ public:
     void startDampTimer();
     void stopDampTimer();
 
+    float curSpeed();
     void setResolution(unsigned int p_ms);
 
 signals:

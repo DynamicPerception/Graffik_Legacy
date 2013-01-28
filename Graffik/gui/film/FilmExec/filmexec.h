@@ -155,7 +155,7 @@ private:
     int m_stat;
     int m_shuttle;
 
-    void _sendHome(OMAxis* p_axis);
+    void _sendHome(OMfilmParams *p_film, OMAxis* p_axis);
     void _sendDistance(OMAxis* p_axis, unsigned long p_distance, bool p_dir);
     void _sendCamera(OMAxis* p_master);
     void _sendMaster(OMAxis* p_master, QList<OMAxis*> p_axes);

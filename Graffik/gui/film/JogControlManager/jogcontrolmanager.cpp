@@ -118,7 +118,9 @@ void JogControlManager::playStatusChange(bool p_stat) {
     Q_UNUSED(p_stat);
         // any change to play status should immediately stop the
         // speed control proxy
-    m_scp->speedPosChange(0);
+
+    if( m_scp->curSpeed() != 0.0 )
+        m_scp->speedPosChange(0);
 }
 
 void JogControlManager::_liveDeviceSelected(unsigned short p_addr) {

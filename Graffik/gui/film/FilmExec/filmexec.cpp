@@ -150,7 +150,7 @@ void FilmExec::start() {
             if( distanceToMove != 0 && ! mute ) {
                     // only do this if moving
                 qDebug() << "FEx: Sending Device Home: " << addr;
-                _sendHome(axis);
+                _sendHome(&m_film, axis);
 
                     // record that we sent axes home
                 m_axesHome.insert(axis, 0);
@@ -252,7 +252,7 @@ void FilmExec::rewind() {
         if( distanceToMove != 0 && ! mute ) {
                 // only do this if moving
             qDebug() << "FEx: Sending Device Home: " << addr;
-            _sendHome(axis);
+            _sendHome(&m_film, axis);
 
                 // record that we sent axes home
             m_axesHome.insert(axis, 0);
@@ -450,9 +450,12 @@ unsigned long FilmExec::interval(OMfilmParams* p_film) {
 
  /* Transmit Functions */
 
-void FilmExec::_sendHome(OMAxis* p_axis) {
+void FilmExec::_sendHome(OMfilmParams *p_film, OMAxis* p_axis) {
     qDebug() << "FEx: Sending node home" << p_axis->address();
+    OMfilmAxisParams* parms = p_film->axes.value(p_axis->address());
+
     p_axis->motorEnable();
+    p_axis->easing(parms->easing);
     p_axis->microSteps(1);
     p_axis->home();
 }
