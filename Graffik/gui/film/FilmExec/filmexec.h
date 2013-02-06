@@ -50,6 +50,8 @@ enum { FILM_STOPPED, FILM_STARTED, FILM_PAUSED };
 
 enum { SHUTTLE_NONE, SHUTTLE_HOME, SHUTTLE_END, SHUTTLE_BEG };
 
+enum { FILM_OK_HOME, FILM_OK, FILM_ERR_MASTER };
+
 /** Film Execution Handler
 
     Manages the execution of a film, as defined by a FilmParameters object.
@@ -81,12 +83,15 @@ public:
     void rewind();
     void ffwd();
 
+    void frameAdvance();
+    void frameReverse();
+
     int status();
     unsigned long runTime();
     unsigned long filmTime();
 
-    unsigned long interval(OMfilmParams* p_film);
-    unsigned long minInterval(OMfilmParams* p_film);
+    static unsigned long interval(OMfilmParams* p_film);
+    static unsigned long minInterval(OMfilmParams* p_film);
 
 
 signals:
@@ -155,12 +160,16 @@ private:
     int m_stat;
     int m_shuttle;
 
+    bool m_filmPrepped;
+
     void _sendHome(OMfilmParams *p_film, OMAxis* p_axis);
     void _sendDistance(OMAxis* p_axis, unsigned long p_distance, bool p_dir);
     void _sendCamera(OMAxis* p_master);
     void _sendMaster(OMAxis* p_master, QList<OMAxis*> p_axes);
     void _sendNodeMovements(OMfilmParams* p_film, OMAxis* p_axis);
     void _disableMotor(OMAxis* p_axis);
+
+    int _prepFilm(bool p_home);
 
     float _round(float p_val);
 

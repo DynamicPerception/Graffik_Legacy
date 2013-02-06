@@ -70,6 +70,7 @@ MotionPathPainter::~MotionPathPainter() {
 }
 
 
+
 /** Get X Pixel Point at (Wall) Time
 
   Returns the X-pixel value of the specified film time
@@ -402,7 +403,7 @@ QPainterPath* MotionPathPainter::getPath(QRect p_area) {
     m_area = p_area;
 
     OMfilmParams filmParams = m_film->getParamsCopy();
-    OMaxisOptions* aopts = m_aopt->getOptions(m_addr);
+    OMaxisOptions*    aopts = m_aopt->getOptions(m_addr);
 
         // do nothing if we've already drawn this
     if( p_area.height() == m_wasHeight &&
@@ -412,18 +413,18 @@ QPainterPath* MotionPathPainter::getPath(QRect p_area) {
             aopts->maxSteps == m_wasMax )
         return m_path;
 
-    unsigned int width = p_area.width();
+    unsigned int  width = p_area.width();
     unsigned int height = p_area.height();
 
         // set a new floor
     height = height * MPP_HEIGHT_BUF;
 
     m_hasChanged = true;
-    m_new = false;
-    m_wasWidth = p_area.width();
-    m_wasHeight = p_area.height();
-    m_wasLength = filmParams.realLength;
-    m_wasMax = aopts->maxSteps;
+           m_new = false;
+      m_wasWidth = p_area.width();
+     m_wasHeight = p_area.height();
+     m_wasLength = filmParams.realLength;
+        m_wasMax = aopts->maxSteps;
 
         // put upper boundary at 1 point per millisecond
     unsigned long actMaxPts = m_maxPoints > filmParams.realLength ? filmParams.realLength : m_maxPoints;
@@ -457,8 +458,8 @@ QPainterPath* MotionPathPainter::getPath(QRect p_area) {
 
     m_maxHeight = height;
 
-    int curIdx      = 0;
-    int isMoving   = 0;
+    int   curIdx = 0;
+    int isMoving = 0;
 
     m_path->moveTo(0, height);
 

@@ -139,6 +139,7 @@ public:
     const int play();
     const int stop();
     const int pause();
+    const int autoPause(bool);
 
     const int home();
     const int setHome();
@@ -156,6 +157,9 @@ public:
     const int plan(bool which, bool dir, unsigned long step, unsigned long shots, unsigned long accel, unsigned long decel);
     const int delayMove(unsigned long ms);
     const int backlash(unsigned char);
+
+    const int planAdvance();
+    const int planReverse();
 
     const int easing(unsigned char);
 
@@ -277,6 +281,9 @@ private:
         static const char  progMaxTime  = 22;
         static const char  progName     = 23;
         static const char  progCom      = 24;
+        static const char  progAPause   = 25;
+        static const char  progFAdv     = 26;
+        static const char  progFRev     = 27;
         static const char  progStat     = 100;
 
         static const char   dataCam     = 1;

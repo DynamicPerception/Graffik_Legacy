@@ -57,6 +57,8 @@ public:
     MotionBase(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions* c_aopts, GlobalOptions* c_gopts, QWidget *parent);
     ~MotionBase();
     
+    MotionArea* area();
+
 public slots:
     void curScale(bool p_scale);
     void muted(int p_muted);

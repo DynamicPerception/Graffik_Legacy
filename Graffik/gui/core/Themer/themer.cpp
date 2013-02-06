@@ -194,6 +194,8 @@ QString Themer::_fileContents(QString p_path) {
 // #ifdef Q_WS_WIN
     ret.replace("url(", "url(" + QCoreApplication::applicationDirPath() + "/");
 // #endif
+    // Ok, so I lied, pretty much no implementation with QSS can live with relative paths
+    // whatever they say online is wrong. Screw the interwebs.
 
     return ret;
 }

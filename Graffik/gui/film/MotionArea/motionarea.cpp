@@ -398,6 +398,8 @@ void MotionArea::paintEvent(QPaintEvent *e) {
 
 void MotionArea::moveSane(bool p_sane) {
 
+    qDebug() << "MA: Got moveSane" << p_sane;
+
         // handle mute check for bg color
     if( p_sane ) {
             // do not change mute setting on sane check, unless it was
@@ -421,6 +423,9 @@ void MotionArea::moveSane(bool p_sane) {
         // careful of feedback loop - do not let any slot
         // attached to this attempt to broadcast a change to
         // film parameters
+
+    qDebug() << "MA: Emitting muted()";
+
     emit muted(m_mute);
 
 }
@@ -440,8 +445,6 @@ void MotionArea::moveSane(bool p_sane) {
 
 QList<QString> MotionArea::convertValue(float p_val) {
     OMaxisOptions* devOpts = m_aopt->getOptions(m_dev->device->address());
-
-    qDebug() << "MA: cV: Got " << p_val;
 
     float devRatio = devOpts->ratio;
 

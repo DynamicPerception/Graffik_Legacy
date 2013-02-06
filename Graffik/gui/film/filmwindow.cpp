@@ -438,12 +438,64 @@ void FilmWindow::_checkFilmTimeConstraint() {
         // TODO: Add UI indicator that limitation has
         // been placed...
 
-    OMfilmParams* params = m_params->getParams();
-
-    unsigned long minInt = m_exec->minInterval(params);
-
+    OMfilmParams*    params = m_params->getParams();
+    unsigned long    minInt = m_exec->minInterval(params);
     unsigned long maxFrames = params->realLength / minInt;
-    unsigned long maxTime   = (maxFrames / params->fps) * 1000;
+    unsigned long   maxTime = (maxFrames / params->fps) * 1000;
+    unsigned long  interval = m_exec->interval(params);
+
+    unsigned long freeInterval = interval - minInt;
+
+    QList<unsigned short> muteTracks;
+
+        // for SMS moves, we have to check each track and see
+        // if it can actually achieve the desired movement in the
+        // specified real time.
+    if( params->filmMode == FILM_MODE_SMS ) {
+        QHash<unsigned short, OMfilmAxisParams*> axes = params->axes;
+
+        foreach(unsigned short addr, axes.keys() ) {
+
+            qDebug() << "FW: Checking SMS Sanity for" << addr;
+
+            OMfilmAxisParams* axParms = axes.value(addr);
+
+            unsigned long    moveDist = axParms->endDist;
+            unsigned long   startShot = axParms->startTm / interval;
+            unsigned long     endShot = axParms->endTm / interval;
+            unsigned long  totalShots = params->realLength / interval;
+            unsigned long travelShots = totalShots - startShot - endShot;
+            unsigned long    maxSpeed = m_opts->getOptions(addr)->maxSteps;
+            float             maxMove = m_areaBlocks.value(addr)->area()->getPathPainter()->getMaxSpeed();
+
+                // set move as not sane if it can't be fulfilled
+
+
+            if( moveDist > 0 ) {
+
+                bool fail = false;
+
+                if( freeInterval < 1 ) {
+                    qDebug() << "FW: SMS Sane: No free interval time" << addr;
+                    fail = true;
+                }
+                else if( ((freeInterval * travelShots) / 1000) < (moveDist / maxSpeed) ) {
+                    qDebug() << "FW: SMS Sane: Not enough time to move all steps" << addr << moveDist;
+                    fail = true;
+                }
+                else if( (freeInterval / 1000) < (maxMove / maxSpeed) ) {
+                    qDebug() << "FW: SMS Sane: Max Move will cause interval to be exceeded" << addr << maxMove;
+                    fail = true;
+                }
+
+                if( fail ) {
+                        // we can't actually call moveSane() here, because the chain of signals
+                        // and slots will result in a call to ask for the filmParams.
+                    muteTracks.append(addr);
+                }
+            } // end movedist > 0
+        } // end foreach
+    } // end if sms
 
     maxTime = maxTime < 1000 ? 1000 : maxTime;
 
@@ -458,6 +510,11 @@ void FilmWindow::_checkFilmTimeConstraint() {
     else {
         m_params->releaseParams(false);
     }
+
+        // now, do any track muting we need to...
+    foreach(unsigned short addr, muteTracks)
+        m_areaBlocks.value(addr)->area()->moveSane(false);
+
 
 }
 
@@ -488,18 +545,21 @@ void FilmWindow::on_filmSSSpin_valueChanged(unsigned int p_val) {
 void FilmWindow::on_realHHSpin_valueChanged(unsigned int p_val) {
     if( ! m_ignoreUpdate ) {
         _changeTime(2, 1, p_val);
+        _checkFilmTimeConstraint();
     }
 }
 
 void FilmWindow::on_realMMSpin_valueChanged(unsigned int p_val) {
     if( ! m_ignoreUpdate ) {
         _changeTime(2, 2, p_val);
+        _checkFilmTimeConstraint();
     }
 }
 
 void FilmWindow::on_realSSSpin_valueChanged(unsigned int p_val) {
     if( ! m_ignoreUpdate ) {
         _changeTime(2, 3, p_val);
+        _checkFilmTimeConstraint();
     }
 }
 
@@ -604,6 +664,8 @@ void FilmWindow::on_rewindButton_clicked() {
     qDebug() << "FW: Send Rewind";
     _inputEnable(false);
 
+    m_error = false;
+
     m_busy->setLabelText("Sending All Axes to Start Point");
     m_busy->setMinimum(0);
     m_busy->setMaximum(0);
@@ -617,6 +679,8 @@ void FilmWindow::on_forwardButton_clicked() {
     qDebug() << "FW: Send Forward";
     _inputEnable(false);
 
+    m_error = false;
+
     m_busy->setLabelText("Sending All Axes to End Point");
     m_busy->setMinimum(0);
     m_busy->setMaximum(0);
@@ -628,10 +692,14 @@ void FilmWindow::on_forwardButton_clicked() {
 
 void FilmWindow::on_frameFwdButton_clicked() {
 
+    m_error = false;
+    m_exec->frameAdvance();
 }
 
 void FilmWindow::on_frameRwdButton_clicked() {
 
+    m_error = false;
+    m_exec->frameReverse();
 }
 
 void FilmWindow::_setPlayButtonStatus(int p_stat) {
@@ -878,6 +946,7 @@ void FilmWindow::save() {
 
 void FilmWindow::filmParamsChanged() {
         // re-display inputs when params change
+    _checkFilmTimeConstraint();
     _prepInputs();
 }
 

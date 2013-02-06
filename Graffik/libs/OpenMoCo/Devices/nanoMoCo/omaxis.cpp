@@ -144,6 +144,19 @@ const int OMAxis::pause() {
 
 }
 
+/** Enable or Disable Auto-Pause
+
+   Auto-pause causes the program to pause immediately after
+   a shot cycle (focus, shoot, delay, move) is completed.
+
+   @return
+   The ID of the command
+   */
+
+const int OMAxis::autoPause(bool p_pause) {
+    return this->command(COMPROG, progAPause, (char) p_pause);
+}
+
 /** Enable or Disable Continuous Motion
 
   Enables or disables continuous motion, if continuous motion is
@@ -321,6 +334,38 @@ const int OMAxis::plan(bool which, bool dir, unsigned long step, unsigned long s
 
    return this->command(COMPROG, progPlan, data, 22);
    delete[] data;
+}
+
+/** Advance One Frame in the Current Plan
+
+  Causes the nanoMoCo to execute one exposure cycle in the
+  current plan.
+
+  Note: as a side-effect, it will enable autoPause() on the
+  nanoMoCo, you must manually disable this later.
+
+   @return
+   The ID of the command
+  */
+
+const int OMAxis::planAdvance() {
+    return this->command(COMPROG, progFAdv);
+}
+
+/** Reverse One Frame in the Current Plan
+
+  Causes the nanoMoCo to move backwards a distance equal to the
+  amount moved in the last executed plan cycle.  Does not fire
+  the camera, focus, or otherwise delay.
+
+  Does not set or re-set autoPause()
+
+   @return
+   The ID of the command
+   */
+
+const int OMAxis::planReverse() {
+    return this->command(COMPROG, progFRev);
 }
 
 /** Set Easing Algorithm
