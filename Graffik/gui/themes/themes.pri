@@ -160,6 +160,8 @@ OTHER_FILES += \
        themes/DP-Blue/main_win.qss \
        themes/DP-Blue/motionbase.qss \
        themes/DP-Blue/motionbase_osx.qss \
+       themes/DP-Blue/motion_error.qss \
+       themes/DP-Blue/motion_error_element.qss \
        themes/DP-Blue/net_base.qss \
        themes/DP-Blue/net_base_win.qss \
        themes/DP-Blue/net_man.qss \

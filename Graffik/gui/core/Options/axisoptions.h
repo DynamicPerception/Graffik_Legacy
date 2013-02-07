@@ -28,9 +28,12 @@
 #include <QString>
 #include <QDataStream>
 #include <QMutex>
+#include <QHash>
+#include <QList>
 
 #include "Devices/nanoMoCo/omaxis.h"
 #include "MoCoBus/omnetwork.h"
+#include "optiontypes.h"
 
 #define OM_OPT_ABSMAXSTEPS    5000
 #define OM_OPT_VX1MAXSTEPS    2500
@@ -49,6 +52,11 @@ enum {
     AXIS_VX1_PAN, AXIS_VX1_TILT, AXIS_SX1_SLIDE, AXIS_CUSTOM
 };
 
+
+const QString ERR_STR_NFI = "There is no free interval time for interleaved motion, increase interval time or decrease time taken by camera activity";
+const QString ERR_STR_NET = "There is not enough total free time to complete the interleaved motion, increase real time of film or decrease distance moved";
+const QString ERR_STR_NIT = "One or more intervals have a movement which will cause the interval to be exceeded, increase interval or decrease distance moved.";
+const QString ERR_STR_SPD = "Required Move Speed Exceeds Maximum Speed or Step Rate for Axis. Increase Real Time or Decrease Travel Distance.";
 
     // properties related to film functionality
     // for an axis
@@ -153,7 +161,7 @@ inline QDataStream& operator>>(QDataStream& in, OMaxisOptions& options)
   This class provides containers for, and controls access to, the options for
   motion axes.
 
-  All set and get methods are thread-safe.
+  All set, get, and error methods are thread-safe.
 
   @author
   C. A. Church
@@ -170,6 +178,11 @@ public:
     void setOptions(unsigned short p_addr, OMaxisOptions* p_opts);
     void setMaster(unsigned short p_addr);
 
+    QList<QString> errors(unsigned short p_addr);
+    void clearErrors(unsigned short p_addr);
+    void error(unsigned short p_addr, int p_err);
+    void removeError(unsigned short p_addr, int p_err);
+
 signals:
     void deviceOptionsChanged(OMaxisOptions* p_opts, unsigned short p_addr);
     void deviceOptionsRemoved(unsigned short p_addr);
@@ -180,8 +193,10 @@ public slots:
 
 private:
     QHash<unsigned short, OMaxisOptions*> m_optList;
-
+    QHash<unsigned short, QList<int> > m_errList;
     QMutex* m_optMutex;
+
+    QString _errToString(int p_err);
 };
 
 #endif // OMAXISFILMOPTIONS_H

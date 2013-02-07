@@ -50,6 +50,168 @@ AxisOptions::~AxisOptions() {
     delete m_optMutex;
 }
 
+/** Set an Error for a Specific Axis
+
+  As there may be a need for recording an error with an axis, the AxisOptions
+  class provides a centralized facility for storing and retrieving them.
+
+  These errors are not part of the OMaxisOptions structure, and are not
+  persisted to disk when the structure is persisted.  They are for run-time
+  use only.
+
+  You must use one of the types defined in the AxisErrors namespace
+
+  @param p_addr
+  The address of the axis
+
+  @param p_err
+  The error code
+  */
+
+void AxisOptions::error(unsigned short p_addr, int p_err) {
+    m_optMutex->lock();
+
+    if( ! m_optList.contains(p_addr) ) {
+        m_optMutex->unlock();
+        return;
+    }
+
+    QList<unsigned short> keys = m_errList.keys();
+
+    if( ! keys.contains(p_addr) ) {
+        QList<int> errs;
+        errs.append(p_err);
+        m_errList.insert(p_addr, errs);
+    }
+    else {
+        QList<int> errs = m_errList.value(p_addr);
+        errs.append(p_err);
+        m_errList.insert(p_addr, errs);
+    }
+
+    m_optMutex->unlock();
+}
+
+/** Remove a Specific Error Code from a Specific Axis
+
+  Removes all instances of a specific error code from an
+  axis.
+
+  @param p_addr
+  The address of the axis
+
+  @param p_err
+  The error code
+  */
+
+void AxisOptions::removeError(unsigned short p_addr, int p_err) {
+    m_optMutex->lock();
+
+    if( ! m_optList.contains(p_addr) ) {
+        m_optMutex->unlock();
+        return;
+    }
+
+    QList<unsigned short> keys = m_errList.keys();
+
+    if( ! keys.contains(p_addr) ) {
+        return;
+    }
+    else {
+        QList<int> errs = m_errList.value(p_addr);
+        errs.removeAll(p_err);
+        m_errList.insert(p_addr, errs);
+    }
+
+    m_optMutex->unlock();
+}
+
+/** Get All Errors for a Specific Axis as Strings
+
+  Returns a copy of all errors recorded for a specific axis.
+
+  This method returns human-readable strings for the errors.
+
+  @param p_addr
+  The address of the axis
+
+  @return
+  A QList containing all error strings
+  */
+
+QList<QString> AxisOptions::errors(unsigned short p_addr) {
+    m_optMutex->lock();
+
+    using namespace AxisErrors;
+
+    QList<QString> errors;
+
+    if( ! m_optList.contains(p_addr) ) {
+        m_optMutex->unlock();
+        return errors;
+    }
+
+    QList<unsigned short> keys = m_errList.keys();
+
+    if( keys.contains(p_addr) ) {
+
+        QList<int> errInts = m_errList.value(p_addr);
+
+        foreach(int e, errInts) {
+            errors.append(_errToString(e));
+        }
+    }
+
+    m_optMutex->unlock();
+
+    return errors;
+}
+
+
+/** Clears all Errors for a Specific Axis
+
+  @param p_addr
+  The address of the axis to clear errors for
+  */
+
+void AxisOptions::clearErrors(unsigned short p_addr) {
+    m_optMutex->lock();
+
+    if( ! m_optList.contains(p_addr) ) {
+        m_optMutex->unlock();
+        return;
+    }
+
+    QList<unsigned short> keys = m_errList.keys();
+
+    if( keys.contains(p_addr) ) {
+       m_errList.remove(p_addr);
+    }
+
+    m_optMutex->unlock();
+}
+
+QString AxisOptions::_errToString(int p_err) {
+    using namespace AxisErrors;
+    switch(p_err) {
+        case ErrorSpeedExceeded:
+            return ERR_STR_SPD;
+            break;
+        case ErrorNoInterval:
+            return ERR_STR_NFI;
+            break;
+        case ErrorNoTime:
+            return ERR_STR_NET;
+            break;
+        case ErrorIntervalSpeed:
+            return ERR_STR_NIT;
+            break;
+        default:
+            return QString("Unknown Error");
+            break;
+    }
+}
+
 /** Get Options for a Specific Axis
 
   Retrieves option data for a specific axis

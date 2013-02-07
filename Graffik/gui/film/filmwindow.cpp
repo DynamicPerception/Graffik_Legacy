@@ -470,6 +470,9 @@ void FilmWindow::_checkFilmTimeConstraint() {
 
                 // set move as not sane if it can't be fulfilled
 
+            m_opts->removeError(addr, AxisErrors::ErrorNoInterval);
+            m_opts->removeError(addr, AxisErrors::ErrorNoTime);
+            m_opts->removeError(addr, AxisErrors::ErrorIntervalSpeed);
 
             if( moveDist > 0 ) {
 
@@ -477,14 +480,17 @@ void FilmWindow::_checkFilmTimeConstraint() {
 
                 if( freeInterval < 1 ) {
                     qDebug() << "FW: SMS Sane: No free interval time" << addr;
+                    m_opts->error(addr, AxisErrors::ErrorNoInterval);
                     fail = true;
                 }
                 else if( ((freeInterval * travelShots) / 1000) < (moveDist / maxSpeed) ) {
                     qDebug() << "FW: SMS Sane: Not enough time to move all steps" << addr << moveDist;
+                    m_opts->error(addr, AxisErrors::ErrorNoTime);
                     fail = true;
                 }
                 else if( (freeInterval / 1000) < (maxMove / maxSpeed) ) {
                     qDebug() << "FW: SMS Sane: Max Move will cause interval to be exceeded" << addr << maxMove;
+                    m_opts->error(addr, AxisErrors::ErrorIntervalSpeed);
                     fail = true;
                 }
 
@@ -946,6 +952,7 @@ void FilmWindow::save() {
 
 void FilmWindow::filmParamsChanged() {
         // re-display inputs when params change
+    qDebug() << "FW: Got Film Params Changed";
     _checkFilmTimeConstraint();
     _prepInputs();
 }

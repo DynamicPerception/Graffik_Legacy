@@ -28,6 +28,8 @@
 #include <QString>
 
 #include "motionarea.h"
+#include "ErrorConsole/motionerrordialog.h"
+
 #include "MoCoBus/omnetwork.h"
 #include "core/Options/axisoptions.h"
 #include "core/Options/globaloptions.h"
@@ -65,6 +67,7 @@ public slots:
     void on_easeButton_clicked();
     void on_resButton_clicked();
     void on_nameButton_clicked();
+    void on_errorButton_clicked();
 
     void statusChange(bool p_stat);
     void currentPlayStatus(bool p_stat, unsigned long p_runTime);
@@ -87,6 +90,7 @@ private:
     MotionArea* m_area;
     FilmParameters* m_film;
     OMdeviceInfo* m_dev;
+    AxisOptions* m_opts;
 
 
 };

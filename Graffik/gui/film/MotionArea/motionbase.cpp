@@ -32,6 +32,7 @@ MotionBase::MotionBase(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions 
     m_area = new MotionArea(c_film, c_dev, c_aopts, c_gopts, this);
     ui->gridLayout->addWidget(m_area, 0, 2, 1, 1);
 
+    m_opts = c_aopts;
     m_film = c_film;
     m_dev = c_dev;
 
@@ -49,6 +50,9 @@ MotionBase::MotionBase(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions 
     ui->scaleButton->setText(" P ");
 
     ui->dispLCD->setToolTip(MB_STR_POS);
+
+        // by default this is hidden
+    ui->errorButton->hide();
 
         // pass through click signal
     connect(ui->scaleButton, SIGNAL(clicked()), m_area, SLOT(scaleChange()));
@@ -159,6 +163,13 @@ void MotionBase::on_resButton_clicked() {
 
 }
 
+ /** Error Button Clicked Slot */
+void MotionBase::on_errorButton_clicked() {
+    qDebug() << "MB: Show Error Console";
+    MotionErrorDialog err(m_opts->errors(m_dev->device->address()));
+    err.exec();
+}
+
 /** This slot is triggered when receiving a muted signal from the MotionArea.
 
     We use the MotionArea to handle muting, since it controls display of the motion area (colors, etc.)
@@ -174,13 +185,24 @@ void MotionBase::muted(int p_muted) {
 
     OMfilmAxisParams* axis = parms->axes.value(m_dev->device->address());
 
+    qDebug() << "MB: Got mute:" << p_muted;
+
     if( p_muted != MA_MUTE_NA ) {
-        p_muted = 1;
         ui->muteButton->setDown(true);
+
+        if( p_muted == MA_MUTE_ER ) {
+            ui->errorButton->show();
+            ui->errorButton->setEnabled(true);
+        }
+
+        p_muted = 1;
+
     }
     else {
         p_muted = 0;
         ui->muteButton->setDown(false);
+        ui->errorButton->hide();
+        ui->errorButton->setEnabled(false);
     }
 
     axis->mute = p_muted;

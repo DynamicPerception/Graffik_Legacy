@@ -1,6 +1,7 @@
 #trackDivFrame {
     border-image: url(themes/DP-Blue/img/track-div-back.png);
     border: 0px transparent;
+    text-align:right;
 }
 
 #MotionBase {
@@ -29,6 +30,19 @@
 
 #nameButton:flat {
     background-color:qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(69, 140, 187, 255), stop:1 rgba(43, 110, 159, 255));
+}
+
+#errorButton {
+    border-image: url(themes/DP-Blue/img/error.png);
+    border: 0px transparent;
+    margin: 0px;
+    margin-top: 1px;
+    margin-right: 5px;
+    padding: 0px;
+    max-height: 15px;
+    max-width: 15px;
+    min-width: 15px;
+    min-height: 15px;
 }
 
 #nameButton {

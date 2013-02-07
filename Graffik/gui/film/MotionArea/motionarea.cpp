@@ -405,6 +405,7 @@ void MotionArea::moveSane(bool p_sane) {
             // do not change mute setting on sane check, unless it was
             // set to error by this function
         if( m_mute == MA_MUTE_ER  || m_mute == MA_MUTE_NA ) {
+            m_aopt->clearErrors(m_dev->device->address());
             m_mute = MA_MUTE_NA;
             _refreshStylesheet();
         }

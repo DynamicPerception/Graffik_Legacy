@@ -379,8 +379,11 @@ void MotionPathPainter::setMotionCurve() {
         // block movement of the axis if it tries to exceed its maximum speed,
         // or the total step rate exceeds the ability of the driver
 
+    m_aopt->removeError(m_addr, AxisErrors::ErrorSpeedExceeded);
+
     if( m_maxSpeed > ((float)maxSpeed / (1000.0 / ms_per_xpt)) || ( m_maxSpeed * (1000.0 / ms_per_xpt)) * m_wasMs > MPP_REAL_MAX ) {
         qDebug() << "MPP: Motion Profile is not Sane";
+        m_aopt->error(m_addr, AxisErrors::ErrorSpeedExceeded);
         sane = false;
     }
 

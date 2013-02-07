@@ -31,4 +31,18 @@ namespace Options {
     const int Metric   = 2;
     const int Steps    = 3;
 }
+
+/** Error Types */
+
+namespace AxisErrors {
+
+        /** Maximum speed exceeded for axis */
+    const int ErrorSpeedExceeded = 1;
+        /** Not enough free interval time */
+    const int    ErrorNoInterval = 2;
+        /** Not enough total free interval time during film */
+    const int        ErrorNoTime = 3;
+        /** At least one interval needs more time than allocated based on move */
+    const int ErrorIntervalSpeed = 4;
+}
 #endif // OPTIONTYPES_H
