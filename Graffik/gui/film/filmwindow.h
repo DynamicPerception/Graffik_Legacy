@@ -164,6 +164,8 @@ private:
     bool m_spinsPrepped;
     bool m_ignoreUpdate;
 
+    unsigned long m_curFrameShot;
+
     void _displayCamControl();
     void _enableCamControl(bool p_en = true);
     void _showFilmTime();

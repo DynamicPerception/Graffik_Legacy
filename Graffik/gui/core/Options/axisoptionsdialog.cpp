@@ -69,7 +69,8 @@ void AxisOptionsDialog::_initInputs() {
     combShowSel = ui->typeCombo->findData(m_opts->axisMove);
     ui->typeCombo->setCurrentIndex(combShowSel);
 
-    ui->ratioLine->setText(QString::number(m_opts->ratio));
+    ui->ratioLine->setText(QString::number(m_opts->driveRatio));
+    ui->stepsLine->setText(QString::number(m_opts->stepRev));
     ui->maxLine->setText(QString::number(m_opts->maxSteps));
 
     ui->masterToggle->setValue(m_opts->master);
@@ -101,12 +102,14 @@ void AxisOptionsDialog::_defaultComboChange(int p_idx) {
             // pass down...
         case AXIS_VX1_TILT:
             enable = false;
+            ui->stepsLine->setText(QString::number(OM_OPT_VX1REVS));
             ui->ratioLine->setText(QString::number(OM_OPT_VX1RATIO));
             ui->maxLine->setText(QString::number(OM_OPT_VX1MAXSTEPS));
             ui->typeCombo->setCurrentIndex(ui->typeCombo->findData(AXIS_MOVE_ROT));
             break;
         case AXIS_SX1_SLIDE:
             enable = false;
+            ui->stepsLine->setText(QString::number(OM_OPT_SX1REVS));
             ui->ratioLine->setText(QString::number(OM_OPT_SX1RATIO));
             ui->maxLine->setText(QString::number(OM_OPT_SX1MAXSTEPS));
             ui->typeCombo->setCurrentIndex(ui->typeCombo->findData(AXIS_MOVE_LIN));
@@ -115,11 +118,13 @@ void AxisOptionsDialog::_defaultComboChange(int p_idx) {
 
         // pre-defined types cannot be customized
     if( enable == false ) {
+        ui->stepsLine->setDisabled(true);
         ui->maxLine->setDisabled(true);
         ui->ratioLine->setDisabled(true);
         ui->typeCombo->setDisabled(true);
     }
     else {
+        ui->stepsLine->setDisabled(false);
         ui->maxLine->setDisabled(false);
         ui->ratioLine->setDisabled(false);
         ui->typeCombo->setDisabled(false);
@@ -137,11 +142,22 @@ void AxisOptionsDialog::on_saveButton_clicked() {
 
     qDebug() << "AFODia: User Saved Values";
 
-    m_opts->axisType = ui->defaultCombo->itemData(ui->defaultCombo->currentIndex()).toUInt();
-    m_opts->axisMove = ui->typeCombo->itemData(ui->typeCombo->currentIndex()).toUInt();
-    m_opts->ratio = ui->ratioLine->text().toFloat();
-    m_opts->maxSteps = ui->maxLine->text().toUInt();
-    m_opts->backlash = ui->backlashLine->text().toUShort();
+      m_opts->axisType = ui->defaultCombo->itemData(ui->defaultCombo->currentIndex()).toUInt();
+      m_opts->maxSteps = ui->maxLine->text().toUInt();
+      m_opts->backlash = ui->backlashLine->text().toUShort();
+      m_opts->axisMove = ui->typeCombo->itemData(ui->typeCombo->currentIndex()).toUInt();
+       m_opts->stepRev = ui->stepsLine->text().toUInt();
+    m_opts->driveRatio = ui->ratioLine->text().toFloat();
+
+        // set correct ratio based on movement type...
+    if( m_opts->axisMove == AXIS_MOVE_ROT ) {
+            // we want to see how many steps it takes to do one 360' revolution
+        m_opts->ratio = ui->stepsLine->text().toFloat() * m_opts->driveRatio;
+    }
+    else {
+            // we want to see how many steps it takes to go one inch
+        m_opts->ratio = (1.0 / m_opts->driveRatio) * ui->stepsLine->text().toFloat();
+    }
 
     m_opts->jogLimit = m_opts->maxSteps;
     m_opts->jogDamp = OM_OPT_JOGDAMP;

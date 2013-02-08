@@ -464,11 +464,12 @@ QList<QString> MotionArea::convertValue(float p_val) {
         }
         else {
             if( dispType == Options::Imperial ) {
-                p_val = p_val * (1.0 / devRatio);
+                qDebug() << "MA: Cnv:" << p_val << devRatio;
+                p_val = p_val / devRatio;
                 dLabel = MA_STR_IMP;
             }
             else {
-                p_val = p_val * (2.54 / devRatio);
+                p_val = p_val / (2.54 / devRatio);
                 dLabel = MA_STR_MET;
             }
 

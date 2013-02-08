@@ -178,7 +178,12 @@ void CameraControlDialog::_setupInputs() {
     ui->focLocToggle->setValue(lck);
     ui->smsToggle->setValue(sms);
 
-    ui->delaySpin->setValue( (float) TimeConverter::seconds(cam->delayMS) );
+    float camDelay = (float) TimeConverter::seconds(cam->delayMS);
+    camDelay += (float) TimeConverter::freeMilliSeconds(cam->delayMS) / 1000;
+
+    qDebug() << "CamOpts: camDelay" << cam->delayMS << camDelay;
+
+    ui->delaySpin->setValue( camDelay );
 
         // populate list of master devices into drop-down
     QHash<unsigned short, OMdeviceInfo*> devs = m_net->getDevices();

@@ -100,19 +100,19 @@ unsigned int TimeConverter::freeMilliSeconds(unsigned long p_ms) {
 }
 
 
-unsigned long TimeConverter::msFromDays(unsigned int p_days) {
+unsigned long TimeConverter::msFromDays(float p_days) {
     return( (unsigned long) p_days * 60 * 60 * 24 * 1000);
 }
 
-unsigned long TimeConverter::msFromHours(unsigned int p_hours) {
+unsigned long TimeConverter::msFromHours(float p_hours) {
     return( (unsigned long) p_hours * 60 * 60 * 1000);
 }
 
-unsigned long TimeConverter::msFromMinutes(unsigned int p_minutes) {
+unsigned long TimeConverter::msFromMinutes(float p_minutes) {
     return( (unsigned long) p_minutes * 60 * 1000);
 }
 
-unsigned long TimeConverter::msFromSeconds(unsigned long p_seconds) {
+unsigned long TimeConverter::msFromSeconds(float p_seconds) {
     return( p_seconds * 1000 );
 }
 

@@ -54,6 +54,8 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
 
     ui->visualSA->setWidget(m_areaViewPort);
 
+    m_curFrameShot = 0;
+
     // OSX has issues laying out these buttons w/o overlap,
     // this is a work-around
 #ifdef Q_WS_MAC
@@ -464,7 +466,7 @@ void FilmWindow::_checkFilmTimeConstraint() {
             unsigned long   startShot = axParms->startTm / interval;
             unsigned long     endShot = axParms->endTm / interval;
             unsigned long  totalShots = params->realLength / interval;
-            unsigned long travelShots = totalShots - startShot - endShot;
+            unsigned long travelShots = endShot - startShot;
             unsigned long    maxSpeed = m_opts->getOptions(addr)->maxSteps;
             float             maxMove = m_areaBlocks.value(addr)->area()->getPathPainter()->getMaxSpeed();
 
@@ -484,7 +486,7 @@ void FilmWindow::_checkFilmTimeConstraint() {
                     fail = true;
                 }
                 else if( ((freeInterval * travelShots) / 1000) < (moveDist / maxSpeed) ) {
-                    qDebug() << "FW: SMS Sane: Not enough time to move all steps" << addr << moveDist;
+                    qDebug() << "FW: SMS Sane: Not enough time to move all steps" << addr << moveDist << freeInterval  << travelShots;
                     m_opts->error(addr, AxisErrors::ErrorNoTime);
                     fail = true;
                 }
@@ -626,6 +628,9 @@ void FilmWindow::on_playButton_clicked() {
         m_busy->show();
 
         m_exec->start();
+
+        m_curFrameShot = 0;
+
         bstat = 1;
     }
     else if( mode == FILM_MODE_SMS && fstat == FILM_STARTED ) {
@@ -660,6 +665,8 @@ void FilmWindow::on_stopButton_clicked() {
 
     qDebug() << "FW: Sending Stop";
 
+    m_curFrameShot = 0;
+
     m_exec->stop();
     _inputEnable(true);
     emit playStatusChange(false);
@@ -679,6 +686,9 @@ void FilmWindow::on_rewindButton_clicked() {
 
     m_exec->rewind();
 
+    m_curFrameShot = 0;
+    m_motion->jumpTo(0);
+
 }
 
 void FilmWindow::on_forwardButton_clicked() {
@@ -694,18 +704,48 @@ void FilmWindow::on_forwardButton_clicked() {
 
     m_exec->ffwd();
 
+    m_curFrameShot = 0;
+
+    OMfilmParams*     params = m_params->getParams();
+    unsigned long realLength = params->realLength;
+
+    m_params->releaseParams(false);
+
+    m_motion->jumpTo(realLength);
 }
 
 void FilmWindow::on_frameFwdButton_clicked() {
 
     m_error = false;
+
+    OMfilmParams*     params = m_params->getParams();
+    unsigned long   interval = m_exec->interval(params);
+    unsigned long totalShots = params->realLength / interval;
+
+    m_params->releaseParams(false);
+
+    if( m_curFrameShot >= totalShots )
+        return;
+
+    m_curFrameShot++;
+
     m_exec->frameAdvance();
+    m_motion->jumpTo(m_curFrameShot * interval);
 }
 
 void FilmWindow::on_frameRwdButton_clicked() {
-
     m_error = false;
-    m_exec->frameReverse();
+
+    OMfilmParams*   params = m_params->getParams();
+    unsigned long interval = m_exec->interval(params);
+
+    m_params->releaseParams(false);
+
+    if( m_curFrameShot > 0 ) {
+        m_exec->frameReverse();
+        m_curFrameShot--;
+        m_motion->jumpTo(m_curFrameShot * interval);
+    }
 }
 
 void FilmWindow::_setPlayButtonStatus(int p_stat) {

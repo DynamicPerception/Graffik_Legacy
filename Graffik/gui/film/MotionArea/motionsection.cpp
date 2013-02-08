@@ -100,6 +100,16 @@ void MotionSection::playStatusChanged(bool p_stat, unsigned long p_runTime) {
     this->update();
 }
 
+/** Manually Position Timeline
+
+  Sets the vertical time indicator position to a manual time
+  */
+
+void MotionSection::jumpTo(unsigned long p_runTime) {
+    m_curPos = p_runTime;
+    this->update();
+}
+
 void MotionSection::_updatePath() {
 
     delete m_path;

@@ -51,10 +51,10 @@ public:
     static unsigned int freeSeconds(unsigned long p_ms);
     static unsigned int freeMilliSeconds(unsigned long p_ms);
 
-    static unsigned long msFromSeconds(unsigned long p_seconds);
-    static unsigned long msFromDays(unsigned int p_days);
-    static unsigned long msFromHours(unsigned int p_hours);
-    static unsigned long msFromMinutes(unsigned int p_minutes);
+    static unsigned long msFromSeconds(float p_seconds);
+    static unsigned long msFromDays(float p_days);
+    static unsigned long msFromHours(float p_hours);
+    static unsigned long msFromMinutes(float p_minutes);
 
     static QString stringify(unsigned long p_ms);
 

@@ -52,6 +52,8 @@ public:
 
     void paintEvent(QPaintEvent* p_event);
 
+    void jumpTo(unsigned long p_runTime);
+
 signals:
     
 

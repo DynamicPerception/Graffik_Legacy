@@ -35,12 +35,14 @@
 #include "MoCoBus/omnetwork.h"
 #include "optiontypes.h"
 
-#define OM_OPT_ABSMAXSTEPS    5000
-#define OM_OPT_VX1MAXSTEPS    2500
-#define OM_OPT_VX1RATIO       18000
-#define OM_OPT_SX1MAXSTEPS    1500
-#define OM_OPT_SX1RATIO       200 / 0.3
-#define OM_OPT_JOGDAMP        5.0
+const int OM_OPT_ABSMAXSTEPS = 5000;
+const int OM_OPT_VX1MAXSTEPS = 1500;
+const int     OM_OPT_VX1REVS = 200;
+const float  OM_OPT_VX1RATIO = 10.0;
+const int OM_OPT_SX1MAXSTEPS = 1500;
+const int     OM_OPT_SX1REVS = 200;
+const float  OM_OPT_SX1RATIO = 0.169947;
+const float   OM_OPT_JOGDAMP = 5.0;
 
 
 
@@ -71,32 +73,39 @@ struct OMaxisOptions {
     float jogDamp;
     unsigned int ms;
     unsigned char backlash;
+    float driveRatio;
+    unsigned int stepRev;
 
         // default construction
     OMaxisOptions() {
       //  axisType = AXIS_CUSTOM;
-        axisType = AXIS_VX1_PAN;
-        master = false;
-        ratio = OM_OPT_VX1RATIO;
-        maxSteps = OM_OPT_VX1MAXSTEPS;
-        axisMove = AXIS_MOVE_ROT;
-        jogLimit = OM_OPT_VX1MAXSTEPS;
-        jogDamp = OM_OPT_JOGDAMP;
-        ms = 1;
-        backlash = 0;
+          axisType = AXIS_VX1_PAN;
+            master = false;
+             ratio = OM_OPT_VX1REVS * OM_OPT_VX1RATIO;
+          maxSteps = OM_OPT_VX1MAXSTEPS;
+          axisMove = AXIS_MOVE_ROT;
+          jogLimit = OM_OPT_VX1MAXSTEPS;
+           jogDamp = OM_OPT_JOGDAMP;
+                ms = 1;
+          backlash = 0;
+        driveRatio = OM_OPT_VX1RATIO;
+           stepRev = OM_OPT_VX1REVS;
+
     }
 
         // construct new from old
     OMaxisOptions(const OMaxisOptions& opts) {
-        axisType = opts.axisType;
-        master = opts.master;
-        ratio = opts.ratio;
-        maxSteps = opts.maxSteps;
-        axisMove = opts.axisMove;
-        jogLimit = opts.jogLimit;
-        jogDamp = opts.jogDamp;
-        ms = opts.ms;
-        backlash = opts.backlash;
+          axisType = opts.axisType;
+            master = opts.master;
+             ratio = opts.ratio;
+          maxSteps = opts.maxSteps;
+          axisMove = opts.axisMove;
+          jogLimit = opts.jogLimit;
+           jogDamp = opts.jogDamp;
+                ms = opts.ms;
+          backlash = opts.backlash;
+        driveRatio = opts.driveRatio;
+           stepRev = opts.stepRev;
     }
 };
 
@@ -116,6 +125,8 @@ inline QDataStream& operator<<(QDataStream& out, const OMaxisOptions& options)
     out << QString::number(options.jogDamp);
     out << quint32(options.ms);
     out << quint8(options.backlash);
+    out << QString::number(options.driveRatio);
+    out << quint32(options.stepRev);
 
 
     return out;
@@ -132,6 +143,8 @@ inline QDataStream& operator>>(QDataStream& in, OMaxisOptions& options)
     QString jogDamp;
     quint32 ms;
     quint8  backlash;
+    QString driveRatio;
+    quint32 stepRev;
 
     in >> type;
     in >> move;
@@ -142,16 +155,20 @@ inline QDataStream& operator>>(QDataStream& in, OMaxisOptions& options)
     in >> jogDamp;
     in >> ms;
     in >> backlash;
+    in >> driveRatio;
+    in >> stepRev;
 
-    options.axisMove = move;
-    options.axisType = type;
-    options.master = master;
-    options.maxSteps = maxSteps;
-    options.ratio = ratio.toFloat();
-    options.jogLimit = jogLimit;
-    options.jogDamp = jogDamp.toFloat();
-    options.ms = ms;
-    options.backlash = backlash;
+      options.axisMove = move;
+      options.axisType = type;
+        options.master = master;
+      options.maxSteps = maxSteps;
+         options.ratio = ratio.toFloat();
+      options.jogLimit = jogLimit;
+       options.jogDamp = jogDamp.toFloat();
+            options.ms = ms;
+      options.backlash = backlash;
+    options.driveRatio = driveRatio.toFloat();
+       options.stepRev = stepRev;
 
     return in;
 }
