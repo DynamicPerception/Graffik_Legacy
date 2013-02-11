@@ -175,6 +175,7 @@ private:
     void _changeTime(int p_which, int p_pos, int p_val);
     void _calcAutoFilmTime();
     void _checkFilmTimeConstraint();
+    QList<unsigned short> _checkSMSMovements(OMfilmParams* p_params);
 
     void _setPlayButtonStatus(int p_stat);
     void _setStopButtonStatus(int p_stat);

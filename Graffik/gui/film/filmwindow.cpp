@@ -444,9 +444,6 @@ void FilmWindow::_checkFilmTimeConstraint() {
     unsigned long    minInt = m_exec->minInterval(params);
     unsigned long maxFrames = params->realLength / minInt;
     unsigned long   maxTime = (maxFrames / params->fps) * 1000;
-    unsigned long  interval = m_exec->interval(params);
-
-    unsigned long freeInterval = interval - minInt;
 
     QList<unsigned short> muteTracks;
 
@@ -454,55 +451,8 @@ void FilmWindow::_checkFilmTimeConstraint() {
         // if it can actually achieve the desired movement in the
         // specified real time.
     if( params->filmMode == FILM_MODE_SMS ) {
-        QHash<unsigned short, OMfilmAxisParams*> axes = params->axes;
-
-        foreach(unsigned short addr, axes.keys() ) {
-
-            qDebug() << "FW: Checking SMS Sanity for" << addr;
-
-            OMfilmAxisParams* axParms = axes.value(addr);
-
-            unsigned long    moveDist = axParms->endDist;
-            unsigned long   startShot = axParms->startTm / interval;
-            unsigned long     endShot = axParms->endTm / interval;
-            unsigned long travelShots = endShot - startShot;
-            unsigned long    maxSpeed = m_opts->getOptions(addr)->maxSteps;
-            float             maxMove = m_areaBlocks.value(addr)->area()->getPathPainter()->getMaxSpeed();
-
-                // set move as not sane if it can't be fulfilled
-
-            m_opts->removeError(addr, AxisErrors::ErrorNoInterval);
-            m_opts->removeError(addr, AxisErrors::ErrorNoTime);
-            m_opts->removeError(addr, AxisErrors::ErrorIntervalSpeed);
-
-            if( moveDist > 0 ) {
-
-                bool fail = false;
-
-                if( freeInterval < 1 ) {
-                    qDebug() << "FW: SMS Sane: No free interval time" << addr;
-                    m_opts->error(addr, AxisErrors::ErrorNoInterval);
-                    fail = true;
-                }
-                else if( ((freeInterval * travelShots) / 1000) < (moveDist / maxSpeed) ) {
-                    qDebug() << "FW: SMS Sane: Not enough time to move all steps" << addr << moveDist << freeInterval  << travelShots;
-                    m_opts->error(addr, AxisErrors::ErrorNoTime);
-                    fail = true;
-                }
-                else if( (freeInterval / 1000) < (maxMove / maxSpeed) ) {
-                    qDebug() << "FW: SMS Sane: Max Move will cause interval to be exceeded" << addr << maxMove;
-                    m_opts->error(addr, AxisErrors::ErrorIntervalSpeed);
-                    fail = true;
-                }
-
-                if( fail ) {
-                        // we can't actually call moveSane() here, because the chain of signals
-                        // and slots will result in a call to ask for the filmParams.
-                    muteTracks.append(addr);
-                }
-            } // end movedist > 0
-        } // end foreach
-    } // end if sms
+        muteTracks = _checkSMSMovements(params);
+    }
 
     maxTime = maxTime < 1000 ? 1000 : maxTime;
 
@@ -523,6 +473,68 @@ void FilmWindow::_checkFilmTimeConstraint() {
         m_areaBlocks.value(addr)->area()->moveSane(false);
 
 
+}
+
+// Check SMS movements for sanity
+
+QList<unsigned short> FilmWindow::_checkSMSMovements(OMfilmParams *p_params) {
+
+    QHash<unsigned short, OMfilmAxisParams*> axes = p_params->axes;
+    QList<unsigned short> muteTracks;
+
+    unsigned long     interval = m_exec->interval(p_params);
+    unsigned long       minInt = m_exec->minInterval(p_params);
+    unsigned long freeInterval = interval - minInt;
+
+
+    foreach(unsigned short addr, axes.keys() ) {
+
+        qDebug() << "FW: Checking SMS Sanity for" << addr;
+
+        OMfilmAxisParams* axParms = axes.value(addr);
+
+        unsigned long    moveDist = axParms->endDist;
+        unsigned long   startShot = axParms->startTm / interval;
+        unsigned long     endShot = axParms->endTm / interval;
+        unsigned long travelShots = endShot - startShot;
+        unsigned long    maxSpeed = m_opts->getOptions(addr)->maxSteps;
+        float             maxMove = m_areaBlocks.value(addr)->area()->getPathPainter()->getMaxSpeed();
+
+            // set move as not sane if it can't be fulfilled
+
+        m_opts->removeError(addr, AxisErrors::ErrorNoInterval);
+        m_opts->removeError(addr, AxisErrors::ErrorNoTime);
+        m_opts->removeError(addr, AxisErrors::ErrorIntervalSpeed);
+
+        if( moveDist > 0 ) {
+
+            bool fail = false;
+
+            if( freeInterval < 1 ) {
+                qDebug() << "FW: SMS Sane: No free interval time" << addr;
+                m_opts->error(addr, AxisErrors::ErrorNoInterval);
+                fail = true;
+            }
+            else if( ((freeInterval * travelShots) / 1000) < (moveDist / maxSpeed) ) {
+                qDebug() << "FW: SMS Sane: Not enough time to move all steps" << addr << moveDist << freeInterval  << travelShots;
+                m_opts->error(addr, AxisErrors::ErrorNoTime);
+                fail = true;
+            }
+            else if( (freeInterval / 1000) < (maxMove / maxSpeed) ) {
+                qDebug() << "FW: SMS Sane: Max Move will cause interval to be exceeded" << addr << maxMove;
+                m_opts->error(addr, AxisErrors::ErrorIntervalSpeed);
+                fail = true;
+            }
+
+            if( fail ) {
+                    // we can't actually call moveSane() here, because the chain of signals
+                    // and slots will result in a call to ask for the filmParams.
+                muteTracks.append(addr);
+            }
+        } // end movedist > 0
+    } // end foreach
+
+    return muteTracks;
 }
 
 void FilmWindow::on_filmHHSpin_valueChanged(unsigned int p_val) {
@@ -728,6 +740,8 @@ void FilmWindow::on_frameFwdButton_clicked() {
 
     m_curFrameShot++;
 
+        // advance one frame, and set correct position of time
+        // indicator
     m_exec->frameAdvance();
     m_motion->jumpTo(m_curFrameShot * interval);
 }
@@ -740,6 +754,8 @@ void FilmWindow::on_frameRwdButton_clicked() {
 
     m_params->releaseParams(false);
 
+        // reverse frame, if we're at a frame north of zero
+        // and set correct location of visual time indicator
     if( m_curFrameShot > 0 ) {
         m_exec->frameReverse();
         m_curFrameShot--;
