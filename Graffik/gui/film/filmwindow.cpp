@@ -465,7 +465,6 @@ void FilmWindow::_checkFilmTimeConstraint() {
             unsigned long    moveDist = axParms->endDist;
             unsigned long   startShot = axParms->startTm / interval;
             unsigned long     endShot = axParms->endTm / interval;
-            unsigned long  totalShots = params->realLength / interval;
             unsigned long travelShots = endShot - startShot;
             unsigned long    maxSpeed = m_opts->getOptions(addr)->maxSteps;
             float             maxMove = m_areaBlocks.value(addr)->area()->getPathPainter()->getMaxSpeed();

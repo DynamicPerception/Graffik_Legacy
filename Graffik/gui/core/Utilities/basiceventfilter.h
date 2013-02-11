@@ -21,27 +21,29 @@
 
     */
 
-#ifndef SECTIONRESIZEFILTER_H
-#define SECTIONRESIZEFILTER_H
+#ifndef BASICEVENTFILTER_H
+#define BASICEVENTFILTER_H
 
 #include <QObject>
 #include <QWidget>
-#include "motionsection.h"
+#include <QEvent>
 
-/** Section Resize Event Filter
+/** A basic EventFilter Class for Triggering Updates on All Events
 
-  The Section Resize Event Filter is used to capture and filter update events for the
-  re-drawing of the Motion Section Widget
+  For certain widget types, drawing updates may not be effectively passed down.  They may use this
+  event filter for capturing and updating on all draw-related events.
+
+  This Event Filter should only be used when necessary.
 
   @author
   C. A. Church
   */
 
-class SectionResizeFilter : public QObject
+class BasicEventFilter : public QObject
 {
     Q_OBJECT
 public:
-    SectionResizeFilter(MotionSection* c_motion, QObject *parent = 0);
+    BasicEventFilter(QWidget *c_watch, QObject *parent = 0);
     
 signals:
     
@@ -51,7 +53,7 @@ protected:
     bool eventFilter(QObject *p_obj, QEvent *p_event);
 
 private:
-    MotionSection* m_motion;
+    QWidget* m_watch;
 };
 
-#endif // SECTIONRESIZEFILTER_H
+#endif // BASICEVENTFILTER_H

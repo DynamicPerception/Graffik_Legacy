@@ -1,5 +1,7 @@
 #include "skinneddial.h"
 
+#include <QDebug>
+
  /** Constructor
 
    Create a new instance of SkinnedDial, with no images pre-defined.
@@ -17,6 +19,7 @@ SkinnedDial::SkinnedDial(QWidget *parent) : QDial(parent) {
     m_paintFlags      = QPainter::RenderHint(QPainter::Antialiasing | QPainter::SmoothPixmapTransform || QPainter::HighQualityAntialiasing);
     m_cacheBackground = new QPixmap;
     m_cacheNeedle     = new QPixmap;
+    m_cacheNeedleRot  = new QPixmap;
     m_cacheVal        = 0;
     m_cacheWidth      = 0;
     m_cacheHeight     = 0;
@@ -48,9 +51,15 @@ SkinnedDial::SkinnedDial(QPixmap* c_back, QPixmap* c_needle, float c_angle, QWid
     m_paintFlags       = QPainter::RenderHint(QPainter::Antialiasing | QPainter::SmoothPixmapTransform || QPainter::HighQualityAntialiasing);
     *m_cacheBackground = *m_background;
     *m_cacheNeedle     = *m_needle;
+    *m_cacheNeedleRot  = *m_needle;
     m_cacheVal         = 0;
     m_cacheWidth       = 0;
     m_cacheHeight      = 0;
+    m_filter           = new BasicEventFilter(this, this);
+
+        // we use the basic event filter to ensure that
+    installEventFilter(m_filter);
+
 }
 
 SkinnedDial::~SkinnedDial() {
@@ -106,12 +115,14 @@ void SkinnedDial::paintEvent(QPaintEvent *pe) {
             if( height <= m_background->height() ) {
                 *m_cacheBackground = m_background->scaledToHeight(height, Qt::SmoothTransformation);
                 *m_cacheNeedle     = m_needle->scaledToHeight(height, Qt::SmoothTransformation);
+                *m_cacheNeedleRot  = *m_cacheNeedle;
             }
         }
         else {
             if( width <= m_background->width() ) {
                 *m_cacheBackground = m_background->scaledToWidth(width, Qt::SmoothTransformation);
                 *m_cacheNeedle     = m_needle->scaledToWidth(width, Qt::SmoothTransformation);
+                *m_cacheNeedleRot  = *m_cacheNeedle;
             }
         }
         m_cacheHeight = height;
@@ -119,6 +130,8 @@ void SkinnedDial::paintEvent(QPaintEvent *pe) {
         cacheHit      = false;
     }
 
+
+    qDebug() << "SD: Cache Hit" << cacheHit;
 
      // find top-left corner to start placing the pixmap for the background,
      // centering it in the total event area
@@ -134,12 +147,15 @@ void SkinnedDial::paintEvent(QPaintEvent *pe) {
         // rotate the needle image and display it
 
     int curVal = this->value();
-    QPixmap rotNeedle = *m_cacheNeedle;
+
+    QPixmap rotNeedle = *m_cacheNeedleRot;
 
         // only re-process the needle image if the position
         // changes, or we had a size cache miss
 
     if( curVal != m_cacheVal || cacheHit == false ) {
+
+       rotNeedle = *m_cacheNeedle;
 
        if( curVal < 0 ) {
             float pct = (float) abs(curVal) / (float) abs(this->minimum());
@@ -151,6 +167,7 @@ void SkinnedDial::paintEvent(QPaintEvent *pe) {
         }
 
         m_cacheVal = curVal;
+        *m_cacheNeedleRot = rotNeedle;
     }
 
 

@@ -30,6 +30,8 @@
 #include <QPaintEvent>
 #include <QTransform>
 
+#include "core/Utilities/basiceventfilter.h"
+
 /** Custom-Skinned QDial
 
   This class allows one to create a custom-skinned QDial by supplying your own image
@@ -146,6 +148,9 @@ private:
 
     QPixmap* m_cacheBackground;
     QPixmap* m_cacheNeedle;
+    QPixmap* m_cacheNeedleRot;
+
+    BasicEventFilter* m_filter;
 
     int m_cacheVal;
     int m_cacheWidth;

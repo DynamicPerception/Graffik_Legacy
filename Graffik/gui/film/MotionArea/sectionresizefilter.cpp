@@ -26,11 +26,8 @@
 #include <QEvent>
 #include <QDebug>
 
-SectionResizeFilter::SectionResizeFilter(MotionSection *c_motion, QObject *parent) :
-    QObject(parent)
-{
+SectionResizeFilter::SectionResizeFilter(MotionSection *c_motion, QObject *parent) : QObject(parent) {
     m_motion = c_motion;
-
 }
 
 

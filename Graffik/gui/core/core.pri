@@ -36,7 +36,8 @@ HEADERS                 +=  \
     core/Themer/themer.h \
     core/Utilities/singleton.h \
     core/Themer/singlethemer.h \
-    core/Dialogs/welcomedialog.h
+    core/Dialogs/welcomedialog.h \
+    core/Utilities/basiceventfilter.h
 
 			   
 SOURCES                 +=  \
@@ -67,7 +68,8 @@ SOURCES                 +=  \
     core/Widgets/statefulbutton.cpp \
     core/Themer/themer.cpp \
     core/Themer/singlethemer.cpp \
-    core/Dialogs/welcomedialog.cpp
+    core/Dialogs/welcomedialog.cpp \
+    core/Utilities/basiceventfilter.cpp
 
 			   
 FORMS 			+=  \
