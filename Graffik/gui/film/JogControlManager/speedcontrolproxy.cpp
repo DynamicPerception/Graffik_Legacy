@@ -195,8 +195,6 @@ void SpeedControlProxy::deviceAdded(OMdeviceInfo *p_dev) {
     if( p_dev->device->type() == "nanoMoCo") {
         qDebug() << "SCP: Is nanoMoCo device.";
         m_devList.insert(p_dev->device->address(), p_dev);
-        //m_curDev = static_cast<OMAxis*>(p_dev->device);
-        //m_opts = m_optObj->getOptions(p_dev->device->address());
     }
     else {
         qDebug() << "SCP: Is NOT nanoMoCo device. Ignoring.";

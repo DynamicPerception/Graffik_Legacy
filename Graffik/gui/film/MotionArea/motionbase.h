@@ -38,6 +38,8 @@
 #include "film/Dialogs/trackinfodialog.h"
 
 const QString MB_STR_POS = "Position:";
+const QString MB_STR_ISM = "Camera Connected";
+const QString MB_STR_NTM = "No Camera";
 
 namespace Ui {
 class MotionBase;
@@ -68,9 +70,11 @@ public slots:
     void on_resButton_clicked();
     void on_nameButton_clicked();
     void on_errorButton_clicked();
+    void on_masterButton_clicked();
 
     void statusChange(bool p_stat);
     void currentPlayStatus(bool p_stat, unsigned long p_runTime);
+    void deviceOptionsChanged(OMaxisOptions* p_opts, unsigned short p_addr);
 
 private slots:
     void _themeChanged();
@@ -91,6 +95,8 @@ private:
     FilmParameters* m_film;
     OMdeviceInfo* m_dev;
     AxisOptions* m_opts;
+
+    unsigned short m_addr;
 
 
 };

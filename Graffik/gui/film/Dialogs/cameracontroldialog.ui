@@ -281,51 +281,12 @@
                <property name="spacing">
                 <number>0</number>
                </property>
-               <item row="2" column="0">
-                <widget class="QLabel" name="hhSpinLabel">
-                 <property name="text">
-                  <string>HH</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="1">
-                <widget class="QLabel" name="mmSpinLabel">
-                 <property name="text">
-                  <string>MM</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="2">
-                <widget class="QLabel" name="ssSpinLabel">
-                 <property name="text">
-                  <string>SS</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
                <item row="1" column="0">
-                <widget class="FlickNumber" name="hhSpinBox" native="true"/>
-               </item>
-               <item row="1" column="1">
-                <widget class="FlickNumber" name="mmSpinBox" native="true">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>0</height>
-                  </size>
+                <widget class="QDoubleSpinBox" name="manIntSpin">
+                 <property name="toolTip">
+                  <string>Manual Interval, In Seconds</string>
                  </property>
                 </widget>
-               </item>
-               <item row="1" column="2">
-                <widget class="FlickNumber" name="ssSpinBox" native="true"/>
                </item>
               </layout>
              </item>
@@ -454,6 +415,9 @@
           </item>
           <item>
            <widget class="QDoubleSpinBox" name="bulbSpin">
+            <property name="toolTip">
+             <string>Bulb Exposure Time, In Seconds</string>
+            </property>
             <property name="maximum">
              <double>999.000000000000000</double>
             </property>
@@ -471,6 +435,9 @@
           </item>
           <item>
            <widget class="QDoubleSpinBox" name="delaySpin">
+            <property name="toolTip">
+             <string>Camera Exposure Delay, In Seconds</string>
+            </property>
             <property name="maximum">
              <double>999.000000000000000</double>
             </property>
@@ -589,6 +556,9 @@
           </item>
           <item>
            <widget class="QDoubleSpinBox" name="focusSpin">
+            <property name="toolTip">
+             <string>Focus Time, In Seconds</string>
+            </property>
             <property name="maximum">
              <double>999.000000000000000</double>
             </property>
@@ -662,12 +632,6 @@
    <class>SlideToggle</class>
    <extends>QSlider</extends>
    <header>core/Widgets/slidetoggle.h</header>
-  </customwidget>
-  <customwidget>
-   <class>FlickNumber</class>
-   <extends>QWidget</extends>
-   <header location="global">core/Utilities/flicknumber.h</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

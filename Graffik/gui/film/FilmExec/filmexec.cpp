@@ -119,7 +119,7 @@ int FilmExec::_prepFilm(bool p_home) {
     OMAxis* timingMaster = _getTimingMaster(&axes);
 
     if( timingMaster == 0 ) {
-        QString errText = "No timing master has been assigned, film cannot Be started. Go to Devices -> Manage Devices, and use the Device Configuration to set the timing master";
+        QString errText = "No timing master has been assigned, film cannot Be started. Select the camera enabled for at least one axis.";
         emit error(errText);
         return FILM_ERR_MASTER;
     }

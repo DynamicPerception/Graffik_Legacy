@@ -162,13 +162,9 @@ void JogControlManager::_prepJogInputs(unsigned short p_addr) {
     OMaxisOptions* opts = m_opts->getOptions(p_addr);
 
     unsigned int jog_limit = opts->jogLimit;
-    unsigned int max_jog = opts->maxSteps;
-    // float ratio = opts->ratio;
-    unsigned int type = opts->axisType;
-    float setMove = 360.0;
+    unsigned int   max_jog = opts->maxSteps;
 
-    if( type != AXIS_MOVE_ROT )
-        setMove = 1.0;
+        // TODO: Add indicator for displaying max speed and damping
 
     float curMax  = _stepsToJogSpeed(opts, jog_limit);
     float dispMax = _stepsToJogSpeed(opts, max_jog);

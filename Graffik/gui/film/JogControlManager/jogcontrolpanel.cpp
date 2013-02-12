@@ -76,6 +76,8 @@ void JogControlPanel::_jogMotorChangeDenied(unsigned short p_oldAddr) {
 
     int row = m_ldModel->find(p_oldAddr);
 
+    qDebug() << "JCP: Selecting Row" << row;
+
     QModelIndex tl = m_ldModel->index(row, 0, QModelIndex());
     QModelIndex tr = m_ldModel->index(row, 0, QModelIndex());
     QItemSelection sel(tl, tr);

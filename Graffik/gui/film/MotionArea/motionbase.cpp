@@ -34,7 +34,9 @@ MotionBase::MotionBase(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions 
 
     m_opts = c_aopts;
     m_film = c_film;
-    m_dev = c_dev;
+     m_dev = c_dev;
+    m_addr = m_dev->device->address();
+
 
     // OSX has issues laying out these buttons w/o overlap,
     // this is a work-around
@@ -54,6 +56,18 @@ MotionBase::MotionBase(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions 
         // by default this is hidden
     ui->errorButton->hide();
 
+        // set correct state for master button
+    OMaxisOptions* opts = m_opts->getOptions(m_addr);
+
+    if( opts->master == true ) {
+        ui->masterButton->setState(1);
+        ui->masterButton->setToolTip(MB_STR_ISM);
+    }
+    else {
+        ui->masterButton->setState(0);
+        ui->masterButton->setToolTip(MB_STR_NTM);
+    }
+
         // pass through click signal
     connect(ui->scaleButton, SIGNAL(clicked()), m_area, SLOT(scaleChange()));
     connect(ui->muteButton, SIGNAL(clicked()), m_area, SLOT(mute()));
@@ -63,6 +77,8 @@ MotionBase::MotionBase(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions 
 
     connect(m_area, SIGNAL(globalPosition(int,int)), this, SIGNAL(areaBorders(int,int)));
     connect(this, SIGNAL(playStatus(bool)), m_area, SLOT(playStatus(bool)));
+
+    connect(m_opts, SIGNAL(deviceOptionsChanged(OMaxisOptions*,unsigned short)), this, SLOT(deviceOptionsChanged(OMaxisOptions*,unsigned short)));
 
     // theming
 
@@ -258,4 +274,48 @@ void MotionBase::on_nameButton_clicked() {
 
     TrackInfoDialog dia(axis, this);
     dia.exec();
+}
+
+/** Receive Changes to Axis Options
+
+    This slot is triggered when axis options are changed, will correctly update
+    the state of the master status button as needed, and refresh the CSS
+*/
+
+void MotionBase::deviceOptionsChanged(OMaxisOptions *p_opts, unsigned short p_addr) {
+
+    if( p_addr != m_addr )
+        return;
+
+    qDebug() << "MB: Got Options Change for" << p_addr;
+
+        // set master button state correctly on options change
+    if( p_opts->master == true ) {
+        ui->masterButton->setState(1);
+        ui->masterButton->setToolTip(MB_STR_ISM);
+    }
+    else {
+        ui->masterButton->setState(0);
+        ui->masterButton->setToolTip(MB_STR_NTM);
+    }
+
+        // refresh css
+    ui->masterButton->style()->unpolish(ui->masterButton);
+    ui->masterButton->style()->polish(ui->masterButton);
+    update();
+}
+
+
+void MotionBase::on_masterButton_clicked() {
+
+    OMaxisOptions* opts = m_opts->getOptions(m_addr);
+
+    qDebug() << "MB: Got Click on MasterButton";
+
+        // we don't unset master this way
+    if( opts->master == true )
+        return;
+    else
+        m_opts->setMaster(m_addr);
+
 }

@@ -73,9 +73,7 @@ void CameraControlDialog::on_manIntToggle_selected(int p_val) {
     if( p_val == 0 )
         state = false;
 
-    ui->hhSpinBox->setEnabled(state);
-    ui->mmSpinBox->setEnabled(state);
-    ui->ssSpinBox->setEnabled(state);
+    ui->manIntSpin->setEnabled(state);
 
 }
 
@@ -94,14 +92,10 @@ void CameraControlDialog::on_filmLenToggle_selected(int p_val) {
     }
 
     if( state == true && ui->manIntToggle->value() == 1 ) {
-        ui->hhSpinBox->setEnabled(state);
-        ui->mmSpinBox->setEnabled(state);
-        ui->ssSpinBox->setEnabled(state);
+        ui->manIntSpin->setEnabled(state);
     }
     else {
-        ui->hhSpinBox->setEnabled(false);
-        ui->mmSpinBox->setEnabled(false);
-        ui->ssSpinBox->setEnabled(false);
+        ui->manIntSpin->setEnabled(false);
     }
 
 }
@@ -130,28 +124,16 @@ void CameraControlDialog::_setupInputs() {
     else
         ui->manIntShowFrame->hide();
 
-        // set interval inputs
-    unsigned long ihh = TimeConverter::hours(cam->interval);
-    unsigned long imm = TimeConverter::freeMinutes(cam->interval);
-    unsigned long iss = TimeConverter::freeSeconds(cam->interval);
+        // set interval input
 
     ui->manIntToggle->setValue(enManControls);
-    ui->hhSpinBox->setEnabled(enManControls);
-    ui->hhSpinBox->setCount(99);
-    ui->hhSpinBox->setValue(ihh);
-
-    ui->mmSpinBox->setEnabled(enManControls);
-    ui->mmSpinBox->setCount(59);
-    ui->mmSpinBox->setValue(imm);
-
-    ui->ssSpinBox->setEnabled(enManControls);
-    ui->ssSpinBox->setCount(59);
-    ui->ssSpinBox->setValue(iss);
-
-    ui->fpsSpin->setValue( params.fps );
+    ui->manIntSpin->setEnabled(enManControls);
+    ui->manIntSpin->setValue( (float) TimeConverter::seconds(cam->interval) );
 
 
     // set other inputs
+
+    ui->fpsSpin->setValue( params.fps );
 
     ui->bulbSpin->setMaximum(CAM_MAX_EXPOSURE);
     ui->focusSpin->setMaximum(CAM_MAX_FOCUS);
@@ -257,14 +239,9 @@ void CameraControlDialog::accept() {
 
         // set new interval time, if manual interval selected
     if( cam->manInterval ) {
-        unsigned long iv = ui->ssSpinBox->value();
-        iv += ui->mmSpinBox->value() * 60;
-        iv += ui->hhSpinBox->value() * 60 * 60;
-
+        unsigned long iv = ui->manIntSpin->value();
         iv = TimeConverter::msFromSeconds(iv); // convert back to mS
         cam->interval = iv;
-
-
         qDebug() << "CCD: Interval: " << iv;
     }
 

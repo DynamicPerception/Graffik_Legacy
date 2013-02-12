@@ -100,6 +100,19 @@
         </item>
         <item>
          <widget class="QPushButton" name="errorButton">
+          <property name="toolTip">
+           <string>Axis Errors</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="StatefulButton" name="masterButton">
+          <property name="toolTip">
+           <string>Axis Does NOT Have Camera Connected</string>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -426,6 +439,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>StatefulButton</class>
+   <extends>QPushButton</extends>
+   <header>core/Widgets/statefulbutton.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

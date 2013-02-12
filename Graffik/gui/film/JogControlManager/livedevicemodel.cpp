@@ -46,6 +46,7 @@ void LiveDeviceModel::deviceAdded(OMdeviceInfo *p_dev) {
 
     qDebug() << "LDM: Rebuilt model because device was added:" << p_dev->name;
     endResetModel();
+
 }
 
 void LiveDeviceModel::deviceClicked(const QModelIndex &p_item) {

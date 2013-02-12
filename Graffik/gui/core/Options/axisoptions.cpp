@@ -307,6 +307,12 @@ void AxisOptions::deviceAdded(OMbusInfo*, OMdeviceInfo *p_dev) {
     if( ! m_optList.contains(p_dev->device->address()) )
         setOptions(p_dev->device->address(), new OMaxisOptions);
 
+        // if only first device, set it as master by default.
+    if( m_optList.count() == 1 ) {
+        OMaxisOptions* opts = getOptions(p_dev->device->address());
+        opts->master = true;
+    }
+
     m_optMutex->unlock();
 }
 

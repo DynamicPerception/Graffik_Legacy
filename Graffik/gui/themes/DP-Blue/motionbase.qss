@@ -45,6 +45,23 @@
     min-height: 15px;
 }
 
+#masterButton {
+    border-image: url(themes/DP-Blue/img/cam-sm-ds.png);
+    border: 0px transparent;
+    margin: 0px;
+    margin-top: 1px;
+    margin-right: 5px;
+    padding: 0px;
+    max-height: 12px;
+    max-width: 20px;
+    min-width: 20px;
+    min-height: 12px;
+}
+
+#masterButton[state="1"] {
+    border-image: url(themes/DP-Blue/img/cam-sm-en.png);
+}
+
 #nameButton {
     color: rgb(255,255,255);
     border:0px;
