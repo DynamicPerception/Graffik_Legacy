@@ -62,6 +62,14 @@ public:
 
 signals:
 
+    /** Scan Complete Signal
+
+      This signal is emitted when a scan is fully completed (all nodes have been
+      probed and all responses/errors received)
+      */
+
+    void scanDone();
+
 public slots:
     
 private slots:

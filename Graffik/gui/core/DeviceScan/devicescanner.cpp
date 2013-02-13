@@ -343,7 +343,7 @@ void DeviceScanner::_commandCompleted(int p_id, OMCommandBuffer *p_com) {
   */
 
 void DeviceScanner::_scanAccepted() {
-    m_scanWidget->hide();
+   // m_scanWidget->hide();
 
 
     if( m_findAddr == 0 ) {
@@ -374,6 +374,8 @@ void DeviceScanner::_checkDone() {
     if( m_respCount >= m_cmdSent.count() ) {
             // enable 'Done' button
         m_scanWidget->enableConfirm(true);
+        emit scanDone();
+
         if( m_foundCount <= 0 )
             m_scanWidget->addNote("No New Devices Were Found");
         else

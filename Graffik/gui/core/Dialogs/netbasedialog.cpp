@@ -30,36 +30,52 @@ NetBaseDialog::NetBaseDialog(OMNetwork *c_net, NetworkModel *c_model, AxisOption
 
     ui->setupUi(this);
 
-    m_net = c_net;
-    m_opts = c_opts;
-    m_model = c_model;
-    m_scan = 0;
-
-    m_curWidget = 0;
-
+            m_net = c_net;
+           m_opts = c_opts;
+          m_model = c_model;
+           m_scan = 0;
+      m_curWidget = 0;
     m_frameLayout = new QVBoxLayout();
+
     m_frameLayout->setSpacing(0);
     m_frameLayout->setContentsMargins(0,0,0,0);
     ui->actionFrame->setLayout(m_frameLayout);
 
     m_netMan = new NetworkManager(m_model, m_opts, this);
 
+        // prevent the close or minimize system window option from being used
+
+    setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowTitleHint);
+
+        // default to manage devices screen
     on_manageButton_clicked();
 
     setStyleSheet(SingleThemer::getStyleSheet("net_base"));
 }
 
-NetBaseDialog::~NetBaseDialog()
-{
+NetBaseDialog::~NetBaseDialog() {
     delete ui;
 
-    if( m_scan != 0)
+    if( m_scan != 0) {
+        disconnect(m_scan, SIGNAL(scanDone()), this, SLOT(scanCompleted()));
         delete m_scan;
+    }
 
     delete m_frameLayout;
     delete m_netMan;
 }
 
+
+/** Scan Completed Slot
+
+  Triggering a scan disables the 'Done' button on this dialog.
+
+  This slot re-enables the 'Done' button when the scan is completed.
+  */
+
+void NetBaseDialog::scanCompleted() {
+    _blockForScan(false);
+}
 
 void NetBaseDialog::on_scanButton_clicked() {
 
@@ -79,10 +95,18 @@ void NetBaseDialog::on_scanButton_clicked() {
 
     m_curState = SCAN;
 
-    if( m_scan != 0)
+    if( m_scan != 0) {
+        disconnect(m_scan, SIGNAL(scanDone()), this, SLOT(scanCompleted()));
         delete m_scan;
+    }
 
     m_scan = new DeviceScanner(m_net);
+
+        // monitor signal for when we can re-enable done button
+    connect(m_scan, SIGNAL(scanDone()), this, SLOT(scanCompleted()));
+
+    _blockForScan(true);
+
     m_scan->startScan();
 
     QWidget* dispWidg = m_scan->getWidget();
@@ -109,10 +133,18 @@ void NetBaseDialog::on_initButton_clicked() {
 
     m_curState = INIT;
 
-    if( m_scan != 0)
+    if( m_scan != 0) {
+        disconnect(m_scan, SIGNAL(scanDone()), this, SLOT(scanCompleted()));
         delete m_scan;
+    }
 
     m_scan = new DeviceScanner(m_net, 2, true);
+
+        // monitor signal for when we can re-enable done button
+    connect(m_scan, SIGNAL(scanDone()), this, SLOT(scanCompleted()));
+
+    _blockForScan(true);
+
     m_scan->startScan();
 
     QWidget* dispWidg = m_scan->getWidget();
@@ -154,6 +186,30 @@ void NetBaseDialog::_swapWidget(QWidget *p_widg) {
 
     p_widg->show();
     m_curWidget = p_widg;
+}
+
+ // block/enable UI elements that would interfere with scanning
+void NetBaseDialog::_blockForScan(bool p_stat) {
+
+    if( p_stat == true ) {
+            // we want to prevent the user from minimizing the window via standard ui elements, so
+            // we don't end up with a runaway scan causing problems for the user
+
+        // NOTE: CC: Well, this is a bummer.  Since we're a modal dialog, the dialog will exit
+        // when attempting to change window flags after the ctor.  This is because the dialog
+        // exits whenever it is hidden (being modal and all).  Thus, we must simply disable
+        // closing of the dialog period in the ctor
+
+        // this->setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowTitleHint);
+        ui->doneButton->setEnabled(false);
+    }
+    else {
+            // See note above
+
+        //this->setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
+        //this->show();
+        ui->doneButton->setEnabled(true);
+    }
 }
 
 

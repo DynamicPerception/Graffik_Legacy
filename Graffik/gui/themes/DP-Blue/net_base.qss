@@ -35,6 +35,10 @@
     border-image:url(themes/DP-Blue/img/affirmative-big-button-pressed.png);
 }
 
+#doneButton:disabled {
+    border-image:url(themes/DP-Blue/img/affirmative-big-button-disabled.png);
+}
+
 #actionFrame {
     margin: 10px;
 }

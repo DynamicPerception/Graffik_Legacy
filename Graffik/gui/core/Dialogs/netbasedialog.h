@@ -66,6 +66,8 @@ public slots:
     void on_manageButton_clicked();
     void on_doneButton_clicked();
 
+    void scanCompleted();
+
 private slots:
 
 
@@ -83,6 +85,7 @@ private:
     QVBoxLayout* m_frameLayout;
 
     void _swapWidget(QWidget* p_widg);
+    void _blockForScan(bool p_stat);
 
     enum curState { SCAN, INIT, MANAGE };
 
