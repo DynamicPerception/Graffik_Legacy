@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <QtHelpProject version="1.0">
+     <namespace>dynamicperception.com.graffik.1.0</namespace>
+	<virtualFolder>docs</virtualFolder>
+	<filterSection>
+		<toc>
+			<section title="Slim User Guide" ref="slimdoc.html">
+				<section title="Slim Overview" ref="slimdoc.html#overview" />
+				<section title="Slim UI" ref="slimdoc.html#ui" />
+				<section title="The MoCoBus Network" ref="slimdoc.html#mocobus">
+					<section title="Managing the Network and Devices" ref="slimdoc.html#managing" />
+                                        <section title="Scanning for Devices on the Network" ref="slimdoc.html#scan" />
+                                        <section title="Initializing a Device for the First Time" ref="slimdoc.html#init" />
+					<section title="Changing Device Addresses" ref="slimdoc.html#changeaddr" />
+				</section>
+				<section title="Slim Scripting" ref="slimdoc.html#scripting">
+					<section title="Creating a Slim Script" ref="slimdoc.html#createscript" />
+					<section title="Loading a Slim Script" ref="slimdoc.html#loadscript" />
+					<section title="Core Slim Scripting Commands" ref="slimdoc.html#corescript" />
+                                        <section title="Broadcast Commands" ref="slimdoc.html#bcast" />
+				</section>
+				<section title="Supported Node Devices" ref="slimdoc.html#supdev">
+					<section title="nanoMoCo" ref="slimdoc.html#nanomoco">
+						<section title="Basic Workflow" ref="slimdoc.html#nmbasic" />
+						<section title="All Supported Commands" ref="slimdoc.html#nmsup" />
+						<section title="Motion Control" ref="slimdoc.html#nmmoco" />
+						<section title="Multi-Node Operation" ref="slimdoc.html#nmmulti" />
+						<section title="Easing Algorithms" ref="slimdoc.html#nmease" />
+					</section>
+				</section>
+			</section>
+		</toc>
+		<files>
+			<file>*.html</file>
+			<file>*.png</file>
+		</files>
+	</filterSection>
+ </QtHelpProject>
+				

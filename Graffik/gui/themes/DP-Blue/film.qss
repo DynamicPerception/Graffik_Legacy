@@ -1,0 +1,359 @@
+FlickNumber #wheelLabel {
+    border-image:url(themes/DP-Blue/img/kinetic-wheel.png);
+    border:0px transparent;
+    padding: 0px;
+    margin:0px;
+    margin-top: 3px;
+}
+
+FlickNumber {
+ max-height: 45px;
+}
+
+FlickNumber QListWidget {
+    show-decoration-selected: 1;
+    border-image: url(themes/DP-Blue/img/kinetic-bg.png);
+    font: 26pt "Lucida Sans";
+    border:0px transparent;
+    padding: 0px;
+    margin: 0px;
+    margin-top:3px;
+}
+
+
+FlickNumber QListWidget::item {
+    color:rgb(81,82,85);
+     border: 0px transparent;
+    padding: 0px;
+    margin: 0px;
+    background-color: transparent;
+}
+
+FlickNumber QListWidget::item:selected {
+    color:rgb(81,82,85);
+     border-image: url(themes/DP-Blue/img/kinetic-bg.png);
+     border: 0px transparent;
+    padding: 0px;
+    margin: 0px;
+    background-color: transparent;
+}
+
+FlickNumber QListWidget::item:disabled {
+    color:rgb(184, 184, 184);
+}
+
+FlickNumber QListWidgetItem {
+    text-align: center;
+}
+
+#forwardButton, #rewindButton, #frameFwdButton, #frameRwdButton, #playButton, #stopButton {
+    margin-top: 2px;
+    margin-bottom: 2px;
+    margin:0px;
+    padding: 0px;
+}
+
+#forwardButton {
+    border-image: url(themes/DP-Blue/img/fwd-end-normal.png);
+    border:0px transparent;
+}
+
+#forwardButton:pressed {
+    border-image: url(themes/DP-Blue/img/fwd-end-pressed.png);
+}
+
+#forwardButton:disabled {
+    border-image: url(themes/DP-Blue/img/fwd-end-disable.png);
+}
+
+#frameFwdButton {
+    border-image: url(themes/DP-Blue/img/fwd-normal.png);
+    border:0px transparent;
+}
+
+#frameFwdButton:pressed {
+    border-image: url(themes/DP-Blue/img/fwd-pressed.png);
+}
+
+#frameFwdButton:disabled {
+    border-image: url(themes/DP-Blue/img/fwd-disable.png);
+}
+
+#rewindButton {
+    border-image: url(themes/DP-Blue/img/rwd-home-normal.png);
+    border:0px transparent;
+}
+
+#rewindButton:pressed {
+    border-image: url(themes/DP-Blue/img/rwd-home-pressed.png);
+}
+
+#rewindButton:disabled {
+    border-image: url(themes/DP-Blue/img/rwd-home-disable.png);
+}
+
+#frameRwdButton {
+    border-image: url(themes/DP-Blue/img/rwd-normal.png);
+    border:0px transparent;
+}
+
+#frameRwdButton:pressed {
+    border-image: url(themes/DP-Blue/img/rwd-pressed.png);
+}
+
+#frameRwdButton:disabled {
+    border-image: url(themes/DP-Blue/img/rwd-disable.png);
+}
+
+#playButton {
+    border-image: url(themes/DP-Blue/img/play-normal.png);
+    border:0px transparent;
+}
+
+#playButton:pressed {
+    border-image: url(themes/DP-Blue/img/play-pressed.png);
+}
+
+#playButton:disabled {
+    border-image: url(themes/DP-Blue/img/play-disable.png);
+}
+
+#playButton[state="1"] {
+    border-image: url(themes/DP-Blue/img/pause-normal.png);
+}
+
+#playButton:pressed[state="1"] {
+    border-image: url(themes/DP-Blue/img/pause-pressed.png);
+}
+
+#stopButton {
+    border-image: url(themes/DP-Blue/img/stop-normal.png);
+    border:0px transparent;
+}
+
+#stopButton:pressed {
+    border-image: url(themes/DP-Blue/img/stop-pressed.png);
+}
+
+#stopButton:disabled {
+    border-image: url(themes/DP-Blue/img/stop-disable.png);
+}
+
+MotionTape {
+    qproperty-background: rgb(143, 143, 143);
+    qproperty-color: white;
+}
+
+MotionArea {
+    qproperty-lineWidth: 2; /* Width of drawn motion line */
+    qproperty-lineColor: rgb(77, 154, 205); /* Color of drawn motion line */
+    qproperty-fillColorStart: rgba(77, 154, 205, 175); /* Top color of the gradient below motion line */
+    qproperty-fillColorEnd: rgba(255, 255, 255, 100); /* Bottom color of the gradient below motion line */
+    qproperty-grabLineColor: rgba(77, 154, 205, 255); /* Grab handle line color */
+    qproperty-grabFillColor: rgba(255, 255, 255, 175); /* Grab handle fill color */
+    border-image: url(themes/DP-Blue/img/track-back.png);
+    border: 0px transparent;
+    border-color: #000000;
+}
+
+/* Track is muted by user interaction */
+MotionArea[muted="1"] {
+    border-image: url(themes/DP-Blue/img/track-back-mute.png);
+}
+
+/* Track is muted by error */
+MotionArea[muted="2"] {
+    border-image: url(themes/DP-Blue/img/track-back-error.png);
+}
+
+
+#visualSA {
+    padding:0px;
+    margin:0px;
+}
+
+#camSetBut {
+     border-image: url(themes/DP-Blue/img/camset-but-normal.png);
+     border: 0px transparent;
+     margin-top:2px;
+     margin-left:5px;
+     min-width:150px;
+     max-width:187px;
+     min-height: 37px;
+     max-height: 37px;
+}
+
+#camSetBut:pressed {
+     border-image: url(themes/DP-Blue/img/camset-but-pressed.png);
+     border: 0px transparent;
+     margin-top:2px;
+}
+
+#camSetBut:disabled {
+     border-image: url(themes/DP-Blue/img/camset-but-desat.png);
+     border: 0px transparent;
+     margin-top:2px;
+}
+
+#camControlSlider {
+
+ margin-left: 10px;
+ margin-top: -2px;
+ margin-right: 10px;
+}
+
+#camControlSlider::groove:horizontal {
+     border-image: url(themes/DP-Blue/img/toggle-bg.png);
+     padding: 0px;
+     margin: 0px;
+     height: 35px;
+     width: 75px;
+
+}
+
+#camControlSlider::handle:horizontal {
+    margin:-2px -4px -4px -4px;
+    padding:0px;
+    height: 42px;
+    width:42px;
+    image: url(themes/DP-Blue/img/slider-handle-dark.png);
+}
+
+
+#pluginStackedWidget {
+    padding: 0px;
+    margin:0px;
+}
+
+#separatorLine {
+    padding:0px;
+    margin:0px;
+}
+
+#timeDispContainerFrame {
+    background-color: rgb(218,218,218);
+}
+
+#filmTimeBoxFrame {
+    margin-left: 3px;
+}
+
+#runTimeBoxFrame {
+    margin-right: 3px;
+}
+
+#runTimeBoxFrame, #filmTimeBoxFrame {
+    border:1px solid;
+    border-color:rgb(86,86,86);
+    border-radius:3px;
+    background-color:rgb(189,189,189);
+}
+
+#filmHHLabel, #filmMMLabel, #filmSSLabel, #runHHLabel, #runMMLabel, #runSSLabel {
+    background-color: white;
+    border-color:rgb(86,86,86);
+    border:1px solid;
+    color:rgb(81,82,85);
+    font: 40pt "Lucida Sans";
+}
+
+#filmHHLabel, #runHHLabel {
+    border-top-left-radius: 3px;
+} 
+
+#filmSSLabel, #runSSLabel {
+    border-top-right-radius: 3px;
+} 
+
+#filmTimeDispHHLabel, #filmTimeDispMMLabel, #filmTimeDispSSLabel, #runTimeDispHHLabel, #runTimeDispMMLabel, #runTimeDispSSLabel {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(171, 171, 171, 255), stop:0.571429 rgba(146, 146, 146, 255));
+    color: white;
+    border: 1px solid;
+    border-color: rgb(86,86,86);
+}
+
+#runTimeDispHHLabel, #filmTimeDispHHLabel {
+    border-bottom-left-radius: 3px;
+}
+
+#runTimeDispSSLabel, #filmTimeDispSSLabel {
+    border-bottom-right-radius: 3px;
+}
+
+
+
+
+#curFrameDispLabel, #totalFrameDispLabel {
+    background-color:white;
+    color: black;
+    border-radius:4px;
+    border: 1px solid;
+    border-color:rgb(84, 84, 84);
+    margin-left: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    min-width:75px;
+}
+
+
+
+#realTimeLabel, #filmLengthLabel, #shuttleAreaFrame, #timeHeaderFrame {
+     background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0.541872 rgba(104, 104, 104, 255), stop:1 rgba(74, 74, 74, 255));
+     color:white;
+}
+
+#curFramesLabel, #totalFramesLabel {
+    color:white;
+    margin-left: 5px;
+}
+
+#timeHeaderFrame {
+    border:1px solid;
+    border-color:rgb(84, 84, 84);
+    padding-top:0px;
+    padding-bottom:0px;
+}
+
+#filmTimeDispLabel, #runTimeDispLabel {
+    color:white;
+}
+
+#shuttleAreaFrame {
+    border:1px solid;
+    border-color:rgb(84, 84, 84);
+    padding:0px;
+}
+
+#realTimeLabel, #filmLengthLabel {
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+
+#filmLenFrame, #realTimeFrame {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(186, 186, 186, 255), stop:1 rgba(171, 171, 171, 255));
+    border-color:rgb(111, 111, 111);
+    border-radius:3px;
+    border-width:1px;
+    border-style:solid;
+}
+
+#realTimeFrame {
+    margin-left: 20px;
+    margin-right:10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#filmLenFrame {
+    margin-left: 10px;
+    margin-right:20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#rtHHLabel, #rtMMLabel, #rtSSLabel, #filmLenHHLabel, #filmLenMMLabel, #filmLenSSLabel {
+    color:white;
+    font: 12pt "Lucida Sans";
+    padding-right: 28px;
+}
+

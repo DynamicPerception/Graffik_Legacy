@@ -1,0 +1,52 @@
+/* Set custom properties for column widths, led images */
+
+#historyTableView {
+    qproperty-colWidth0: 100;
+    qproperty-colWidth1: 225;
+    qproperty-colWidth2: 100;
+    qproperty-colWidth3: 50;
+    qproperty-colWidth4: 125;
+    qproperty-errLED: url(themes/DP-Blue/img/stat-led-red.png);
+    qproperty-queueLED: url(themes/DP-Blue/img/stat-led-grey.png);
+    qproperty-bcastLED: url(themes/DP-Blue/img/stat-led-blue.png);
+    qproperty-okLED: url(themes/DP-Blue/img/stat-led-green.png);
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(253, 253, 253, 255), stop:1 rgba(208, 208, 208, 255));
+    alternate-background-color:rgb(197, 197, 197);
+}
+
+#historyTableView QHeaderView::section {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(172, 172, 172, 255), stop:1 rgba(146, 146, 146, 255));
+    color: rgb(255,255,255);
+    font: 14pt "Lucida Sans";
+    border: 1px solid rgb(86,86,86);
+    min-height: 40px;
+}
+
+#SlimWindow {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(253, 253, 253, 255), stop:1 rgba(208, 208, 208, 255));
+}
+
+#commandFrame {
+    border: 1px solid rgb(86,86,86);
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(253, 253, 253, 255), stop:1 rgba(208, 208, 208, 255));
+}
+
+#commandFrame QLineEdit {
+    border: 1px solid rgb(86,86,86);
+    border-radius: 3px;
+    min-height: 25px;
+    font: 14pt "Lucida Sans";
+}
+
+#goButton {
+    border-image: url(themes/DP-Blue/img/small-blue-but-normal.png);
+    border: 0px transparent;
+    max-width:75px;
+    max-height: 29px;
+    min-width:75px;
+    min-height: 29px;
+    color: rgb(255,255,255);
+    font: 12px "Lucida Sans";
+}
+
+

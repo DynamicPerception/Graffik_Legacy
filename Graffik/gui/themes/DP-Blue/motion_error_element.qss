@@ -1,0 +1,27 @@
+#iconLabel {
+    border-image: url(themes/DP-Blue/img/error.png);
+    border: 0px transparent;
+    min-width: 30px;
+    max-width:30px;
+    min-height: 30px;
+    max-height: 30px;
+    margin-right: 10px;
+    margin-left: 5px;
+}
+
+#motionErrorElement {
+
+ max-height: 50px;
+ min-height: 50px;
+ background-color: rgb(255,255,255);
+}
+
+#errorText {
+    max-height: 75px;
+    min-height: 75px;
+    background-color: rgb(255, 200, 200);
+}
+
+#sepLine {
+    max-height: 75px;
+}

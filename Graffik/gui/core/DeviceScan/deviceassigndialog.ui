@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DeviceAssignDialog</class>
+ <widget class="QDialog" name="DeviceAssignDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>192</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Configure New Device</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QComboBox:drop-down {
+border-image: url(:/core/drop-down-sm-blue.png);
+border: 0px transparent;
+}
+
+QComboBox {
+min-height: 33px;
+min-width: 100px;
+}
+
+#AxisOptionsDialog {
+background-color:qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(253, 253, 253, 255), stop:1 rgba(208, 208, 208, 255));
+}
+
+QLabel {
+font: 14pt &quot;Lucida Sans&quot;;
+}
+
+SlideToggle {
+min-width: 66px;
+max-width: 66px;
+min-height: 34px;
+max-height: 34px;
+}
+
+SlideToggle::groove:horizontal {
+ border-image: url(:/core/toggle-bg.png); 
+border: 0px transparent;
+ border-left: -9px transparent;
+ border-right: -8px transparent;
+ border-bottom: -5px transparent;
+ border-top: 0px transparent;
+/* border: 0px transparent;*/
+ padding: 0px;
+ margin: 0px;
+}
+
+SlideToggle::handle:horizontal {
+margin:0px;
+padding:0px;
+image: url(:/core/slider-handle-blue.png);
+}
+
+SlideToggle {
+margin:4px;
+}
+
+
+#cancelButton, #saveButton {
+padding:10px;
+color: rgb(255,255,255);
+font: 12px &quot;Lucida Sans&quot;;
+max-width:75px;
+max-height: 24px;
+}
+
+#cancelButton {
+border-image: url(:/core/small-gray-but-normal.png);
+border: 0px transparent;
+}
+
+#saveButton {
+border-image: url(:/core/small-blue-but-normal.png);
+border: 0px transparent;
+}
+</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>New Device Address</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="2">
+    <widget class="QComboBox" name="addrCombo"/>
+   </item>
+   <item row="1" column="1" rowspan="2" colspan="2">
+    <widget class="QLineEdit" name="nameLine"/>
+   </item>
+   <item row="3" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>125</width>
+       <height>61</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="3" column="1">
+    <spacer name="horizontalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>106</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="3" column="2">
+    <spacer name="horizontalSpacer_3">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>106</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="4" column="0">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>115</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="4" column="2">
+    <widget class="QPushButton" name="saveButton">
+     <property name="text">
+      <string>Save</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QPushButton" name="cancelButton">
+     <property name="text">
+      <string>Cancel</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>New Device Name</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

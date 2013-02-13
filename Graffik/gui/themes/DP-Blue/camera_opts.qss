@@ -1,0 +1,255 @@
+#hhSpinLabel, #mmSpinLabel, #ssSpinLabel {
+    text-align:center;
+}
+
+#buttonBox QPushButton {
+    border-image: url(themes/DP-Blue/img/small-blue-but-normal.png);
+    border: 0px transparent;
+    max-width:75px;
+    max-height: 24px;
+    min-width:75px;
+    min-height: 24px;
+    color: rgb(255,255,255);
+    font: 12px "Lucida Sans";
+}
+
+
+QComboBox:drop-down {
+    border-image: url(themes/DP-Blue/img/drop-down-sm-blue.png);
+    border: 0px transparent;
+    width:30px;
+    min-width:30px;
+    max-width:30px;
+    border: 0px transparent;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+   subcontrol-origin: content;
+   subcontrol-position: center right;
+}
+
+QComboBox {
+    min-height: 33px;
+    min-width: 100px;
+    font: 12px "Lucida Sans";
+    margin-left: 5px;
+    padding-left: 5px;
+    border-radius: 8px;
+    border-top-right-radius: 9px;
+    border-bottom-right-radius: 9px;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border: 1px solid;
+}
+
+
+QDoubleSpinBox, QSpinBox {
+    padding-left: 10px;
+    padding-right: 29px;
+    border-image:url(themes/DP-Blue/img/scroll-spin-bg.png);
+    border: 0px transparent;
+    border-top-right-radius:8px;
+    border-bottom-right-radius: 8px;
+    border-right: 0px;
+    min-height: 43px;
+    max-height: 43px;
+    font: 20px "Lucida Sans";
+}
+
+QDoubleSpinBox:disabled, QSpinBox:disabled {
+    border-image:url(themes/DP-Blue/img/scroll-spin-bg-dis.png);
+    border: 0px transparent;
+}
+
+QDoubleSpinBox::up-button, QSpinBox::up-button {
+    border-image:url(themes/DP-Blue/img/scroll-spin-up.png);
+    border: 0px transparent;
+    min-height: 21px;
+    max-height: 21px;
+    min-width:29px;
+    max-width:29px;
+}
+
+QDoubleSpinBox::down-button, QSpinBox::down-button {
+    border-image:url(themes/DP-Blue/img/scroll-spin-down.png);
+    border: 0px transparent;
+    min-height: 22px;
+    max-height: 22px;
+    min-width:29px;
+    max-width:29px;
+}
+
+
+
+FlickNumber #wheelLabel {
+    border-image:url(themes/DP-Blue/img/kinetic-sm-wheel.png) stretch;
+    border:0px transparent;
+    padding: 0px;
+    margin:0px;
+    margin-top: 3px;
+    max-height: 35px;
+    min-height: 35px;
+}
+
+FlickNumber {
+    max-height: 40px;
+    min-height: 40px;
+    max-width: 100px;
+    min-width: 100px;
+   /* margin-right: 2px;*/
+}
+
+FlickNumber QListWidget {
+    show-decoration-selected: 1;
+    border-image: url(themes/DP-Blue/img/kinetic-sm-bg.png) stretch;
+    font: 20pt "Lucida Sans";
+    border:0px transparent;
+    padding: 0px;
+    margin: 0px;
+    margin-top:3px;
+    max-height: 35px;
+    min-height: 35px;
+}
+
+
+FlickNumber QListWidget::item {
+    color:rgb(81,82,85);
+     border: 0px transparent;
+    padding: 0px;
+    margin: 0px;
+    background-color: transparent;
+    max-height: 35px;
+    min-height: 35px;
+}
+
+FlickNumber QListWidget::item:selected {
+    color:rgb(81,82,85);
+     border-image: url(themes/DP-Blue/img/kinetic-sm-bg.png) stretch;
+     border: 0px transparent;
+    padding: 0px;
+    margin: 0px;
+    background-color: transparent;
+    max-height: 35px;
+    min-height: 35px;
+}
+
+FlickNumber QListWidget::item:disabled {
+    color:rgb(184, 184, 184);
+}
+
+FlickNumber QListWidgetItem {
+    text-align: center;
+}
+
+
+
+
+SlideToggle {
+    margin: 4px;
+    min-width: 66px;
+    max-width: 66px;
+    min-height: 34px;
+    max-height: 34px;
+}
+
+SlideToggle::groove:horizontal {
+     border-image: url(themes/DP-Blue/img/toggle-bg.png);
+     border: 0px transparent;
+     padding: 0px;
+     margin: 0px;
+     width: 66px;
+     height: 34px;
+}
+
+SlideToggle::handle:horizontal {
+    margin:-2px -4px -4px -4px;
+    padding:0px;
+    width:40px;
+    height:40px;
+    image: url(themes/DP-Blue/img/slider-handle-blue.png);
+}
+
+
+#expDelayLabel {
+    max-height:15px;
+}
+
+#manIntShowFrame {
+    min-height: 100px;
+    max-height: 100px;
+}
+
+#SMSInnerFrame, #focLocFrame, #focusConFrame, #manIntFrame, #filmLenFrame, #bulbExpFrame {
+    max-height: 50px;
+    min-height: 40px;
+}
+
+
+#SMSFrame {
+    max-height:75px;
+}
+
+#SMSInnerFrame, #filmLenFrame, #bulbExpFrame, #focLocFrame, #focusConFrame, #manIntFrame {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(172, 172, 172, 255), stop:1 rgba(146, 146, 146, 255));
+    /* background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0.541872 rgba(104, 104, 104, 255), stop:1 rgba(74, 74, 74, 255)); */
+    border: 1px solid rgb(0,0,0);
+    border-radius: 6px;
+}
+
+#SMSInnerFrame QLabel, #filmLenFrame QLabel, #bulbExpFrame QLabel, #focLocFrame QLabel, #focusConFrame QLabel, #manIntFrame QLabel {
+    color: rgb(255,255,255);
+    font: 16pt "Lucida Sans";
+}
+
+#SMSInnerFrame QLabel, #filmLenFrame QLabel, #focLocFrame QLabel, #focusConFrame QLabel, #manIntFrame QLabel, #bulbExpFrame QLabel {
+    margin-left: 5px;
+}
+
+#SMSFrame, #exposureFrame, #focusFrame, #filmDefFrame {
+    padding-top: 10px;
+    padding-bottom:10px;
+    padding-right: 5px;
+    padding-left: 5px;
+    margin: 0px;
+    border: 0px;
+    background-color: transparent;
+/*    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(253, 253, 253, 255), stop:1 rgba(208, 208, 208, 255));
+    border-top: 1px solid;
+    border-right: 1px solid;
+    border-left: 1px solid;
+    border-bottom: 1px solid; */
+}
+
+#focusFrame {
+    border-bottom: 1px solid;
+}
+
+#focusFrame QVBoxLayout {
+    qproperty-spacing: 5;
+}
+
+#CameraControlDialog {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(253, 253, 253, 255), stop:1 rgba(208, 208, 208, 255));
+    padding: 0px;
+    margin:0px;
+}
+
+QToolBox::tab {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0.541872 rgba(104, 104, 104, 255), stop:1 rgba(74, 74, 74, 255));
+    /*background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(136, 136, 136, 255), stop:1 rgba(255, 255, 255, 255));*/
+    color: rgb(255, 255, 255);
+    font: 14px "Lucida Sans";
+    margin: 0px;
+}
+
+QToolBox {
+    border: 0px;
+}
+
+#timingPage, #cameraPage {
+ /* background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(253, 253, 253, 255), stop:1 rgba(208, 208, 208, 255)); */
+    background: transparent;
+}
+
+#masterLabel {
+    font: 12pt "Lucida Sans";
+}
