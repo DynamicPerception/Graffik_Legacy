@@ -108,7 +108,12 @@ void NetworkModel::addDevice(QString p_port, unsigned short p_addr) {
     display[0]->setFlags(display[0]->flags() & ~Qt::ItemIsEditable);
     display[1]->setFlags(display[1]->flags() & ~Qt::ItemIsEditable);
     display[2]->setFlags(display[2]->flags() & ~Qt::ItemIsEditable);
-    display[3]->setFlags(display[2]->flags() & ~Qt::ItemIsEditable);
+    display[3]->setFlags(display[3]->flags() & ~Qt::ItemIsEditable);
+
+        // tooltip for configure icon
+        // TODO: Correct issue preventing tooltip from displaying
+    display[3]->setFlags(display[3]->flags() | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+    display[3]->setToolTip(NETMODEL_STR_CONF);
 
     parentList[0]->appendRow(display);
 

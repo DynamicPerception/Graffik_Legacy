@@ -29,7 +29,8 @@ HEADERS += \
     film/FilmFileHandler/addressnotfounddialog.h \
     film/Dialogs/trackinfodialog.h \
     film/MotionArea/ErrorConsole/motionerrordialog.h \
-    film/MotionArea/ErrorConsole/motionerrorelement.h
+    film/MotionArea/ErrorConsole/motionerrorelement.h \
+    film/MotionArea/notrackswidget.h
 
 
 SOURCES += \
@@ -54,7 +55,8 @@ SOURCES += \
     film/FilmFileHandler/addressnotfounddialog.cpp \
     film/Dialogs/trackinfodialog.cpp \
     film/MotionArea/ErrorConsole/motionerrordialog.cpp \
-    film/MotionArea/ErrorConsole/motionerrorelement.cpp
+    film/MotionArea/ErrorConsole/motionerrorelement.cpp \
+    film/MotionArea/notrackswidget.cpp
 
 FORMS += \
     film/filmwindow.ui \
@@ -66,4 +68,5 @@ FORMS += \
     film/FilmFileHandler/addressnotfounddialog.ui \
     film/Dialogs/trackinfodialog.ui \
     film/MotionArea/ErrorConsole/motionerrordialog.ui \
-    film/MotionArea/ErrorConsole/motionerrorelement.ui
+    film/MotionArea/ErrorConsole/motionerrorelement.ui \
+    film/MotionArea/notrackswidget.ui

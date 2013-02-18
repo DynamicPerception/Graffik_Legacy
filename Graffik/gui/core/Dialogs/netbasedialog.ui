@@ -52,6 +52,9 @@
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QPushButton" name="manageButton">
+        <property name="toolTip">
+         <string>Use Device Manager</string>
+        </property>
         <property name="text">
          <string>Manage Devices</string>
         </property>
@@ -59,6 +62,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="initButton">
+        <property name="toolTip">
+         <string>Initialize a New Device</string>
+        </property>
         <property name="text">
          <string>Initialize a New Device</string>
         </property>
@@ -66,6 +72,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="scanButton">
+        <property name="toolTip">
+         <string>Scan For Devices on Bus</string>
+        </property>
         <property name="text">
          <string>Scan for Devices</string>
         </property>
@@ -95,6 +104,9 @@
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="1" column="1">
        <widget class="QPushButton" name="doneButton">
+        <property name="toolTip">
+         <string>Dismiss this Window</string>
+        </property>
         <property name="text">
          <string>Done</string>
         </property>

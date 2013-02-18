@@ -25,7 +25,11 @@
     </widget>
    </item>
    <item>
-    <widget class="QComboBox" name="defaultCombo"/>
+    <widget class="QComboBox" name="defaultCombo">
+     <property name="toolTip">
+      <string>Select a Pre-defined Device Type</string>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="Line" name="line">
@@ -42,7 +46,11 @@
     </widget>
    </item>
    <item>
-    <widget class="QComboBox" name="typeCombo"/>
+    <widget class="QComboBox" name="typeCombo">
+     <property name="toolTip">
+      <string>What Type of Motion</string>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QFrame" name="masterFrame">
@@ -97,7 +105,11 @@
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="stepsLine"/>
+    <widget class="QLineEdit" name="stepsLine">
+     <property name="toolTip">
+      <string>Steps per Revolution of the Motor</string>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QLabel" name="ratioLabel">
@@ -107,7 +119,11 @@
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="ratioLine"/>
+    <widget class="QLineEdit" name="ratioLine">
+     <property name="toolTip">
+      <string>Output Drive Ratio</string>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QLabel" name="maxLabel">
@@ -117,7 +133,11 @@
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="maxLine"/>
+    <widget class="QLineEdit" name="maxLine">
+     <property name="toolTip">
+      <string>Maximum Full Steps per Second</string>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QLabel" name="backlashLabel">
@@ -127,7 +147,11 @@
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="backlashLine"/>
+    <widget class="QLineEdit" name="backlashLine">
+     <property name="toolTip">
+      <string>Backlash Compensation in Steps</string>
+     </property>
+    </widget>
    </item>
    <item>
     <spacer name="verticalSpacer">

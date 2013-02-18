@@ -26,12 +26,16 @@
 
 #include <QStandardItemModel>
 #include <QPixmap>
+#include <QString>
 
 #include "MoCoBus/omnetwork.h"
 
   // which column holds the configure icon?
-#define NETMODEL_CONFIG_COL 3
-#define NETMODEL_ADDR_COL 1
+const int NETMODEL_CONFIG_COL = 3;
+const int NETMODEL_ADDR_COL = 1;
+
+
+const QString NETMODEL_STR_CONF = "Configure Axis Options";
 
 /** Network Model Class
 

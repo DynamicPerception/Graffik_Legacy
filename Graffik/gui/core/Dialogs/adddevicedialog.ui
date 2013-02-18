@@ -42,7 +42,11 @@
       </widget>
      </item>
      <item row="1" column="2">
-      <widget class="QComboBox" name="busList"/>
+      <widget class="QComboBox" name="busList">
+       <property name="toolTip">
+        <string>Select the Bus This Device is Attached to</string>
+       </property>
+      </widget>
      </item>
      <item row="4" column="1">
       <widget class="QLabel" name="label_2">
@@ -62,7 +66,11 @@
       </widget>
      </item>
      <item row="2" column="2">
-      <widget class="QComboBox" name="deviceTypeList"/>
+      <widget class="QComboBox" name="deviceTypeList">
+       <property name="toolTip">
+        <string>Select the Type of Device</string>
+       </property>
+      </widget>
      </item>
      <item row="3" column="1">
       <widget class="QLabel" name="label_4">
@@ -168,6 +176,9 @@
         </property>
         <item>
          <widget class="QPushButton" name="cancelButton">
+          <property name="toolTip">
+           <string>Close and Do Not Add Device</string>
+          </property>
           <property name="text">
            <string>Cancel</string>
           </property>
@@ -175,6 +186,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="okButton">
+          <property name="toolTip">
+           <string/>
+          </property>
           <property name="text">
            <string>Add Device</string>
           </property>

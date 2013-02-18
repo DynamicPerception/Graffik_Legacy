@@ -1,3 +1,24 @@
+#NoTracksWidget {
+    max-height: 125px;
+    min-height: 125px;
+}
+
+#warnLabel {
+
+    border-image: url(themes/DP-Blue/img/warn-icon.png);
+    border: 0px transparent;
+    min-width: 92px;
+    max-width: 92px;
+    min-height: 79px;
+    max-height: 79px;
+}
+
+#warnText {
+    border: 0px;
+    background-color: transparent;
+    max-height: 50px;
+}
+
 FlickNumber #wheelLabel {
     border-image:url(themes/DP-Blue/img/kinetic-wheel.png);
     border:0px transparent;
@@ -46,10 +67,39 @@ FlickNumber QListWidgetItem {
     text-align: center;
 }
 
+#frameVline1, #frameVline2 {
+
+ margin-left: 8px;
+ margin-top: 0px;
+ margin-bottom: 0px;
+ padding:0px;
+/* color: rgb(75,75, 75);*/
+ min-width: 1px;
+}
+
+#shuttleSepFrame1, #shuttleSepFrame2 {
+    margin: 0px;
+    padding: 0px;
+    background-color: rgb(189,189,189);
+    border: 0px;
+}
+
+#shuttleSepFrame1 {
+    border-top: 1px solid;
+    border-color: rgb(70,70,70);
+}
+
+#shuttleSepFrame2 {
+    border-bottom: 1px solid;
+    border-color: rgb(70,70,70);
+}
+
 #forwardButton, #rewindButton, #frameFwdButton, #frameRwdButton, #playButton, #stopButton {
-    margin-top: 2px;
+/*    margin-top: 2px;
     margin-bottom: 2px;
-    margin:0px;
+    margin-left: 0px;
+    margin-right:0px; */
+    margin: 0px;
     padding: 0px;
 }
 
@@ -142,6 +192,9 @@ FlickNumber QListWidgetItem {
 MotionTape {
     qproperty-background: rgb(143, 143, 143);
     qproperty-color: white;
+    border: 0px;
+    border-right: 1px solid;
+    border-color: rgb(0,0,0);
 }
 
 MotionArea {
@@ -170,6 +223,7 @@ MotionArea[muted="2"] {
 #visualSA {
     padding:0px;
     margin:0px;
+    border: 0px;
 }
 
 #camSetBut {
@@ -197,8 +251,8 @@ MotionArea[muted="2"] {
 
 #camControlSlider {
 
- margin-left: 10px;
- margin-top: -2px;
+ margin-left: 12px;
+ margin-top: 0px;
  margin-right: 10px;
 }
 
@@ -212,7 +266,7 @@ MotionArea[muted="2"] {
 }
 
 #camControlSlider::handle:horizontal {
-    margin:-2px -4px -4px -4px;
+    margin:-2px -3px -4px -4px;
     padding:0px;
     height: 42px;
     width:42px;
@@ -228,6 +282,13 @@ MotionArea[muted="2"] {
 #separatorLine {
     padding:0px;
     margin:0px;
+}
+
+#timeAdjustFrame {
+    border: 0px;
+    border-right: 1px solid;
+    border-color: rgb(0, 0, 0);
+
 }
 
 #timeDispContainerFrame {
@@ -301,6 +362,8 @@ MotionArea[muted="2"] {
      background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0.541872 rgba(104, 104, 104, 255), stop:1 rgba(74, 74, 74, 255));
      color:white;
 }
+
+
 
 #curFramesLabel, #totalFramesLabel {
     color:white;

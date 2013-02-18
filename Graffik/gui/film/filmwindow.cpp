@@ -44,10 +44,14 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
     m_busy = new QProgressDialog(this);
     m_jcp = new JogControlPanel(m_net, m_opts, m_params, this);
     m_fcp = new FlickCharm;
+    m_notw = new NoTracksWidget(this);
 
     m_areaLayout = new QVBoxLayout;
     m_areaLayout->setContentsMargins(0, 0, 0, 0);
     m_areaLayout->setSpacing(0);
+    m_areaLayout->addWidget(m_notw);
+
+    m_notwShown = true;
 
     m_areaViewPort = new QWidget;
     m_areaViewPort->setLayout(m_areaLayout);
@@ -152,6 +156,12 @@ void FilmWindow::_drawNewAxis(OMdeviceInfo *p_dev) {
     if( p_dev->type != "OpenMoCo Axis")
         return;
 
+        // hide the no track shown widget if currently shown
+    if( m_notwShown == true ) {
+        m_areaLayout->removeWidget(m_notw);
+        m_notwShown = false;
+    }
+
     qDebug() << "FW: Got new axis, spawning motion area" << p_dev->type;
 
     MotionBase* area = new MotionBase(m_params, p_dev, m_opts, m_gopts, this);
@@ -176,8 +186,15 @@ void FilmWindow::_eraseAxis(QString p_bus, unsigned short p_addr) {
         delete m_areaBlocks.value(p_addr);
         m_areaBlocks.remove(p_addr);
 
+            // if there are no more tracks, show our warning area
+        if( m_areaBlocks.count() < 1 ) {
+            m_areaLayout->addWidget(m_notw);
+            m_notwShown = true;
+        }
+
         _redrawMotionOverlay();
     }
+
 
 
 }

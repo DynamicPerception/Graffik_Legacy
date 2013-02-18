@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>405</height>
+    <width>852</width>
+    <height>723</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,7 +19,7 @@
   <property name="minimumSize">
    <size>
     <width>800</width>
-    <height>405</height>
+    <height>403</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -40,6 +40,65 @@
      <property name="spacing">
       <number>0</number>
      </property>
+     <item row="2" column="2" colspan="2">
+      <widget class="QScrollArea" name="visualSA">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>600</width>
+         <height>186</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="baseSize">
+        <size>
+         <width>600</width>
+         <height>165</height>
+        </size>
+       </property>
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAsNeeded</enum>
+       </property>
+       <property name="widgetResizable">
+        <bool>true</bool>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+       <widget class="QWidget" name="visualSAContents">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>598</width>
+          <height>248</height>
+         </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>165</height>
+         </size>
+        </property>
+       </widget>
+      </widget>
+     </item>
      <item row="3" column="2" colspan="2">
       <widget class="QFrame" name="shuttleAreaFrame">
        <property name="sizePolicy">
@@ -51,19 +110,19 @@
        <property name="minimumSize">
         <size>
          <width>0</width>
-         <height>30</height>
+         <height>40</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
          <width>16777215</width>
-         <height>55</height>
+         <height>65</height>
         </size>
        </property>
        <property name="baseSize">
         <size>
          <width>0</width>
-         <height>55</height>
+         <height>65</height>
         </size>
        </property>
        <property name="frameShape">
@@ -72,14 +131,14 @@
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <property name="spacing">
-         <number>0</number>
-        </property>
+       <layout class="QGridLayout" name="gridLayout_4">
         <property name="margin">
          <number>0</number>
         </property>
-        <item>
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <item row="1" column="0" rowspan="2">
          <widget class="QLabel" name="curFramesLabel">
           <property name="font">
            <font>
@@ -91,7 +150,7 @@
           </property>
          </widget>
         </item>
-        <item>
+        <item row="1" column="1" rowspan="2">
          <widget class="QLabel" name="curFrameDispLabel">
           <property name="minimumSize">
            <size>
@@ -104,6 +163,9 @@
             <family>Lucida Sans</family>
            </font>
           </property>
+          <property name="toolTip">
+           <string>Current Film Frame</string>
+          </property>
           <property name="text">
            <string>0</string>
           </property>
@@ -112,7 +174,17 @@
           </property>
          </widget>
         </item>
-        <item>
+        <item row="1" column="2" rowspan="2">
+         <widget class="Line" name="frameVline1">
+          <property name="frameShadow">
+           <enum>QFrame::Plain</enum>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3" rowspan="2">
          <widget class="QLabel" name="totalFramesLabel">
           <property name="font">
            <font>
@@ -124,13 +196,16 @@
           </property>
          </widget>
         </item>
-        <item>
+        <item row="1" column="4" rowspan="2">
          <widget class="QLabel" name="totalFrameDispLabel">
           <property name="minimumSize">
            <size>
             <width>50</width>
             <height>0</height>
            </size>
+          </property>
+          <property name="toolTip">
+           <string>Total Film Frames</string>
           </property>
           <property name="text">
            <string>0</string>
@@ -140,23 +215,17 @@
           </property>
          </widget>
         </item>
-        <item>
-         <spacer name="horizontalSpacer_3">
+        <item row="1" column="5" rowspan="2" colspan="2">
+         <widget class="Line" name="frameVline2">
+          <property name="frameShadow">
+           <enum>QFrame::Plain</enum>
+          </property>
           <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+           <enum>Qt::Vertical</enum>
           </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Expanding</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>5</height>
-           </size>
-          </property>
-         </spacer>
+         </widget>
         </item>
-        <item>
+        <item row="1" column="7" rowspan="2">
          <widget class="QPushButton" name="rewindButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -193,12 +262,15 @@
             <pointsize>10</pointsize>
            </font>
           </property>
+          <property name="toolTip">
+           <string>Rewind to Beginning</string>
+          </property>
           <property name="text">
            <string/>
           </property>
          </widget>
         </item>
-        <item>
+        <item row="1" column="8" rowspan="2">
          <widget class="QPushButton" name="frameRwdButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -235,12 +307,15 @@
             <pointsize>10</pointsize>
            </font>
           </property>
+          <property name="toolTip">
+           <string>Reverse One Frame</string>
+          </property>
           <property name="text">
            <string/>
           </property>
          </widget>
         </item>
-        <item>
+        <item row="1" column="9" rowspan="2">
          <widget class="StatefulButton" name="playButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -277,6 +352,9 @@
             <pointsize>10</pointsize>
            </font>
           </property>
+          <property name="toolTip">
+           <string>Play</string>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -285,49 +363,7 @@
           </property>
          </widget>
         </item>
-        <item>
-         <widget class="QPushButton" name="stopButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>27</width>
-            <height>27</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>54</width>
-            <height>54</height>
-           </size>
-          </property>
-          <property name="sizeIncrement">
-           <size>
-            <width>1</width>
-            <height>1</height>
-           </size>
-          </property>
-          <property name="baseSize">
-           <size>
-            <width>27</width>
-            <height>27</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
+        <item row="1" column="11" rowspan="2">
          <widget class="QPushButton" name="frameFwdButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -364,12 +400,15 @@
             <pointsize>10</pointsize>
            </font>
           </property>
+          <property name="toolTip">
+           <string>Advance One Frame</string>
+          </property>
           <property name="text">
            <string/>
           </property>
          </widget>
         </item>
-        <item>
+        <item row="1" column="12" rowspan="2">
          <widget class="QPushButton" name="forwardButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -405,6 +444,103 @@
            <font>
             <pointsize>10</pointsize>
            </font>
+          </property>
+          <property name="toolTip">
+           <string>Forward to End</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="6">
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>5</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="0" colspan="13">
+         <widget class="QFrame" name="shuttleSepFrame2">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>8</height>
+           </size>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0" colspan="13">
+         <widget class="QFrame" name="shuttleSepFrame1">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>8</height>
+           </size>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <zorder>stopButton</zorder>
+         </widget>
+        </item>
+        <item row="1" column="10" rowspan="2">
+         <widget class="QPushButton" name="stopButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>27</width>
+            <height>27</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>54</width>
+            <height>54</height>
+           </size>
+          </property>
+          <property name="sizeIncrement">
+           <size>
+            <width>1</width>
+            <height>1</height>
+           </size>
+          </property>
+          <property name="baseSize">
+           <size>
+            <width>27</width>
+            <height>27</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="toolTip">
+           <string>Stop</string>
           </property>
           <property name="text">
            <string/>
@@ -919,65 +1055,6 @@
        </property>
       </spacer>
      </item>
-     <item row="2" column="2" colspan="2">
-      <widget class="QScrollArea" name="visualSA">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>600</width>
-         <height>186</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="baseSize">
-        <size>
-         <width>600</width>
-         <height>165</height>
-        </size>
-       </property>
-       <property name="verticalScrollBarPolicy">
-        <enum>Qt::ScrollBarAsNeeded</enum>
-       </property>
-       <property name="widgetResizable">
-        <bool>true</bool>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-       </property>
-       <widget class="QWidget" name="visualSAContents">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>598</width>
-          <height>184</height>
-         </rect>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>165</height>
-         </size>
-        </property>
-       </widget>
-      </widget>
-     </item>
      <item row="1" column="2" colspan="2">
       <widget class="QFrame" name="tapeFrame">
        <property name="sizePolicy">
@@ -1160,6 +1237,9 @@
                    <height>16777215</height>
                   </size>
                  </property>
+                 <property name="toolTip">
+                  <string>Set Real Time Hours</string>
+                 </property>
                 </widget>
                </item>
                <item>
@@ -1176,6 +1256,9 @@
                    <height>16777215</height>
                   </size>
                  </property>
+                 <property name="toolTip">
+                  <string>Set Real Time Minutes</string>
+                 </property>
                 </widget>
                </item>
                <item>
@@ -1185,6 +1268,9 @@
                    <width>16777215</width>
                    <height>16777215</height>
                   </size>
+                 </property>
+                 <property name="toolTip">
+                  <string>Set Real Time Seconds</string>
                  </property>
                 </widget>
                </item>
@@ -1343,6 +1429,9 @@
                    <height>16777215</height>
                   </size>
                  </property>
+                 <property name="toolTip">
+                  <string>Film Length Hours</string>
+                 </property>
                 </widget>
                </item>
                <item>
@@ -1359,6 +1448,9 @@
                    <height>16777215</height>
                   </size>
                  </property>
+                 <property name="toolTip">
+                  <string>Film Length Minutes</string>
+                 </property>
                 </widget>
                </item>
                <item>
@@ -1368,6 +1460,9 @@
                    <width>16777215</width>
                    <height>16777215</height>
                   </size>
+                 </property>
+                 <property name="toolTip">
+                  <string>Film Length Seconds</string>
                  </property>
                 </widget>
                </item>
@@ -1593,6 +1688,9 @@
                  <pointsize>10</pointsize>
                 </font>
                </property>
+               <property name="toolTip">
+                <string>Camera Control Options</string>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -1617,6 +1715,9 @@
                  <width>16777215</width>
                  <height>16777215</height>
                 </size>
+               </property>
+               <property name="toolTip">
+                <string>Enable or Disable Camera Control</string>
                </property>
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>

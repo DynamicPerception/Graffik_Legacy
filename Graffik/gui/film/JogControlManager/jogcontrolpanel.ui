@@ -81,6 +81,9 @@
          <height>80</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>Select an Axis to Jog</string>
+       </property>
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
        </property>
@@ -153,6 +156,9 @@
        </property>
        <property name="cursor">
         <cursorShape>OpenHandCursor</cursorShape>
+       </property>
+       <property name="toolTip">
+        <string>Move Dial to Jog Axis Into Position</string>
        </property>
        <property name="minimum">
         <number>-210</number>
@@ -246,6 +252,9 @@
             <height>56</height>
            </size>
           </property>
+          <property name="toolTip">
+           <string>Set Current Position as Axis Home</string>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -279,6 +288,9 @@
             <width>130</width>
             <height>56</height>
            </size>
+          </property>
+          <property name="toolTip">
+           <string>Set Current Position as Axis End</string>
           </property>
           <property name="text">
            <string/>
@@ -358,6 +370,9 @@
             <height>34</height>
            </size>
           </property>
+          <property name="toolTip">
+           <string>Set Maximum Jog Speed</string>
+          </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -411,6 +426,9 @@
             <width>16777215</width>
             <height>34</height>
            </size>
+          </property>
+          <property name="toolTip">
+           <string>Set Jog Damping</string>
           </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>

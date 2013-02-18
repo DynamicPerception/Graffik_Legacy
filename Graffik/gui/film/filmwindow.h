@@ -51,6 +51,7 @@
 #include "film/MotionArea/motiontape.h"
 #include "film/MotionArea/motionsection.h"
 #include "film/MotionArea/sectionresizefilter.h"
+#include "film/MotionArea/notrackswidget.h"
 #include "film/FilmParameters/filmparameters.h"
 #include "film/Dialogs/cameracontroldialog.h"
 #include "film/FilmExec/filmexec.h"
@@ -148,6 +149,7 @@ private:
     QProgressDialog* m_busy;
     JogControlPanel* m_jcp;
     FlickCharm* m_fcp;
+    NoTracksWidget* m_notw;
 
     QWidget* m_areaViewPort;
     QVBoxLayout* m_areaLayout;
@@ -163,6 +165,7 @@ private:
     bool m_error;
     bool m_spinsPrepped;
     bool m_ignoreUpdate;
+    bool m_notwShown;
 
     unsigned long m_curFrameShot;
 

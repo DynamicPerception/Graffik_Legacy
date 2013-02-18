@@ -118,6 +118,9 @@
    </item>
    <item row="3" column="2">
     <widget class="QPushButton" name="clearButton">
+     <property name="toolTip">
+      <string>Wipe All Settings, Requires Re-Start</string>
+     </property>
      <property name="text">
       <string>Clear</string>
      </property>
