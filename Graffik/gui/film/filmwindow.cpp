@@ -476,10 +476,10 @@ void FilmWindow::_checkFilmTimeConstraint() {
     qDebug() << "FW: TimeConstraint: MT=" << maxTime << "LN=" << params->length;
 
     if( params->length > maxTime ) {
+        qDebug() << "FW: Constraining maximum film time";
         params->length = maxTime;
         m_params->releaseParams();
         _showFilmTime();
-        qDebug() << "FW: Constraining maximum film time";
     }
     else {
         m_params->releaseParams(false);

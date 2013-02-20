@@ -55,10 +55,8 @@ JogControlManager::JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, Live
     m_jogCombo->addItem("X Fine", OM_JOGRES_XFINE);
     m_jogCombo->setCurrentIndex(0);
 */
-        // create speedcontrolproxy object and run timer loop
-        // in its own thread
+        // create speedcontrolproxy object
     m_scp = new SpeedControlProxy(m_opts);
-    m_scpThread = new QThread;
 
         // ensure the SCP knows when a new device has been added
     connect(m_net, SIGNAL(deviceAdded(OMdeviceInfo*)), m_scp, SLOT(deviceAdded(OMdeviceInfo*)));
@@ -93,24 +91,10 @@ JogControlManager::JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, Live
     connect(m_homeBut, SIGNAL(clicked()), this, SLOT(_homeClicked()));
     connect(m_endBut, SIGNAL(clicked()), this, SLOT(_endClicked()));
 
-        // move speedcontrolproxy to thread and start it
-    m_scp->moveToThread(m_scpThread);
-    m_scpThread->start();
-        // do this after starting the thread to ensure the timer
-        // has affinity to the new thread, rather than ours
-    m_scp->startDampTimer();
-
 }
 
 JogControlManager::~JogControlManager() {
 
-        // stop the timer and thread for SCP
-    m_scp->stopDampTimer();
-    m_scpThread->quit();
-    m_scpThread->wait();
-
-
-    delete m_scpThread;
     delete m_scp;
 }
 
@@ -302,6 +286,9 @@ void JogControlManager::_cmdComplete(int p_id, OMCommandBuffer *p_cmd) {
     if( m_wantId == 0 || m_wantId != p_id )
         return;
 
+    long distance = 0;
+    bool   doEmit = false;
+
     if( m_wantType == s_typeEnd ) {
         if( p_cmd->status() != OMC_SUCCESS ) {
             qDebug() << "JCM: ERROR! Did Not Get Success for cmd id" << p_id << "Got" << p_cmd->status();
@@ -309,7 +296,6 @@ void JogControlManager::_cmdComplete(int p_id, OMCommandBuffer *p_cmd) {
             return;
         }
         else {
-            long distance = 0;
             unsigned int resSize = p_cmd->resultSize();
 
             if( resSize > 0 ) {
@@ -320,9 +306,10 @@ void JogControlManager::_cmdComplete(int p_id, OMCommandBuffer *p_cmd) {
                 distance = qFromBigEndian<qint32>((uchar*)res);
                 delete res;
 
+                doEmit = true;
+
                 qDebug() << "JCM: Got End Position" << QString::number(distance);
 
-                emit endPosition(m_curAxis, distance);
             }
         }
 
@@ -332,4 +319,8 @@ void JogControlManager::_cmdComplete(int p_id, OMCommandBuffer *p_cmd) {
     m_wantType = 0;
 
     m_net->getManager()->release(p_id);
+
+    if( doEmit )
+        emit endPosition(m_curAxis, distance);
+
 }

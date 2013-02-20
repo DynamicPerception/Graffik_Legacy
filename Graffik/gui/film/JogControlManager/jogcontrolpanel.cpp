@@ -102,4 +102,6 @@ void JogControlPanel::_endSet(unsigned short p_addr, long p_dist) {
 
 
     m_params->releaseParams();
+
+    qDebug() << "JCP: End Setting Completed";
 }

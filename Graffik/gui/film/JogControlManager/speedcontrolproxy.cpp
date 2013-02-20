@@ -26,34 +26,52 @@
 #include <QDebug>
 
 SpeedControlProxy::SpeedControlProxy(AxisOptions *c_opts) : QObject() {
-    m_optObj = c_opts;
-    m_curDev = 0;
-    m_maxpct = 1.0;
-    m_curDir = true;
-    m_nextSpd = 0.0;
-    m_curSpd = 0.0;
-    m_dampPeriods = 50;
-    m_curPeriod = 1;
-    m_devSelected = false;
+    m_optObj       = c_opts;
+    m_curDev       = 0;
+    m_maxpct       = 1.0;
+    m_curDir       = true;
+    m_nextSpd      = 0.0;
+    m_curSpd       = 0.0;
+    m_dampPeriods  = 50;
+    m_curPeriod    = 1;
+    m_devSelected  = false;
+    m_timerStarted = false;
+    m_timer        = 0;
 }
 
 SpeedControlProxy::~SpeedControlProxy() {
-    delete m_timer;
+    stopDampTimer();
+
+    if( m_timer != 0)
+        delete m_timer;
 }
 
 void SpeedControlProxy::startDampTimer() {
+
+        // do not start timer if already started
+    if( m_timerStarted )
+        return;
+
     qDebug() << "SCP: Starting Timer" << QThread::currentThreadId();
 
-    m_timer = new QTimer();
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(_timerFire()));
+    if( m_timer == 0 ) {
+        m_timer = new QTimer();
+        connect(m_timer, SIGNAL(timeout()), this, SLOT(_timerFire()));
+    }
+
     m_timer->start(SCP_TIME_PERIOD);
 
+    m_timerStarted = true;
     qDebug() << "SCP: Timer Started";
 }
 
 void SpeedControlProxy::stopDampTimer() {
-    qDebug() << "SCP: Stopping Timer" << QThread::currentThreadId();
-    m_timer->stop();
+
+    if( m_timerStarted ) {
+        qDebug() << "SCP: Stopping Timer" << QThread::currentThreadId();
+        m_timer->stop();
+        m_timerStarted = false;
+    }
 }
 
 /** Set Maximum Speed Percentage
@@ -86,6 +104,8 @@ void SpeedControlProxy::speedPosChange(int p_value) {
 
     qDebug() << "SCP: Received speed value: " << p_value << QThread::currentThreadId();
 
+        // start timer (it will stop its self, if need be)
+    startDampTimer();
 
         // change direction, if needed
 
@@ -154,9 +174,11 @@ void SpeedControlProxy::_timerFire() {
         m_curDev->stopMotor();
         m_curPeriod = m_dampPeriods;
         m_curSpd = 0.0;
+        stopDampTimer();
         return;
     }
     else {
+
         if( m_curSpd == 0.0 ) {
                 // we are currently stopped, so make sure
                 // we get everything moving first
@@ -232,12 +254,15 @@ void SpeedControlProxy::deviceChange(unsigned short p_addr) {
         m_curDev = static_cast<OMAxis*>(m_devList.value(p_addr)->device);
         m_opts = m_optObj->getOptions(p_addr);
         m_devSelected = true;
+
+        qDebug() << "SCP: Emiting Acceptance of" << p_addr;
+        emit motorChangeAccepted(p_addr);
+        return;
     }
     else {
         qDebug() << "SCP: Device is unknown to us, ignoring";
     }
 
-    emit motorChangeAccepted(p_addr);
 }
 
 

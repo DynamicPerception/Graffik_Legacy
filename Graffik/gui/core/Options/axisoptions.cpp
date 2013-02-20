@@ -279,23 +279,30 @@ void AxisOptions::setMaster(unsigned short p_addr) {
 
     m_optMutex->lock();
 
-    QList<unsigned short> addresses = m_optList.keys();
+    QList<unsigned short>  addresses = m_optList.keys();
+    QList<unsigned short> bCastAddrs;
+
     unsigned short addr;
+
 
     foreach(addr, addresses) {
         if(addr == p_addr) {
             qDebug() << "OAFO: setMaster: Found options for" << p_addr;
             m_optList[addr]->master = true;
-            emit deviceOptionsChanged(m_optList[addr], addr);
+            bCastAddrs.append(addr);
         }
         else if(m_optList[addr]->master == true ) {
                 // only update the previous master, if there is one
             m_optList[addr]->master = false;
-            emit deviceOptionsChanged(m_optList[addr], addr);
+            bCastAddrs.append(addr);
         }
     }
 
     m_optMutex->unlock();
+
+    foreach( unsigned short addr, bCastAddrs)
+        emit deviceOptionsChanged(m_optList[addr], addr);
+
 }
 
 void AxisOptions::deviceAdded(OMbusInfo*, OMdeviceInfo *p_dev) {

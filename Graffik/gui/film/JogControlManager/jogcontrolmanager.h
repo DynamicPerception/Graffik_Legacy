@@ -26,7 +26,6 @@
 
 #include <QObject>
 #include <QDoubleSpinBox>
-#include <QThread>
 #include <QDial>
 #include <QComboBox>
 #include <QPushButton>
@@ -95,8 +94,6 @@ private:
     AxisOptions* m_opts;
     LiveDeviceModel* m_ldm;
     SpeedControlProxy* m_scp;
-
-    QThread* m_scpThread;
 
     int m_wantId;
     int m_wantType;

@@ -96,6 +96,7 @@ private:
     bool m_curDir;
     float m_curSpd;
     float m_nextSpd;
+    bool m_timerStarted;
 
     unsigned int m_dampPeriods;
     unsigned int m_curPeriod;
