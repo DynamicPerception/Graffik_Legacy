@@ -16,7 +16,8 @@
 #warnText {
     border: 0px;
     background-color: transparent;
-    max-height: 50px;
+    max-height: 55px;
+    font: 26pt "Lucida Sans";
 }
 
 FlickNumber #wheelLabel {
