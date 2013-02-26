@@ -507,6 +507,9 @@ void MotionArea::_tooltipTimer() {
 
         // Convert absolute step values into correct deg/distance as required
 
+        // re-cast as positive value
+    curPos = curPos < 0.0 ? curPos * -1.0 : curPos;
+
     QList<QString> posDisp = convertValue(curPos);
     QList<QString> spdDisp = convertValue(curSpd);
 

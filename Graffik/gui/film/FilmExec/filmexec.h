@@ -48,7 +48,7 @@ enum { FILM_STOPPED, FILM_STARTED, FILM_PAUSED };
     // shuttle home when beginning a film, and shuttle to beginning when
     // not playing
 
-enum { SHUTTLE_NONE, SHUTTLE_HOME, SHUTTLE_END, SHUTTLE_BEG };
+enum { SHUTTLE_NONE, SHUTTLE_HOME, SHUTTLE_END, SHUTTLE_BEG, SHUTTLE_POS };
 
 enum { FILM_OK_HOME, FILM_OK, FILM_ERR_MASTER };
 
@@ -85,6 +85,8 @@ public:
 
     void frameAdvance();
     void frameReverse();
+
+    void sendAxesTo(QHash<unsigned short, long> p_positions);
 
     int status();
     unsigned long runTime();
@@ -156,6 +158,7 @@ private:
 
     QHash<OMAxis*, unsigned long> m_axesHome;
     QHash<int, OMAxis*> m_cmds;
+    QHash<unsigned short, long> m_shuttleTo;
 
     int m_stat;
     int m_shuttle;
@@ -175,6 +178,7 @@ private:
 
     QList<OMAxis*> _getAxes(OMfilmParams* p_film);
     OMAxis* _getTimingMaster(QList<OMAxis*>* p_axes);
+
 
 
 };

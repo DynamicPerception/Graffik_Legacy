@@ -86,7 +86,7 @@ public:
     float getFilmTime(int p_x);
     float getSpeed(unsigned long p_x);
     float getPosition(unsigned long p_x);
-    int getX(int p_time);
+    int getX(unsigned long p_time);
 
 signals:
     

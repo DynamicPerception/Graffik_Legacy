@@ -29,42 +29,40 @@
 #include <QScrollBar>
 #include <QLayout>
 
-MotionTape::MotionTape(FilmParameters *c_film, QWidget *c_scroll, QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::MotionTape)
-{
+MotionTape::MotionTape(FilmParameters *c_film, QWidget *c_scroll, QWidget *parent) : QWidget(parent), ui(new Ui::MotionTape) {
 
     ui->setupUi(this);
 
-    m_film = c_film;
-    m_scroll = c_scroll;
-
-    m_drawn = false;
-    m_time  = 0;
-
-    m_path = new QPainterPath;
-    m_font = new QFont(MT_LABEL_FONT, MT_FONT_SIZE, QFont::Light, false);
+    m_film             = c_film;
+    m_scroll           = c_scroll;
+    m_icon             = new QPixmap;
+    m_path             = new QPainterPath;
+    m_font             = new QFont(MT_LABEL_FONT, MT_FONT_SIZE, QFont::Light, false);
+    m_drawn            = false;
+    m_enableClicks     = true;
 
     OMfilmParams parms = m_film->getParamsCopy();
-    m_time  = parms.realLength;
-    m_width = this->width();
-    m_scrollWidth = m_scroll->width();
+    m_time             = parms.realLength;
+    m_curTime          = 0;
+    m_wasTime          = 0;
 
-    m_leftX = 0;
-    m_rightX = m_width;
+    m_width            = this->width();
+    m_scrollWidth      = m_scroll->width();
+    m_leftX            = 0;
+    m_rightX           = m_width;
 
-    m_bgCol = Qt::white;
-    m_fgCol = Qt::black;
+    m_bgCol            = Qt::white;
+    m_fgCol            = Qt::black;
 
     connect(m_film, SIGNAL(paramsReleased()), this, SLOT(filmUpdated()));
 
 }
 
-MotionTape::~MotionTape()
-{
+MotionTape::~MotionTape() {
     delete ui;
     delete m_path;
     delete m_font;
+    delete m_icon;
 }
 
 
@@ -84,6 +82,16 @@ QColor MotionTape::color() {
     return m_fgCol;
 }
 
+QPixmap MotionTape::icon() {
+    return *m_icon;
+}
+
+void MotionTape::setIcon(QPixmap p_icon) {
+    qDebug() << "MT: Got Marker Icon";
+
+    *m_icon = p_icon;
+}
+
 /** Set Foreground Color
 
    For use in property access within stylesheets
@@ -91,6 +99,11 @@ QColor MotionTape::color() {
 void MotionTape::setColor(QColor p_col) {
     m_fgCol = p_col;
 }
+
+/** Film Updated Slot
+
+  Registers Changes in the film, and updates the time ticker as necessary
+  */
 
 void MotionTape::filmUpdated() {
 
@@ -104,6 +117,61 @@ void MotionTape::filmUpdated() {
     }
 }
 
+/** Disable Clicks Slot
+
+  Enables or disables the signal being emitted when the timeline is
+  clicked by the mouse
+
+  @param p_en
+  Disable (true) or enable (false) handling of mouse clicks
+  */
+
+void MotionTape::disableClicks(bool p_en) {
+
+    qDebug() << "MT: Called disableClicks" << p_en;
+    m_enableClicks = !p_en;
+}
+
+/** Mouse Press Event Handler
+
+   Captures a mouse press to force film to shuttle to that point
+   */
+
+void MotionTape::mousePressEvent(QMouseEvent *p_event) {
+
+        // do nothing if clicking is disabled!
+    if( ! m_enableClicks )
+        return;
+
+       QPoint cPos = p_event->pos();
+
+        // get relative position of the click based on where timeline is drawn
+       int pressX = cPos.x();
+
+        // do nothing if click is outside of the timeline drawing area
+       if( pressX < m_leftX )
+           return;
+
+       pressX -= m_leftX;
+
+        // get the time corresponding to the click point
+       unsigned long newTime = (float) m_time * ( (float) pressX / (float) m_width);
+
+       qDebug() << "MT: Press Event " << pressX << newTime;
+
+        // update position of marker icon
+       filmPlayStatus(false, newTime);
+
+        // emit the timelineClick signal with the clicked time
+       emit timelineClick(newTime);
+}
+
+/** Paint Event Handler
+
+   Paints time ticker across widget.  Only updates time ticker when
+   film parameters or window size changes.
+   */
+
 void MotionTape::paintEvent(QPaintEvent *p_event) {
     QPainter painter(this);
     QRect eventRect = p_event->rect();
@@ -112,6 +180,7 @@ void MotionTape::paintEvent(QPaintEvent *p_event) {
   //  m_scrollWidth = m_scroll->width() - m_scroll->layout()->contentsMargins().right();
   //  m_preSpace = MT_LINE_SPACE + m_scroll->layout()->contentsMargins().left();
 
+    bool forceMarker = false;
 
     if( ! m_drawn || m_width != (m_rightX - m_leftX) ) {
         delete m_path;
@@ -119,12 +188,29 @@ void MotionTape::paintEvent(QPaintEvent *p_event) {
         m_path = new QPainterPath;
         _drawTime(eventRect);
         m_drawn = true;
+        forceMarker = true;
     }
+
 
     painter.fillRect(eventRect, m_bgCol);
     painter.setPen(QPen(m_fgCol));
     painter.setBrush(QBrush(m_fgCol));
     painter.drawPath(*m_path);
+
+        // update marker icon on the screen
+    if( m_curTime != m_wasTime || forceMarker == true ) {
+
+        m_wasTime  = m_curTime;
+        int imgWid = m_icon->width();
+        int imgHgt = m_icon->height();
+        int timePx = m_leftX + ( ( (float) m_curTime / (float) m_time ) * (float) m_width );
+        m_iconX    = timePx - (imgWid / 2);
+        m_iconY    = this->height() - imgHgt;
+
+    }
+
+    QPoint imgPoint(m_iconX, m_iconY);
+    painter.drawPixmap(imgPoint, *m_icon);
 
 }
 
@@ -142,7 +228,7 @@ void MotionTape::_drawTime(QRect p_rect) {
     int offset = 0;
     int pad = 0;
     int height = 1;
-    QString labelText;
+ //   QString labelText;
 
         // We go by largest time set as major marks,
         // with next largest time set as minor marks
@@ -155,7 +241,7 @@ void MotionTape::_drawTime(QRect p_rect) {
             // note that we'll likely have remainding time outside of
             // the
         pad = (float) offset * ((float)(hours - (days * 24)) / 24);
-        labelText.append(MT_LABEL_DD);
+  //      labelText.append(MT_LABEL_DD);
     }
 
     else if( hours > 0 ) {
@@ -164,7 +250,7 @@ void MotionTape::_drawTime(QRect p_rect) {
         offset = offset > 60 ? 60 : offset;
         marks = hours;
         pad = (float) offset * ((float)(mins - (hours * 60)) / 60);
-        labelText.append(MT_LABEL_HH);
+   //     labelText.append(MT_LABEL_HH);
     }
 
     else if( mins > 0  ) {
@@ -173,7 +259,7 @@ void MotionTape::_drawTime(QRect p_rect) {
         offset = offset > 60 ? 60 : offset;
         marks = mins;
         pad = (float) offset * ((float)(secs - (mins * 60)) / 60);
-        labelText.append(MT_LABEL_MM);
+  //      labelText.append(MT_LABEL_MM);
 
     }
     else {
@@ -182,7 +268,7 @@ void MotionTape::_drawTime(QRect p_rect) {
         offset = offset > 100 ? 100 : offset;
         marks = secs;
         pad = (float) offset * ((float)(m_time  - (secs * 1000)) / 100);
-        labelText.append(MT_LABEL_SS);
+  //      labelText.append(MT_LABEL_SS);
 
     }
 
@@ -278,6 +364,34 @@ float MotionTape::_calcSpacing(QRect, int p_lines, int p_fill, int p_pad) {
     }
     return ((float) m_rightX - (float) m_leftX) / (float) p_lines;
 }
+
+/** Play Status Changed Slot
+
+  Updates position of timeline marker icon as needed.
+  */
+
+void MotionTape::filmPlayStatus(bool p_stat, unsigned long p_time) {
+    Q_UNUSED(p_stat);
+
+    qDebug() << "MT: Got Stat Change";
+
+    m_curTime = p_time;
+
+    update();
+}
+
+/** Set Borders Slot
+
+  Sets the borders of where the timeline should be drawn, this
+  allows the widget to model exactly where the film events are
+  projected on the screen
+
+  @param p_left
+  The left-most X pixel position
+
+  @param p_right
+  The right-most X pixel position
+  */
 
 void MotionTape::setBorders(int p_left, int p_right) {
     m_leftX = mapFromGlobal(QPoint(p_left, 0)).x();

@@ -105,13 +105,13 @@ void PositionMonitor::_cmdReceived(int p_id, OMCommandBuffer *p_cmd) {
 
                 // get target position for axis, and determine
                 // distance from target
-            unsigned long target = m_positions.value(m_cmds.value(p_id)->address());
-            unsigned long position = qFromBigEndian<qint32>((uchar*)res);
-            unsigned long distance = target > position ? target - position : position - target;
+            long target   = m_positions.value(m_cmds.value(p_id)->address());
+            long position = qFromBigEndian<qint32>((uchar*)res);
+            long distance = target > position ? target - position : position - target;
 
             delete res;
 
-            qDebug() << "HM: Found current distance from target for axis" << m_cmds.value(p_id)->address() << "is" << distance;
+            qDebug() << "HM: Found current distance from target for axis" << m_cmds.value(p_id)->address() << "is" << distance << target << position;
 
             if( distance < HMM_SLOP ) {
                     // node is (generally) at target, remove it from list

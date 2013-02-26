@@ -96,6 +96,7 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
 
 
     connect(m_exec, SIGNAL(filmPlayStatus(bool,ulong)), this, SLOT(_playStatus(bool,ulong)));
+    connect(m_exec, SIGNAL(filmPlayStatus(bool,ulong)), m_tape, SLOT(filmPlayStatus(bool,ulong)));
     connect(m_exec, SIGNAL(filmStarted()), this, SLOT(_filmStarted()));
     connect(m_exec, SIGNAL(error(QString)), this, SLOT(error(QString)));
     connect(m_exec, SIGNAL(shuttleComplete()), this, SLOT(_shuttleComplete()));
@@ -108,6 +109,9 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
     connect(m_params, SIGNAL(paramsReleased()), this, SLOT(filmParamsChanged()));
 
     connect(this, SIGNAL(playStatusChange(bool)), m_jcp, SIGNAL(playStatusChange(bool)));
+    connect(this, SIGNAL(playStatusChange(bool)), m_tape, SLOT(disableClicks(bool)));
+
+    connect(m_tape, SIGNAL(timelineClick(ulong)), this, SLOT(timelineClicked(ulong)));
 
 
     _prepInputs();
@@ -146,6 +150,50 @@ void FilmWindow::_themeChanged() {
     style()->unpolish(this);
     style()->polish(this);
     update();
+}
+
+
+/** Time Line Clicked Slot
+
+  Handles receiving the timelineClicked signal from MotionTape
+
+  @param p_time
+  The time clicked by the user
+  */
+
+void FilmWindow::timelineClicked(unsigned long p_time) {
+
+    int filmXpos = 0;
+
+    QHash<unsigned short, long> theseAxes;
+
+    foreach( unsigned short addr, m_areaBlocks.keys() ) {
+        MotionBase*             mb = m_areaBlocks.value(addr);
+        MotionPathPainter* painter = mb->area()->getPathPainter();
+
+        if( filmXpos == 0 )
+            filmXpos = painter->getX(p_time);
+
+        float position = painter->getPosition(filmXpos);
+
+        qDebug() << "FW: timeLine: Position for" << addr << position;
+
+        theseAxes.insert(addr, position);
+    }
+
+    qDebug() << "FW: Send Nodes to Position";
+    _inputEnable(false);
+
+    m_error = false;
+
+    m_busy->setLabelText("Sending All Axes to Specified Point");
+    m_busy->setMinimum(0);
+    m_busy->setMaximum(0);
+    m_busy->show();
+
+    m_exec->sendAxesTo(theseAxes);
+
+    m_motion->jumpTo(p_time);
 }
 
 void FilmWindow::_drawNewAxis(OMdeviceInfo *p_dev) {
@@ -645,6 +693,7 @@ void FilmWindow::on_playButton_clicked() {
     int bstat = 0;
     int fstat = m_exec->status();
 
+
     m_error = false;
 
     if( fstat != FILM_STARTED ) {
@@ -716,6 +765,7 @@ void FilmWindow::on_rewindButton_clicked() {
 
     m_curFrameShot = 0;
     m_motion->jumpTo(0);
+    m_tape->filmPlayStatus(false, 0);
 
 }
 
@@ -740,6 +790,7 @@ void FilmWindow::on_forwardButton_clicked() {
     m_params->releaseParams(false);
 
     m_motion->jumpTo(realLength);
+    m_tape->filmPlayStatus(false, realLength);
 }
 
 void FilmWindow::on_frameFwdButton_clicked() {
@@ -761,6 +812,7 @@ void FilmWindow::on_frameFwdButton_clicked() {
         // indicator
     m_exec->frameAdvance();
     m_motion->jumpTo(m_curFrameShot * interval);
+    m_tape->filmPlayStatus(false, m_curFrameShot * interval);
 }
 
 void FilmWindow::on_frameRwdButton_clicked() {
@@ -777,6 +829,7 @@ void FilmWindow::on_frameRwdButton_clicked() {
         m_exec->frameReverse();
         m_curFrameShot--;
         m_motion->jumpTo(m_curFrameShot * interval);
+        m_tape->filmPlayStatus(false, m_curFrameShot * interval);
     }
 }
 

@@ -193,6 +193,7 @@ FlickNumber QListWidgetItem {
 MotionTape {
     qproperty-background: rgb(143, 143, 143);
     qproperty-color: white;
+    qproperty-icon: url(themes/DP-Blue/img/marker-icon.png);
     border: 0px;
     border-right: 1px solid;
     border-color: rgb(0,0,0);

@@ -36,6 +36,8 @@
 #include <QFont>
 #include <QWidget>
 #include <QColor>
+#include <QPixmap>
+#include <QPoint>
 
 const int MT_LINE_MINSPC = 5;
 const int MT_FONT_SIZE   = 8;
@@ -64,8 +66,12 @@ class MotionTape;
 class MotionTape : public QWidget
 {
     Q_OBJECT
+        /** Background color */
     Q_PROPERTY(QColor background READ background WRITE setBackground DESIGNABLE true)
+        /** Color of tick lines */
     Q_PROPERTY(QColor color READ color WRITE setColor DESIGNABLE true)
+        /** Icon for current position indicator */
+    Q_PROPERTY(QPixmap icon READ icon WRITE setIcon DESIGNABLE true)
 
 public:
     explicit MotionTape(FilmParameters* c_film, QWidget* c_scroll, QWidget *parent = 0);
@@ -76,13 +82,24 @@ public:
     QColor background();
     void setBackground(QColor p_col);
 
+    QPixmap icon();
+    void setIcon(QPixmap p_icon);
+
     QColor color();
     void setColor(QColor p_col);
+
+    void mousePressEvent(QMouseEvent* p_event);
+
+signals:
+    void timelineClick(unsigned long p_time);
 
 public slots:
 
     void filmUpdated();
     void setBorders(int p_left, int p_right);
+    void disableClicks(bool p_en);
+
+    void filmPlayStatus(bool p_stat, unsigned long p_time);
 
 private:
     Ui::MotionTape* ui;
@@ -90,14 +107,20 @@ private:
     FilmParameters* m_film;
     QFont* m_font;
     QWidget* m_scroll;
+    QPixmap* m_icon;
 
     bool m_drawn;
+    bool m_enableClicks;
     unsigned long m_time;
+    unsigned long m_curTime;
+    unsigned long m_wasTime;
     int m_width;
     int m_scrollWidth;
     int m_preSpace;
     int m_leftX;
     int m_rightX;
+    int m_iconX;
+    int m_iconY;
 
     QColor m_bgCol;
     QColor m_fgCol;

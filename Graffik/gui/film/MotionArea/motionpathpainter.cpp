@@ -76,7 +76,7 @@ MotionPathPainter::~MotionPathPainter() {
   Returns the X-pixel value of the specified film time
   */
 
-int MotionPathPainter::getX(int p_time) {
+int MotionPathPainter::getX(unsigned long p_time) {
     OMfilmParams parms = m_film->getParamsCopy();
     int x = ((float) p_time / (float) parms.realLength) * (float) m_wasWidth;
     return x;
@@ -298,9 +298,14 @@ void MotionPathPainter::setMotionCurve() {
     m_new        = true;
     m_curveAvail = false;
 
+    float  stepMod = 1.0;
     long moveSteps = axParms->endDist;
-            // get absolute value
-         moveSteps = moveSteps < 0 ? moveSteps * -1 : moveSteps;
+
+            // get absolute value and save modifier
+    if( moveSteps < 0 ) {
+        moveSteps *= -1;
+        stepMod = -1.0;
+    }
 
     if( filmParams.realLength == 0 )
         return;
@@ -367,13 +372,13 @@ void MotionPathPainter::setMotionCurve() {
 
             // record steps taken from home
           totalSteps += curSpd;
-          m_stepsTaken.append(totalSteps);
+          m_stepsTaken.append(totalSteps * stepMod);
     }
 
         // pad array after move
     for( unsigned long i = 0; i < leave; i++ ) {
         m_renderPoints.append(0);
-        m_stepsTaken.append(totalSteps);
+        m_stepsTaken.append(totalSteps * stepMod);
     }
 
         // block movement of the axis if it tries to exceed its maximum speed,

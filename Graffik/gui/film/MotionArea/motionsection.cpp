@@ -35,7 +35,7 @@ MotionSection::MotionSection(FilmExec *c_exec, FilmParameters *c_film, QWidget *
     m_width  = 0;
     m_height = 0;
     m_curPos = 0;
-    m_wasPos = 0;
+    m_wasPos = 50;
     m_length = 0;
 
     m_scrollWidth = m_parent->width() - m_parent->layout()->contentsMargins().right();
@@ -49,6 +49,8 @@ MotionSection::MotionSection(FilmExec *c_exec, FilmParameters *c_film, QWidget *
 
     m_leftX = 0;
     m_rightX = rect().width();
+
+    jumpTo(0);
 
 }
 
@@ -109,6 +111,7 @@ void MotionSection::jumpTo(unsigned long p_runTime) {
     m_curPos = p_runTime;
     this->update();
 }
+
 
 void MotionSection::_updatePath() {
 

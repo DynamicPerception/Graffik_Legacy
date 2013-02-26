@@ -118,6 +118,9 @@ public slots:
     void load();
     void save();
 
+    // handling timeline clicks
+    void timelineClicked(unsigned long p_time);
+
 private slots:
     void _drawNewAxis(OMdeviceInfo* p_dev);
     void _eraseAxis(QString p_bus, unsigned short p_addr);
@@ -135,6 +138,7 @@ signals:
         /** This signal is sent when the film playing status is changed, indicating what
           the current status is */
     void playStatusChange(bool p_stat);
+
 
 private:
     Ui::FilmWindow *ui;

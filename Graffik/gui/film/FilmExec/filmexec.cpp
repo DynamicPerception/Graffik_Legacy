@@ -460,6 +460,77 @@ void FilmExec::ffwd() {
 
 }
 
+/** Send Multiple Axes to a Specific Position
+
+  For the listed axes, send each axis to a specified position.
+
+  Pass a QHash with each key being the node address, and the value
+  being a long integer with the specified target direction (including
+  direction, so negative or positive integers).  For any axis which is not
+  muted, the axis will be sent to that position.
+
+  When all axes have arrived at their target position, the shuttleComplete()
+  signal will be issued.
+
+  @param p_positions
+  Each axis to move, and the position to move it to
+  */
+
+void FilmExec::sendAxesTo(QHash<unsigned short, long> p_positions) {
+
+    qDebug() << "FEx: Send Axes to Position";
+
+    // refresh film parameters for a fresh start
+    m_film = m_params->getParamsCopy();
+
+    // We must first determine location of nodes, so that we may send them to their desired position...
+    QList<OMAxis*> axes = _getAxes(&m_film);
+    m_axesHome.clear();
+    m_shuttleTo.clear();
+
+    // do this first...
+    m_shuttle = SHUTTLE_POS;
+
+    // Send commands to read current position from each
+    // node which shall move, so we can determine how
+    // far, and in which direction, to move to reach their
+    // end destinations.
+
+    foreach(OMAxis* axis, axes) {
+
+        unsigned short addr = axis->address();
+        long         moveTo = p_positions.value(addr);
+        bool           mute = m_film.axes.value(addr)->mute;
+
+        if( ! p_positions.contains(addr) )
+            continue;
+
+        if( moveTo != 0 && ! mute ) {
+
+
+                // only do this if moving
+            qDebug() << "FEx: Querying Device Position: " << addr;
+
+            int cmdId = axis->getHomeDist();
+            m_net->getManager()->hold(cmdId);
+            m_cmds.insert(cmdId, axis);
+
+                // record that we sent axes home
+            m_axesHome.insert(axis, moveTo);
+            m_shuttleTo.insert(addr, moveTo);
+        }
+
+    } //end foreach
+
+    if( m_axesHome.count() < 1 ) {
+        emit shuttleComplete();
+        return;
+    }
+
+    m_position->checkAxes(m_axesHome);
+
+}
+
 /** Return Current Execution Status
 
   Returns one of the following:
@@ -821,7 +892,7 @@ void FilmExec::_cmdReceived(int p_id, OMCommandBuffer *p_cmd) {
             char* res = new char[resSize];
             p_cmd->result(res, resSize);
 
-            if( m_shuttle == SHUTTLE_END ) {
+            if( m_shuttle == SHUTTLE_END || SHUTTLE_POS ) {
 
                     // for shuttle to end status, we need to
                 OMAxis* axis = m_cmds.value(p_id);
@@ -829,10 +900,15 @@ void FilmExec::_cmdReceived(int p_id, OMCommandBuffer *p_cmd) {
 
                     // get target position for axis, and determine
                     // distance from target
-                unsigned long   target = m_film.axes.value(addr)->endDist;
-                unsigned long position = qFromBigEndian<qint32>((uchar*)res);
-                unsigned long distance = 0;
-                bool dir = true;
+                long   target = m_film.axes.value(addr)->endDist;
+                long position = qFromBigEndian<qint32>((uchar*)res);
+                long distance = 0;
+                bool      dir = true;
+
+                    // for shuttling to a specific position (vs. end), we want the
+                    // target position, not the move complete position
+                if( m_shuttle == SHUTTLE_POS )
+                    target = m_shuttleTo.value(addr);
 
                 if( target > position ) {
                     distance = target - position;
@@ -843,7 +919,8 @@ void FilmExec::_cmdReceived(int p_id, OMCommandBuffer *p_cmd) {
                     dir = false;
                 }
 
-                qDebug() << "FEx: Got Position Response for Axis" << m_cmds.value(p_id)->address() << ":" << position << distance << dir;
+
+                qDebug() << "FEx: Got Position Response for Axis" << m_cmds.value(p_id)->address() << ":" << position << target << distance << dir;
 
                 _sendDistance(axis, distance, dir);
             } // end if shuttle_end
@@ -863,7 +940,7 @@ void FilmExec::_cmdReceived(int p_id, OMCommandBuffer *p_cmd) {
         // no more axes left, we can tell the monitor
         // to start checking to see if all nodes are at
         // their target position (for shuttle to end)
-    if( m_cmds.count() < 1 && m_shuttle == SHUTTLE_END )
+    if( m_cmds.count() < 1 && ( m_shuttle == SHUTTLE_END || m_shuttle == SHUTTLE_POS ) )
         m_position->start();
 
 }
