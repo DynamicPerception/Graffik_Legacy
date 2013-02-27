@@ -26,6 +26,16 @@ QPushButton#jogEndButton:pressed {
     border-image: url(themes/DP-Blue/img/set-end-sel.png);
 }
 
+QPushButton#stopButton {
+    border-image: url(themes/DP-Blue/img/estop.png);
+    border: 0px transparent;
+    padding: 0px;
+    margin: 0px;
+    max-height: 50px;
+    min-height: 50px;
+    max-width: 50px;
+    min-width: 50px;
+}
 
 #jogButFrame, #jogSliderFrame {
     border-left: 0px;

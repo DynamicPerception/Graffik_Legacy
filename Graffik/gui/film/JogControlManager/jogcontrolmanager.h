@@ -68,6 +68,7 @@ signals:
 
 public slots:
     void playStatusChange(bool p_stat);
+    void emergencyStop();
 
 private slots:
     void _liveDeviceSelected(unsigned short p_addr);

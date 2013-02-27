@@ -117,6 +117,8 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
     connect(m_time, SIGNAL(timePositionChanged(ulong)), m_tape, SLOT(timeChanged(ulong)));
     connect(m_time, SIGNAL(timePositionChanged(ulong)), m_motion, SLOT(timeChanged(ulong)));
 
+    connect(m_jcp, SIGNAL(emergencyStop()), this, SLOT(_emergencyStop()));
+
     _prepInputs();
 
     // theming
@@ -158,6 +160,11 @@ void FilmWindow::_themeChanged() {
     update();
 }
 
+
+void FilmWindow::_emergencyStop() {
+    qDebug() << "FW: Got Emergency Stop Signal!";
+    m_exec->stop();
+}
 
 /** Time Line Clicked Slot
 

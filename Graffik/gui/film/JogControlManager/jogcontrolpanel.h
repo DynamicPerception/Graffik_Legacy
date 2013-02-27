@@ -59,6 +59,8 @@ public:
 signals:
 
     void playStatusChange(bool p_stat);
+    void emergencyStop();
+
 
 private slots:
     void _endSet(unsigned short p_addr, long p_dist);

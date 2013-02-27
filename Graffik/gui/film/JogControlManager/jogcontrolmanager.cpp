@@ -98,6 +98,13 @@ JogControlManager::~JogControlManager() {
     delete m_scp;
 }
 
+void JogControlManager::emergencyStop() {
+    if( m_scp->curSpeed() != 0.0 )
+        m_scp->speedPosChange(0);
+
+    m_jogDial->setValue(0);
+}
+
 void JogControlManager::playStatusChange(bool p_stat) {
     Q_UNUSED(p_stat);
         // any change to play status should immediately stop the

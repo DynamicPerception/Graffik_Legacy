@@ -129,6 +129,7 @@ private slots:
     void _busyCanceled();
     void _shuttleComplete();
     void _themeChanged();
+    void _emergencyStop();
 
 signals:
         /** This signal is reflected from the drawn motion areas to indicate
