@@ -26,17 +26,16 @@
 #include <QDebug>
 #include <QLayout>
 
-MotionSection::MotionSection(FilmExec *c_exec, FilmParameters *c_film, QWidget *parent) : QWidget(parent) {
+MotionSection::MotionSection(FilmParameters *c_film, QWidget *parent) : QWidget(parent) {
     m_path = new QPainterPath;
     m_film = c_film;
-    m_exec = c_exec;
     m_parent = parent;
 
     m_width  = 0;
     m_height = 0;
     m_curPos = 0;
     m_wasPos = 50;
-    m_length = 0;
+    m_length = m_film->getParamsCopy().realLength;
 
     m_scrollWidth = m_parent->width() - m_parent->layout()->contentsMargins().right();
 
@@ -45,12 +44,11 @@ MotionSection::MotionSection(FilmExec *c_exec, FilmParameters *c_film, QWidget *
     setAttribute(Qt::WA_TranslucentBackground);
 
     connect(m_film, SIGNAL(paramsReleased()), this, SLOT(paramsChanged()));
-    connect(m_exec, SIGNAL(filmPlayStatus(bool,ulong)), this, SLOT(playStatusChanged(bool,ulong)));
 
     m_leftX = 0;
     m_rightX = rect().width();
 
-    jumpTo(0);
+    timeChanged(0);
 
 }
 
@@ -80,6 +78,12 @@ void MotionSection::paintEvent(QPaintEvent * p_event) {
 }
 
 
+/** Film Parameters Changed Slot
+
+  Updates overlay when film parameters are changed, if
+  film real length changes
+  */
+
 void MotionSection::paramsChanged() {
 
     OMfilmParams params = m_film->getParamsCopy();
@@ -89,28 +93,27 @@ void MotionSection::paramsChanged() {
 
     m_length = params.realLength;
     _updatePath();
-    this->update();
+    update();
 }
 
 
-void MotionSection::playStatusChanged(bool p_stat, unsigned long p_runTime) {
+/** Current Time Changed Slot
 
-    if( p_stat == false )
+  Updates the position of the time marker line when the
+  current film real time is changed.
+  */
+void MotionSection::timeChanged(unsigned long p_runTime) {
+
+    if( m_curPos == p_runTime )
         return;
 
+    qDebug() << "MS: Got time change" << p_runTime;
     m_curPos = p_runTime;
-    this->update();
+    _updatePath();
+    update();
 }
 
-/** Manually Position Timeline
 
-  Sets the vertical time indicator position to a manual time
-  */
-
-void MotionSection::jumpTo(unsigned long p_runTime) {
-    m_curPos = p_runTime;
-    this->update();
-}
 
 
 void MotionSection::_updatePath() {

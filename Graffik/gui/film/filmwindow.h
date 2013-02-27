@@ -42,7 +42,6 @@
 #include "core/Dialogs/errordialog.h"
 
 #include "core/Utilities/timeconverter.h"
-#include "core/Utilities/flickcharm.h"
 #include "core/Utilities/flicknumber.h"
 #include "core/Widgets/slidetoggle.h"
 
@@ -55,6 +54,7 @@
 #include "film/FilmParameters/filmparameters.h"
 #include "film/Dialogs/cameracontroldialog.h"
 #include "film/FilmExec/filmexec.h"
+#include "film/FilmExec/filmtimemanager.h"
 #include "film/FilmFileHandler/filmfilehandler.h"
 
 
@@ -147,12 +147,12 @@ private:
     GlobalOptions* m_gopts;
     FilmParameters* m_params;
     FilmExec* m_exec;
+    FilmTimeManager* m_time;
     MotionTape* m_tape;
     MotionSection* m_motion;
     SectionResizeFilter* m_filter;
     QProgressDialog* m_busy;
     JogControlPanel* m_jcp;
-    FlickCharm* m_fcp;
     NoTracksWidget* m_notw;
 
     QWidget* m_areaViewPort;

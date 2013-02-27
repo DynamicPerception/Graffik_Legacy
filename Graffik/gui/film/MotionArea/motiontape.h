@@ -99,7 +99,7 @@ public slots:
     void setBorders(int p_left, int p_right);
     void disableClicks(bool p_en);
 
-    void filmPlayStatus(bool p_stat, unsigned long p_time);
+    void timeChanged(unsigned long p_time);
 
 private:
     Ui::MotionTape* ui;

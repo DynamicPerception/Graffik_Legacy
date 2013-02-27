@@ -159,9 +159,6 @@ void MotionTape::mousePressEvent(QMouseEvent *p_event) {
 
        qDebug() << "MT: Press Event " << pressX << newTime;
 
-        // update position of marker icon
-       filmPlayStatus(false, newTime);
-
         // emit the timelineClick signal with the clicked time
        emit timelineClick(newTime);
 }
@@ -365,15 +362,14 @@ float MotionTape::_calcSpacing(QRect, int p_lines, int p_fill, int p_pad) {
     return ((float) m_rightX - (float) m_leftX) / (float) p_lines;
 }
 
-/** Play Status Changed Slot
+/** Time Changed Slot
 
   Updates position of timeline marker icon as needed.
   */
 
-void MotionTape::filmPlayStatus(bool p_stat, unsigned long p_time) {
-    Q_UNUSED(p_stat);
+void MotionTape::timeChanged(unsigned long p_time) {
 
-    qDebug() << "MT: Got Stat Change";
+    qDebug() << "MT: Got Time Change";
 
     m_curTime = p_time;
 

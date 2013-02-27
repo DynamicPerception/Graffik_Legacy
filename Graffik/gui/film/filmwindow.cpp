@@ -40,11 +40,11 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
     m_ignoreUpdate = false;
 
     m_params = new FilmParameters(m_net, this);
-    m_exec = new FilmExec(m_net, m_params, m_opts, m_gopts, this);
-    m_busy = new QProgressDialog(this);
-    m_jcp = new JogControlPanel(m_net, m_opts, m_params, this);
-    m_fcp = new FlickCharm;
-    m_notw = new NoTracksWidget(this);
+    m_exec   = new FilmExec(m_net, m_params, m_opts, m_gopts, this);
+    m_busy   = new QProgressDialog(this);
+    m_jcp    = new JogControlPanel(m_net, m_opts, m_params, this);
+    m_notw   = new NoTracksWidget(this);
+    m_time   = new FilmTimeManager(m_exec, m_params);
 
     m_areaLayout = new QVBoxLayout;
     m_areaLayout->setContentsMargins(0, 0, 0, 0);
@@ -75,13 +75,14 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
         // this must be done after the layout is added to visualSAContents,
         // as this class attempts to access that layout
 
-    m_motion = new MotionSection(m_exec, m_params, m_areaViewPort);
+    m_motion = new MotionSection(m_params, m_areaViewPort);
     m_filter = new SectionResizeFilter(m_motion, this);
-
-    m_motion->show();
 
         // need to capture resize events to resize our transparent overlay
     m_areaViewPort->installEventFilter(m_filter);
+
+    m_motion->show();
+
 
     m_tape = new MotionTape(m_params, m_areaViewPort, this);
     ui->tapeVLayout->addWidget(m_tape);
@@ -96,7 +97,6 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
 
 
     connect(m_exec, SIGNAL(filmPlayStatus(bool,ulong)), this, SLOT(_playStatus(bool,ulong)));
-    connect(m_exec, SIGNAL(filmPlayStatus(bool,ulong)), m_tape, SLOT(filmPlayStatus(bool,ulong)));
     connect(m_exec, SIGNAL(filmStarted()), this, SLOT(_filmStarted()));
     connect(m_exec, SIGNAL(error(QString)), this, SLOT(error(QString)));
     connect(m_exec, SIGNAL(shuttleComplete()), this, SLOT(_shuttleComplete()));
@@ -113,6 +113,9 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
 
     connect(m_tape, SIGNAL(timelineClick(ulong)), this, SLOT(timelineClicked(ulong)));
 
+        // let these guys monitor time position changes
+    connect(m_time, SIGNAL(timePositionChanged(ulong)), m_tape, SLOT(timeChanged(ulong)));
+    connect(m_time, SIGNAL(timePositionChanged(ulong)), m_motion, SLOT(timeChanged(ulong)));
 
     _prepInputs();
 
@@ -122,6 +125,10 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
     connect(theme, SIGNAL(themeChanged()), this, SLOT(_themeChanged()));
 
     setStyleSheet(theme->getThemeCSS("film"));
+
+        // start out at beginning of film!
+    m_time->timePosition(0);
+
 }
 
 FilmWindow::~FilmWindow() {
@@ -131,15 +138,14 @@ FilmWindow::~FilmWindow() {
         m_areaBlocks.remove(addr);
     }
 
+    delete m_time;
     delete m_tape;
     delete m_areaLayout;
     delete m_motion;
     delete m_filter;
-   // delete m_areaViewPort;
 
     delete m_exec;
     delete m_jcp;
-    delete m_fcp;
     delete m_params;
     delete m_areaViewPort;
     delete ui;
@@ -193,7 +199,7 @@ void FilmWindow::timelineClicked(unsigned long p_time) {
 
     m_exec->sendAxesTo(theseAxes);
 
-    m_motion->jumpTo(p_time);
+    m_time->timePosition(p_time);
 }
 
 void FilmWindow::_drawNewAxis(OMdeviceInfo *p_dev) {
@@ -764,8 +770,8 @@ void FilmWindow::on_rewindButton_clicked() {
     m_exec->rewind();
 
     m_curFrameShot = 0;
-    m_motion->jumpTo(0);
-    m_tape->filmPlayStatus(false, 0);
+
+    m_time->timePosition(0);
 
 }
 
@@ -789,8 +795,7 @@ void FilmWindow::on_forwardButton_clicked() {
 
     m_params->releaseParams(false);
 
-    m_motion->jumpTo(realLength);
-    m_tape->filmPlayStatus(false, realLength);
+    m_time->timePosition(realLength);
 }
 
 void FilmWindow::on_frameFwdButton_clicked() {
@@ -811,8 +816,7 @@ void FilmWindow::on_frameFwdButton_clicked() {
         // advance one frame, and set correct position of time
         // indicator
     m_exec->frameAdvance();
-    m_motion->jumpTo(m_curFrameShot * interval);
-    m_tape->filmPlayStatus(false, m_curFrameShot * interval);
+    m_time->timePosition(m_curFrameShot * interval);
 }
 
 void FilmWindow::on_frameRwdButton_clicked() {
@@ -828,8 +832,7 @@ void FilmWindow::on_frameRwdButton_clicked() {
     if( m_curFrameShot > 0 ) {
         m_exec->frameReverse();
         m_curFrameShot--;
-        m_motion->jumpTo(m_curFrameShot * interval);
-        m_tape->filmPlayStatus(false, m_curFrameShot * interval);
+        m_time->timePosition(m_curFrameShot * interval);
     }
 }
 
@@ -958,8 +961,10 @@ void FilmWindow::_popTimeDisplay(QLabel *p_label, int p_time) {
 void FilmWindow::_redrawMotionOverlay() {
     m_areaViewPort->removeEventFilter(m_filter);
 
+    disconnect(m_time, SIGNAL(timePositionChanged(ulong)), m_motion, SLOT(timeChanged(ulong)));
+
     delete m_motion;
-    m_motion = new MotionSection(m_exec, m_params, m_areaViewPort);
+    m_motion = new MotionSection(m_params, m_areaViewPort);
     m_motion->show();
 
     delete m_filter;
@@ -967,6 +972,7 @@ void FilmWindow::_redrawMotionOverlay() {
     m_areaViewPort->installEventFilter(m_filter);
 
     connect(this, SIGNAL(motionAreaBorders(int,int)), m_motion, SLOT(setBorders(int,int)));
+    connect(m_time, SIGNAL(timePositionChanged(ulong)), m_motion, SLOT(timeChanged(ulong)));
 
 }
 

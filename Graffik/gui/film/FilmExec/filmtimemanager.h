@@ -21,60 +21,52 @@
 
     */
 
-#ifndef MOTIONSECTION_H
-#define MOTIONSECTION_H
 
-#include <QWidget>
-#include <QPainterPath>
-#include <QPaintEvent>
-#include <QPainter>
+#ifndef FILMTIMEMANAGER_H
+#define FILMTIMEMANAGER_H
 
+#include <QObject>
 #include "film/FilmParameters/filmparameters.h"
+#include "filmexec.h"
 
+/** Film Time Manager
 
-/**
-
-  The MotionSection class creates a transparent section which is displayed
-  over the motion path elements, and draws a vertical line where the current
-  time is.
+  The film time manager class provides a central interface to noting current film time,
+  seeking to specific times, and broadcasting time changes.
 
   @author
   C. A. Church
   */
 
-class MotionSection : public QWidget
+class FilmTimeManager : public QObject
 {
     Q_OBJECT
 public:
-    MotionSection(FilmParameters *c_film, QWidget *parent);
-    ~MotionSection();
-
-    void paintEvent(QPaintEvent* p_event);
+    FilmTimeManager(FilmExec* c_exec, FilmParameters* c_params, QObject *parent = 0);
+    ~FilmTimeManager();
+    
+    void timePosition(unsigned long p_time);
+    unsigned long timePosition();
 
 signals:
     
+     /** Time Position Changed Signal
+
+       This signal is emitted whenever a time position change is received
+       */
+    void timePositionChanged(unsigned long p_time);
 
 public slots:
-    void paramsChanged();
-    void timeChanged(unsigned long p_runTime);
-    void setBorders(int p_leftX, int p_rightX);
+    void filmParamsChanged();
+    void playStatus(bool p_runStat, unsigned long p_curTime);
 
 private:
-   QPainterPath* m_path;
-   FilmParameters* m_film;
-   QWidget* m_parent;
 
-   int m_width;
-   int m_height;
-   int m_scrollWidth;
-   unsigned long m_curPos;
-   unsigned long m_wasPos;
-   unsigned long m_length;
-   int m_leftX;
-   int m_rightX;
-
-   void _updatePath();
+    FilmParameters* m_params;
+    FilmExec* m_exec;
+    unsigned long m_filmTime;
+    unsigned long m_curTime;
 
 };
 
-#endif // MOTIONSECTION_H
+#endif // FILMTIMEMANAGER_H

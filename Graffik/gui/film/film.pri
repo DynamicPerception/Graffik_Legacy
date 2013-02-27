@@ -30,7 +30,8 @@ HEADERS += \
     film/Dialogs/trackinfodialog.h \
     film/MotionArea/ErrorConsole/motionerrordialog.h \
     film/MotionArea/ErrorConsole/motionerrorelement.h \
-    film/MotionArea/notrackswidget.h
+    film/MotionArea/notrackswidget.h \
+    film/FilmExec/filmtimemanager.h
 
 
 SOURCES += \
@@ -56,7 +57,8 @@ SOURCES += \
     film/Dialogs/trackinfodialog.cpp \
     film/MotionArea/ErrorConsole/motionerrordialog.cpp \
     film/MotionArea/ErrorConsole/motionerrorelement.cpp \
-    film/MotionArea/notrackswidget.cpp
+    film/MotionArea/notrackswidget.cpp \
+    film/FilmExec/filmtimemanager.cpp
 
 FORMS += \
     film/filmwindow.ui \
