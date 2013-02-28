@@ -37,6 +37,10 @@ QPushButton#stopButton {
     min-width: 50px;
 }
 
+QPushButton#stopButton:pressed {
+   border-image: url(themes/DP-Blue/img/estop-pressed.png);
+}
+
 #jogButFrame, #jogSliderFrame {
     border-left: 0px;
     border-right: 0px;
