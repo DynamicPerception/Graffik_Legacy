@@ -516,21 +516,34 @@ void FilmWindow::_checkFilmTimeConstraint() {
      qDebug() << "FW: Checking Time Constraints";
 
         // TODO: Add UI indicator that limitation has
-        // been placed...
+        // been placed (if one is placed)...
+
+     // before we go around accessing film params, let's clear out
+     // and SMS track errors that might've been set before...
+
+     // this can cause a problem when a track has both SMS errors
+     // AND normal motion curve errors (unlikely, considering the
+     // issues for continuous motion should not be possible with
+     // SMS moves and vice-versa, but keep an eye out for the future
+
+    foreach(unsigned short addr, m_smsErrorTracks)
+         m_areaBlocks.value(addr)->area()->moveSane(true);
+
+    m_smsErrorTracks.clear();
+
 
     OMfilmParams*    params = m_params->getParams();
     unsigned long    minInt = m_exec->minInterval(params);
     unsigned long maxFrames = params->realLength / minInt;
     unsigned long   maxTime = (maxFrames / params->fps) * 1000;
 
-    QList<unsigned short> muteTracks;
-
         // for SMS moves, we have to check each track and see
         // if it can actually achieve the desired movement in the
         // specified real time.
     if( params->filmMode == FILM_MODE_SMS ) {
-        muteTracks = _checkSMSMovements(params);
+        m_smsErrorTracks = _checkSMSMovements(params);
     }
+
 
     maxTime = maxTime < 1000 ? 1000 : maxTime;
 
@@ -547,7 +560,7 @@ void FilmWindow::_checkFilmTimeConstraint() {
     }
 
         // now, do any track muting we need to...
-    foreach(unsigned short addr, muteTracks)
+    foreach(unsigned short addr, m_smsErrorTracks)
         m_areaBlocks.value(addr)->area()->moveSane(false);
 
 
@@ -563,6 +576,7 @@ QList<unsigned short> FilmWindow::_checkSMSMovements(OMfilmParams *p_params) {
     unsigned long     interval = m_exec->interval(p_params);
     unsigned long       minInt = m_exec->minInterval(p_params);
     unsigned long freeInterval = interval - minInt;
+    unsigned long   filmLength = p_params->realLength;
 
 
     foreach(unsigned short addr, axes.keys() ) {
@@ -573,7 +587,7 @@ QList<unsigned short> FilmWindow::_checkSMSMovements(OMfilmParams *p_params) {
 
         unsigned long    moveDist = axParms->endDist;
         unsigned long   startShot = axParms->startTm / interval;
-        unsigned long     endShot = axParms->endTm / interval;
+        unsigned long     endShot = axParms->endTm > 0 ? axParms->endTm / interval : filmLength / interval;
         unsigned long travelShots = endShot - startShot;
         unsigned long    maxSpeed = m_opts->getOptions(addr)->maxSteps;
         float             maxMove = m_areaBlocks.value(addr)->area()->getPathPainter()->getMaxSpeed();

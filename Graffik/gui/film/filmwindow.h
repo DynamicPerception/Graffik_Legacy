@@ -159,6 +159,7 @@ private:
     QWidget* m_areaViewPort;
     QVBoxLayout* m_areaLayout;
     QHash<unsigned short, MotionBase*> m_areaBlocks;
+    QList<unsigned short> m_smsErrorTracks;
 
         // internal status registers
     static const int s_Enable   = 1;
