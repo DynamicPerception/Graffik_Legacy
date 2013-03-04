@@ -109,6 +109,13 @@
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="delButton">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="StatefulButton" name="masterButton">
           <property name="toolTip">
            <string>Axis Does NOT Have Camera Connected</string>

@@ -24,20 +24,6 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="headingLabel">
-     <property name="font">
-      <font>
-       <pointsize>16</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Confirm</string>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QLabel" name="contentLabel">
      <property name="text">
       <string>TextLabel</string>

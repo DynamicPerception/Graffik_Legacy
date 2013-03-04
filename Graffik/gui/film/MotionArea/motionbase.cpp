@@ -45,6 +45,9 @@ MotionBase::MotionBase(FilmParameters* c_film, OMdeviceInfo* c_dev, AxisOptions 
     ui->resButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
     ui->easeButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
     ui->muteButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+    ui->delButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+    ui->errorButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+    ui->masterButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
 #endif
 
     ui->nameButton->setText(c_dev->name);
@@ -114,6 +117,27 @@ void MotionBase::curScale(bool p_scale) {
         ui->scaleButton->setText(" R ");
     else
         ui->scaleButton->setText(" P ");
+}
+
+/** Delete Motion Button Clicked Slot */
+
+void MotionBase::on_delButton_clicked() {
+    ConfirmDialog dia(MB_STR_DEL, this);
+    int res = dia.exec();
+
+    if( res == QDialog::Accepted ) {
+            // if accepted, purge move information for axis
+        OMfilmParams* parms = m_film->getParams();
+        OMfilmAxisParams* axis = parms->axes.value(m_dev->device->address());
+
+        axis->endDist = 0;
+        axis->decelTm = 0;
+        axis->endTm   = 0;
+        axis->startTm = 0;
+        axis->accelTm = 0;
+
+        m_film->releaseParams();
+    }
 }
 
 /** Easing Button Clicked Slot */

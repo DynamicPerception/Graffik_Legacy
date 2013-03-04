@@ -19,7 +19,7 @@ INCLUDEPATH  += ../libs/qextserialport/src/ \
 
  # set software version string
 
-DEFINES += "GRAFFIK_VERSION=1.021"
+DEFINES += "GRAFFIK_VERSION=1.022"
 
 
  # link to openmoco libraries

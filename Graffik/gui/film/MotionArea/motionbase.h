@@ -34,12 +34,14 @@
 #include "core/Options/axisoptions.h"
 #include "core/Options/globaloptions.h"
 #include "core/Themer/singlethemer.h"
+#include "core/Dialogs/confirmdialog.h"
 #include "film/FilmParameters/filmparameters.h"
 #include "film/Dialogs/trackinfodialog.h"
 
 const QString MB_STR_POS = "Position:";
 const QString MB_STR_ISM = "Camera Connected";
 const QString MB_STR_NTM = "No Camera";
+const QString MB_STR_DEL = "WARNING: Move Delete Cannot Be Undone, Continue?";
 
 namespace Ui {
 class MotionBase;
@@ -71,6 +73,7 @@ public slots:
     void on_nameButton_clicked();
     void on_errorButton_clicked();
     void on_masterButton_clicked();
+    void on_delButton_clicked();
 
     void statusChange(bool p_stat);
     void currentPlayStatus(bool p_stat, unsigned long p_runTime);
