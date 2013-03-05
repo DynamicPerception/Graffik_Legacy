@@ -56,6 +56,7 @@
 #include "film/FilmExec/filmexec.h"
 #include "film/FilmExec/filmtimemanager.h"
 #include "film/FilmFileHandler/filmfilehandler.h"
+#include "film/FilmFileHandler/filmautosaver.h"
 
 
 
@@ -79,6 +80,8 @@ class FilmWindow : public QWidget
 public:
     FilmWindow(OMNetwork* c_net, AxisOptions* c_opts, GlobalOptions* c_gopts, QWidget *parent = 0);
     ~FilmWindow();
+
+    void postInitialize();
 
 public slots:
 
@@ -155,6 +158,7 @@ private:
     QProgressDialog* m_busy;
     JogControlPanel* m_jcp;
     NoTracksWidget* m_notw;
+    FilmAutoSaver* m_saver;
 
     QWidget* m_areaViewPort;
     QVBoxLayout* m_areaLayout;

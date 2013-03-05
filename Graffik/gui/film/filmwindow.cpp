@@ -45,6 +45,7 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
     m_jcp    = new JogControlPanel(m_net, m_opts, m_params, this);
     m_notw   = new NoTracksWidget(this);
     m_time   = new FilmTimeManager(m_exec, m_params);
+    m_saver  = new FilmAutoSaver(m_net, m_params, this);
 
     m_areaLayout = new QVBoxLayout;
     m_areaLayout->setContentsMargins(0, 0, 0, 0);
@@ -110,6 +111,7 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
 
     connect(this, SIGNAL(playStatusChange(bool)), m_jcp, SIGNAL(playStatusChange(bool)));
     connect(this, SIGNAL(playStatusChange(bool)), m_tape, SLOT(disableClicks(bool)));
+    connect(this, SIGNAL(playStatusChange(bool)), m_saver, SLOT(playStatusChanged(bool)));
 
     connect(m_tape, SIGNAL(timelineClick(ulong)), this, SLOT(timelineClicked(ulong)));
 
@@ -140,6 +142,7 @@ FilmWindow::~FilmWindow() {
         m_areaBlocks.remove(addr);
     }
 
+    delete m_saver;
     delete m_time;
     delete m_tape;
     delete m_areaLayout;
@@ -151,6 +154,14 @@ FilmWindow::~FilmWindow() {
     delete m_params;
     delete m_areaViewPort;
     delete ui;
+}
+
+
+ /** Perform activities that must be done after complete program initialization */
+
+void FilmWindow::postInitialize() {
+        // load any saved film
+    m_saver->loadSavedFilm();
 }
 
 void FilmWindow::_themeChanged() {

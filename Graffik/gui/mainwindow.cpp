@@ -126,6 +126,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         welcome.exec();
         disconnect(&welcome, SIGNAL(addBus()), this, SLOT(_welcomeAddBus()));
     }
+
+    _filmWindow->postInitialize();
+
 }
 
 MainWindow::~MainWindow() {

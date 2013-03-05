@@ -31,7 +31,8 @@ HEADERS += \
     film/MotionArea/ErrorConsole/motionerrordialog.h \
     film/MotionArea/ErrorConsole/motionerrorelement.h \
     film/MotionArea/notrackswidget.h \
-    film/FilmExec/filmtimemanager.h
+    film/FilmExec/filmtimemanager.h \
+    film/FilmFileHandler/filmautosaver.h
 
 
 SOURCES += \
@@ -58,7 +59,8 @@ SOURCES += \
     film/MotionArea/ErrorConsole/motionerrordialog.cpp \
     film/MotionArea/ErrorConsole/motionerrorelement.cpp \
     film/MotionArea/notrackswidget.cpp \
-    film/FilmExec/filmtimemanager.cpp
+    film/FilmExec/filmtimemanager.cpp \
+    film/FilmFileHandler/filmautosaver.cpp
 
 FORMS += \
     film/filmwindow.ui \
