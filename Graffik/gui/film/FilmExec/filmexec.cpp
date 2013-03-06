@@ -37,6 +37,7 @@ FilmExec::FilmExec(OMNetwork* c_net, FilmParameters* c_params, AxisOptions* c_op
            m_stat = FILM_STOPPED;
         m_shuttle = SHUTTLE_NONE;
     m_filmPrepped = false;
+          m_check = false;
 
         // initialize our home position monitor (we'll need this later)
       m_position = new PositionMonitor(m_net, m_gopts);
@@ -58,8 +59,8 @@ FilmExec::FilmExec(OMNetwork* c_net, FilmParameters* c_params, AxisOptions* c_op
     connect(m_position, SIGNAL(allAtPosition()), this, SLOT(_nodesAtPosition()), Qt::QueuedConnection);
     connect(m_position, SIGNAL(error(QString)), this, SLOT(_error(QString)), Qt::QueuedConnection);
 
-        // reflect signal
-    connect(m_play, SIGNAL(playStatus(bool,ulong)), this, SIGNAL(filmPlayStatus(bool,ulong)), Qt::QueuedConnection);
+        // capture signal here..
+    connect(m_play, SIGNAL(playStatus(bool,ulong)), this, SLOT(_playStatus(bool,ulong)), Qt::QueuedConnection);
 
     connect(m_play, SIGNAL(error(QString)), this, SLOT(_error(QString)), Qt::QueuedConnection);
 
@@ -170,6 +171,38 @@ int FilmExec::_prepFilm(bool p_home) {
         return FILM_OK_HOME;
     else
         return FILM_OK;
+
+}
+
+
+ /** Check If Film Running
+
+   This method is primarily used to determine if a film is already executing,
+   perhaps not started by this instance.  If it is running, the filmStarted()
+   signal will be emitted, and you will begin to see filmPlayStatus() signals
+   emitted.
+
+   */
+
+void FilmExec::checkRunning() {
+
+    m_check = true;
+
+        // refresh film parameters for a fresh start
+    m_film = m_params->getParamsCopy();
+
+        // find axes and timing master
+    QList<OMAxis*>  axes = _getAxes(&m_film);
+    OMAxis* timingMaster = _getTimingMaster(&axes);
+
+    if( timingMaster == 0 ) {
+        qDebug() << "FEx: checkRunning: No Master, bailing out.";
+        return;
+    }
+
+    m_play->master(timingMaster);
+
+    m_play->start(true);
 
 }
 
@@ -696,13 +729,9 @@ void FilmExec::_sendCamera(OMAxis* p_master) {
         return;
     }
 
-   // float total_shots = m_film.realLength / iv;
-   // total_shots = _round(total_shots);
-
     p_master->cameraEnable();
     p_master->exposure(m_film.camParams->shutterMS);
     p_master->exposureDelay(m_film.camParams->delayMS);
-  //  p_master->maxShots(total_shots);
 
     if( m_film.camParams->focus )
         p_master->focus(m_film.camParams->focusMS);
@@ -943,4 +972,16 @@ void FilmExec::_cmdReceived(int p_id, OMCommandBuffer *p_cmd) {
     if( m_cmds.count() < 1 && ( m_shuttle == SHUTTLE_END || m_shuttle == SHUTTLE_POS ) )
         m_position->start();
 
+}
+
+
+void FilmExec::_playStatus(bool p_stat, unsigned long p_time) {
+    if( m_check == true ) {
+        m_check = false;
+
+        if( p_stat == true )
+            emit filmStarted();
+    }
+
+    emit filmPlayStatus(p_stat, p_time);
 }

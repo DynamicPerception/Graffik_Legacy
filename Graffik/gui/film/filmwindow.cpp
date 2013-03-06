@@ -31,13 +31,14 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
 
     ui->setupUi(this);
 
-    m_net = c_net;
-    m_opts = c_opts;
+    m_net   = c_net;
+    m_opts  = c_opts;
     m_gopts = c_gopts;
 
-    m_error = false;
+    m_error        = false;
     m_spinsPrepped = false;
     m_ignoreUpdate = false;
+    m_checkRunning = false;
 
     m_params = new FilmParameters(m_net, this);
     m_exec   = new FilmExec(m_net, m_params, m_opts, m_gopts, this);
@@ -162,6 +163,16 @@ FilmWindow::~FilmWindow() {
 void FilmWindow::postInitialize() {
         // load any saved film
     m_saver->loadSavedFilm();
+
+        // recover film state
+    bool filmState = m_saver->savedStatus();
+
+    if( filmState == true ) {
+        // state was previously running, let's see if it still is and if we
+        // can restore to a previous point
+        m_checkRunning = true;
+        m_exec->checkRunning();
+    }
 }
 
 void FilmWindow::_themeChanged() {
@@ -726,7 +737,7 @@ void FilmWindow::on_playButton_clicked() {
 
     OMfilmParams* params = m_params->getParams();
     int mode = params->filmMode;
-    m_params->releaseParams();
+    m_params->releaseParams(false);
 
     int bstat = 0;
     int fstat = m_exec->status();
@@ -914,15 +925,39 @@ void FilmWindow::_playStatus(bool p_stat, unsigned long p_time) {
 
    static bool wasStat = false;
 
-        // not running anymore, turn off our status timers and such
-    if( p_stat == false && wasStat == true && m_exec->status() != FILM_PAUSED ) {
+        // did we issue a request to check running status?
+   if( m_checkRunning == true ) {
+       m_checkRunning = false;
+
+       if( p_stat == true ) {
+           // set correct button states!
+
+           OMfilmParams* parms = m_params->getParams();
+           int mode = parms->filmMode;
+           m_params->releaseParams(false);
+
+           if( mode == FILM_MODE_SMS )
+               _setPlayButtonStatus(s_Pause);
+           else
+               _setPlayButtonStatus(s_DisPres);
+
+           _setStopButtonStatus(s_Enable);
+           emit playStatusChange(true);
+       }
+
+       m_time->timePosition(p_time);
+
+   }
+   else if( p_stat == false && wasStat == true && m_exec->status() != FILM_PAUSED ) {
+               // not running anymore, turn off our status timers and such
         unsigned long len = m_params->getParams()->realLength;
         m_params->releaseParams(false);
         _filmTimeDisplay(len);
         on_stopButton_clicked();
     }
-    else
+    else {
         _filmTimeDisplay(p_time);
+   }
 
     wasStat = p_stat;
 }

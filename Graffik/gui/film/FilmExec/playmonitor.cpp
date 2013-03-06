@@ -28,10 +28,11 @@
 #include <QtEndian>
 
 PlayMonitor::PlayMonitor(OMNetwork *c_net, FilmParameters *c_film, GlobalOptions *c_gopts, QObject *parent) : QObject(parent) {
-    m_film = c_film;
-    m_net = c_net;
-    m_started = false;
-    m_gopts = c_gopts;
+    m_film      = c_film;
+    m_net       = c_net;
+    m_gopts     = c_gopts;
+    m_started   = false;
+    m_checkOnce = false;
 
         // listen for commands completed
     connect(m_net, SIGNAL(complete(int,OMCommandBuffer*)), this, SLOT(_cmdReceived(int,OMCommandBuffer*)), Qt::QueuedConnection);
@@ -43,9 +44,16 @@ PlayMonitor::~PlayMonitor() {
         delete m_timer;
 }
 
-/** Start Timer */
+/** Start Timer
 
-void PlayMonitor::start() {
+   If the checkOnce flag is set to true, the timer will automatically stop if
+   a film isn't running.  This can be used to determine if a film is still
+   executing when starting the program, for example
+*/
+
+void PlayMonitor::start(bool p_checkOnce) {
+
+    m_checkOnce = p_checkOnce;
 
     if( ! m_started ) {
         m_timer = new QTimer();
@@ -143,8 +151,22 @@ void PlayMonitor::_cmdReceived(int p_id, OMCommandBuffer *p_cmd) {
     m_cmds.remove(p_id);
     m_net->getManager()->release(p_id);
 
-    if( m_gotCount > 1 )
-        playStatus(m_runStat, m_runTime);
+    if( m_gotCount > 1 ) {
+
+        if( m_checkOnce == true ) {
+                // if the checkonce flag is set...
+            m_checkOnce = false;
+            if( m_runStat == false ) {
+                    // .. and the program is not running, then
+                    // stop the timer and bug out.
+                stop();
+                return;
+            }
+
+        }
+
+        emit playStatus(m_runStat, m_runTime);
+    }
 
 
 }

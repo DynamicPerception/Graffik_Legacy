@@ -176,6 +176,7 @@ private:
     bool m_spinsPrepped;
     bool m_ignoreUpdate;
     bool m_notwShown;
+    bool m_checkRunning;
 
     unsigned long m_curFrameShot;
 

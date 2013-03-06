@@ -95,6 +95,8 @@ public:
     static unsigned long interval(OMfilmParams* p_film);
     static unsigned long minInterval(OMfilmParams* p_film);
 
+    void checkRunning();
+
 
 signals:
         /** Film Playing Status Signal
@@ -143,6 +145,7 @@ private slots:
     void _nodesAtPosition();
     void _error(QString p_error);
     void _cmdReceived(int p_id, OMCommandBuffer* p_cmd);
+    void _playStatus(bool p_stat, unsigned long p_time);
 
 private:
     OMNetwork* m_net;
@@ -164,6 +167,7 @@ private:
     int m_shuttle;
 
     bool m_filmPrepped;
+    bool m_check;
 
     void _sendHome(OMfilmParams *p_film, OMAxis* p_axis);
     void _sendDistance(OMAxis* p_axis, unsigned long p_distance, bool p_dir);

@@ -59,8 +59,8 @@
 #include "slim/slimwindow.h"
 
 
-#define MW_STR_FILM "Film"
-#define MW_STR_SCRIPT "Script"
+const QString   MW_STR_FILM = "Film";
+const QString MW_STR_SCRIPT = "Script";
 
 
 namespace Ui {
@@ -112,17 +112,17 @@ signals:
 
 private:
     Ui::MainWindow *ui;
-    SlimWindow* _slimWindow;
-    FilmWindow* _filmWindow;
-    AddNetDialog* _addNet;
-    AddDeviceDialog* _addDev;
-    OMNetwork* _net;
-    NetworkModel* _netModel;
-    SlimCommandParser* _parser;
-    UserData* _uData;
-    AxisOptions* _axisOpts;
-    CommandHistoryModel* _cmdHist;
-    GlobalOptions* _globalOpts;
+    SlimWindow* m_slimWindow;
+    FilmWindow* m_filmWindow;
+    AddNetDialog* m_addNet;
+    AddDeviceDialog* m_addDev;
+    OMNetwork* m_net;
+    NetworkModel* m_netModel;
+    SlimCommandParser* m_parser;
+    UserData* m_uData;
+    AxisOptions* m_axisOpts;
+    CommandHistoryModel* m_cmdHist;
+    GlobalOptions* m_globalOpts;
 
     enum CurScreenSel { FILM_SCREEN, SLIM_SCREEN };
 

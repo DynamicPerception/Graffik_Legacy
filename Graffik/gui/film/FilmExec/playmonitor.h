@@ -67,7 +67,7 @@ public:
     PlayMonitor(OMNetwork* c_net, FilmParameters* c_film, GlobalOptions* c_gopts, QObject *parent = 0);
     ~PlayMonitor();
 
-    void start();
+    void start(bool p_checkOnce = false);
     void stop();
     void master(OMAxis* p_master);
     
@@ -94,7 +94,7 @@ private:
 
     bool m_started;
     bool m_running;
-
+    bool m_checkOnce;
     bool m_runStat;
     unsigned long m_runTime;
     int m_gotCount;

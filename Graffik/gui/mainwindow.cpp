@@ -36,20 +36,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 
     ui->setupUi(this);
-    _net = new OMNetwork();
-    _axisOpts = new AxisOptions(this);
-    _globalOpts = new GlobalOptions(this);
-    _netModel = new NetworkModel(_net, this);
-    _parser = new SlimCommandParser(_net);
-    _cmdHist = new CommandHistoryModel(_net, this);
-    _filmWindow = new FilmWindow(_net, _axisOpts, _globalOpts, this);
-    _slimWindow =  new SlimWindow(_net, _cmdHist, _parser, ui->tabs);
-    _uData = new UserData(this);
+    m_net = new OMNetwork();
+    m_axisOpts = new AxisOptions(this);
+    m_globalOpts = new GlobalOptions(this);
+    m_netModel = new NetworkModel(m_net, this);
+    m_parser = new SlimCommandParser(m_net);
+    m_cmdHist = new CommandHistoryModel(m_net, this);
+    m_filmWindow = new FilmWindow(m_net, m_axisOpts, m_globalOpts, this);
+    m_slimWindow =  new SlimWindow(m_net, m_cmdHist, m_parser, ui->tabs);
+    m_uData = new UserData(this);
 
 
 
-    ui->tabs->addWidget(_filmWindow);
-    ui->tabs->addWidget(_slimWindow);
+    ui->tabs->addWidget(m_filmWindow);
+    ui->tabs->addWidget(m_slimWindow);
 
     ui->screenSelCombo->addItem(MW_STR_FILM);
     ui->screenSelCombo->addItem(MW_STR_SCRIPT);
@@ -71,45 +71,45 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
         // make sure that the slim parser can update its alias and registration when a new device is added/deleted
         // (must be done before recoverBuses)
-    connect(_net, SIGNAL(deviceAdded(OMbusInfo*,OMdeviceInfo*)), _slimWindow, SLOT(registerNewDevice(OMbusInfo*,OMdeviceInfo*)));
-    connect(_net, SIGNAL(deviceDeleted(OMbusInfo*,unsigned short)), _slimWindow, SLOT(removeDevice(OMbusInfo*,unsigned short)));
+    connect(m_net, SIGNAL(deviceAdded(OMbusInfo*,OMdeviceInfo*)), m_slimWindow, SLOT(registerNewDevice(OMbusInfo*,OMdeviceInfo*)));
+    connect(m_net, SIGNAL(deviceDeleted(OMbusInfo*,unsigned short)), m_slimWindow, SLOT(removeDevice(OMbusInfo*,unsigned short)));
 
         // create new options for devices as they are added/deleted
-    connect(_net, SIGNAL(deviceAdded(OMbusInfo*,OMdeviceInfo*)), _axisOpts, SLOT(deviceAdded(OMbusInfo*,OMdeviceInfo*)));
-    connect(_net, SIGNAL(deviceDeleted(OMbusInfo*,unsigned short)), _axisOpts, SLOT(deviceDeleted(OMbusInfo*,unsigned short)));
+    connect(m_net, SIGNAL(deviceAdded(OMbusInfo*,OMdeviceInfo*)), m_axisOpts, SLOT(deviceAdded(OMbusInfo*,OMdeviceInfo*)));
+    connect(m_net, SIGNAL(deviceDeleted(OMbusInfo*,unsigned short)), m_axisOpts, SLOT(deviceDeleted(OMbusInfo*,unsigned short)));
 
         // recover stored bus data back to network manager
         // Do this BEFORE connecting up the signals and slots in uData to
         // avoid wasting time writing back the same data to the
         // ini file.  This recovers all buses and devices
-    _uData->recoverBuses(_net);
+    m_uData->recoverBuses(m_net);
 
         // always recover axis options after recovering buses (so devices will have been created already)
         // doing this in the reverse order will result in all devices getting created and then their options
         // overwritten with the default values
-    _uData->recoverAxisOptions(_axisOpts);
+    m_uData->recoverAxisOptions(m_axisOpts);
 
         // recover global options
-    _uData->recoverGlobalOptions(_globalOpts);
+    m_uData->recoverGlobalOptions(m_globalOpts);
 
         // connect network manager to userdata handlers (to save input information automatically)
-    connect(_net, SIGNAL(busAdded(OMbusInfo*)), _uData, SLOT(busAdded(OMbusInfo*)));
-    connect(_net, SIGNAL(busDeleted(QString,QString)), _uData, SLOT(busDeleted(QString,QString)));
-    connect(_net, SIGNAL(deviceAdded(OMbusInfo*,OMdeviceInfo*)), _uData, SLOT(deviceAdded(OMbusInfo*,OMdeviceInfo*)));
-    connect(_net, SIGNAL(deviceDeleted(OMbusInfo*,unsigned short)), _uData, SLOT(deviceDeleted(OMbusInfo*,unsigned short)));
+    connect(m_net, SIGNAL(busAdded(OMbusInfo*)), m_uData, SLOT(busAdded(OMbusInfo*)));
+    connect(m_net, SIGNAL(busDeleted(QString,QString)), m_uData, SLOT(busDeleted(QString,QString)));
+    connect(m_net, SIGNAL(deviceAdded(OMbusInfo*,OMdeviceInfo*)), m_uData, SLOT(deviceAdded(OMbusInfo*,OMdeviceInfo*)));
+    connect(m_net, SIGNAL(deviceDeleted(OMbusInfo*,unsigned short)), m_uData, SLOT(deviceDeleted(OMbusInfo*,unsigned short)));
 
         // again, we connect the userdata to the OMAxisFilmOptions object -after- recoverBuses to prevent the loading
         // of stored axis options to trigger a re-write back to the ini file.  We do not use a queued connection here.
-    connect(_axisOpts, SIGNAL(deviceOptionsChanged(OMaxisOptions*,unsigned short)), _uData, SLOT(deviceOptionsChanged(OMaxisOptions*,unsigned short)));
-    connect(_axisOpts, SIGNAL(deviceOptionsRemoved(unsigned short)), _uData, SLOT(deviceOptionsRemoved(unsigned short)));
+    connect(m_axisOpts, SIGNAL(deviceOptionsChanged(OMaxisOptions*,unsigned short)), m_uData, SLOT(deviceOptionsChanged(OMaxisOptions*,unsigned short)));
+    connect(m_axisOpts, SIGNAL(deviceOptionsRemoved(unsigned short)), m_uData, SLOT(deviceOptionsRemoved(unsigned short)));
 
-    connect(_globalOpts, SIGNAL(optionsChanged()), this, SLOT(_globalOptionsChanged()));
-    connect(this, SIGNAL(globalOptionsChanged(GlobalOptions*)), _uData, SLOT(globalOptionsChanged(GlobalOptions*)));
+    connect(m_globalOpts, SIGNAL(optionsChanged()), this, SLOT(_globalOptionsChanged()));
+    connect(this, SIGNAL(globalOptionsChanged(GlobalOptions*)),m_uData, SLOT(globalOptionsChanged(GlobalOptions*)));
 
     // default to film screen
 
     ui->screenSelCombo->setCurrentIndex(0);
-    ui->tabs->setCurrentWidget(_filmWindow);
+    ui->tabs->setCurrentWidget(m_filmWindow);
     m_curScreen = FILM_SCREEN;
 
         // themeing, watch for changes
@@ -120,14 +120,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     setStyleSheet(theme->getThemeCSS("main"));
 
         // if the application has not yet been configured, prompt a welcome screen
-    if( ! _uData->exists() ) {
+    if( ! m_uData->exists() ) {
         WelcomeDialog welcome(this);
         connect(&welcome, SIGNAL(addBus()), this, SLOT(_welcomeAddBus()));
         welcome.exec();
         disconnect(&welcome, SIGNAL(addBus()), this, SLOT(_welcomeAddBus()));
     }
 
-    _filmWindow->postInitialize();
+    m_filmWindow->postInitialize();
 
 }
 
@@ -136,29 +136,29 @@ MainWindow::~MainWindow() {
         // ALWAYS delete userdata first to prevent it catching
         // signals as other classes are destroyed
 
-    delete _uData;
-    delete _filmWindow;
-    delete _slimWindow;
-    delete _parser;
-    delete _cmdHist;
-    delete _netModel;
-    delete _axisOpts;
-    delete _net;
-    delete _globalOpts;
+    delete m_uData;
+    delete m_filmWindow;
+    delete m_slimWindow;
+    delete m_parser;
+    delete m_cmdHist;
+    delete m_netModel;
+    delete m_axisOpts;
+    delete m_net;
+    delete m_globalOpts;
     delete ui;
 
 }
 
 
 void MainWindow::_globalOptionsChanged() {
-    emit globalOptionsChanged(_globalOpts);
+    emit globalOptionsChanged(m_globalOpts);
 }
 
 void MainWindow::_optionsCleared() {
     ConfirmDialog dia("WARNING: Clearing All Settings Cannot Be Undone, Continue?", this);
     int res = dia.exec();
     if( res == QDialog::Accepted ) {
-        _uData->clear();
+        m_uData->clear();
     }
 }
 
@@ -171,7 +171,7 @@ void MainWindow::_themeChanged() {
 
 void MainWindow::_welcomeAddBus() {
 
-    AddNetDialog addnet(_net, this);
+    AddNetDialog addnet(m_net, this);
     addnet.exec();
 }
 
@@ -185,7 +185,7 @@ void MainWindow::on_actionHelp_Contents_triggered() {
 
 void MainWindow::on_actionSettings_triggered() {
     qDebug() << "MW: Settings Triggered";
-    GlobalOptionsDialog options(_globalOpts);
+    GlobalOptionsDialog options(m_globalOpts);
 
     connect(&options, SIGNAL(optionsCleared()), this, SLOT(_optionsCleared()));
 
@@ -204,18 +204,18 @@ void MainWindow::on_actionAbout_Graffik_triggered() {
 
 void MainWindow::on_screenSelCombo_currentIndexChanged(const QString p_str) {
     if( p_str == MW_STR_SCRIPT ) {
-        ui->tabs->setCurrentWidget(_slimWindow);
+        ui->tabs->setCurrentWidget(m_slimWindow);
         m_curScreen = SLIM_SCREEN;
     }
     else if( p_str == MW_STR_FILM ) {
-        ui->tabs->setCurrentWidget(_filmWindow);
+        ui->tabs->setCurrentWidget(m_filmWindow);
         m_curScreen = FILM_SCREEN;
     }
 
 }
 
 void MainWindow::on_netButton_clicked() {
-    NetBaseDialog net(_net, _netModel, _axisOpts);
+    NetBaseDialog net(m_net, m_netModel, m_axisOpts);
     net.exec();
 }
 
@@ -225,14 +225,14 @@ void MainWindow::on_optButton_clicked() {
 
 void MainWindow::on_globalLoadButton_clicked() {
     if( m_curScreen == FILM_SCREEN )
-        _filmWindow->load();
+        m_filmWindow->load();
     else if( m_curScreen == SLIM_SCREEN)
-        _slimWindow->load();
+        m_slimWindow->load();
 }
 
 void MainWindow::on_globalSaveButton_clicked() {
     if( m_curScreen == FILM_SCREEN )
-        _filmWindow->save();
+        m_filmWindow->save();
     else if( m_curScreen == SLIM_SCREEN )
-        _slimWindow->save();
+        m_slimWindow->save();
 }
