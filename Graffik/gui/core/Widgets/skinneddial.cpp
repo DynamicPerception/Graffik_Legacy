@@ -93,6 +93,23 @@ void SkinnedDial::setMaxAngle(float p_angle) {
     m_maxDeg = p_angle;
 }
 
+
+/** Overloaded mouseReleaseEvent
+
+  We overload the mouseReleaseEvent so that we may emit a
+  signal when the mouse is released, this allows other code
+  to change the behavior of the dial as needed.
+
+  Note: the inherited QDial::mouseReleaseEvent() is called before
+  emitting the signal so that it may be handled properly.
+
+  */
+
+void SkinnedDial::mouseReleaseEvent(QMouseEvent *p_me) {
+    QDial::mouseReleaseEvent(p_me);
+    emit mouseReleased();
+}
+
 /** Overloaded paintEvent
   */
 

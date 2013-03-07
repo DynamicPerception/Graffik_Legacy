@@ -27,18 +27,10 @@
 
 #include <QDebug>
 
-JogControlManager::JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, LiveDeviceModel* c_ldm, QDial* c_jogDial, QSlider* c_jogSpd, QSlider *c_jogDmp, QPushButton* c_homeBut, QPushButton* c_endBut, QObject *parent) :
-    QObject(parent)
-{
+JogControlManager::JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, LiveDeviceModel* c_ldm, QObject *parent) : QObject(parent) {
     m_curAxis = 0;
     m_curRes = 1;
 
-  //  m_jogCombo = c_jogCombo;
-    m_jogSpd = c_jogSpd;
-    m_jogDmp = c_jogDmp;
-    m_jogDial = c_jogDial;
-    m_homeBut = c_homeBut;
-    m_endBut = c_endBut;
 
     m_net = c_net;
     m_opts = c_opts;
@@ -47,14 +39,7 @@ JogControlManager::JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, Live
     m_wantId = 0;
     m_wantType = 0;
 
-        // populate resolution combo
 
- /*   m_jogCombo->addItem("Rapid", OM_JOGRES_RAPID);
-    m_jogCombo->addItem("Coarse", OM_JOGRES_COARSE);
-    m_jogCombo->addItem("Fine", OM_JOGRES_FINE);
-    m_jogCombo->addItem("X Fine", OM_JOGRES_XFINE);
-    m_jogCombo->setCurrentIndex(0);
-*/
         // create speedcontrolproxy object
     m_scp = new SpeedControlProxy(m_opts);
 
@@ -75,21 +60,8 @@ JogControlManager::JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, Live
 
         // we need to know when a device is changed so that we can modify the jogspeed and jogdamp spin boxes as needed
     connect(m_scp, SIGNAL(motorChangeAccepted(unsigned short)), this, SLOT(_liveDeviceSelected(unsigned short)));
+    connect(m_scp, SIGNAL(motorChangeAccepted(unsigned short)), this, SIGNAL(motorChangeAllowed(unsigned short)));
 
-
-        // listen to jog spinners
-    connect(m_jogSpd, SIGNAL(valueChanged(int)), this, SLOT(_jogMaxSpeedChange(int)));
-    connect(m_jogDmp, SIGNAL(valueChanged(int)), this, SLOT(_jogDampChange(int)));
-
-        // tie the jog dial into the speed control proxy
-    connect(m_jogDial, SIGNAL(sliderMoved(int)), m_scp, SLOT(speedPosChange(int)));
-
-        // tie resolution change to us (we'll pass onto SCP)
-   // connect(m_jogCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(_jogResChange(int)));
-
-        // tie home and end buttons
-    connect(m_homeBut, SIGNAL(clicked()), this, SLOT(_homeClicked()));
-    connect(m_endBut, SIGNAL(clicked()), this, SLOT(_endClicked()));
 
 }
 
@@ -98,11 +70,14 @@ JogControlManager::~JogControlManager() {
     delete m_scp;
 }
 
+void JogControlManager::speedChange(int p_spd) {
+    m_scp->speedPosChange(p_spd);
+}
+
 void JogControlManager::emergencyStop() {
     if( m_scp->curSpeed() != 0.0 )
         m_scp->speedPosChange(0);
 
-    m_jogDial->setValue(0);
 }
 
 void JogControlManager::playStatusChange(bool p_stat) {
@@ -117,66 +92,56 @@ void JogControlManager::playStatusChange(bool p_stat) {
 void JogControlManager::_liveDeviceSelected(unsigned short p_addr) {
 
     qDebug() << "JCM: Received selection for device addr" << p_addr;
-    _prepJogInputs(p_addr);
 
-        // revert to rapid
-   // m_jogCombo->setCurrentIndex(0);
+    m_curAxis = p_addr;
+            // revert to rapid
     m_scp->setResolution(1);
 
 }
 
-double JogControlManager::_stepsToJogSpeed(OMaxisOptions* p_opts, unsigned int p_steps) {
+/** Convert Steps per Second to Speed
+
+  Given a pointer to an OMaxisOptions instance, a given steps per second, and a current resolution,
+  returns a native speed for the motor in distance per second.
+  */
+
+double JogControlManager::stepsToJogSpeed(OMaxisOptions* p_opts, unsigned int p_steps, int p_res) {
     float setMove = 360.0;
 
     if( p_opts->axisType != AXIS_MOVE_ROT )
         setMove = 1.0;
 
-    double spd = ( ((setMove / p_opts->ratio ) * (float) p_steps) * 60.0 ) / m_curRes;
+    double spd = ( ((setMove / p_opts->ratio ) * (float) p_steps) * 60.0 ) / p_res;
 
     return( spd );
 
 }
 
-unsigned int JogControlManager::_jogSpeedToSteps(OMaxisOptions *p_opts, double p_speed) {
+/** Convert Speed to Steps per Second
+
+  Given a pointer an OMaxisOptions instance, a given speed (in native units for the axis), and a current resolution,
+  returns a speed in steps per second.
+  */
+
+unsigned int JogControlManager::jogSpeedToSteps(OMaxisOptions *p_opts, double p_speed, int p_res) {
     float setMove = 360.0;
 
     if( p_opts->axisType != AXIS_MOVE_ROT )
         setMove = 1.0;
 
-    return( ((p_speed / 60.0) / (setMove / p_opts->ratio)) * m_curRes );
+    return( ((p_speed / 60.0) / (setMove / p_opts->ratio)) * p_res );
 }
 
-void JogControlManager::_prepJogInputs(unsigned short p_addr) {
 
-        // update the jog speed limit and damping with the saved
-        // values for the axis
-    OMaxisOptions* opts = m_opts->getOptions(p_addr);
+/** Jog Max Speed Changed Slot
 
-    unsigned int jog_limit = opts->jogLimit;
-    unsigned int   max_jog = opts->maxSteps;
+  Set the maximum jog speed
 
-        // TODO: Add indicator for displaying max speed and damping
+  Does nothing if no axis is selected.
 
-    float curMax  = _stepsToJogSpeed(opts, jog_limit);
-    float dispMax = _stepsToJogSpeed(opts, max_jog);
+  */
 
-    qDebug() << "JCM: Setting current speed max value to" << curMax;
-
-    m_jogSpd->setMinimum(1);
-    m_jogSpd->setMaximum(dispMax);
-    m_jogSpd->setValue(curMax);
-
-    _jogMaxSpeedChange(curMax);
-
-    m_jogDmp->setMinimum(1);
-    m_jogDmp->setMaximum(30);
-    m_jogDmp->setValue((int) opts->jogDamp);
-
-    m_curAxis = p_addr;
-
-}
-
-void JogControlManager::_jogMaxSpeedChange(int p_spd) {
+void JogControlManager::jogMaxSpeedChange(int p_spd) {
     if( m_curAxis == 0 )
         return;
 
@@ -184,7 +149,7 @@ void JogControlManager::_jogMaxSpeedChange(int p_spd) {
 
     OMaxisOptions* opts = m_opts->getOptions(m_curAxis);
 
-    unsigned int steps = _jogSpeedToSteps(opts, p_spd);
+    unsigned int steps = jogSpeedToSteps(opts, p_spd, m_curRes);
 
     double spdPct = (double) steps / (double) opts->maxSteps;
 
@@ -198,7 +163,14 @@ void JogControlManager::_jogMaxSpeedChange(int p_spd) {
 
 }
 
-void JogControlManager::_jogDampChange(int p_damp) {
+/** Jog Damping Value Changed
+
+  Set jog damping amount, in seconds.
+
+  Does nothing if no axis is selected
+  */
+
+void JogControlManager::jogDampChange(int p_damp) {
     if( m_curAxis == 0 )
         return;
 
@@ -212,38 +184,34 @@ void JogControlManager::_jogDampChange(int p_damp) {
     m_opts->setOptions(m_curAxis, opts);
 }
 
-// Handle changes to resolution combobox
-// we do this here so that the SCP doesn't need to know
-// anything about the combobox its self
 
-void JogControlManager::_jogResChange(int p_idx) {
+/** Change Move Resolution Slot */
 
-    // Temporarily disabled resolution changes from jog window
-    // perhaps to be restored in the future, keeping code for now
+void JogControlManager::jogResChange(int p_ms) {
 
-    Q_UNUSED(p_idx);
+    m_scp->setResolution(p_ms);
+    m_curRes = p_ms;
 
-   // unsigned int ms = m_jogCombo->itemData(p_idx).toUInt();
-    unsigned int ms = 1; //m_jogCombo->itemData(p_idx).toUInt();
+        // update max jog speed display - TODO: this needs to be
+        // moved upstream, to the JogControlPanel, saving for that move
+        // later, if code ever needed.
 
-    m_scp->setResolution(ms);
+    /* OMaxisOptions* opts = m_opts->getOptions(m_curAxis);
 
-    OMaxisOptions* opts = m_opts->getOptions(m_curAxis);
+    unsigned int ms = m_jogCombo->itemData(p_idx).toUInt();
 
-    m_curRes = ms;
-
-        // update max jog speed display
-
-    double newDisp = _stepsToJogSpeed(opts, opts->jogLimit);
-    double dispMax = _stepsToJogSpeed(opts, opts->maxSteps);
+    double newDisp = stepsToJogSpeed(opts, opts->jogLimit, m_curRes);
+    double dispMax = stepsToJogSpeed(opts, opts->maxSteps, m_curRes);
 
     m_jogSpd->setMaximum(dispMax);
-    m_jogSpd->setValue(newDisp);
+    m_jogSpd->setValue(newDisp);*/
 
 }
 
 
-void JogControlManager::_homeClicked() {
+/** Set Current Axis Position as Home */
+
+void JogControlManager::setHome() {
     if( m_curAxis == 0 )
         return;
 
@@ -263,7 +231,9 @@ void JogControlManager::_homeClicked() {
     omaxis->setHome();
 }
 
-void JogControlManager::_endClicked() {
+/** Set Current Axis Position as End */
+
+void JogControlManager::setEnd() {
     if( m_curAxis == 0 )
         return;
 

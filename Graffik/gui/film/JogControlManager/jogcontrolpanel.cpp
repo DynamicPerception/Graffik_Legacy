@@ -29,12 +29,13 @@
 JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, FilmParameters *c_params, QWidget *parent) : QWidget(parent), ui(new Ui::JogControlPanel) {
     ui->setupUi(this);
 
-    m_net = c_net;
-    m_opts = c_opts;
-    m_params = c_params;
+    m_net     = c_net;
+    m_opts    = c_opts;
+    m_params  = c_params;
+    m_curMode = false;
 
     m_ldModel = new LiveDeviceModel(m_net, this);
-    m_jcm = new JogControlManager(m_net, m_opts, m_ldModel, ui->jogDial, ui->jogSpeedSlider, ui->jogDampSlider, ui->jogHomeButton, ui->jogEndButton, this);
+    m_jcm     = new JogControlManager(m_net, m_opts, m_ldModel, this);
 
         // connect the device list display to the live device model
     ui->devButtonList->setModel(m_ldModel);
@@ -42,14 +43,37 @@ JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, FilmPara
         // pass a click on to the model via signal
     connect(ui->devButtonList, SIGNAL(clicked(const QModelIndex &)), m_ldModel, SLOT(deviceClicked(const QModelIndex &)));
 
-    connect(ui->stopButton, SIGNAL(clicked()), this, SIGNAL(emergencyStop()));
+        // reflect the eStop signal here, so it can be captured upstream as well
+    connect(ui->stopButton, SIGNAL(clicked()), this, SLOT(_eStop()));
     connect(this, SIGNAL(emergencyStop()), m_jcm, SLOT(emergencyStop()));
 
+    connect(ui->modeButton, SIGNAL(clicked()), this, SLOT(_modeClicked()));
+    connect(ui->jogDial, SIGNAL(mouseReleased()), this, SLOT(_dialReleased()));
+
+        // listen to important signals from the JCM
     connect(m_jcm, SIGNAL(motorChangeDenied(unsigned short)), this, SLOT(_jogMotorChangeDenied(unsigned short)));
+    connect(m_jcm, SIGNAL(motorChangeAllowed(unsigned short)), this, SLOT(_jogMotorChangeAllowed(unsigned short)));
     connect(m_jcm, SIGNAL(endPosition(unsigned short,long)), this, SLOT(_endSet(unsigned short,long)));
 
-        // forward this signal, so that we can inform the JCM when someone smashes the stop button!
+        // forward this signal, so that we can inform the JCM when someone smashes the stop or play button!
     connect(this, SIGNAL(playStatusChange(bool)), m_jcm, SLOT(playStatusChange(bool)));
+
+        // forward ui input signals to the JCM
+    connect(ui->jogHomeButton, SIGNAL(clicked()), m_jcm, SLOT(setHome()));
+    connect(ui->jogEndButton, SIGNAL(clicked()), m_jcm, SLOT(setEnd()));
+    connect(ui->jogDampSlider, SIGNAL(valueChanged(int)), m_jcm, SLOT(jogDampChange(int)));
+    connect(ui->jogSpeedSlider, SIGNAL(valueChanged(int)), m_jcm, SLOT(jogMaxSpeedChange(int)));
+    connect(ui->jogDial, SIGNAL(valueChanged(int)), m_jcm, SLOT(speedChange(int)));
+
+
+    // OSX has issues laying out these buttons w/o overlap,
+    // this is a work-around
+#ifdef Q_WS_MAC
+    ui->stopButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+    ui->jogHomeButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+    ui->jogEndButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+    ui->modeButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+#endif
 
     // theming
 
@@ -67,11 +91,74 @@ JogControlPanel::~JogControlPanel() {
 }
 
 
+void JogControlPanel::_prepJogInputs(unsigned short p_addr) {
+
+        // update the jog speed limit and damping with the saved
+        // values for the axis
+    OMaxisOptions* opts = m_opts->getOptions(p_addr);
+
+    unsigned int jog_limit = opts->jogLimit;
+    unsigned int   max_jog = opts->maxSteps;
+
+        // TODO: Add indicator for displaying max speed and damping
+
+    float curMax  = m_jcm->stepsToJogSpeed(opts, jog_limit);
+    float dispMax = m_jcm->stepsToJogSpeed(opts, max_jog);
+
+    qDebug() << "JCP: Setting current speed max value to" << curMax;
+
+    ui->jogSpeedSlider->setMinimum(1);
+    ui->jogSpeedSlider->setMaximum(dispMax);
+    ui->jogSpeedSlider->setValue(curMax);
+
+    m_jcm->jogMaxSpeedChange(curMax);
+
+    ui->jogDampSlider->setMinimum(1);
+    ui->jogDampSlider->setMaximum(JCP_MAX_DAMP);
+    ui->jogDampSlider->setValue((int) opts->jogDamp);
+
+    m_jcm->jogResChange(1);
+
+}
+
+void JogControlPanel::_modeClicked() {
+
+    if( m_curMode == false )
+        ui->modeButton->setState(1);
+    else
+        ui->modeButton->setState(0);
+
+
+    m_curMode = ! m_curMode;
+
+    // force a re-draw of the button's style
+
+    ui->modeButton->style()->unpolish(ui->modeButton);
+    ui->modeButton->style()->polish(ui->modeButton);
+    ui->modeButton->update();
+}
+
+void JogControlPanel::_dialReleased() {
+    if( m_curMode == true ) {
+        ui->jogDial->setValue(0);
+        m_jcm->speedChange(0);
+    }
+}
+
+void JogControlPanel::_eStop() {
+    ui->jogDial->setValue(0);
+    emit emergencyStop();
+}
+
 void JogControlPanel::_themeChanged() {
     setStyleSheet(SingleThemer::getStyleSheet("jog"));
     style()->unpolish(this);
     style()->polish(this);
     update();
+}
+
+void JogControlPanel::_jogMotorChangeAllowed(unsigned short p_addr) {
+    _prepJogInputs(p_addr);
 }
 
 void JogControlPanel::_jogMotorChangeDenied(unsigned short p_oldAddr) {

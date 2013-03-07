@@ -4,41 +4,70 @@
     qproperty-maxAngle: 140;
 }
 
-QPushButton#jogHomeButton {
-    border-image: url(themes/DP-Blue/img/set-home-normal.png);
-     border: 0px transparent;
-    padding:5px;
-    margin:5px;
-}
-
-QPushButton#jogEndButton {
-    border-image: url(themes/DP-Blue/img/set-end-normal.png);
-     border: 0px transparent;
-    padding:5px;
-    margin:5px;
-}
-
-QPushButton#jogHomeButton:pressed {
-    border-image: url(themes/DP-Blue/img/set-home-sel.png);
-}
-
-QPushButton#jogEndButton:pressed {
-    border-image: url(themes/DP-Blue/img/set-end-sel.png);
-}
-
-QPushButton#stopButton {
-    border-image: url(themes/DP-Blue/img/estop.png);
+    /* Sticky Mode */
+#modeButton {
+    border-image: url(themes/DP-Blue/img/elastic-gr-normal.png);
     border: 0px transparent;
     padding: 0px;
     margin: 0px;
-    max-height: 50px;
-    min-height: 50px;
-    max-width: 50px;
-    min-width: 50px;
+    max-height: 38px;
+    min-height: 38px;
+    max-width: 54px;
+    min-width: 54px;
+
+
 }
 
-QPushButton#stopButton:pressed {
-   border-image: url(themes/DP-Blue/img/estop-pressed.png);
+    /* Elastic Mode */
+#modeButton[state="1"] {
+    border-image: url(themes/DP-Blue/img/elastic-gr-pressed.png);
+}
+
+#jogHomeButton {
+    border-image: url(themes/DP-Blue/img/home-gr-normal.png);
+     border: 0px transparent;
+     padding: 0px;
+     margin: 0px;
+     max-height: 38px;
+     min-height: 38px;
+     max-width: 54px;
+     min-width: 54px;
+
+}
+
+#jogHomeButton:pressed {
+    border-image: url(themes/DP-Blue/img/home-gr-pressed.png);
+}
+
+#jogEndButton {
+    border-image: url(themes/DP-Blue/img/end-gr-normal.png);
+     border: 0px transparent;
+     padding: 0px;
+     margin: 0px;
+     max-height: 38px;
+     min-height: 38px;
+     max-width: 54px;
+     min-width: 54px;
+}
+
+#jogEndButton:pressed {
+    border-image: url(themes/DP-Blue/img/end-gr-pressed.png);
+}
+
+#stopButton {
+    border-image: url(themes/DP-Blue/img/stop-gr-normal.png);
+    border: 0px transparent;
+    padding: 0px;
+    margin: 0px;
+    max-height: 38px;
+    min-height: 38px;
+    max-width: 54px;
+    min-width: 54px;
+
+}
+
+#stopButton:pressed {
+   border-image: url(themes/DP-Blue/img/stop-gr-pressed.png);
 }
 
 #jogButFrame, #jogSliderFrame {
@@ -47,12 +76,20 @@ QPushButton#stopButton:pressed {
     border-top: 1px solid;
     border-bottom: 0px;
     border-color: rgb(125,125,125);
-    background-color:qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:0.636, stop:0 rgba(241, 241, 241, 255), stop:1 rgba(214, 214, 214, 255));
+    padding: 0px;
+}
+
+#jogButFrame {
+
+    min-height: 38px;
+    max-height: 38px;
+    background-color:qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:0.636, stop:0 rgba(157, 157, 157, 255), stop:1 rgba(133, 133, 133, 255));
 }
 
 #jogSliderFrame {
     padding-left: 10px;
     padding-right:10px;
+    background-color:qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:0.636, stop:0 rgba(241, 241, 241, 255), stop:1 rgba(214, 214, 214, 255));
 }
 
 #jogDampSlider::groove:horizontal, #jogSpeedSlider::groove:horizontal {
@@ -86,6 +123,7 @@ QPushButton#stopButton:pressed {
 #devButtonlist {
     border-radius:3px;
     border: 1px solid #000000;
+    padding-top: 5px;
 }
 
 #devButtonList::item {

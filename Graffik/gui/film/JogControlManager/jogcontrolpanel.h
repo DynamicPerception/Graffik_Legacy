@@ -25,6 +25,7 @@
 #define JOGCONTROLPANEL_H
 
 #include <QWidget>
+#include <QString>
 
 #include "jogcontrolmanager.h"
 #include "livedevicemodel.h"
@@ -34,6 +35,9 @@
 
 #include "film/FilmParameters/filmparameters.h"
 #include "MoCoBus/omnetwork.h"
+
+
+const int JCP_MAX_DAMP  = 30;
 
 
 namespace Ui {
@@ -66,6 +70,10 @@ private slots:
     void _endSet(unsigned short p_addr, long p_dist);
     void _jogMotorChangeDenied(unsigned short p_oldAddr);
     void _themeChanged();
+    void _jogMotorChangeAllowed(unsigned short p_addr);
+    void _modeClicked();
+    void _eStop();
+    void _dialReleased();
 
 private:
     Ui::JogControlPanel *ui;
@@ -75,6 +83,10 @@ private:
     FilmParameters* m_params;
     JogControlManager* m_jcm;
     LiveDeviceModel* m_ldModel;
+
+    bool m_curMode;
+
+    void _prepJogInputs(unsigned short p_addr);
 };
 
 #endif // JOGCONTROLPANEL_H

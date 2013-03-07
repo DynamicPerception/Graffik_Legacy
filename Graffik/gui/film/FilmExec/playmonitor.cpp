@@ -153,6 +153,8 @@ void PlayMonitor::_cmdReceived(int p_id, OMCommandBuffer *p_cmd) {
 
     if( m_gotCount > 1 ) {
 
+        emit playStatus(m_runStat, m_runTime);
+
         if( m_checkOnce == true ) {
                 // if the checkonce flag is set...
             m_checkOnce = false;
@@ -163,9 +165,8 @@ void PlayMonitor::_cmdReceived(int p_id, OMCommandBuffer *p_cmd) {
                 return;
             }
 
-        }
+        } // end if( m_checkOnce
 
-        emit playStatus(m_runStat, m_runTime);
     }
 
 

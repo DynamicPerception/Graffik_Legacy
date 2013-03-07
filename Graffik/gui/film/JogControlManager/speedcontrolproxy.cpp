@@ -37,6 +37,7 @@ SpeedControlProxy::SpeedControlProxy(AxisOptions *c_opts) : QObject() {
     m_devSelected  = false;
     m_timerStarted = false;
     m_timer        = 0;
+    m_curRes       = 1;
 }
 
 SpeedControlProxy::~SpeedControlProxy() {
@@ -145,7 +146,7 @@ void SpeedControlProxy::_timerFire() {
    // qDebug() << "SCP: Timer Fired";
 
         // do nothing if already at target speed
-    if( m_nextSpd == m_curSpd || m_curPeriod >= m_dampPeriods )
+    if( m_nextSpd == m_curSpd )
         return;
 
     qDebug() << "SCP: DAMP: " << m_nextSpd << m_curSpd << QThread::currentThreadId();
@@ -182,6 +183,7 @@ void SpeedControlProxy::_timerFire() {
         if( m_curSpd == 0.0 ) {
                 // we are currently stopped, so make sure
                 // we get everything moving first
+            setResolution(m_curRes);
             m_curDev->motorEnable();
             m_curDev->continuous(true);
                 // set the speed before starting a move, so that we don't
@@ -279,6 +281,7 @@ void SpeedControlProxy::setResolution(unsigned int p_ms) {
     }
 
     m_curDev->microSteps(p_ms);
+    m_curRes = p_ms;
 
 }
 

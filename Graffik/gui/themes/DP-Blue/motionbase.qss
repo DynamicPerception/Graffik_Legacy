@@ -61,6 +61,8 @@
     min-height: 12px;
 }
 
+    /* Camera is enabled State */
+
 #masterButton[state="1"] {
     border-image: url(themes/DP-Blue/img/cam-sm-en.png);
 }

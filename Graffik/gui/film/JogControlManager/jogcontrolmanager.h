@@ -25,11 +25,6 @@
 #define JOGCONTROLMANAGER_H
 
 #include <QObject>
-#include <QDoubleSpinBox>
-#include <QDial>
-#include <QComboBox>
-#include <QPushButton>
-#include <QSlider>
 
 #include "speedcontrolproxy.h"
 #include "livedevicemodel.h"
@@ -56,40 +51,41 @@ class JogControlManager : public QObject
 {
     Q_OBJECT
 public:
-    JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, LiveDeviceModel* c_ldm, QDial* c_jogDial, QSlider* c_jogSpd, QSlider* c_jogDmp, QPushButton* c_homeBut, QPushButton* c_endBut, QObject *parent = 0);
+    JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, LiveDeviceModel* c_ldm, QObject *parent);
     ~JogControlManager();
+
+    static double stepsToJogSpeed(OMaxisOptions* p_opts, unsigned int p_steps, int p_res = 1);
+    static unsigned int jogSpeedToSteps(OMaxisOptions* p_opts, double p_speed, int p_res = 1);
 
 signals:
         // if the SCP denies a chaneg to motor (usually because a damp is still in progress)
         // this signal will be emitted, indicating which motor is -still- selected
     void motorChangeDenied(unsigned short p_keepaddr);
+        // Emitted when a motor change request is accepted by the SCP
+    void motorChangeAllowed(unsigned short p_addr);
         // end position determined via button click
     void endPosition(unsigned short p_addr, long p_end);
+
+    void speedValueChanged(int p_spd);
 
 public slots:
     void playStatusChange(bool p_stat);
     void emergencyStop();
+    void jogMaxSpeedChange(int p_spd);
+    void jogDampChange(int p_damp);
+    void jogResChange(int p_ms);
+    void setHome();
+    void setEnd();
+    void speedChange(int p_spd);
 
 private slots:
     void _liveDeviceSelected(unsigned short p_addr);
-    void _jogMaxSpeedChange(int p_spd);
-    void _jogDampChange(int p_damp);
-    void _jogResChange(int p_idx);
-    void _homeClicked();
-    void _endClicked();
 
     void _cmdComplete(int p_id, OMCommandBuffer* p_cmd);
 
 private:
     unsigned short m_curAxis;
     unsigned int m_curRes;
-
-    QSlider* m_jogSpd;
-    QSlider* m_jogDmp;
-    QDial* m_jogDial;
-    QComboBox* m_jogCombo;
-    QPushButton* m_homeBut;
-    QPushButton* m_endBut;
 
     OMNetwork* m_net;
     AxisOptions* m_opts;
@@ -101,8 +97,6 @@ private:
 
     static const int s_typeEnd = 1;
 
-    double _stepsToJogSpeed(OMaxisOptions* p_opts, unsigned int p_steps);
-    unsigned int _jogSpeedToSteps(OMaxisOptions* p_opts, double p_speed);
     void _prepJogInputs(unsigned short p_addr);
 
 };

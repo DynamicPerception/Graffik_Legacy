@@ -13,7 +13,7 @@
   <property name="minimumSize">
    <size>
     <width>200</width>
-    <height>350</height>
+    <height>0</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -210,7 +210,7 @@
        <property name="maximumSize">
         <size>
          <width>16777215</width>
-         <height>81</height>
+         <height>16777215</height>
         </size>
        </property>
        <property name="frameShape">
@@ -221,11 +221,24 @@
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <property name="spacing">
-         <number>5</number>
+         <number>0</number>
         </property>
         <property name="margin">
          <number>0</number>
         </property>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
         <item>
          <widget class="QPushButton" name="jogHomeButton">
           <property name="sizePolicy">
@@ -236,20 +249,20 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>100</width>
-            <height>25</height>
+            <width>0</width>
+            <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>135</width>
-            <height>61</height>
+            <width>16777215</width>
+            <height>16777215</height>
            </size>
           </property>
           <property name="baseSize">
            <size>
-            <width>130</width>
-            <height>56</height>
+            <width>0</width>
+            <height>0</height>
            </size>
           </property>
           <property name="toolTip">
@@ -273,20 +286,20 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>100</width>
-            <height>25</height>
+            <width>0</width>
+            <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>135</width>
-            <height>61</height>
+            <width>16777215</width>
+            <height>16777215</height>
            </size>
           </property>
           <property name="baseSize">
            <size>
-            <width>130</width>
-            <height>56</height>
+            <width>0</width>
+            <height>0</height>
            </size>
           </property>
           <property name="toolTip">
@@ -298,11 +311,37 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="stopButton">
+         <widget class="StatefulButton" name="modeButton">
+          <property name="toolTip">
+           <string>Enable Elastic Dial</string>
+          </property>
           <property name="text">
            <string/>
           </property>
          </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="stopButton">
+          <property name="toolTip">
+           <string>Force An Emergency Stop</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </widget>
@@ -471,29 +510,13 @@
        <zorder>jogDampLabel</zorder>
       </widget>
      </item>
-     <item row="4" column="2" rowspan="2">
-      <spacer name="verticalSpacer_5">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>0</width>
-         <height>200</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
      <item row="6" column="2">
       <spacer name="verticalSpacer_6">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
        <property name="sizeType">
-        <enum>QSizePolicy::Maximum</enum>
+        <enum>QSizePolicy::Expanding</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
@@ -524,6 +547,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>StatefulButton</class>
+   <extends>QPushButton</extends>
+   <header>core/Widgets/statefulbutton.h</header>
+  </customwidget>
   <customwidget>
    <class>SkinnedDial</class>
    <extends>QDial</extends>

@@ -100,6 +100,7 @@ private:
 
     unsigned int m_dampPeriods;
     unsigned int m_curPeriod;
+    unsigned int m_curRes;
 
     QTimer* m_timer;
 

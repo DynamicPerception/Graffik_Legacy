@@ -131,14 +131,19 @@ public:
     float maxAngle();
     void setMaxAngle(float p_angle);
 
+
 protected:
 
     void paintEvent(QPaintEvent *pe);
 
 signals:
     
+    void mouseReleased();
+
 public slots:
     
+    void mouseReleaseEvent(QMouseEvent *p_me);
+
 private:
 
     QPixmap* m_background;
