@@ -62,6 +62,9 @@ JogControlManager::JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, Live
     connect(m_scp, SIGNAL(motorChangeAccepted(unsigned short)), this, SLOT(_liveDeviceSelected(unsigned short)));
     connect(m_scp, SIGNAL(motorChangeAccepted(unsigned short)), this, SIGNAL(motorChangeAllowed(unsigned short)));
 
+        // reflect signals out from SCP
+    connect(m_scp, SIGNAL(motorStarted(unsigned short)), this, SIGNAL(motorStarted(unsigned short)));
+    connect(m_scp, SIGNAL(motorStopped(unsigned short)), this, SIGNAL(motorStopped(unsigned short)));
 
 }
 
@@ -301,3 +304,4 @@ void JogControlManager::_cmdComplete(int p_id, OMCommandBuffer *p_cmd) {
         emit endPosition(m_curAxis, distance);
 
 }
+

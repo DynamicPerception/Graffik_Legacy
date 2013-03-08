@@ -28,6 +28,7 @@
 #include <QPixmap>
 #include <QPainter>
 #include <QPaintEvent>
+#include <QResizeEvent>
 #include <QTransform>
 
 #include "core/Utilities/basiceventfilter.h"
@@ -143,6 +144,7 @@ signals:
 public slots:
     
     void mouseReleaseEvent(QMouseEvent *p_me);
+    void resizeEvent(QResizeEvent *re);
 
 private:
 

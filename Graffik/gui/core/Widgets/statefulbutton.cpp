@@ -1,7 +1,6 @@
 #include "statefulbutton.h"
 
-StatefulButton::StatefulButton(QWidget *parent) : QPushButton(parent)
-{
+StatefulButton::StatefulButton(QWidget *parent) : QPushButton(parent) {
     m_state = 0;
 }
 

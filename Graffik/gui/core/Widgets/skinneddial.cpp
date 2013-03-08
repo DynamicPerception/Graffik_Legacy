@@ -110,6 +110,21 @@ void SkinnedDial::mouseReleaseEvent(QMouseEvent *p_me) {
     emit mouseReleased();
 }
 
+/** Overloaded resizeEvent
+
+  Causes the cache to result in a false hit whenever resized.
+
+  */
+
+void SkinnedDial::resizeEvent(QResizeEvent *re) {
+    Q_UNUSED(re);
+
+    QDial::resizeEvent(re);
+
+    m_cacheHeight = 0;
+    m_cacheWidth  = 0;
+}
+
 /** Overloaded paintEvent
   */
 
@@ -125,6 +140,8 @@ void SkinnedDial::paintEvent(QPaintEvent *pe) {
 
     int height = eventRect.height();
     int  width = eventRect.width();
+
+    qDebug() << "SD: Size" << height << width << m_background->height() << m_background->width();
 
         // only perform scaling again if our event rectangle has changed
     if( height != m_cacheHeight || width != m_cacheWidth ) {

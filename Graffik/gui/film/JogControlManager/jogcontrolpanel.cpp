@@ -33,6 +33,7 @@ JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, FilmPara
     m_opts    = c_opts;
     m_params  = c_params;
     m_curMode = false;
+    m_curAddr = 0;
 
     m_ldModel = new LiveDeviceModel(m_net, this);
     m_jcm     = new JogControlManager(m_net, m_opts, m_ldModel, this);
@@ -54,6 +55,8 @@ JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, FilmPara
     connect(m_jcm, SIGNAL(motorChangeDenied(unsigned short)), this, SLOT(_jogMotorChangeDenied(unsigned short)));
     connect(m_jcm, SIGNAL(motorChangeAllowed(unsigned short)), this, SLOT(_jogMotorChangeAllowed(unsigned short)));
     connect(m_jcm, SIGNAL(endPosition(unsigned short,long)), this, SLOT(_endSet(unsigned short,long)));
+    connect(m_jcm, SIGNAL(motorStarted(unsigned short)), this, SLOT(_motorStarted(unsigned short)));
+    connect(m_jcm, SIGNAL(motorStopped(unsigned short)), this, SLOT(_motorStopped(unsigned short)));
 
         // forward this signal, so that we can inform the JCM when someone smashes the stop or play button!
     connect(this, SIGNAL(playStatusChange(bool)), m_jcm, SLOT(playStatusChange(bool)));
@@ -65,6 +68,7 @@ JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, FilmPara
     connect(ui->jogSpeedSlider, SIGNAL(valueChanged(int)), m_jcm, SLOT(jogMaxSpeedChange(int)));
     connect(ui->jogDial, SIGNAL(valueChanged(int)), m_jcm, SLOT(speedChange(int)));
 
+    connect(ui->jogHomeButton, SIGNAL(clicked()), this, SLOT(_homeSet()));
 
     // OSX has issues laying out these buttons w/o overlap,
     // this is a work-around
@@ -91,7 +95,23 @@ JogControlPanel::~JogControlPanel() {
 }
 
 
+void JogControlPanel::_motorStarted(unsigned short p_addr) {
+    Q_UNUSED(p_addr);
+
+    ui->ledMovingLabel->setState(1);
+    _rePolish(ui->ledMovingLabel);
+}
+
+void JogControlPanel::_motorStopped(unsigned short p_addr) {
+    Q_UNUSED(p_addr);
+
+    ui->ledMovingLabel->setState(0);
+    _rePolish(ui->ledMovingLabel);
+}
+
 void JogControlPanel::_prepJogInputs(unsigned short p_addr) {
+
+    m_curAddr = p_addr;
 
         // update the jog speed limit and damping with the saved
         // values for the axis
@@ -119,6 +139,22 @@ void JogControlPanel::_prepJogInputs(unsigned short p_addr) {
 
     m_jcm->jogResChange(1);
 
+        // set home and end led states
+
+        // pre-populate list with 'off' if not already populated
+    if( ! m_ledStates.contains(p_addr) ) {
+        QList<bool> list;
+        list << false << false;
+
+        m_ledStates.insert(p_addr, list);
+    }
+
+    ui->ledHomeLabel->setState(m_ledStates.value(p_addr).at(0));
+    ui->ledEndLabel->setState(m_ledStates.value(p_addr).at(1));
+
+    _rePolish(ui->ledHomeLabel);
+    _rePolish(ui->ledEndLabel);
+
 }
 
 void JogControlPanel::_modeClicked() {
@@ -133,9 +169,7 @@ void JogControlPanel::_modeClicked() {
 
     // force a re-draw of the button's style
 
-    ui->modeButton->style()->unpolish(ui->modeButton);
-    ui->modeButton->style()->polish(ui->modeButton);
-    ui->modeButton->update();
+    _rePolish(ui->modeButton);
 }
 
 void JogControlPanel::_dialReleased() {
@@ -174,6 +208,19 @@ void JogControlPanel::_jogMotorChangeDenied(unsigned short p_oldAddr) {
     ui->devButtonList->selectionModel()->select(sel, QItemSelectionModel::SelectCurrent);
 }
 
+void JogControlPanel::_homeSet() {
+    // record that home has been set for this axis
+    // (we know that the list was populated by the
+    // _prepJogInputs() method
+
+    QList<bool> list = m_ledStates.value(m_curAddr);
+    list.replace(0, true);
+    m_ledStates.insert(m_curAddr, list);
+
+    ui->ledHomeLabel->setState(1);
+    _rePolish(ui->ledHomeLabel);
+
+}
 
 void JogControlPanel::_endSet(unsigned short p_addr, long p_dist) {
     qDebug() << "JCP: Got EndSet Signal" << p_addr << p_dist;
@@ -193,5 +240,22 @@ void JogControlPanel::_endSet(unsigned short p_addr, long p_dist) {
 
     m_params->releaseParams();
 
+        // record that end has been set for this axis
+        // (we know that the list was populated by the
+        // _prepJogInputs() method
+
+    QList<bool> list = m_ledStates.value(p_addr);
+    list.replace(1, true);
+    m_ledStates.insert(p_addr, list);
+
+    ui->ledEndLabel->setState(1);
+    _rePolish(ui->ledEndLabel);
+
     qDebug() << "JCP: End Setting Completed";
+}
+
+void JogControlPanel::_rePolish(QWidget *m_widget) {
+    m_widget->style()->unpolish(m_widget);
+    m_widget->style()->polish(m_widget);
+    m_widget->update();
 }

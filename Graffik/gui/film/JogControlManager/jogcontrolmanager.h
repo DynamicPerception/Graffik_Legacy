@@ -68,6 +68,9 @@ signals:
 
     void speedValueChanged(int p_spd);
 
+    void motorStarted(unsigned short p_addr);
+    void motorStopped(unsigned short p_addr);
+
 public slots:
     void playStatusChange(bool p_stat);
     void emergencyStop();
@@ -96,9 +99,6 @@ private:
     int m_wantType;
 
     static const int s_typeEnd = 1;
-
-    void _prepJogInputs(unsigned short p_addr);
-
 };
 
 #endif // JOGCONTROLMANAGER_H

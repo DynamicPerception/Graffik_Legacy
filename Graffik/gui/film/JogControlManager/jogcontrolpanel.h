@@ -68,12 +68,15 @@ signals:
 
 private slots:
     void _endSet(unsigned short p_addr, long p_dist);
+    void _homeSet();
     void _jogMotorChangeDenied(unsigned short p_oldAddr);
     void _themeChanged();
     void _jogMotorChangeAllowed(unsigned short p_addr);
     void _modeClicked();
     void _eStop();
     void _dialReleased();
+    void _motorStarted(unsigned short p_addr);
+    void _motorStopped(unsigned short p_addr);
 
 private:
     Ui::JogControlPanel *ui;
@@ -85,8 +88,11 @@ private:
     LiveDeviceModel* m_ldModel;
 
     bool m_curMode;
+    unsigned short m_curAddr;
+    QHash<unsigned short, QList<bool> > m_ledStates;
 
     void _prepJogInputs(unsigned short p_addr);
+    void _rePolish(QWidget* m_widget);
 };
 
 #endif // JOGCONTROLPANEL_H

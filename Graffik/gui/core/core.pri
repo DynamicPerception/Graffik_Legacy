@@ -37,7 +37,8 @@ HEADERS                 +=  \
     core/Utilities/singleton.h \
     core/Themer/singlethemer.h \
     core/Dialogs/welcomedialog.h \
-    core/Utilities/basiceventfilter.h
+    core/Utilities/basiceventfilter.h \
+    core/Widgets/statefullabel.h
 
 			   
 SOURCES                 +=  \
@@ -69,7 +70,8 @@ SOURCES                 +=  \
     core/Themer/themer.cpp \
     core/Themer/singlethemer.cpp \
     core/Dialogs/welcomedialog.cpp \
-    core/Utilities/basiceventfilter.cpp
+    core/Utilities/basiceventfilter.cpp \
+    core/Widgets/statefullabel.cpp
 
 			   
 FORMS 			+=  \
