@@ -10,6 +10,7 @@ TEMPLATE = app
 UI_DIR = .ui
 
 CONFIG += ordered
+CONFIG += help
 
 INCLUDEPATH  += ../libs/qextserialport/src/ \
 		../libs/OpenMoCo \
@@ -43,7 +44,13 @@ macx {
 
 
 
-LIBS += -lopenmoco
+    LIBS += ../libs/OpenMoCo/libopenmoco.a
+    LIBS += -L../libs/qextserialport/src/build -lqextserialport
+
+
+
+
+#LIBS += -lopenmoco
 
  # link to serialport lib, add icons
 
@@ -58,6 +65,7 @@ macx {
         # set icon
     ICON = graffik.icns
 }
+
 
 SOURCES += main.cpp\
 	   mainwindow.cpp 
