@@ -607,18 +607,23 @@ QList<unsigned short> FilmWindow::_checkSMSMovements(OMfilmParams *p_params) {
 
         OMfilmAxisParams* axParms = axes.value(addr);
 
-        unsigned long    moveDist = axParms->endDist;
+                 long    moveDist = axParms->endDist;
         unsigned long   startShot = axParms->startTm / interval;
         unsigned long     endShot = axParms->endTm > 0 ? axParms->endTm / interval : filmLength / interval;
         unsigned long travelShots = endShot - startShot;
         unsigned long    maxSpeed = m_opts->getOptions(addr)->maxSteps;
         float             maxMove = m_areaBlocks.value(addr)->area()->getPathPainter()->getMaxSpeed();
 
+
             // set move as not sane if it can't be fulfilled
 
         m_opts->removeError(addr, AxisErrors::ErrorNoInterval);
         m_opts->removeError(addr, AxisErrors::ErrorNoTime);
         m_opts->removeError(addr, AxisErrors::ErrorIntervalSpeed);
+
+            // normalize number to positive integer
+        if( moveDist < 0)
+            moveDist *= -1;
 
         if( moveDist > 0 ) {
 

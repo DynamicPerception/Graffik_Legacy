@@ -372,10 +372,10 @@ void MotionArea::paintEvent(QPaintEvent *e) {
     if( m_pstat == false ) {
         if( m_path->hasChanged() ) {
 
-            m_mvStart.setRect(m_path->getStartPx() - 5, baseline  - 5, 10, 10);
-            m_mvEnd.setRect(m_path->getEndPx() - 5, baseline - 5, 10, 10);
-            m_acEnd.setRect(m_path->getAcEndPx() - 5, m_path->getMaxHeight() - 5, 10, 10);
-            m_dcStart.setRect(m_path->getDcStartPx() - 5, m_path->getMaxHeight() - 5, 10, 10);
+            m_mvStart.setRect(m_path->getStartPx() - 10, baseline  - 10, 20, 20);
+            m_mvEnd.setRect(m_path->getEndPx() - 10, baseline - 10, 20, 20);
+            m_acEnd.setRect(m_path->getAcEndPx() - 10, m_path->getMaxHeight() - 10, 20, 20);
+            m_dcStart.setRect(m_path->getDcStartPx() - 10, m_path->getMaxHeight() - 10, 20, 20);
         }
 
          // draw drag points for start and end time
