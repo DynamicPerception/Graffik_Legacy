@@ -473,11 +473,16 @@ void FilmExec::ffwd() {
                 // only do this if moving
             qDebug() << "FEx: Querying Device Position: " << addr;
 
+                // set maximum step speed
+            OMaxisOptions*    aopts = m_opts->getOptions(addr);
+            axis->maxStepSpeed(aopts->maxSteps);
+
+                // get distance fro home
             int cmdId = axis->getHomeDist();
             m_net->getManager()->hold(cmdId);
             m_cmds.insert(cmdId, axis);
 
-                // record that we sent axes home
+                // record that we want axis to go to a specific position
             m_axesHome.insert(axis, moveTo);
         }
 
@@ -540,9 +545,14 @@ void FilmExec::sendAxesTo(QHash<unsigned short, long> p_positions) {
 
         if( moveTo != 0 && ! mute ) {
 
-
                 // only do this if moving
             qDebug() << "FEx: Querying Device Position: " << addr;
+
+                // set maximum step speed
+            OMaxisOptions*    aopts = m_opts->getOptions(addr);
+            axis->maxStepSpeed(aopts->maxSteps);
+
+                // request home distance
 
             int cmdId = axis->getHomeDist();
             m_net->getManager()->hold(cmdId);
@@ -685,16 +695,24 @@ unsigned long FilmExec::interval(OMfilmParams* p_film) {
 
 void FilmExec::_sendHome(OMfilmParams *p_film, OMAxis* p_axis) {
     qDebug() << "FEx: Sending node home" << p_axis->address();
-    OMfilmAxisParams* parms = p_film->axes.value(p_axis->address());
 
+    OMfilmAxisParams* parms = p_film->axes.value(p_axis->address());
+    OMaxisOptions*    aopts = m_opts->getOptions(p_axis->address());
+
+    p_axis->maxStepSpeed(aopts->maxSteps);
     p_axis->motorEnable();
     p_axis->easing(parms->easing);
     p_axis->microSteps(1);
     p_axis->home();
+
 }
 
 void FilmExec::_sendDistance(OMAxis *p_axis, unsigned long p_distance, bool p_dir) {
     qDebug() << "FEx: Sending node to position" << p_axis->address() << p_distance << p_dir;
+
+    OMaxisOptions*    aopts = m_opts->getOptions(p_axis->address());
+
+    p_axis->maxStepSpeed(aopts->maxSteps);
     p_axis->motorEnable();
     p_axis->microSteps(1);
     p_axis->move(p_dir, p_distance);
@@ -799,6 +817,7 @@ void FilmExec::_sendNodeMovements(OMfilmParams *p_film, OMAxis *p_axis) {
 
     qDebug() << "FE: Motor Params: " << which << dir << start << end << arrive << accel << decel << aopts->backlash;
 
+    p_axis->maxStepSpeed(aopts->maxSteps);
     p_axis->motorEnable();
     p_axis->autoPause(false); // always disable autopause
     p_axis->backlash(aopts->backlash);
