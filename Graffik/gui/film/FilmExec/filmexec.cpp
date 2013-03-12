@@ -817,6 +817,7 @@ void FilmExec::_sendNodeMovements(OMfilmParams *p_film, OMAxis *p_axis) {
 
     qDebug() << "FE: Motor Params: " << which << dir << start << end << arrive << accel << decel << aopts->backlash;
 
+    p_axis->sleep(aopts->sleep); // enable or disable sleeping as requested
     p_axis->maxStepSpeed(aopts->maxSteps);
     p_axis->motorEnable();
     p_axis->autoPause(false); // always disable autopause

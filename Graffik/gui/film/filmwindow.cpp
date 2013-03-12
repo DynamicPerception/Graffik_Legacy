@@ -607,7 +607,7 @@ QList<unsigned short> FilmWindow::_checkSMSMovements(OMfilmParams *p_params) {
 
         OMfilmAxisParams* axParms = axes.value(addr);
 
-                 long    moveDist = axParms->endDist;
+        long             moveDist = axParms->endDist;
         unsigned long   startShot = axParms->startTm / interval;
         unsigned long     endShot = axParms->endTm > 0 ? axParms->endTm / interval : filmLength / interval;
         unsigned long travelShots = endShot - startShot;

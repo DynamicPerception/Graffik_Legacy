@@ -38,8 +38,7 @@ SlideToggle::handle:horizontal {
 
 
 
-#masterFrame {
-    /*background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(172, 172, 172, 255), stop:1 rgba(146, 146, 146, 255));*/
+#masterFrame, #sleepFrame {
      background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(172, 172, 172, 255), stop:1 rgba(146, 146, 146, 255));
     border: 1px solid rgb(0,0,0);
     border-radius: 6px;
@@ -47,7 +46,7 @@ SlideToggle::handle:horizontal {
     padding: 5px;
 }
 
-#masterFrame QLabel {
+#masterFrame QLabel, #sleepFrame QLabel {
     color: rgb(255,255,255);
     font: 12pt "Lucida Sans";
 }

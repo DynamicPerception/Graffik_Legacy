@@ -28,15 +28,12 @@
 #include <QDebug>
 
 JogControlManager::JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, LiveDeviceModel* c_ldm, QObject *parent) : QObject(parent) {
-    m_curAxis = 0;
-    m_curRes = 1;
-
-
-    m_net = c_net;
-    m_opts = c_opts;
-    m_ldm = c_ldm;
-
-    m_wantId = 0;
+    m_curAxis  = 0;
+    m_curRes   = 1;
+    m_net      = c_net;
+    m_opts     = c_opts;
+    m_ldm      = c_ldm;
+    m_wantId   = 0;
     m_wantType = 0;
 
 
@@ -99,6 +96,20 @@ void JogControlManager::_liveDeviceSelected(unsigned short p_addr) {
     m_curAxis = p_addr;
             // revert to rapid
     m_scp->setResolution(1);
+
+        // make sure sleep enable is set properly for axis
+
+    OMdeviceInfo* devInfo = m_net->getDevices().value(m_curAxis);
+    OMDevice*         dev = devInfo->device;
+    OMAxis*        omaxis = dynamic_cast<OMAxis*>(dev);
+    OMaxisOptions*   opts = m_opts->getOptions(p_addr);
+
+    if( omaxis == 0 ) {
+        qDebug() << "JCM: Error Casting Device!";
+        return;
+    }
+
+    omaxis->sleep(opts->sleep);
 
 }
 
