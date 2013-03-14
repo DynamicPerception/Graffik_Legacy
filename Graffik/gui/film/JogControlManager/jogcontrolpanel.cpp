@@ -77,6 +77,9 @@ JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, FilmPara
     ui->jogHomeButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
     ui->jogEndButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
     ui->modeButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+    ui->ledHomeButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+    ui->ledEndButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+    ui->ledMovingButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
 #endif
 
     // theming
@@ -98,15 +101,15 @@ JogControlPanel::~JogControlPanel() {
 void JogControlPanel::_motorStarted(unsigned short p_addr) {
     Q_UNUSED(p_addr);
 
-    ui->ledMovingLabel->setState(1);
-    _rePolish(ui->ledMovingLabel);
+    ui->ledMovingButton->setState(1);
+    Themer::rePolish(ui->ledMovingButton);
 }
 
 void JogControlPanel::_motorStopped(unsigned short p_addr) {
     Q_UNUSED(p_addr);
 
-    ui->ledMovingLabel->setState(0);
-    _rePolish(ui->ledMovingLabel);
+    ui->ledMovingButton->setState(0);
+    Themer::rePolish(ui->ledMovingButton);
 }
 
 void JogControlPanel::_prepJogInputs(unsigned short p_addr) {
@@ -149,11 +152,11 @@ void JogControlPanel::_prepJogInputs(unsigned short p_addr) {
         m_ledStates.insert(p_addr, list);
     }
 
-    ui->ledHomeLabel->setState(m_ledStates.value(p_addr).at(0));
-    ui->ledEndLabel->setState(m_ledStates.value(p_addr).at(1));
+    ui->ledHomeButton->setState(m_ledStates.value(p_addr).at(0));
+    ui->ledEndButton->setState(m_ledStates.value(p_addr).at(1));
 
-    _rePolish(ui->ledHomeLabel);
-    _rePolish(ui->ledEndLabel);
+    Themer::rePolish(ui->ledHomeButton);
+    Themer::rePolish(ui->ledEndButton);
 
 }
 
@@ -169,7 +172,7 @@ void JogControlPanel::_modeClicked() {
 
     // force a re-draw of the button's style
 
-    _rePolish(ui->modeButton);
+    Themer::rePolish(ui->modeButton);
 }
 
 void JogControlPanel::_dialReleased() {
@@ -186,9 +189,7 @@ void JogControlPanel::_eStop() {
 
 void JogControlPanel::_themeChanged() {
     setStyleSheet(SingleThemer::getStyleSheet("jog"));
-    style()->unpolish(this);
-    style()->polish(this);
-    update();
+    Themer::rePolish(this);
 }
 
 void JogControlPanel::_jogMotorChangeAllowed(unsigned short p_addr) {
@@ -211,14 +212,17 @@ void JogControlPanel::_jogMotorChangeDenied(unsigned short p_oldAddr) {
 void JogControlPanel::_homeSet() {
     // record that home has been set for this axis
     // (we know that the list was populated by the
-    // _prepJogInputs() method
+    // _prepJogInputs() method (or has no contents
+    // if no device has been selected yet)
 
-    QList<bool> list = m_ledStates.value(m_curAddr);
-    list.replace(0, true);
-    m_ledStates.insert(m_curAddr, list);
+    if( m_ledStates.size() > 0 ) {
+        QList<bool> list = m_ledStates.value(m_curAddr);
+        list.replace(0, true);
+        m_ledStates.insert(m_curAddr, list);
+    }
 
-    ui->ledHomeLabel->setState(1);
-    _rePolish(ui->ledHomeLabel);
+    ui->ledHomeButton->setState(1);
+    Themer::rePolish(ui->ledHomeButton);
 
 }
 
@@ -242,20 +246,18 @@ void JogControlPanel::_endSet(unsigned short p_addr, long p_dist) {
 
         // record that end has been set for this axis
         // (we know that the list was populated by the
-        // _prepJogInputs() method
+        // _prepJogInputs() method (or has no contents
+        // if no device has been selected yet)
 
-    QList<bool> list = m_ledStates.value(p_addr);
-    list.replace(1, true);
-    m_ledStates.insert(p_addr, list);
+    if( m_ledStates.size() > 0 ) {
+        QList<bool> list = m_ledStates.value(p_addr);
+        list.replace(1, true);
+        m_ledStates.insert(p_addr, list);
+    }
 
-    ui->ledEndLabel->setState(1);
-    _rePolish(ui->ledEndLabel);
+    ui->ledEndButton->setState(1);
+    Themer::rePolish(ui->ledEndButton);
 
     qDebug() << "JCP: End Setting Completed";
 }
 
-void JogControlPanel::_rePolish(QWidget *m_widget) {
-    m_widget->style()->unpolish(m_widget);
-    m_widget->style()->polish(m_widget);
-    m_widget->update();
-}

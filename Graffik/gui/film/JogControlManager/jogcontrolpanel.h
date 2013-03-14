@@ -92,7 +92,6 @@ private:
     QHash<unsigned short, QList<bool> > m_ledStates;
 
     void _prepJogInputs(unsigned short p_addr);
-    void _rePolish(QWidget* m_widget);
 };
 
 #endif // JOGCONTROLPANEL_H

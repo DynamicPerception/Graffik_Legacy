@@ -226,9 +226,9 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="StatefulLabel" name="ledMovingLabel">
+            <widget class="StatefulButton" name="ledMovingButton">
              <property name="toolTip">
-              <string>Motor Is Currently Moving</string>
+              <string>Motor is Currently Running When Lit</string>
              </property>
              <property name="text">
               <string/>
@@ -236,9 +236,9 @@
             </widget>
            </item>
            <item>
-            <widget class="StatefulLabel" name="ledHomeLabel">
+            <widget class="StatefulButton" name="ledHomeButton">
              <property name="toolTip">
-              <string>Home Point Has Been Set for Motor</string>
+              <string>Home Has Been Set for Axis When Lit</string>
              </property>
              <property name="text">
               <string/>
@@ -246,9 +246,9 @@
             </widget>
            </item>
            <item>
-            <widget class="StatefulLabel" name="ledEndLabel">
+            <widget class="StatefulButton" name="ledEndButton">
              <property name="toolTip">
-              <string>End Point Has Been Set for Motor</string>
+              <string>End Has Been Set For Axis When Lit</string>
              </property>
              <property name="text">
               <string/>
@@ -332,7 +332,7 @@
         <item>
          <widget class="StatefulButton" name="modeButton">
           <property name="toolTip">
-           <string>Enable Elastic Dial</string>
+           <string>Enable Elastic Dial (Snap To Zero When Mouse Released)</string>
           </property>
           <property name="text">
            <string/>
@@ -562,11 +562,6 @@
    <class>SkinnedDial</class>
    <extends>QDial</extends>
    <header>core/Widgets/skinneddial.h</header>
-  </customwidget>
-  <customwidget>
-   <class>StatefulLabel</class>
-   <extends>QLabel</extends>
-   <header location="global">core/Widgets/statefullabel.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

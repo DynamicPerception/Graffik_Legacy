@@ -16,6 +16,17 @@ Themer::~Themer() {
     delete m_themeList;
 }
 
+/** Repolish Widget
+
+  Static method to re-polish any given widget and force an update on it.
+  */
+
+void Themer::rePolish(QWidget *p_widget) {
+    p_widget->style()->unpolish(p_widget);
+    p_widget->style()->polish(p_widget);
+    p_widget->update();
+}
+
 /** Get all Theme Names */
 QList<QString> Themer::themes() {
 

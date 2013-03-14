@@ -177,9 +177,7 @@ void FilmWindow::postInitialize() {
 
 void FilmWindow::_themeChanged() {
     setStyleSheet(SingleThemer::getStyleSheet("film"));
-    style()->unpolish(this);
-    style()->polish(this);
-    update();
+    Themer::rePolish(this);
 }
 
 
@@ -903,16 +901,12 @@ void FilmWindow::_setPlayButtonStatus(int p_stat) {
        ui->playButton->setState(0);
         // need to update stylesheet as it reads a custom property for border-image
         // selection
-       ui->playButton->style()->unpolish(ui->playButton);
-       ui->playButton->style()->polish(ui->playButton);
-       this->update();
+       Themer::rePolish(ui->playButton);
     }
     else if( p_stat == s_Pause ) {
        ui->playButton->setDown(false);
        ui->playButton->setState(1);
-       ui->playButton->style()->unpolish(ui->playButton);
-       ui->playButton->style()->polish(ui->playButton);
-       this->update();
+       Themer::rePolish(ui->playButton);
     }
 }
 

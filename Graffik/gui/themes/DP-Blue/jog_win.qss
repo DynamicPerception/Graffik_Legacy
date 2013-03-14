@@ -1,0 +1,34 @@
+ /* Off */
+#ledHomeButton {
+
+    border-image: url(themes/DP-Blue/img/led-blue-off-win.png) !important;
+}
+
+ /* On */
+#ledHomeButton[state="1"] {
+    border-image: url(themes/DP-Blue/img/led-blue-on-win.png) !important;
+}
+
+ /* Off */
+#ledEndButton {
+
+    border-image: url(themes/DP-Blue/img/led-green-off-win.png) !important;
+}
+
+ /* On */
+#ledEndButton[state="1"] {
+    border-image: url(themes/DP-Blue/img/led-green-on-win.png) !important;
+}
+
+ /* Off */
+
+#ledMovingButton {
+
+    border-image: url(themes/DP-Blue/img/led-yellow-off-win.png) !important;
+}
+
+ /* On */
+#ledMovingButton[state="1"] {
+
+    border-image: url(themes/DP-Blue/img/led-yellow-on-win.png) !important;
+}

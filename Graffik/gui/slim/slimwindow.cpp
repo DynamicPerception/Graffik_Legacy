@@ -47,9 +47,8 @@ SlimWindow::SlimWindow(OMNetwork* net, CommandHistoryModel* hist, SlimCommandPar
     setStyleSheet(theme->getThemeCSS("slim"));
 
         // we need to re-apply css
-    ui->historyTableView->style()->unpolish(ui->historyTableView);
-    ui->historyTableView->style()->polish(ui->historyTableView);
-    ui->historyTableView->update();
+    Themer::rePolish(ui->historyTableView);
+
 }
 
 SlimWindow::~SlimWindow() {
@@ -59,9 +58,7 @@ SlimWindow::~SlimWindow() {
 
 void SlimWindow::_themeChanged() {
     setStyleSheet(SingleThemer::getStyleSheet("slim"));
-    style()->unpolish(this);
-    style()->polish(this);
-    update();
+    Themer::rePolish(this);
 }
 
 void SlimWindow::onCmdEntry() {

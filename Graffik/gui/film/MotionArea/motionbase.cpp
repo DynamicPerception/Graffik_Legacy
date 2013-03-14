@@ -99,9 +99,7 @@ MotionBase::~MotionBase() {
 
 void MotionBase::_themeChanged() {
     setStyleSheet(SingleThemer::getStyleSheet("motionbase"));
-    style()->unpolish(this);
-    style()->polish(this);
-    update();
+    Themer::rePolish(this);
 }
 
 /** Get Pointer to Contained MotionArea */
@@ -327,9 +325,8 @@ void MotionBase::deviceOptionsChanged(OMaxisOptions *p_opts, unsigned short p_ad
     }
 
         // refresh css
-    ui->masterButton->style()->unpolish(ui->masterButton);
-    ui->masterButton->style()->polish(ui->masterButton);
-    update();
+    Themer::rePolish(ui->masterButton);
+
 }
 
 

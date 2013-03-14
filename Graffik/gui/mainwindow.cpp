@@ -164,9 +164,7 @@ void MainWindow::_optionsCleared() {
 
 void MainWindow::_themeChanged() {
     setStyleSheet(SingleThemer::getStyleSheet("main"));
-    style()->unpolish(this);
-    style()->polish(this);
-    update();
+    Themer::rePolish(this);
 }
 
 void MainWindow::_welcomeAddBus() {

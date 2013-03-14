@@ -552,9 +552,7 @@ int MotionArea::muted() {
 }
 
 void MotionArea::_refreshStylesheet() {
-    style()->unpolish(this);
-    style()->polish(this);
-    update();
+       Themer::rePolish(this);
 }
 
 /** Slot for Setting Current Play Status

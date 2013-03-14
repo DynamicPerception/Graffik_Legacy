@@ -12,7 +12,7 @@
 }
 
  /* Off */
-#ledHomeLabel {
+#ledHomeButton {
 
     border-image: url(themes/DP-Blue/img/led-blue-off.png);
     border: 0px transparent;
@@ -23,12 +23,12 @@
 }
 
  /* On */
-#ledHomeLabel[state="1"] {
+#ledHomeButton[state="1"] {
     border-image: url(themes/DP-Blue/img/led-blue-on.png);
 }
 
  /* Off */
-#ledEndLabel {
+#ledEndButton {
 
     border-image: url(themes/DP-Blue/img/led-green-off.png);
     border: 0px transparent;
@@ -39,13 +39,13 @@
 }
 
  /* On */
-#ledEndLabel[state="1"] {
+#ledEndButton[state="1"] {
     border-image: url(themes/DP-Blue/img/led-green-on.png);
 }
 
  /* Off */
 
-#ledMovingLabel {
+#ledMovingButton {
 
     border-image: url(themes/DP-Blue/img/led-yellow-off.png);
     border: 0px transparent;
@@ -56,7 +56,7 @@
 }
 
  /* On */
-#ledMovingLabel[state="1"] {
+#ledMovingButton[state="1"] {
 
     border-image: url(themes/DP-Blue/img/led-yellow-on.png);
 }
