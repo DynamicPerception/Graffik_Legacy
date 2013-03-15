@@ -134,6 +134,8 @@ int FilmExec::_prepFilm(bool p_home) {
         long distanceToMove = abs(m_film.axes.value(addr)->endDist);
         bool           mute = m_film.axes.value(addr)->mute;
 
+        axis->sleep(m_opts->getOptions(addr)->sleep); // enable or disable sleeping as requested
+
         if( distanceToMove != 0 && ! mute ) {
 
                 // only do this if moving and if requested to allow
