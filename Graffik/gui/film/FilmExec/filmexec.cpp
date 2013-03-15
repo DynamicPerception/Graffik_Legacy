@@ -540,6 +540,8 @@ void FilmExec::sendAxesTo(QHash<unsigned short, long> p_positions) {
         long         moveTo = p_positions.value(addr);
         bool           mute = m_film.axes.value(addr)->mute;
 
+        axis->sleep(m_opts->getOptions(addr)->sleep); // enable or disable sleeping as requested
+
         if( ! p_positions.contains(addr) )
             continue;
 
@@ -822,7 +824,6 @@ void FilmExec::_sendNodeMovements(OMfilmParams *p_film, OMAxis *p_axis) {
 
     qDebug() << "FE: Motor Params: " << which << dir << start << end << arrive << accel << decel << aopts->backlash;
 
-    p_axis->sleep(aopts->sleep); // enable or disable sleeping as requested
     p_axis->maxStepSpeed(aopts->maxSteps);
     p_axis->motorEnable();
     p_axis->autoPause(false); // always disable autopause
