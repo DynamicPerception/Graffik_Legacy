@@ -39,6 +39,7 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
     m_spinsPrepped = false;
     m_ignoreUpdate = false;
     m_checkRunning = false;
+    m_camOpts      = false;
 
     m_params = new FilmParameters(m_net, this);
     m_exec   = new FilmExec(m_net, m_params, m_opts, m_gopts, this);
@@ -60,7 +61,8 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
 
     ui->visualSA->setWidget(m_areaViewPort);
 
-    m_curFrameShot = 0;
+    m_curFrameShot   = 0;
+    m_smsMinInterval = 1;
 
     // OSX has issues laying out these buttons w/o overlap,
     // this is a work-around
@@ -276,8 +278,6 @@ void FilmWindow::_eraseAxis(QString p_bus, unsigned short p_addr) {
         _redrawMotionOverlay();
     }
 
-
-
 }
 
 void FilmWindow::on_camControlSlider_selected(int p_value) {
@@ -337,11 +337,18 @@ void FilmWindow::_displayCamControl() {
 // handle clicking the camera settings button
 
 void FilmWindow::on_camSetBut_clicked() {
+
+    m_camOpts = true;
+
     CameraControlDialog* control = new CameraControlDialog(m_params, m_net, m_opts);
     control->exec();
 
+    m_camOpts = false;
+
     OMfilmParams* params = m_params->getParams();
-    bool autoFPS = params->camParams->autoFPS;
+    bool         autoFPS = params->camParams->autoFPS;
+    int             mode = params->filmMode;
+
     m_params->releaseParams(false);
 
 
@@ -350,9 +357,17 @@ void FilmWindow::on_camSetBut_clicked() {
 
         // if not using auto fps, show what film time will be
         // based on FPS or manual interval
-    if( ! autoFPS )
+    if( ! autoFPS ) {
         _calcAutoFilmTime();
+    }
     else {
+
+            // we have to calculate a different minimum interval for
+            // SMS, instead of the normal min interval returned by FilmExec
+        if( mode == FILM_MODE_SMS ) {
+            _setSMSMinimumInterval();
+        }
+
         _checkFilmTimeConstraint();
         en = true;
     }
@@ -420,6 +435,50 @@ void FilmWindow::_prepInputs() {
     _displayCamControl();
     _inputEnable(true);
     _showFilmTime();
+
+
+}
+
+
+ // calculate minimum interval for an SMS move
+void FilmWindow::_setSMSMinimumInterval() {
+
+    OMfilmParams*  params = m_params->getParams();
+    unsigned long  minInt = m_exec->minInterval(params);
+    unsigned long minTime = minInt;
+
+    QHash<unsigned short, OMfilmAxisParams*> axes = params->axes;
+
+
+    foreach(unsigned short addr, axes.keys() ) {
+
+
+        unsigned long    maxSpeed = m_opts->getOptions(addr)->maxSteps;
+        float             maxMove = m_areaBlocks.value(addr)->area()->getPathPainter()->getMaxSpeed();
+        unsigned long      mSmove = ( (float) maxMove / (float) maxSpeed / 1000.0 );
+
+            // always give us at least 50mS to make a move
+        if( mSmove < 50 && maxMove > 0 )
+            mSmove = 50;
+
+        minTime = ( minInt + mSmove > minTime ) ? minInt + mSmove : minTime;
+
+        qDebug() << "FW: Calculating minimum interval time for" << addr << minInt << minTime << maxMove << mSmove;
+
+    }
+
+
+    m_smsMinInterval = minTime;
+
+    qDebug() << "FW: SMS Interval" << minTime << params->camParams->interval;
+
+    if( minTime > params->camParams->interval ) {
+        params->camParams->interval = minTime;
+        m_params->releaseParams(true);
+    }
+    else {
+        m_params->releaseParams(false);
+    }
 
 
 }
@@ -556,28 +615,39 @@ void FilmWindow::_checkFilmTimeConstraint() {
     unsigned long    minInt = m_exec->minInterval(params);
     unsigned long maxFrames = params->realLength / minInt;
     unsigned long   maxTime = (maxFrames / params->fps) * 1000;
+    bool            filmUpd = false;
 
-        // for SMS moves, we have to check each track and see
-        // if it can actually achieve the desired movement in the
-        // specified real time.
+
+        // Fpor SMS movements, we have a different interval, as we have to include move time
     if( params->filmMode == FILM_MODE_SMS ) {
-        m_smsErrorTracks = _checkSMSMovements(params);
+        minInt           = m_smsMinInterval;
+        maxFrames        = params->realLength / minInt;
+        maxTime          = (maxFrames / params->fps) * 1000;
     }
 
 
     maxTime = maxTime < 1000 ? 1000 : maxTime;
 
-    qDebug() << "FW: TimeConstraint: MT=" << maxTime << "LN=" << params->length;
+    qDebug() << "FW: TimeConstraint: MT=" << maxTime << "LN=" << params->length << "MI=" << minInt;
 
     if( params->length > maxTime ) {
         qDebug() << "FW: Constraining maximum film time";
         params->length = maxTime;
-        m_params->releaseParams();
+        filmUpd = true;
+    }
+
+        // for SMS moves, we have to check each track and see
+        // if it can actually achieve the desired movement in the
+        // specified real time.
+
+    if( params->filmMode == FILM_MODE_SMS ) {
+         m_smsErrorTracks = _checkSMSMovements(params);
+    }
+
+    m_params->releaseParams(filmUpd);
+
+    if( filmUpd)
         _showFilmTime();
-    }
-    else {
-        m_params->releaseParams(false);
-    }
 
         // now, do any track muting we need to...
     foreach(unsigned short addr, m_smsErrorTracks)
@@ -628,7 +698,7 @@ QList<unsigned short> FilmWindow::_checkSMSMovements(OMfilmParams *p_params) {
             bool fail = false;
 
             if( freeInterval < 1 ) {
-                qDebug() << "FW: SMS Sane: No free interval time" << addr;
+                qDebug() << "FW: SMS Sane: No free interval time" << addr << interval << minInt << freeInterval;
                 m_opts->error(addr, AxisErrors::ErrorNoInterval);
                 fail = true;
             }
@@ -637,8 +707,8 @@ QList<unsigned short> FilmWindow::_checkSMSMovements(OMfilmParams *p_params) {
                 m_opts->error(addr, AxisErrors::ErrorNoTime);
                 fail = true;
             }
-            else if( (freeInterval / 1000) < (maxMove / maxSpeed) ) {
-                qDebug() << "FW: SMS Sane: Max Move will cause interval to be exceeded" << addr << maxMove;
+            else if( (freeInterval / 1000) < (maxMove / maxSpeed) && p_params->camParams->manInterval ) {
+                qDebug() << "FW: SMS Sane: Max Move will cause manual interval to be exceeded" << addr << maxMove;
                 m_opts->error(addr, AxisErrors::ErrorIntervalSpeed);
                 fail = true;
             }
@@ -706,7 +776,7 @@ void FilmWindow::_calcAutoFilmTime() {
     OMfilmParams* params = m_params->getParams();
     unsigned long interval = m_exec->interval(params);
 
-    unsigned short fps = params->fps;
+    unsigned short   fps = params->fps;
     unsigned long filmTm = params->length;
     unsigned long wallTm = params->realLength;
 
@@ -1149,8 +1219,14 @@ void FilmWindow::save() {
 
 void FilmWindow::filmParamsChanged() {
         // re-display inputs when params change
+
     qDebug() << "FW: Got Film Params Changed";
-    _checkFilmTimeConstraint();
+
+        // don't check film time constraints if camera
+        // options screen is currently displayed
+    if( ! m_camOpts )
+        _checkFilmTimeConstraint();
+
     _prepInputs();
 }
 

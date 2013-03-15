@@ -662,6 +662,7 @@ unsigned long FilmExec::interval(OMfilmParams* p_film) {
     unsigned long     iv = p_film->camParams->interval;
     unsigned long filmTm = p_film->length;
     unsigned long realTm = p_film->realLength;
+    int             mode = p_film->filmMode;
 
     // determine minimum amount of interval
     // time based on input values...
@@ -675,13 +676,17 @@ unsigned long FilmExec::interval(OMfilmParams* p_film) {
     else if( autoFPS ) {
             // auto fps - determine interval from
             // film length
-        iv = (float) realTm / ((float) filmTm / (float) fps);
+
+                // don't do it for SMS though, use the specified interval
+        if( mode != FILM_MODE_SMS ) {
+            iv = (float) realTm / ((float) filmTm / (float) fps);
+        }
 
         if( iv < minInt )
             iv = minInt;
 
     }
-    else if( ! manInt ) {
+    else if( ! manInt && mode != FILM_MODE_SMS ) {
             // only FPS specified, interval is minimum interval
         iv = minInt;
     }

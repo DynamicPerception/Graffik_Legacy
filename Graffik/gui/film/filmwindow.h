@@ -177,29 +177,28 @@ private:
     bool m_ignoreUpdate;
     bool m_notwShown;
     bool m_checkRunning;
+    bool m_camOpts;
 
     unsigned long m_curFrameShot;
+    unsigned long m_smsMinInterval;
 
     void _displayCamControl();
     void _enableCamControl(bool p_en = true);
     void _showFilmTime();
     void _prepInputs();
     void _showTotalFrames(unsigned long p_len, unsigned long p_val, bool p_type = false);
-
+    void _setSMSMinimumInterval();
     void _changeTime(int p_which, int p_pos, int p_val);
     void _calcAutoFilmTime();
     void _checkFilmTimeConstraint();
-    QList<unsigned short> _checkSMSMovements(OMfilmParams* p_params);
-
     void _setPlayButtonStatus(int p_stat);
     void _setStopButtonStatus(int p_stat);
-
     void _filmTimeDisplay(unsigned long p_ms);
-
     void _redrawMotionOverlay();
     void _inputEnable(bool p_stat);
-
     void _popTimeDisplay(QLabel* p_label, int p_time);
+    QList<unsigned short> _checkSMSMovements(OMfilmParams* p_params);
+
 };
 
 #endif // FILMWINDOW_H
