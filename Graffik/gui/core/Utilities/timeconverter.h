@@ -45,6 +45,7 @@ public:
     static unsigned int hours(unsigned long p_ms);
     static unsigned int minutes(unsigned long p_ms);
     static unsigned long seconds(unsigned long p_ms);
+    static float fractionalSeconds(unsigned long p_ms);
 
     static unsigned int freeHours(unsigned long p_ms);
     static unsigned int freeMinutes(unsigned long p_ms);
@@ -55,6 +56,7 @@ public:
     static unsigned long msFromDays(float p_days);
     static unsigned long msFromHours(float p_hours);
     static unsigned long msFromMinutes(float p_minutes);
+
 
     static QString stringify(unsigned long p_ms);
 

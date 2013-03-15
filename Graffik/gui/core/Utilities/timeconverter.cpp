@@ -28,25 +28,31 @@
   All methods are static.
   */
 
-TimeConverter::TimeConverter()
-{
+TimeConverter::TimeConverter() {
 }
 
-/** Get Total Seconds from mS */
+/** Get Total (Fractional) Seconds from mS */
+
+float TimeConverter::fractionalSeconds(unsigned long p_ms) {
+    return( p_ms / 1000.0 );
+}
+
+/** Get Total (Whole) Seconds from mS */
 unsigned long TimeConverter::seconds(unsigned long p_ms) {
     return( p_ms / 1000);
 }
 
-/** Get Total Minutes from mS */
+/** Get Total (Whole) Minutes from mS */
 unsigned int TimeConverter::minutes(unsigned long p_ms) {
     return( p_ms / 1000 / 60);
 }
 
-/** Get Total Hours from mS */
+/** Get Total (Whole) Hours from mS */
 unsigned int TimeConverter::hours(unsigned long p_ms) {
     return( p_ms / 1000 / 60 / 60);
 }
 
+/** Get Total (Whole) Days from mS */
 unsigned int TimeConverter::days(unsigned long p_ms) {
     return(p_ms / 1000 / 60 / 60 / 24);
 }

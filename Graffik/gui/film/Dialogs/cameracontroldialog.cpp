@@ -29,10 +29,9 @@
 CameraControlDialog::CameraControlDialog(FilmParameters *c_params, OMNetwork *c_net, AxisOptions *c_opts, QWidget *parent) : QDialog(parent), ui(new Ui::CameraControlDialog) {
     ui->setupUi(this);
 
-    m_params = c_params;
-       m_net = c_net;
-      m_opts = c_opts;
-
+    m_params    = c_params;
+    m_net       = c_net;
+    m_opts      = c_opts;
     m_wasMaster = 0;
 
     _setupInputs();
@@ -78,21 +77,23 @@ void CameraControlDialog::on_manIntToggle_selected(int p_val) {
 }
 
 void CameraControlDialog::on_filmLenToggle_selected(int p_val) {
-    bool state = false;
 
-    if( p_val == 0 )
-        state = true;
+    _showManInterval(! p_val);
 
-    if( state ) {
-        ui->manIntToggle->setEnabled(state);
+}
+
+void CameraControlDialog::_showManInterval(bool p_en) {
+
+    if( p_en ) {
+        ui->manIntToggle->setEnabled(true);
         ui->manIntShowFrame->show();
     }
     else {
         ui->manIntShowFrame->hide();
     }
 
-    if( state == true && ui->manIntToggle->value() == 1 ) {
-        ui->manIntSpin->setEnabled(state);
+    if( p_en == true && ui->manIntToggle->value() == 1 ) {
+        ui->manIntSpin->setEnabled(true);
     }
     else {
         ui->manIntSpin->setEnabled(false);
@@ -119,17 +120,12 @@ void CameraControlDialog::_setupInputs() {
 
     bool enManControls = aFPS ? false : man ? true : false;
 
-    if( enManControls )
-        ui->manIntShowFrame->show();
-    else
-        ui->manIntShowFrame->hide();
 
         // set interval input
 
     ui->manIntToggle->setValue(enManControls);
-    ui->manIntSpin->setEnabled(enManControls);
-    ui->manIntSpin->setValue( (float) TimeConverter::seconds(cam->interval) );
-
+    ui->manIntSpin->setValue( (float) TimeConverter::fractionalSeconds(cam->interval) );
+    _showManInterval( ! aFPS );
 
     // set other inputs
 
@@ -141,7 +137,7 @@ void CameraControlDialog::_setupInputs() {
 
     ui->bulbExpToggle->setValue(bulb);
     ui->bulbSpin->setEnabled(bulb);
-    ui->bulbSpin->setValue( (float) TimeConverter::seconds(cam->shutterMS) );
+    ui->bulbSpin->setValue( (float) TimeConverter::fractionalSeconds(cam->shutterMS) );
 
     if( bulb )
         ui->bulbSpin->show();
@@ -150,7 +146,7 @@ void CameraControlDialog::_setupInputs() {
 
     ui->focusConToggle->setValue(foc);
     ui->focusSpin->setEnabled(foc);
-    ui->focusSpin->setValue( (float) TimeConverter::seconds(cam->focusMS) );
+    ui->focusSpin->setValue( (float) TimeConverter::fractionalSeconds(cam->focusMS) );
 
     if( foc )
         ui->focusSpin->show();
@@ -160,12 +156,7 @@ void CameraControlDialog::_setupInputs() {
     ui->focLocToggle->setValue(lck);
     ui->smsToggle->setValue(sms);
 
-    float camDelay = (float) TimeConverter::seconds(cam->delayMS);
-    camDelay += (float) TimeConverter::freeMilliSeconds(cam->delayMS) / 1000;
-
-    qDebug() << "CamOpts: camDelay" << cam->delayMS << camDelay;
-
-    ui->delaySpin->setValue( camDelay );
+    ui->delaySpin->setValue( (float) TimeConverter::fractionalSeconds(cam->delayMS) );
 
         // populate list of master devices into drop-down
     QHash<unsigned short, OMdeviceInfo*> devs = m_net->getDevices();
@@ -239,10 +230,7 @@ void CameraControlDialog::accept() {
 
         // set new interval time, if manual interval selected
     if( cam->manInterval ) {
-        unsigned long iv = ui->manIntSpin->value();
-        iv = TimeConverter::msFromSeconds(iv); // convert back to mS
-        cam->interval = iv;
-        qDebug() << "CCD: Interval: " << iv;
+        cam->interval = TimeConverter::msFromSeconds(ui->manIntSpin->value()); // convert back to mS
     }
 
 

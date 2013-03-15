@@ -80,6 +80,7 @@ private:
     int m_wasMaster;
 
     void _setupInputs();
+    void _showManInterval(bool p_en);
 };
 
 #endif // CAMERACONTROLDIALOG_H
