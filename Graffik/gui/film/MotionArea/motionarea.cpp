@@ -167,6 +167,7 @@ void MotionArea::axisOptionsUpdated(OMaxisOptions*, unsigned short p_addr) {
     this->update();
 }
 
+
 /** Handle Mouse Press inside of Widget */
 
 void MotionArea::mousePressEvent(QMouseEvent *p_event) {
@@ -178,19 +179,19 @@ void MotionArea::mousePressEvent(QMouseEvent *p_event) {
         // note that we never allow click+drag when the film is playing,
         // so check the play status
 
-    if( m_pstat == false && m_mvStart.contains(cPos) ) {
+    if( m_pstat == false && _inHitRegion(&cPos, m_mvStart) ) {
         qDebug() << "MA: Clicked MVStart";
         m_moveItem = MA_PT_START;
     }
-    else if( m_pstat == false && m_mvEnd.contains(cPos) ) {
+    else if( m_pstat == false && _inHitRegion(&cPos, m_mvEnd) ) {
         qDebug() << "MA: Clicked MVEnd";
         m_moveItem = MA_PT_END;
     }
-    else if( m_pstat == false && m_acEnd.contains(cPos) ) {
+    else if( m_pstat == false && _inHitRegion(&cPos, m_acEnd) ) {
         qDebug() << "MA: Clicked ACEnd";
         m_moveItem = MA_PT_ACE;
     }
-    else if(m_pstat == false && m_dcStart.contains(cPos) ) {
+    else if(m_pstat == false && _inHitRegion(&cPos, m_dcStart) ) {
         qDebug() << "MA: Clicked DCStart";
         m_moveItem = MA_PT_DCS;
     }
@@ -372,10 +373,26 @@ void MotionArea::paintEvent(QPaintEvent *e) {
     if( m_pstat == false ) {
         if( m_path->hasChanged() ) {
 
-            m_mvStart.setRect(m_path->getStartPx() - 10, baseline  - 10, 20, 20);
-            m_mvEnd.setRect(m_path->getEndPx() - 10, baseline - 10, 20, 20);
-            m_acEnd.setRect(m_path->getAcEndPx() - 10, m_path->getMaxHeight() - 10, 20, 20);
-            m_dcStart.setRect(m_path->getDcStartPx() - 10, m_path->getMaxHeight() - 10, 20, 20);
+            m_mvStart.setRect( m_path->getStartPx() - MA_GRAB_SIZE / 2,
+                               baseline  - MA_GRAB_SIZE / 2,
+                               MA_GRAB_SIZE, MA_GRAB_SIZE
+                             );
+
+            m_mvEnd.setRect( m_path->getEndPx() - MA_GRAB_SIZE / 2,
+                             baseline - MA_GRAB_SIZE / 2,
+                             MA_GRAB_SIZE, MA_GRAB_SIZE
+                            );
+
+            m_acEnd.setRect( m_path->getAcEndPx() - MA_GRAB_SIZE / 2,
+                             m_path->getMaxHeight()  - MA_GRAB_SIZE / 2,
+                             MA_GRAB_SIZE, MA_GRAB_SIZE
+                           );
+
+            m_dcStart.setRect( m_path->getDcStartPx() - MA_GRAB_SIZE / 2,
+                               m_path->getMaxHeight()  - MA_GRAB_SIZE / 2,
+                               MA_GRAB_SIZE, MA_GRAB_SIZE
+                             );
+
         }
 
          // draw drag points for start and end time
@@ -561,4 +578,21 @@ void MotionArea::_refreshStylesheet() {
 
 void MotionArea::playStatus(bool p_stat) {
     m_pstat = p_stat;
+}
+
+
+bool MotionArea::_inHitRegion(QPoint *p_point, QRect p_rect) {
+
+    QRect myRect = p_rect;
+
+    myRect.setCoords( myRect.topLeft().x() - MA_HIT_AREA,
+                      myRect.topLeft().y() - MA_HIT_AREA,
+                      myRect.bottomRight().x() + MA_HIT_AREA,
+                      myRect.bottomRight().y() + MA_HIT_AREA
+                     );
+
+    if( myRect.contains(*p_point) )
+        return true;
+
+    return false;
 }
