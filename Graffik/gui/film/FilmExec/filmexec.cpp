@@ -26,28 +26,28 @@
 #include <QDebug>
 
 FilmExec::FilmExec(OMNetwork* c_net, FilmParameters* c_params, AxisOptions* c_opts, GlobalOptions *c_gopts, QObject *parent) : QObject(parent) {
-       m_net = c_net;
+    m_net    = c_net;
     m_params = c_params;
-      m_opts = c_opts;
-     m_gopts = c_gopts;
+    m_opts   = c_opts;
+    m_gopts  = c_gopts;
 
         // get an initial copy of film parameters
     m_film = m_params->getParamsCopy();
 
-           m_stat = FILM_STOPPED;
-        m_shuttle = SHUTTLE_NONE;
+    m_stat        = FILM_STOPPED;
+    m_shuttle     = SHUTTLE_NONE;
     m_filmPrepped = false;
-          m_check = false;
+    m_check       = false;
 
         // initialize our home position monitor (we'll need this later)
-      m_position = new PositionMonitor(m_net, m_gopts);
+    m_position   = new PositionMonitor(m_net, m_gopts);
     m_homeThread = new QThread();
 
     m_position->moveToThread(m_homeThread);
     m_homeThread->start();
 
         // initialize play status monitor
-          m_play = new PlayMonitor(m_net, m_params, m_gopts);
+    m_play       = new PlayMonitor(m_net, m_params, m_gopts);
     m_playThread = new QThread();
 
     m_play->moveToThread(m_playThread);
@@ -314,7 +314,8 @@ void FilmExec::start() {
 
     bool sentHome = false;
     bool   doHome = false;
-        m_shuttle = SHUTTLE_NONE;
+
+    m_shuttle     = SHUTTLE_NONE;
 
         // If stopped, we have to do several things before
         // starting - but if paused, we can just broadcast
@@ -630,7 +631,6 @@ unsigned long FilmExec::minInterval(OMfilmParams *p_film) {
     unsigned long delayMs = p_film->camParams->delayMS;
     unsigned long   focMs = p_film->camParams->focusMS;
     bool            focus = p_film->camParams->focus;
-
     unsigned long    ival = shutMs + delayMs;
 
     if( focus )
