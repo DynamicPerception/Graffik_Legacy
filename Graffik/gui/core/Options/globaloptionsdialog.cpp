@@ -53,6 +53,24 @@ void GlobalOptionsDialog::on_okButton_clicked() {
 
     m_opts->theme(ui->themeCombo->currentText());
 
+        // Set new hotkeys
+    QHash<int, QString> hotkeys;
+
+    if( ui->hkPlayLine->text().length() > 0 )
+        hotkeys.insert(HotKeys::FilmPlay, ui->hkPlayLine->text());
+    if( ui->hkStopLine->text().length() > 0 )
+        hotkeys.insert(HotKeys::FilmStop, ui->hkStopLine->text());
+    if( ui->hkFwdLine->text().length() > 0 )
+        hotkeys.insert(HotKeys::FilmFwd, ui->hkFwdLine->text());
+    if( ui->hkRwdLine->text().length() > 0 )
+        hotkeys.insert(HotKeys::FilmRwd, ui->hkRwdLine->text());
+    if( ui->hkFFwdLine->text().length() > 0 )
+        hotkeys.insert(HotKeys::FilmFFwd, ui->hkFFwdLine->text());
+    if( ui->hkFRwdLine->text().length() > 0 )
+        hotkeys.insert(HotKeys::FilmFRwd, ui->hkFRwdLine->text());
+
+    m_opts->hotkeys(hotkeys);
+
     done(QDialog::Accepted);
 }
 
@@ -94,5 +112,21 @@ void GlobalOptionsDialog::_setupInputs() {
         ui->displayCombo->setCurrentIndex(1);
     else if( dispTyp == Options::Steps)
         ui->displayCombo->setCurrentIndex(2);
+
+        // restore hotkeys
+    QHash<int, QString> hotkeys = m_opts->hotkeys();
+
+    if( hotkeys.contains(HotKeys::FilmPlay) )
+        ui->hkPlayLine->setText(hotkeys.value(HotKeys::FilmPlay));
+    if( hotkeys.contains(HotKeys::FilmStop) )
+        ui->hkStopLine->setText(hotkeys.value(HotKeys::FilmStop));
+    if( hotkeys.contains(HotKeys::FilmFwd) )
+        ui->hkFwdLine->setText(hotkeys.value(HotKeys::FilmFwd));
+    if( hotkeys.contains(HotKeys::FilmRwd) )
+        ui->hkRwdLine->setText(hotkeys.value(HotKeys::FilmRwd));
+    if( hotkeys.contains(HotKeys::FilmFFwd) )
+        ui->hkFFwdLine->setText(hotkeys.value(HotKeys::FilmFFwd));
+    if( hotkeys.contains(HotKeys::FilmFRwd) )
+        ui->hkFRwdLine->setText(hotkeys.value(HotKeys::FilmFRwd));
 
 }

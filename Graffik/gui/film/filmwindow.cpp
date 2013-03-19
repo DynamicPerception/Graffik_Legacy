@@ -49,6 +49,13 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
     m_time   = new FilmTimeManager(m_exec, m_params);
     m_saver  = new FilmAutoSaver(m_net, m_params, this);
 
+    m_scPlay = new QShortcut(this);
+    m_scStop = new QShortcut(this);
+    m_scRwd  = new QShortcut(this);
+    m_scFwd  = new QShortcut(this);
+    m_scFRwd = new QShortcut(this);
+    m_scFFwd = new QShortcut(this);
+
     m_areaLayout = new QVBoxLayout;
     m_areaLayout->setContentsMargins(0, 0, 0, 0);
     m_areaLayout->setSpacing(0);
@@ -111,6 +118,7 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
     connect(this, SIGNAL(motionAreaBorders(int,int)), m_motion, SLOT(setBorders(int,int)));
 
     connect(m_params, SIGNAL(paramsReleased()), this, SLOT(filmParamsChanged()));
+    connect(m_gopts, SIGNAL(optionsChanged()), this, SLOT(optionsChanged()));
 
     connect(this, SIGNAL(playStatusChange(bool)), m_jcp, SIGNAL(playStatusChange(bool)));
     connect(this, SIGNAL(playStatusChange(bool)), m_tape, SLOT(disableClicks(bool)));
@@ -123,6 +131,15 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
     connect(m_time, SIGNAL(timePositionChanged(ulong)), m_motion, SLOT(timeChanged(ulong)));
 
     connect(m_jcp, SIGNAL(emergencyStop()), this, SLOT(_emergencyStop()));
+
+        // watch for key shortcuts being input
+
+    connect(m_scPlay, SIGNAL(activated()), this, SLOT(on_playButton_clicked()));
+    connect(m_scStop, SIGNAL(activated()), this, SLOT(on_stopButton_clicked()));
+    connect(m_scRwd, SIGNAL(activated()), this, SLOT(on_rewindButton_clicked()));
+    connect(m_scFwd, SIGNAL(activated()), this, SLOT(on_forwardButton_clicked()));
+    connect(m_scFRwd, SIGNAL(activated()), this, SLOT(on_frameRwdButton_clicked()));
+    connect(m_scFFwd, SIGNAL(activated()), this, SLOT(on_frameFwdButton_clicked()));
 
     _prepInputs();
 
@@ -144,6 +161,13 @@ FilmWindow::~FilmWindow() {
         delete m_areaBlocks.value(addr);
         m_areaBlocks.remove(addr);
     }
+
+    delete m_scPlay;
+    delete m_scStop;
+    delete m_scRwd;
+    delete m_scFwd;
+    delete m_scFRwd;
+    delete m_scFFwd;
 
     delete m_saver;
     delete m_time;
@@ -957,12 +981,15 @@ void FilmWindow::_setPlayButtonStatus(int p_stat) {
     if( p_stat == s_DisPres ) {
         ui->playButton->setEnabled(false);
         ui->playButton->setDown(true);
+        m_scPlay->setEnabled(false);
     }
     if( p_stat == s_Disable ) {
         ui->playButton->setEnabled(false);
+        m_scPlay->setEnabled(false);
     }
     else {
         ui->playButton->setEnabled(true);
+        m_scPlay->setEnabled(true);
     }
 
 
@@ -981,10 +1008,14 @@ void FilmWindow::_setPlayButtonStatus(int p_stat) {
 }
 
 void FilmWindow::_setStopButtonStatus(int p_stat) {
-    if( p_stat == s_Disable )
+    if( p_stat == s_Disable ) {
         ui->stopButton->setEnabled(false);
-    else
+        m_scStop->setEnabled(false);
+    }
+    else {
         ui->stopButton->setEnabled(true);
+        m_scStop->setEnabled(false);
+    }
 }
 
 
@@ -1157,6 +1188,9 @@ void FilmWindow::_inputEnable(bool p_stat) {
     ui->rewindButton->setEnabled(p_stat);
     ui->camControlSlider->setEnabled(p_stat);
 
+    m_scFwd->setEnabled(p_stat);
+    m_scRwd->setEnabled(p_stat);
+
         // only control status of certain camera inputs, if
         // cam control enabled
 
@@ -1176,16 +1210,22 @@ void FilmWindow::_inputEnable(bool p_stat) {
         if( mode == FILM_MODE_SMS ) {
             ui->frameFwdButton->setEnabled(p_stat);
             ui->frameRwdButton->setEnabled(p_stat);
+            m_scFFwd->setEnabled(p_stat);
+            m_scFRwd->setEnabled(p_stat);
         }
         else {
             ui->frameFwdButton->setEnabled(false);
             ui->frameRwdButton->setEnabled(false);
+            m_scFFwd->setEnabled(false);
+            m_scFRwd->setEnabled(false);
         }
     }
     else {
         ui->camSetBut->setEnabled(false);
         ui->frameFwdButton->setEnabled(false);
         ui->frameRwdButton->setEnabled(false);
+        m_scFFwd->setEnabled(false);
+        m_scFRwd->setEnabled(false);
     }
 }
 
@@ -1215,6 +1255,33 @@ void FilmWindow::save() {
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save Film"), "", tr("Film Files (*.film)"));
     qDebug() << "FW: FilmSave Got File: " << fileName;
     FilmFileHandler::writeFile(fileName, m_params);
+}
+
+void FilmWindow::optionsChanged() {
+
+    qDebug() << "FW: Got Options Changed";
+
+    QHash<int, QString> hotkeys = m_gopts->hotkeys();
+
+    if( hotkeys.contains(HotKeys::FilmPlay) )
+        m_scPlay->setKey(hotkeys.value(HotKeys::FilmPlay));
+
+    if( hotkeys.contains(HotKeys::FilmStop) )
+        m_scStop->setKey(hotkeys.value(HotKeys::FilmStop));
+
+    if( hotkeys.contains(HotKeys::FilmFwd) )
+        m_scFwd->setKey(hotkeys.value(HotKeys::FilmFwd));
+
+    if( hotkeys.contains(HotKeys::FilmRwd) )
+        m_scRwd->setKey(hotkeys.value(HotKeys::FilmRwd));
+
+    if( hotkeys.contains(HotKeys::FilmFFwd) )
+        m_scFFwd->setKey(hotkeys.value(HotKeys::FilmFFwd));
+
+    if( hotkeys.contains(HotKeys::FilmFRwd) )
+        m_scFRwd->setKey(hotkeys.value(HotKeys::FilmFRwd));
+
+
 }
 
 void FilmWindow::filmParamsChanged() {

@@ -1,3 +1,14 @@
+QToolBox::tab {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0.541872 rgba(104, 104, 104, 255), stop:1 rgba(74, 74, 74, 255));
+    color: rgb(255, 255, 255);
+    font: 14px "Lucida Sans";
+    margin: 0px;
+}
+
+QToolBox {
+    border: 0px;
+}
+
 QPushButton {
     border: 0px transparent;
     max-width:120px;

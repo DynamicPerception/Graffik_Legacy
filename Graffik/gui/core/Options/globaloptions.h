@@ -32,6 +32,7 @@
 #include "core/Utilities/singleton.h"
 #include "optiontypes.h"
 
+
 /** Global Options Class
 
   This class manages a set of global options available to the user interface.
@@ -56,6 +57,12 @@ public:
 
     QString theme();
     void theme(QString p_theme);
+
+    QHash<int, QString> hotkeys();
+    void hotkeys(QHash<int, QString> p_list);
+
+    QString hotkey(int p_key);
+    void hotkey(int p_key, QString p_val);
     
 signals:
     void optionsChanged();
@@ -68,6 +75,8 @@ private:
     QString m_theme;
 
     QMutex* m_mutex;
+
+    QHash<int, QString> m_hotKeys;
 };
 
 #endif // GLOBALOPTIONS_H

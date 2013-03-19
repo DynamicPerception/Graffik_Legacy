@@ -31,7 +31,7 @@
 #include <QPaintEvent>
 #include <QProgressDialog>
 #include <QFileDialog>
-
+#include <QShortcut>
 
 #include "MoCoBus/omnetwork.h"
 
@@ -116,6 +116,7 @@ public slots:
     void error(QString p_err);
 
     void filmParamsChanged();
+    void optionsChanged();
 
     // handling global save/load buttons
     void load();
@@ -159,6 +160,14 @@ private:
     JogControlPanel* m_jcp;
     NoTracksWidget* m_notw;
     FilmAutoSaver* m_saver;
+
+
+    QShortcut* m_scPlay;
+    QShortcut* m_scStop;
+    QShortcut* m_scRwd;
+    QShortcut* m_scFwd;
+    QShortcut* m_scFRwd;
+    QShortcut* m_scFFwd;
 
     QWidget* m_areaViewPort;
     QVBoxLayout* m_areaLayout;

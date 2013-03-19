@@ -126,6 +126,22 @@ void UserData::globalOptionsChanged(GlobalOptions *p_opts) {
     m_qset->setValue("display", p_opts->display());
     m_qset->setValue("theme", p_opts->theme());
 
+    QHash<int, QString> hotkeys = p_opts->hotkeys();
+
+    m_qset->remove("hotkeys");
+
+    m_qset->beginWriteArray("hotkeys");
+    int i = 1;
+
+    foreach(int key, hotkeys.keys() ) {
+        m_qset->setArrayIndex(i);
+        m_qset->setValue("key", key);
+        m_qset->setValue("input", hotkeys.value(key));
+        i++;
+    }
+
+    m_qset->endArray();
+
     m_qset->endGroup();
     _haveWritten(true);
 }
@@ -148,6 +164,21 @@ void UserData::recoverGlobalOptions(GlobalOptions *p_opts) {
     p_opts->stopOnErr(stop);
     p_opts->display(disp);
     p_opts->theme(theme);
+
+    QHash<int, QString> hotkeys;
+
+    int size = m_qset->beginReadArray("hotkeys");
+
+    for(int i = 0; i < size; ++i) {
+        m_qset->setArrayIndex(i);
+        int       key = m_qset->value("key").toInt();
+        QString value = m_qset->value("input").toString();
+        hotkeys.insert(key, value);
+    }
+
+    m_qset->endArray();
+
+    p_opts->hotkeys(hotkeys);
 
     m_qset->endGroup();
 }

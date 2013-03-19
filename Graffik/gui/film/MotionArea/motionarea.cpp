@@ -371,6 +371,7 @@ void MotionArea::paintEvent(QPaintEvent *e) {
         // TODO: Remove hard-coded sizes.
 
     if( m_pstat == false ) {
+
         if( m_path->hasChanged() ) {
 
             m_mvStart.setRect( m_path->getStartPx() - MA_GRAB_SIZE / 2,
