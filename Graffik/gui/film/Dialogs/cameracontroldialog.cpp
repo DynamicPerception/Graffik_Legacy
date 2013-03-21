@@ -34,6 +34,8 @@ CameraControlDialog::CameraControlDialog(FilmParameters *c_params, OMNetwork *c_
     m_opts      = c_opts;
     m_wasMaster = 0;
 
+    setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::FramelessWindowHint);
+
     _setupInputs();
 
     setStyleSheet(SingleThemer::getStyleSheet("camera_opts"));

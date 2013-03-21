@@ -43,7 +43,7 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
 
     m_params = new FilmParameters(m_net, this);
     m_exec   = new FilmExec(m_net, m_params, m_opts, m_gopts, this);
-    m_busy   = new QProgressDialog(this);
+    m_busy   = 0;
     m_jcp    = new JogControlPanel(m_net, m_opts, m_params, this);
     m_notw   = new NoTracksWidget(this);
     m_time   = new FilmTimeManager(m_exec, m_params);
@@ -82,6 +82,8 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
     ui->frameRwdButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
 #endif
 
+
+
         // create our transparent overlay for drawing position line
         // this must be done after the layout is added to visualSAContents,
         // as this class attempts to access that layout
@@ -111,8 +113,6 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
     connect(m_exec, SIGNAL(filmStarted()), this, SLOT(_filmStarted()));
     connect(m_exec, SIGNAL(error(QString)), this, SLOT(error(QString)));
     connect(m_exec, SIGNAL(shuttleComplete()), this, SLOT(_shuttleComplete()));
-
-    connect(m_busy, SIGNAL(canceled()), this, SLOT(_busyCanceled()));
 
     connect(this, SIGNAL(motionAreaBorders(int,int)), m_tape, SLOT(setBorders(int,int)));
     connect(this, SIGNAL(motionAreaBorders(int,int)), m_motion, SLOT(setBorders(int,int)));
@@ -160,6 +160,10 @@ FilmWindow::~FilmWindow() {
     foreach(unsigned short addr, m_areaBlocks.keys()) {
         delete m_areaBlocks.value(addr);
         m_areaBlocks.remove(addr);
+    }
+
+    if( m_busy != 0 ) {
+        delete m_busy;
     }
 
     delete m_scPlay;
@@ -245,10 +249,7 @@ void FilmWindow::timelineClicked(unsigned long p_time) {
 
     m_error = false;
 
-    m_busy->setLabelText("Sending All Axes to Specified Point");
-    m_busy->setMinimum(0);
-    m_busy->setMaximum(0);
-    m_busy->show();
+    _drawBusyDialog(FW_STR_SPEC);
 
     m_exec->sendAxesTo(theseAxes);
 
@@ -845,10 +846,7 @@ void FilmWindow::on_playButton_clicked() {
     if( fstat != FILM_STARTED ) {
         qDebug() << "FW: Send Start";
 
-        m_busy->setLabelText("Sending All Axes Home");
-        m_busy->setMinimum(0);
-        m_busy->setMaximum(0);
-        m_busy->show();
+        _drawBusyDialog(FW_STR_HOME);
 
         m_exec->start();
 
@@ -902,10 +900,7 @@ void FilmWindow::on_rewindButton_clicked() {
 
     m_error = false;
 
-    m_busy->setLabelText("Sending All Axes to Start Point");
-    m_busy->setMinimum(0);
-    m_busy->setMaximum(0);
-    m_busy->show();
+    _drawBusyDialog(FW_STR_START);
 
     m_exec->rewind();
 
@@ -921,10 +916,7 @@ void FilmWindow::on_forwardButton_clicked() {
 
     m_error = false;
 
-    m_busy->setLabelText("Sending All Axes to End Point");
-    m_busy->setMinimum(0);
-    m_busy->setMaximum(0);
-    m_busy->show();
+    _drawBusyDialog(FW_STR_END);
 
     m_exec->ffwd();
 
@@ -1146,7 +1138,7 @@ void FilmWindow::_redrawMotionOverlay() {
 
 void FilmWindow::_filmStarted() {
     qDebug() << "FW: Got filmStarted";
-    m_busy->hide();
+   _hideBusyDialog();
     _inputEnable(false);
     emit playStatusChange(true);
 }
@@ -1161,7 +1153,7 @@ void FilmWindow::error(QString p_err) {
             // make sure everything is stopped (may trigger another error)
         on_stopButton_clicked();
 
-        m_busy->hide();
+        _hideBusyDialog();
 
         ErrorDialog error;
         error.setError(p_err);
@@ -1240,7 +1232,7 @@ void FilmWindow::on_plugJogButton_clicked() {
   */
 
 void FilmWindow::load() {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Film"), "", tr("Film Files (*.film)"));
+    QString fileName = QFileDialog::getOpenFileName(this, FW_STR_OPEN, "", tr("Film Files (*.film)"));
     qDebug() << "FW: FilmOpen Got File: " << fileName;
     FilmFileHandler::readFile(fileName, m_params, m_net);
 }
@@ -1252,7 +1244,7 @@ void FilmWindow::load() {
 
 void FilmWindow::save() {
 
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Film"), "", tr("Film Files (*.film)"));
+    QString fileName = QFileDialog::getSaveFileName(this, FW_STR_SAVE, "", tr("Film Files (*.film)"));
     qDebug() << "FW: FilmSave Got File: " << fileName;
     FilmFileHandler::writeFile(fileName, m_params);
 }
@@ -1299,6 +1291,31 @@ void FilmWindow::filmParamsChanged() {
 
 
 void FilmWindow::_shuttleComplete() {
-    m_busy->hide();
+    _hideBusyDialog();
     _inputEnable(true);
+}
+
+
+void FilmWindow::_drawBusyDialog(QString p_str) {
+
+    if( m_busy != 0 ) {
+        delete m_busy;
+        m_busy = 0;
+    }
+
+    m_busy = new QProgressDialog(p_str, FW_STR_CANCEL, 0, 0, this, Qt::CustomizeWindowHint | Qt::WindowTitleHint);
+    connect(m_busy, SIGNAL(canceled()), this, SLOT(_busyCanceled()));
+    m_busy->setLabelText(p_str);
+    m_busy->setWindowModality(Qt::WindowModal);
+    m_busy->show();
+}
+
+void FilmWindow::_hideBusyDialog() {
+
+    if( m_busy != 0 ) {
+        m_busy->hide();
+        disconnect(m_busy, SIGNAL(canceled()), this, SLOT(_busyCanceled()));
+        delete m_busy;
+        m_busy = 0;
+    }
 }

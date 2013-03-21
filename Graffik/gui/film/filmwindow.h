@@ -29,9 +29,9 @@
 #include <QVBoxLayout>
 #include <QPainterPath>
 #include <QPaintEvent>
-#include <QProgressDialog>
 #include <QFileDialog>
 #include <QShortcut>
+#include <QProgressDialog>
 
 #include "MoCoBus/omnetwork.h"
 
@@ -60,6 +60,13 @@
 
 
 
+const QString FW_STR_CANCEL = "Cancel";
+const QString FW_STR_SPEC   = "Sending All Axes to Specified Point";
+const QString FW_STR_HOME   = "Sending All Axes Home";
+const QString FW_STR_START  = "Sending All Axes to Start Point";
+const QString FW_STR_END    = "Sending All Axes to End Point";
+const QString FW_STR_OPEN   = "Open Film";
+const QString FW_STR_SAVE   = "Save Film";
 
 namespace Ui {
     class FilmWindow;
@@ -207,6 +214,8 @@ private:
     void _inputEnable(bool p_stat);
     void _popTimeDisplay(QLabel* p_label, int p_time);
     QList<unsigned short> _checkSMSMovements(OMfilmParams* p_params);
+    void _drawBusyDialog(QString p_str);
+    void _hideBusyDialog();
 
 };
 

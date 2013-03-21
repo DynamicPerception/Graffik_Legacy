@@ -29,6 +29,8 @@ GlobalOptionsDialog::GlobalOptionsDialog(GlobalOptions *c_opts, QWidget *parent)
 
     m_opts = c_opts;
 
+    setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::FramelessWindowHint);
+
     _setupInputs();
 
     setStyleSheet(SingleThemer::getStyleSheet("global_opts"));
