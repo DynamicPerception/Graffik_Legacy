@@ -44,7 +44,7 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
     m_params = new FilmParameters(m_net, this);
     m_exec   = new FilmExec(m_net, m_params, m_opts, m_gopts, this);
     m_busy   = 0;
-    m_jcp    = new JogControlPanel(m_net, m_opts, m_params, this);
+    m_jcp    = new JogControlPanel(m_net, m_opts, m_gopts, m_params, this);
     m_notw   = new NoTracksWidget(this);
     m_time   = new FilmTimeManager(m_exec, m_params);
     m_saver  = new FilmAutoSaver(m_net, m_params, this);

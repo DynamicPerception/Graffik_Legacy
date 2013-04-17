@@ -455,7 +455,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>Damping (Sec)</string>
+           <string>Damping</string>
           </property>
          </widget>
         </item>

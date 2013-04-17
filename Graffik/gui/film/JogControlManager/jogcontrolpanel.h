@@ -31,6 +31,7 @@
 #include "livedevicemodel.h"
 
 #include "core/Options/axisoptions.h"
+#include "core/Options/globaloptions.h"
 #include "core/Themer/singlethemer.h"
 
 #include "film/FilmParameters/filmparameters.h"
@@ -39,6 +40,12 @@
 
 const int JCP_MAX_DAMP  = 30;
 
+const QString JCP_STR_DAMP = "Damping: %1 Seconds";
+const QString JCP_STR_SPD  = "Max Speed: %1 %2/Minute";
+const QString JCP_STR_DEG  = "Deg.";
+const QString JCP_STR_IN   = "In.";
+const QString JCP_STR_CM   = "Cm.";
+const QString JCP_STR_STEP = "Steps";
 
 namespace Ui {
 class JogControlPanel;
@@ -57,7 +64,7 @@ class JogControlPanel : public QWidget
     Q_OBJECT
     
 public:
-    JogControlPanel(OMNetwork* c_net, AxisOptions* c_opts, FilmParameters* c_params, QWidget *parent = 0);
+    JogControlPanel(OMNetwork* c_net, AxisOptions* c_opts, GlobalOptions* c_gopts, FilmParameters* c_params, QWidget *parent = 0);
     ~JogControlPanel();
     
 signals:
@@ -77,12 +84,15 @@ private slots:
     void _dialReleased();
     void _motorStarted(unsigned short p_addr);
     void _motorStopped(unsigned short p_addr);
+    void _jogDampChanged(int p_val);
+    void _jogSpeedChanged(int p_val);
 
 private:
     Ui::JogControlPanel *ui;
 
     OMNetwork* m_net;
     AxisOptions* m_opts;
+    GlobalOptions* m_gopts;
     FilmParameters* m_params;
     JogControlManager* m_jcm;
     LiveDeviceModel* m_ldModel;

@@ -26,11 +26,12 @@
 
 #include <QDebug>
 
-JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, FilmParameters *c_params, QWidget *parent) : QWidget(parent), ui(new Ui::JogControlPanel) {
+JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, GlobalOptions *c_gopts, FilmParameters *c_params, QWidget *parent) : QWidget(parent), ui(new Ui::JogControlPanel) {
     ui->setupUi(this);
 
     m_net     = c_net;
     m_opts    = c_opts;
+    m_gopts   = c_gopts;
     m_params  = c_params;
     m_curMode = false;
     m_curAddr = 0;
@@ -65,7 +66,9 @@ JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, FilmPara
     connect(ui->jogHomeButton, SIGNAL(clicked()), m_jcm, SLOT(setHome()));
     connect(ui->jogEndButton, SIGNAL(clicked()), m_jcm, SLOT(setEnd()));
     connect(ui->jogDampSlider, SIGNAL(valueChanged(int)), m_jcm, SLOT(jogDampChange(int)));
+    connect(ui->jogDampSlider, SIGNAL(valueChanged(int)), this, SLOT(_jogDampChanged(int)));
     connect(ui->jogSpeedSlider, SIGNAL(valueChanged(int)), m_jcm, SLOT(jogMaxSpeedChange(int)));
+    connect(ui->jogSpeedSlider, SIGNAL(valueChanged(int)), this, SLOT(_jogSpeedChanged(int)));
     connect(ui->jogDial, SIGNAL(valueChanged(int)), m_jcm, SLOT(speedChange(int)));
 
     connect(ui->jogHomeButton, SIGNAL(clicked()), this, SLOT(_homeSet()));
@@ -134,11 +137,15 @@ void JogControlPanel::_prepJogInputs(unsigned short p_addr) {
     ui->jogSpeedSlider->setMaximum(dispMax);
     ui->jogSpeedSlider->setValue(curMax);
 
+    _jogSpeedChanged(curMax);
+
     m_jcm->jogMaxSpeedChange(curMax);
 
     ui->jogDampSlider->setMinimum(1);
     ui->jogDampSlider->setMaximum(JCP_MAX_DAMP);
     ui->jogDampSlider->setValue((int) opts->jogDamp);
+
+    _jogDampChanged((int) opts->jogDamp);
 
     m_jcm->jogResChange(1);
 
@@ -261,3 +268,35 @@ void JogControlPanel::_endSet(unsigned short p_addr, long p_dist) {
     qDebug() << "JCP: End Setting Completed";
 }
 
+void JogControlPanel::_jogDampChanged(int p_val) {
+        ui->jogDampLabel->setText( QString(JCP_STR_DAMP).arg(p_val) );
+}
+
+void JogControlPanel::_jogSpeedChanged(int p_val) {
+
+    if( m_curAddr == 0 )
+        return;
+
+    OMaxisOptions* opts = m_opts->getOptions(m_curAddr);
+    int            disp = m_gopts->display();
+
+    QString dLabel;
+
+        // display correct label
+
+    if( disp == Options::Steps ) {
+        dLabel = JCP_STR_STEP;
+    }
+    else if( opts->axisMove == AXIS_MOVE_ROT ) {
+        dLabel = JCP_STR_DEG;
+    }
+    else {
+
+        if( disp == Options::Imperial )
+            dLabel = JCP_STR_IN;
+        else
+            dLabel = JCP_STR_CM;
+    }
+
+    ui->jogSpeedLabel->setText( QString(JCP_STR_SPD).arg( p_val ).arg(dLabel) );
+}

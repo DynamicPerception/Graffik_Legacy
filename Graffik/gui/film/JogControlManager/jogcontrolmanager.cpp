@@ -116,7 +116,7 @@ void JogControlManager::_liveDeviceSelected(unsigned short p_addr) {
 /** Convert Steps per Second to Speed
 
   Given a pointer to an OMaxisOptions instance, a given steps per second, and a current resolution,
-  returns a native speed for the motor in distance per second.
+  returns a native speed for the motor in distance per minute.
   */
 
 double JogControlManager::stepsToJogSpeed(OMaxisOptions* p_opts, unsigned int p_steps, int p_res) {
