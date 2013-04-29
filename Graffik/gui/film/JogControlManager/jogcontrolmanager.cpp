@@ -137,7 +137,7 @@ double JogControlManager::stepsToJogSpeed(OMaxisOptions* p_opts, unsigned int p_
   returns a speed in steps per second.
   */
 
-unsigned int JogControlManager::jogSpeedToSteps(OMaxisOptions *p_opts, double p_speed, int p_res) {
+double JogControlManager::jogSpeedToSteps(OMaxisOptions *p_opts, double p_speed, int p_res) {
     float setMove = 360.0;
 
     if( p_opts->axisType != AXIS_MOVE_ROT )
@@ -163,9 +163,8 @@ void JogControlManager::jogMaxSpeedChange(int p_spd) {
 
     OMaxisOptions* opts = m_opts->getOptions(m_curAxis);
 
-    unsigned int steps = jogSpeedToSteps(opts, p_spd, m_curRes);
-
-    double spdPct = (double) steps / (double) opts->maxSteps;
+    double  steps = jogSpeedToSteps(opts, p_spd, m_curRes);
+    double spdPct = steps / (double) opts->maxSteps;
 
     qDebug() << "JCM: Steps =" << steps << "Percentage:" << spdPct;
 
@@ -175,6 +174,7 @@ void JogControlManager::jogMaxSpeedChange(int p_spd) {
     opts->jogLimit = steps;
     m_opts->setOptions(m_curAxis, opts);
 
+    emit maxStepSpeed(steps);
 }
 
 /** Jog Damping Value Changed

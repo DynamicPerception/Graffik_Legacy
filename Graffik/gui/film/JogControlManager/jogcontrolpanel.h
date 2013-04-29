@@ -41,11 +41,13 @@
 const int JCP_MAX_DAMP  = 30;
 
 const QString JCP_STR_DAMP = "Damping: %1 Seconds";
-const QString JCP_STR_SPD  = "Max Speed: %1 %2/Minute";
+const QString JCP_STR_SPD  = "Max Speed: %1 %2/%3";
 const QString JCP_STR_DEG  = "Deg.";
 const QString JCP_STR_IN   = "In.";
 const QString JCP_STR_CM   = "Cm.";
 const QString JCP_STR_STEP = "Steps";
+const QString JCP_STR_SEC  = "Sec";
+const QString JCP_STR_MIN  = "Min";
 
 namespace Ui {
 class JogControlPanel;
@@ -85,7 +87,7 @@ private slots:
     void _motorStarted(unsigned short p_addr);
     void _motorStopped(unsigned short p_addr);
     void _jogDampChanged(int p_val);
-    void _jogSpeedChanged(int p_val);
+    void _jogSpeedChanged(double p_val);
 
 private:
     Ui::JogControlPanel *ui;

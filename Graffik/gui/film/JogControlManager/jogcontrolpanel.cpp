@@ -58,6 +58,7 @@ JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, GlobalOp
     connect(m_jcm, SIGNAL(endPosition(unsigned short,long)), this, SLOT(_endSet(unsigned short,long)));
     connect(m_jcm, SIGNAL(motorStarted(unsigned short)), this, SLOT(_motorStarted(unsigned short)));
     connect(m_jcm, SIGNAL(motorStopped(unsigned short)), this, SLOT(_motorStopped(unsigned short)));
+    connect(m_jcm, SIGNAL(maxStepSpeed(double)), this, SLOT(_jogSpeedChanged(double)));
 
         // forward this signal, so that we can inform the JCM when someone smashes the stop or play button!
     connect(this, SIGNAL(playStatusChange(bool)), m_jcm, SLOT(playStatusChange(bool)));
@@ -68,7 +69,6 @@ JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, GlobalOp
     connect(ui->jogDampSlider, SIGNAL(valueChanged(int)), m_jcm, SLOT(jogDampChange(int)));
     connect(ui->jogDampSlider, SIGNAL(valueChanged(int)), this, SLOT(_jogDampChanged(int)));
     connect(ui->jogSpeedSlider, SIGNAL(valueChanged(int)), m_jcm, SLOT(jogMaxSpeedChange(int)));
-    connect(ui->jogSpeedSlider, SIGNAL(valueChanged(int)), this, SLOT(_jogSpeedChanged(int)));
     connect(ui->jogDial, SIGNAL(valueChanged(int)), m_jcm, SLOT(speedChange(int)));
 
     connect(ui->jogHomeButton, SIGNAL(clicked()), this, SLOT(_homeSet()));
@@ -272,31 +272,37 @@ void JogControlPanel::_jogDampChanged(int p_val) {
         ui->jogDampLabel->setText( QString(JCP_STR_DAMP).arg(p_val) );
 }
 
-void JogControlPanel::_jogSpeedChanged(int p_val) {
+void JogControlPanel::_jogSpeedChanged(double p_val) {
 
     if( m_curAddr == 0 )
         return;
 
     OMaxisOptions* opts = m_opts->getOptions(m_curAddr);
     int            disp = m_gopts->display();
+    double          val = p_val;
 
     QString dLabel;
+    QString eLabel;
 
         // display correct label
 
     if( disp == Options::Steps ) {
         dLabel = JCP_STR_STEP;
-    }
-    else if( opts->axisMove == AXIS_MOVE_ROT ) {
-        dLabel = JCP_STR_DEG;
+        eLabel = JCP_STR_SEC;
     }
     else {
 
-        if( disp == Options::Imperial )
+        if( opts->axisMove == AXIS_MOVE_ROT )
+            dLabel = JCP_STR_DEG;
+        else if( disp == Options::Imperial )
             dLabel = JCP_STR_IN;
         else
             dLabel = JCP_STR_CM;
+
+        val    = m_jcm->stepsToJogSpeed(opts, p_val);
+        eLabel = JCP_STR_MIN;
     }
 
-    ui->jogSpeedLabel->setText( QString(JCP_STR_SPD).arg( p_val ).arg(dLabel) );
+
+    ui->jogSpeedLabel->setText( QString(JCP_STR_SPD).arg( val ).arg(dLabel).arg(eLabel) );
 }
