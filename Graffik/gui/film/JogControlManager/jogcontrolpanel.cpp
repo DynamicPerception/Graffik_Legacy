@@ -58,7 +58,7 @@ JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, GlobalOp
     connect(m_jcm, SIGNAL(endPosition(unsigned short,long)), this, SLOT(_endSet(unsigned short,long)));
     connect(m_jcm, SIGNAL(motorStarted(unsigned short)), this, SLOT(_motorStarted(unsigned short)));
     connect(m_jcm, SIGNAL(motorStopped(unsigned short)), this, SLOT(_motorStopped(unsigned short)));
-    connect(m_jcm, SIGNAL(maxStepSpeed(double)), this, SLOT(_jogSpeedChanged(double)));
+
 
         // forward this signal, so that we can inform the JCM when someone smashes the stop or play button!
     connect(this, SIGNAL(playStatusChange(bool)), m_jcm, SLOT(playStatusChange(bool)));
@@ -69,6 +69,7 @@ JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, GlobalOp
     connect(ui->jogDampSlider, SIGNAL(valueChanged(int)), m_jcm, SLOT(jogDampChange(int)));
     connect(ui->jogDampSlider, SIGNAL(valueChanged(int)), this, SLOT(_jogDampChanged(int)));
     connect(ui->jogSpeedSlider, SIGNAL(valueChanged(int)), m_jcm, SLOT(jogMaxSpeedChange(int)));
+    connect(ui->jogSpeedSlider, SIGNAL(valueChanged(int)), this, SLOT(_jogSpeedChanged(int)));
     connect(ui->jogDial, SIGNAL(valueChanged(int)), m_jcm, SLOT(speedChange(int)));
 
     connect(ui->jogHomeButton, SIGNAL(clicked()), this, SLOT(_homeSet()));
@@ -128,20 +129,20 @@ void JogControlPanel::_prepJogInputs(unsigned short p_addr) {
 
         // TODO: Add indicator for displaying max speed and damping
 
-    float curMax  = m_jcm->stepsToJogSpeed(opts, jog_limit);
-    float dispMax = m_jcm->stepsToJogSpeed(opts, max_jog);
+   // float curMax  = m_jcm->stepsToJogSpeed(opts, jog_limit);
+   // float dispMax = m_jcm->stepsToJogSpeed(opts, max_jog);
 
-    qDebug() << "JCP: Setting current speed max value to" << curMax;
+    qDebug() << "JCP: Setting current speed max value to" << jog_limit;
 
     ui->jogSpeedSlider->setMinimum(1);
-    ui->jogSpeedSlider->setMaximum(dispMax);
-    ui->jogSpeedSlider->setValue(curMax);
+    ui->jogSpeedSlider->setMaximum(max_jog);
+    ui->jogSpeedSlider->setValue(jog_limit);
 
-    _jogSpeedChanged(curMax);
+    _jogSpeedChanged(jog_limit);
 
-    m_jcm->jogMaxSpeedChange(curMax);
+    m_jcm->jogMaxSpeedChange(jog_limit);
 
-    ui->jogDampSlider->setMinimum(1);
+    ui->jogDampSlider->setMinimum(0);
     ui->jogDampSlider->setMaximum(JCP_MAX_DAMP);
     ui->jogDampSlider->setValue((int) opts->jogDamp);
 
@@ -272,7 +273,7 @@ void JogControlPanel::_jogDampChanged(int p_val) {
         ui->jogDampLabel->setText( QString(JCP_STR_DAMP).arg(p_val) );
 }
 
-void JogControlPanel::_jogSpeedChanged(double p_val) {
+void JogControlPanel::_jogSpeedChanged(int p_val) {
 
     if( m_curAddr == 0 )
         return;
@@ -292,14 +293,17 @@ void JogControlPanel::_jogSpeedChanged(double p_val) {
     }
     else {
 
+        val    = m_jcm->stepsToJogSpeed(opts, p_val);
+
         if( opts->axisMove == AXIS_MOVE_ROT )
             dLabel = JCP_STR_DEG;
         else if( disp == Options::Imperial )
             dLabel = JCP_STR_IN;
-        else
+        else {
             dLabel = JCP_STR_CM;
+            val *= 2.54; // convert to cm
+        }
 
-        val    = m_jcm->stepsToJogSpeed(opts, p_val);
         eLabel = JCP_STR_MIN;
     }
 

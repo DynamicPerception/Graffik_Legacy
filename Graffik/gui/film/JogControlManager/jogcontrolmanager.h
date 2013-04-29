@@ -71,9 +71,6 @@ signals:
     void motorStarted(unsigned short p_addr);
     void motorStopped(unsigned short p_addr);
 
-        // new maximum speed set
-    void maxStepSpeed(double p_steps);
-
 public slots:
     void playStatusChange(bool p_stat);
     void emergencyStop();

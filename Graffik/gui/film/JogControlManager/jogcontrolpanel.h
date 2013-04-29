@@ -87,7 +87,7 @@ private slots:
     void _motorStarted(unsigned short p_addr);
     void _motorStopped(unsigned short p_addr);
     void _jogDampChanged(int p_val);
-    void _jogSpeedChanged(double p_val);
+    void _jogSpeedChanged(int p_val);
 
 private:
     Ui::JogControlPanel *ui;

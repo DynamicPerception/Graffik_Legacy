@@ -163,18 +163,17 @@ void JogControlManager::jogMaxSpeedChange(int p_spd) {
 
     OMaxisOptions* opts = m_opts->getOptions(m_curAxis);
 
-    double  steps = jogSpeedToSteps(opts, p_spd, m_curRes);
-    double spdPct = steps / (double) opts->maxSteps;
+   // double  steps = jogSpeedToSteps(opts, p_spd, m_curRes);
+    double spdPct = p_spd / (double) opts->maxSteps;
 
-    qDebug() << "JCM: Steps =" << steps << "Percentage:" << spdPct;
+    qDebug() << "JCM: Steps =" << p_spd << "Percentage:" << spdPct;
 
     m_scp->maxSpeed(spdPct);
 
         // record and save new value
-    opts->jogLimit = steps;
+    opts->jogLimit = p_spd;
     m_opts->setOptions(m_curAxis, opts);
 
-    emit maxStepSpeed(steps);
 }
 
 /** Jog Damping Value Changed
