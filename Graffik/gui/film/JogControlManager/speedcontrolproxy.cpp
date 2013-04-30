@@ -97,6 +97,10 @@ void SpeedControlProxy::maxSpeed(float p_pct) {
 void SpeedControlProxy::setDamping(float p_secs) {
 
     m_dampPeriods = (unsigned int) ( (1000.0 * p_secs) / (float) SCP_TIME_PERIOD );
+
+    if( p_secs == 0.0 )
+        m_dampPeriods = 1;
+
 }
 
 
