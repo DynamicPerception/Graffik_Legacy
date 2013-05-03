@@ -110,6 +110,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="delButton">
+          <property name="toolTip">
+           <string>Delete This Move</string>
+          </property>
           <property name="text">
            <string/>
           </property>
