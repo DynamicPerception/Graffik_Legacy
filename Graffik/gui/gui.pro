@@ -10,7 +10,12 @@ TEMPLATE = app
 UI_DIR = .ui
 
 CONFIG += ordered
-CONFIG += help
+unix:!macx {
+    CONFIG += help
+}
+
+#Uncomment this line for additional debugging output.
+#CONFIG += debug
 
 INCLUDEPATH  += ../libs/qextserialport/src/ \
 		../libs/OpenMoCo \
@@ -35,22 +40,22 @@ win32 {
     }
 
     LIBS += -L../libs/qextserialport/src/build
+    LIBS += -lopenmoco
 }
 
 macx {
     LIBS += -L../libs/OpenMoCo/build
     LIBS += -L$$(HOME)/lib
+    LIBS += -lopenmoco
+}
+
+unix:!macx {
+    CONFIG(debug, debug|release)
+    LIBS += ../libs/OpenMoCo/libopenmoco.a
 }
 
 
 
-    LIBS += ../libs/OpenMoCo/libopenmoco.a
-    LIBS += -L../libs/qextserialport/src/build -lqextserialport
-
-
-
-
-#LIBS += -lopenmoco
 
  # link to serialport lib, add icons
 
@@ -64,6 +69,10 @@ macx {
     LIBS += -lqextserialport
         # set icon
     ICON = graffik.icns
+}
+
+unix:!macx {
+    LIBS += -L../libs/qextserialport/src/build -lqextserialport
 }
 
 
