@@ -29,7 +29,7 @@
 #include <QPixmap>
 #include <QAbstractItemModel>
 
-#include "Slim/CommandHistoryModel/commandhistorymodel.h"
+#include "slim/CommandHistoryModel/commandhistorymodel.h"
 
 class CommandHistoryView : public QTableView
 {

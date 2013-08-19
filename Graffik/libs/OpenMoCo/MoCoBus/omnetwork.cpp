@@ -177,6 +177,10 @@ void OMNetwork::addBus(QString p_port, QString p_name) {
         qDebug() << "OMN: Bus" << p_port << "is already in use.";
         throw OM_NET_DUPE;
     }
+    
+    #ifdef __linux__
+    p_port == "/dev/" + p_port;
+    #endif
 
     OMMoCoBus* bus = new OMMoCoBus(p_port);
 
