@@ -23,6 +23,7 @@
 #ifndef OMMOCOBUS_H
 #define OMMOCOBUS_H
 
+#include <stdint.h>
 
 #include <QObject>
 #include <QMetaType>

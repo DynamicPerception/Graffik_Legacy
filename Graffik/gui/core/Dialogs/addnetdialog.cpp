@@ -97,7 +97,11 @@ void AddNetDialog::on_okButton_clicked() {
 
     if( ok == true ) {
         try {
+            #ifdef __linux__
+            _net->addBus("/dev/" + port, name);
+            #else
             _net->addBus(port, name);
+            #endif
         }
         catch (int e) {
             ok = false;
