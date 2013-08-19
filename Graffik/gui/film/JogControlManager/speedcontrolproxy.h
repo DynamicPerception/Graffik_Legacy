@@ -74,6 +74,8 @@ public:
 signals:
     void motorNotReady(unsigned short p_addr);
     void motorChangeAccepted(unsigned short p_addr);
+    void motorStarted(unsigned short p_addr);
+    void motorStopped(unsigned short p_addr);
 
 public slots:
     void speedPosChange(int p_value);
@@ -101,6 +103,7 @@ private:
     unsigned int m_dampPeriods;
     unsigned int m_curPeriod;
     unsigned int m_curRes;
+    unsigned short m_curAddr;
 
     QTimer* m_timer;
 

@@ -29,9 +29,9 @@
 #include <QVBoxLayout>
 #include <QPainterPath>
 #include <QPaintEvent>
-#include <QProgressDialog>
 #include <QFileDialog>
-
+#include <QShortcut>
+#include <QProgressDialog>
 
 #include "MoCoBus/omnetwork.h"
 
@@ -60,6 +60,13 @@
 
 
 
+const QString FW_STR_CANCEL = "Cancel";
+const QString FW_STR_SPEC   = "Sending All Axes to Specified Point";
+const QString FW_STR_HOME   = "Sending All Axes Home";
+const QString FW_STR_START  = "Sending All Axes to Start Point";
+const QString FW_STR_END    = "Sending All Axes to End Point";
+const QString FW_STR_OPEN   = "Open Film";
+const QString FW_STR_SAVE   = "Save Film";
 
 namespace Ui {
     class FilmWindow;
@@ -116,6 +123,7 @@ public slots:
     void error(QString p_err);
 
     void filmParamsChanged();
+    void optionsChanged();
 
     // handling global save/load buttons
     void load();
@@ -160,6 +168,14 @@ private:
     NoTracksWidget* m_notw;
     FilmAutoSaver* m_saver;
 
+
+    QShortcut* m_scPlay;
+    QShortcut* m_scStop;
+    QShortcut* m_scRwd;
+    QShortcut* m_scFwd;
+    QShortcut* m_scFRwd;
+    QShortcut* m_scFFwd;
+
     QWidget* m_areaViewPort;
     QVBoxLayout* m_areaLayout;
     QHash<unsigned short, MotionBase*> m_areaBlocks;
@@ -177,29 +193,30 @@ private:
     bool m_ignoreUpdate;
     bool m_notwShown;
     bool m_checkRunning;
+    bool m_camOpts;
 
     unsigned long m_curFrameShot;
+    unsigned long m_smsMinInterval;
 
     void _displayCamControl();
     void _enableCamControl(bool p_en = true);
     void _showFilmTime();
     void _prepInputs();
     void _showTotalFrames(unsigned long p_len, unsigned long p_val, bool p_type = false);
-
+    void _setSMSMinimumInterval();
     void _changeTime(int p_which, int p_pos, int p_val);
     void _calcAutoFilmTime();
     void _checkFilmTimeConstraint();
-    QList<unsigned short> _checkSMSMovements(OMfilmParams* p_params);
-
     void _setPlayButtonStatus(int p_stat);
     void _setStopButtonStatus(int p_stat);
-
     void _filmTimeDisplay(unsigned long p_ms);
-
     void _redrawMotionOverlay();
     void _inputEnable(bool p_stat);
-
     void _popTimeDisplay(QLabel* p_label, int p_time);
+    QList<unsigned short> _checkSMSMovements(OMfilmParams* p_params);
+    void _drawBusyDialog(QString p_str);
+    void _hideBusyDialog();
+
 };
 
 #endif // FILMWINDOW_H

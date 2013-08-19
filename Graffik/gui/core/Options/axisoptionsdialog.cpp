@@ -30,9 +30,10 @@
 
 AxisOptionsDialog::AxisOptionsDialog(AxisOptions* c_opts, unsigned short c_addr, QWidget *parent) : QDialog(parent), ui(new Ui::AxisOptionsDialog) {
     ui->setupUi(this);
-    m_opts = c_opts->getOptions(c_addr);
+
+    m_opts   = c_opts->getOptions(c_addr);
     m_optObj = c_opts;
-    m_addr = c_addr;
+    m_addr   = c_addr;
 
     _initInputs();
 
@@ -74,6 +75,7 @@ void AxisOptionsDialog::_initInputs() {
     ui->maxLine->setText(QString::number(m_opts->maxSteps));
 
     ui->masterToggle->setValue(m_opts->master);
+    ui->sleepToggle->setValue(m_opts->sleep);
 
     ui->backlashLine->setText(QString::number(m_opts->backlash));
 
@@ -91,7 +93,7 @@ void AxisOptionsDialog::_initInputs() {
 
 void AxisOptionsDialog::_defaultComboChange(int p_idx) {
 
-    bool enable = false;
+    bool      enable = false;
     unsigned int sel = ui->defaultCombo->itemData(p_idx).toUInt();
 
     switch(sel) {
@@ -142,12 +144,15 @@ void AxisOptionsDialog::on_saveButton_clicked() {
 
     qDebug() << "AFODia: User Saved Values";
 
-      m_opts->axisType = ui->defaultCombo->itemData(ui->defaultCombo->currentIndex()).toUInt();
-      m_opts->maxSteps = ui->maxLine->text().toUInt();
-      m_opts->backlash = ui->backlashLine->text().toUShort();
-      m_opts->axisMove = ui->typeCombo->itemData(ui->typeCombo->currentIndex()).toUInt();
-       m_opts->stepRev = ui->stepsLine->text().toUInt();
+    m_opts->axisType   = ui->defaultCombo->itemData(ui->defaultCombo->currentIndex()).toUInt();
+    m_opts->maxSteps   = ui->maxLine->text().toUInt();
+    m_opts->backlash   = ui->backlashLine->text().toUShort();
+    m_opts->axisMove   = ui->typeCombo->itemData(ui->typeCombo->currentIndex()).toUInt();
+    m_opts->stepRev    = ui->stepsLine->text().toUInt();
     m_opts->driveRatio = ui->ratioLine->text().toFloat();
+    m_opts->sleep      = ui->sleepToggle->value();
+    m_opts->jogLimit   = m_opts->maxSteps;
+    m_opts->jogDamp    = OM_OPT_JOGDAMP;
 
         // set correct ratio based on movement type...
     if( m_opts->axisMove == AXIS_MOVE_ROT ) {
@@ -159,8 +164,6 @@ void AxisOptionsDialog::on_saveButton_clicked() {
         m_opts->ratio = (1.0 / m_opts->driveRatio) * ui->stepsLine->text().toFloat();
     }
 
-    m_opts->jogLimit = m_opts->maxSteps;
-    m_opts->jogDamp = OM_OPT_JOGDAMP;
 
     if( m_opts->master != ui->masterToggle->value() ) {
             // changing the timing master flag has implications, force the user to confirm

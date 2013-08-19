@@ -30,11 +30,11 @@ NetBaseDialog::NetBaseDialog(OMNetwork *c_net, NetworkModel *c_model, AxisOption
 
     ui->setupUi(this);
 
-            m_net = c_net;
-           m_opts = c_opts;
-          m_model = c_model;
-           m_scan = 0;
-      m_curWidget = 0;
+    m_net         = c_net;
+    m_opts        = c_opts;
+    m_model       = c_model;
+    m_scan        = 0;
+    m_curWidget   = 0;
     m_frameLayout = new QVBoxLayout();
 
     m_frameLayout->setSpacing(0);
@@ -45,7 +45,7 @@ NetBaseDialog::NetBaseDialog(OMNetwork *c_net, NetworkModel *c_model, AxisOption
 
         // prevent the close or minimize system window option from being used
 
-    setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowTitleHint);
+    setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::FramelessWindowHint);
 
         // default to manage devices screen
     on_manageButton_clicked();

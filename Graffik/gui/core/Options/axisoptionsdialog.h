@@ -34,9 +34,9 @@
 const QString AOD_STR_MAST   = "By setting this device as the timing master, you will automatically unset any existing master device. Do you want to do this?";
 const QString AOD_STR_UNMAST = "If you unset this device as the timing master, you must manually select and edit another device and configure it as timing master for synchronization to work. Do you want to do this?";
 
-const QString AOD_STR_PAN   =  "VX1 Pan";
-const QString AOD_STR_TILT  =  "VX1 Tilt";
-const QString AOD_STR_SLIDE =  "VX1 Slider";
+const QString AOD_STR_PAN   =  "NMx+VX1 Pan";
+const QString AOD_STR_TILT  =  "NMx+VX1 Tilt";
+const QString AOD_STR_SLIDE =  "NMx Slider";
 const QString AOD_STR_CUST  =  "Custom";
 
 const QString AOD_STR_ROT   =  "Rotary";

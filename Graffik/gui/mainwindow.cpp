@@ -104,7 +104,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(m_axisOpts, SIGNAL(deviceOptionsRemoved(unsigned short)), m_uData, SLOT(deviceOptionsRemoved(unsigned short)));
 
     connect(m_globalOpts, SIGNAL(optionsChanged()), this, SLOT(_globalOptionsChanged()));
-    connect(this, SIGNAL(globalOptionsChanged(GlobalOptions*)),m_uData, SLOT(globalOptionsChanged(GlobalOptions*)));
+    connect(this, SIGNAL(globalOptionsChanged(GlobalOptions*)), m_uData, SLOT(globalOptionsChanged(GlobalOptions*)));
 
     // default to film screen
 
@@ -164,9 +164,7 @@ void MainWindow::_optionsCleared() {
 
 void MainWindow::_themeChanged() {
     setStyleSheet(SingleThemer::getStyleSheet("main"));
-    style()->unpolish(this);
-    style()->polish(this);
-    update();
+    Themer::rePolish(this);
 }
 
 void MainWindow::_welcomeAddBus() {

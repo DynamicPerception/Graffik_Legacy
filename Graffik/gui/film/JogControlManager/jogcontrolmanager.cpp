@@ -28,15 +28,12 @@
 #include <QDebug>
 
 JogControlManager::JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, LiveDeviceModel* c_ldm, QObject *parent) : QObject(parent) {
-    m_curAxis = 0;
-    m_curRes = 1;
-
-
-    m_net = c_net;
-    m_opts = c_opts;
-    m_ldm = c_ldm;
-
-    m_wantId = 0;
+    m_curAxis  = 0;
+    m_curRes   = 1;
+    m_net      = c_net;
+    m_opts     = c_opts;
+    m_ldm      = c_ldm;
+    m_wantId   = 0;
     m_wantType = 0;
 
 
@@ -62,6 +59,9 @@ JogControlManager::JogControlManager(OMNetwork* c_net, AxisOptions* c_opts, Live
     connect(m_scp, SIGNAL(motorChangeAccepted(unsigned short)), this, SLOT(_liveDeviceSelected(unsigned short)));
     connect(m_scp, SIGNAL(motorChangeAccepted(unsigned short)), this, SIGNAL(motorChangeAllowed(unsigned short)));
 
+        // reflect signals out from SCP
+    connect(m_scp, SIGNAL(motorStarted(unsigned short)), this, SIGNAL(motorStarted(unsigned short)));
+    connect(m_scp, SIGNAL(motorStopped(unsigned short)), this, SIGNAL(motorStopped(unsigned short)));
 
 }
 
@@ -97,12 +97,26 @@ void JogControlManager::_liveDeviceSelected(unsigned short p_addr) {
             // revert to rapid
     m_scp->setResolution(1);
 
+        // make sure sleep enable is set properly for axis
+
+    OMdeviceInfo* devInfo = m_net->getDevices().value(m_curAxis);
+    OMDevice*         dev = devInfo->device;
+    OMAxis*        omaxis = dynamic_cast<OMAxis*>(dev);
+    OMaxisOptions*   opts = m_opts->getOptions(p_addr);
+
+    if( omaxis == 0 ) {
+        qDebug() << "JCM: Error Casting Device!";
+        return;
+    }
+
+    omaxis->sleep(opts->sleep);
+
 }
 
 /** Convert Steps per Second to Speed
 
   Given a pointer to an OMaxisOptions instance, a given steps per second, and a current resolution,
-  returns a native speed for the motor in distance per second.
+  returns a native speed for the motor in distance per minute.
   */
 
 double JogControlManager::stepsToJogSpeed(OMaxisOptions* p_opts, unsigned int p_steps, int p_res) {
@@ -123,7 +137,7 @@ double JogControlManager::stepsToJogSpeed(OMaxisOptions* p_opts, unsigned int p_
   returns a speed in steps per second.
   */
 
-unsigned int JogControlManager::jogSpeedToSteps(OMaxisOptions *p_opts, double p_speed, int p_res) {
+double JogControlManager::jogSpeedToSteps(OMaxisOptions *p_opts, double p_speed, int p_res) {
     float setMove = 360.0;
 
     if( p_opts->axisType != AXIS_MOVE_ROT )
@@ -149,16 +163,15 @@ void JogControlManager::jogMaxSpeedChange(int p_spd) {
 
     OMaxisOptions* opts = m_opts->getOptions(m_curAxis);
 
-    unsigned int steps = jogSpeedToSteps(opts, p_spd, m_curRes);
+   // double  steps = jogSpeedToSteps(opts, p_spd, m_curRes);
+    double spdPct = p_spd / (double) opts->maxSteps;
 
-    double spdPct = (double) steps / (double) opts->maxSteps;
-
-    qDebug() << "JCM: Steps =" << steps << "Percentage:" << spdPct;
+    qDebug() << "JCM: Steps =" << p_spd << "Percentage:" << spdPct;
 
     m_scp->maxSpeed(spdPct);
 
         // record and save new value
-    opts->jogLimit = steps;
+    opts->jogLimit = p_spd;
     m_opts->setOptions(m_curAxis, opts);
 
 }
@@ -301,3 +314,4 @@ void JogControlManager::_cmdComplete(int p_id, OMCommandBuffer *p_cmd) {
         emit endPosition(m_curAxis, distance);
 
 }
+

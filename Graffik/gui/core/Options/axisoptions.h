@@ -75,37 +75,40 @@ struct OMaxisOptions {
     unsigned char backlash;
     float driveRatio;
     unsigned int stepRev;
+    bool sleep;
 
         // default construction
     OMaxisOptions() {
       //  axisType = AXIS_CUSTOM;
-          axisType = AXIS_VX1_PAN;
-            master = false;
-             ratio = OM_OPT_VX1REVS * OM_OPT_VX1RATIO;
-          maxSteps = OM_OPT_VX1MAXSTEPS;
-          axisMove = AXIS_MOVE_ROT;
-          jogLimit = OM_OPT_VX1MAXSTEPS;
-           jogDamp = OM_OPT_JOGDAMP;
-                ms = 1;
-          backlash = 0;
+        axisType   = AXIS_VX1_PAN;
+        master     = false;
+        ratio      = OM_OPT_VX1REVS * OM_OPT_VX1RATIO;
+        maxSteps   = OM_OPT_VX1MAXSTEPS;
+        axisMove   = AXIS_MOVE_ROT;
+        jogLimit   = OM_OPT_VX1MAXSTEPS;
+        jogDamp    = OM_OPT_JOGDAMP;
+        ms         = 1;
+        backlash   = 0;
         driveRatio = OM_OPT_VX1RATIO;
-           stepRev = OM_OPT_VX1REVS;
+        stepRev    = OM_OPT_VX1REVS;
+        sleep      = true;
 
     }
 
         // construct new from old
     OMaxisOptions(const OMaxisOptions& opts) {
-          axisType = opts.axisType;
-            master = opts.master;
-             ratio = opts.ratio;
-          maxSteps = opts.maxSteps;
-          axisMove = opts.axisMove;
-          jogLimit = opts.jogLimit;
-           jogDamp = opts.jogDamp;
-                ms = opts.ms;
-          backlash = opts.backlash;
+        axisType   = opts.axisType;
+        master     = opts.master;
+        ratio      = opts.ratio;
+        maxSteps   = opts.maxSteps;
+        axisMove   = opts.axisMove;
+        jogLimit   = opts.jogLimit;
+        jogDamp    = opts.jogDamp;
+        ms         = opts.ms;
+        backlash   = opts.backlash;
         driveRatio = opts.driveRatio;
-           stepRev = opts.stepRev;
+        stepRev    = opts.stepRev;
+        sleep      = opts.sleep;
     }
 };
 
@@ -127,6 +130,7 @@ inline QDataStream& operator<<(QDataStream& out, const OMaxisOptions& options)
     out << quint8(options.backlash);
     out << QString::number(options.driveRatio);
     out << quint32(options.stepRev);
+    out << quint32(options.sleep);
 
 
     return out;
@@ -145,6 +149,7 @@ inline QDataStream& operator>>(QDataStream& in, OMaxisOptions& options)
     quint8  backlash;
     QString driveRatio;
     quint32 stepRev;
+    quint32 sleep;
 
     in >> type;
     in >> move;
@@ -157,18 +162,20 @@ inline QDataStream& operator>>(QDataStream& in, OMaxisOptions& options)
     in >> backlash;
     in >> driveRatio;
     in >> stepRev;
+    in >> sleep;
 
-      options.axisMove = move;
-      options.axisType = type;
-        options.master = master;
-      options.maxSteps = maxSteps;
-         options.ratio = ratio.toFloat();
-      options.jogLimit = jogLimit;
-       options.jogDamp = jogDamp.toFloat();
-            options.ms = ms;
-      options.backlash = backlash;
+    options.axisMove   = move;
+    options.axisType   = type;
+    options.master     = master;
+    options.maxSteps   = maxSteps;
+    options.ratio      = ratio.toFloat();
+    options.jogLimit   = jogLimit;
+    options.jogDamp    = jogDamp.toFloat();
+    options.ms         = ms;
+    options.backlash   = backlash;
     options.driveRatio = driveRatio.toFloat();
-       options.stepRev = stepRev;
+    options.stepRev    = stepRev;
+    options.sleep      = sleep;
 
     return in;
 }

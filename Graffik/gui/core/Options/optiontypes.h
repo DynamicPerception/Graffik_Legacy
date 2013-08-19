@@ -28,8 +28,8 @@
 namespace Options {
 
     const int Imperial = 1;
-    const int Metric   = 2;
-    const int Steps    = 3;
+    const int   Metric = 2;
+    const int    Steps = 3;
 }
 
 /** Error Types */
@@ -44,5 +44,21 @@ namespace AxisErrors {
     const int        ErrorNoTime = 3;
         /** At least one interval needs more time than allocated based on move */
     const int ErrorIntervalSpeed = 4;
+}
+
+namespace HotKeys {
+
+    /** Film Play */
+    const int FilmPlay = 1;
+    /** Film Stop */
+    const int FilmStop = 2;
+    /** Film Fwd to End */
+    const int  FilmFwd = 3;
+    /** Film Rwd to Beginning */
+    const int  FilmRwd = 4;
+    /** Film Frame Advance */
+    const int FilmFFwd = 5;
+    /** Film Frame Reverse */
+    const int FilmFRwd = 6;
 }
 #endif // OPTIONTYPES_H

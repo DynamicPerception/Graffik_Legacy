@@ -26,13 +26,15 @@
 
 #include <QDebug>
 
-JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, FilmParameters *c_params, QWidget *parent) : QWidget(parent), ui(new Ui::JogControlPanel) {
+JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, GlobalOptions *c_gopts, FilmParameters *c_params, QWidget *parent) : QWidget(parent), ui(new Ui::JogControlPanel) {
     ui->setupUi(this);
 
     m_net     = c_net;
     m_opts    = c_opts;
+    m_gopts   = c_gopts;
     m_params  = c_params;
     m_curMode = false;
+    m_curAddr = 0;
 
     m_ldModel = new LiveDeviceModel(m_net, this);
     m_jcm     = new JogControlManager(m_net, m_opts, m_ldModel, this);
@@ -54,6 +56,9 @@ JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, FilmPara
     connect(m_jcm, SIGNAL(motorChangeDenied(unsigned short)), this, SLOT(_jogMotorChangeDenied(unsigned short)));
     connect(m_jcm, SIGNAL(motorChangeAllowed(unsigned short)), this, SLOT(_jogMotorChangeAllowed(unsigned short)));
     connect(m_jcm, SIGNAL(endPosition(unsigned short,long)), this, SLOT(_endSet(unsigned short,long)));
+    connect(m_jcm, SIGNAL(motorStarted(unsigned short)), this, SLOT(_motorStarted(unsigned short)));
+    connect(m_jcm, SIGNAL(motorStopped(unsigned short)), this, SLOT(_motorStopped(unsigned short)));
+
 
         // forward this signal, so that we can inform the JCM when someone smashes the stop or play button!
     connect(this, SIGNAL(playStatusChange(bool)), m_jcm, SLOT(playStatusChange(bool)));
@@ -62,9 +67,12 @@ JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, FilmPara
     connect(ui->jogHomeButton, SIGNAL(clicked()), m_jcm, SLOT(setHome()));
     connect(ui->jogEndButton, SIGNAL(clicked()), m_jcm, SLOT(setEnd()));
     connect(ui->jogDampSlider, SIGNAL(valueChanged(int)), m_jcm, SLOT(jogDampChange(int)));
+    connect(ui->jogDampSlider, SIGNAL(valueChanged(int)), this, SLOT(_jogDampChanged(int)));
     connect(ui->jogSpeedSlider, SIGNAL(valueChanged(int)), m_jcm, SLOT(jogMaxSpeedChange(int)));
+    connect(ui->jogSpeedSlider, SIGNAL(valueChanged(int)), this, SLOT(_jogSpeedChanged(int)));
     connect(ui->jogDial, SIGNAL(valueChanged(int)), m_jcm, SLOT(speedChange(int)));
 
+    connect(ui->jogHomeButton, SIGNAL(clicked()), this, SLOT(_homeSet()));
 
     // OSX has issues laying out these buttons w/o overlap,
     // this is a work-around
@@ -73,6 +81,9 @@ JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, FilmPara
     ui->jogHomeButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
     ui->jogEndButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
     ui->modeButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+    ui->ledHomeButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+    ui->ledEndButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+    ui->ledMovingButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
 #endif
 
     // theming
@@ -91,7 +102,23 @@ JogControlPanel::~JogControlPanel() {
 }
 
 
+void JogControlPanel::_motorStarted(unsigned short p_addr) {
+    Q_UNUSED(p_addr);
+
+    ui->ledMovingButton->setState(1);
+    Themer::rePolish(ui->ledMovingButton);
+}
+
+void JogControlPanel::_motorStopped(unsigned short p_addr) {
+    Q_UNUSED(p_addr);
+
+    ui->ledMovingButton->setState(0);
+    Themer::rePolish(ui->ledMovingButton);
+}
+
 void JogControlPanel::_prepJogInputs(unsigned short p_addr) {
+
+    m_curAddr = p_addr;
 
         // update the jog speed limit and damping with the saved
         // values for the axis
@@ -102,22 +129,42 @@ void JogControlPanel::_prepJogInputs(unsigned short p_addr) {
 
         // TODO: Add indicator for displaying max speed and damping
 
-    float curMax  = m_jcm->stepsToJogSpeed(opts, jog_limit);
-    float dispMax = m_jcm->stepsToJogSpeed(opts, max_jog);
+   // float curMax  = m_jcm->stepsToJogSpeed(opts, jog_limit);
+   // float dispMax = m_jcm->stepsToJogSpeed(opts, max_jog);
 
-    qDebug() << "JCP: Setting current speed max value to" << curMax;
+    qDebug() << "JCP: Setting current speed max value to" << jog_limit;
 
     ui->jogSpeedSlider->setMinimum(1);
-    ui->jogSpeedSlider->setMaximum(dispMax);
-    ui->jogSpeedSlider->setValue(curMax);
+    ui->jogSpeedSlider->setMaximum(max_jog);
+    ui->jogSpeedSlider->setValue(jog_limit);
 
-    m_jcm->jogMaxSpeedChange(curMax);
+    _jogSpeedChanged(jog_limit);
 
-    ui->jogDampSlider->setMinimum(1);
+    m_jcm->jogMaxSpeedChange(jog_limit);
+
+    ui->jogDampSlider->setMinimum(0);
     ui->jogDampSlider->setMaximum(JCP_MAX_DAMP);
     ui->jogDampSlider->setValue((int) opts->jogDamp);
 
+    _jogDampChanged((int) opts->jogDamp);
+
     m_jcm->jogResChange(1);
+
+        // set home and end led states
+
+        // pre-populate list with 'off' if not already populated
+    if( ! m_ledStates.contains(p_addr) ) {
+        QList<bool> list;
+        list << false << false;
+
+        m_ledStates.insert(p_addr, list);
+    }
+
+    ui->ledHomeButton->setState(m_ledStates.value(p_addr).at(0));
+    ui->ledEndButton->setState(m_ledStates.value(p_addr).at(1));
+
+    Themer::rePolish(ui->ledHomeButton);
+    Themer::rePolish(ui->ledEndButton);
 
 }
 
@@ -133,9 +180,7 @@ void JogControlPanel::_modeClicked() {
 
     // force a re-draw of the button's style
 
-    ui->modeButton->style()->unpolish(ui->modeButton);
-    ui->modeButton->style()->polish(ui->modeButton);
-    ui->modeButton->update();
+    Themer::rePolish(ui->modeButton);
 }
 
 void JogControlPanel::_dialReleased() {
@@ -152,9 +197,7 @@ void JogControlPanel::_eStop() {
 
 void JogControlPanel::_themeChanged() {
     setStyleSheet(SingleThemer::getStyleSheet("jog"));
-    style()->unpolish(this);
-    style()->polish(this);
-    update();
+    Themer::rePolish(this);
 }
 
 void JogControlPanel::_jogMotorChangeAllowed(unsigned short p_addr) {
@@ -174,6 +217,22 @@ void JogControlPanel::_jogMotorChangeDenied(unsigned short p_oldAddr) {
     ui->devButtonList->selectionModel()->select(sel, QItemSelectionModel::SelectCurrent);
 }
 
+void JogControlPanel::_homeSet() {
+    // record that home has been set for this axis
+    // (we know that the list was populated by the
+    // _prepJogInputs() method (or has no contents
+    // if no device has been selected yet)
+
+    if( m_ledStates.size() > 0 ) {
+        QList<bool> list = m_ledStates.value(m_curAddr);
+        list.replace(0, true);
+        m_ledStates.insert(m_curAddr, list);
+    }
+
+    ui->ledHomeButton->setState(1);
+    Themer::rePolish(ui->ledHomeButton);
+
+}
 
 void JogControlPanel::_endSet(unsigned short p_addr, long p_dist) {
     qDebug() << "JCP: Got EndSet Signal" << p_addr << p_dist;
@@ -193,5 +252,61 @@ void JogControlPanel::_endSet(unsigned short p_addr, long p_dist) {
 
     m_params->releaseParams();
 
+        // record that end has been set for this axis
+        // (we know that the list was populated by the
+        // _prepJogInputs() method (or has no contents
+        // if no device has been selected yet)
+
+    if( m_ledStates.size() > 0 ) {
+        QList<bool> list = m_ledStates.value(p_addr);
+        list.replace(1, true);
+        m_ledStates.insert(p_addr, list);
+    }
+
+    ui->ledEndButton->setState(1);
+    Themer::rePolish(ui->ledEndButton);
+
     qDebug() << "JCP: End Setting Completed";
+}
+
+void JogControlPanel::_jogDampChanged(int p_val) {
+        ui->jogDampLabel->setText( QString(JCP_STR_DAMP).arg(p_val) );
+}
+
+void JogControlPanel::_jogSpeedChanged(int p_val) {
+
+    if( m_curAddr == 0 )
+        return;
+
+    OMaxisOptions* opts = m_opts->getOptions(m_curAddr);
+    int            disp = m_gopts->display();
+    double          val = p_val;
+
+    QString dLabel;
+    QString eLabel;
+
+        // display correct label
+
+    if( disp == Options::Steps ) {
+        dLabel = JCP_STR_STEP;
+        eLabel = JCP_STR_SEC;
+    }
+    else {
+
+        val    = m_jcm->stepsToJogSpeed(opts, p_val);
+
+        if( opts->axisMove == AXIS_MOVE_ROT )
+            dLabel = JCP_STR_DEG;
+        else if( disp == Options::Imperial )
+            dLabel = JCP_STR_IN;
+        else {
+            dLabel = JCP_STR_CM;
+            val *= 2.54; // convert to cm
+        }
+
+        eLabel = JCP_STR_MIN;
+    }
+
+
+    ui->jogSpeedLabel->setText( QString(JCP_STR_SPD).arg( val ).arg(dLabel).arg(eLabel) );
 }

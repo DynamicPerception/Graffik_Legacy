@@ -55,7 +55,7 @@ public:
     ~JogControlManager();
 
     static double stepsToJogSpeed(OMaxisOptions* p_opts, unsigned int p_steps, int p_res = 1);
-    static unsigned int jogSpeedToSteps(OMaxisOptions* p_opts, double p_speed, int p_res = 1);
+    static double jogSpeedToSteps(OMaxisOptions* p_opts, double p_speed, int p_res = 1);
 
 signals:
         // if the SCP denies a chaneg to motor (usually because a damp is still in progress)
@@ -67,6 +67,9 @@ signals:
     void endPosition(unsigned short p_addr, long p_end);
 
     void speedValueChanged(int p_spd);
+
+    void motorStarted(unsigned short p_addr);
+    void motorStopped(unsigned short p_addr);
 
 public slots:
     void playStatusChange(bool p_stat);
@@ -96,9 +99,6 @@ private:
     int m_wantType;
 
     static const int s_typeEnd = 1;
-
-    void _prepJogInputs(unsigned short p_addr);
-
 };
 
 #endif // JOGCONTROLMANAGER_H

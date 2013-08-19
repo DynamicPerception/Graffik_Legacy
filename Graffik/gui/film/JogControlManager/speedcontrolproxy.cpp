@@ -38,6 +38,7 @@ SpeedControlProxy::SpeedControlProxy(AxisOptions *c_opts) : QObject() {
     m_timerStarted = false;
     m_timer        = 0;
     m_curRes       = 1;
+    m_curAddr      = 0;
 }
 
 SpeedControlProxy::~SpeedControlProxy() {
@@ -96,7 +97,12 @@ void SpeedControlProxy::maxSpeed(float p_pct) {
 void SpeedControlProxy::setDamping(float p_secs) {
 
     m_dampPeriods = (unsigned int) ( (1000.0 * p_secs) / (float) SCP_TIME_PERIOD );
+
+    if( p_secs == 0.0 )
+        m_dampPeriods = 1;
+
 }
+
 
 void SpeedControlProxy::speedPosChange(int p_value) {
 
@@ -143,8 +149,6 @@ void SpeedControlProxy::speedPosChange(int p_value) {
  // handle the timer going off - make a speed change, if necessary
 void SpeedControlProxy::_timerFire() {
 
-   // qDebug() << "SCP: Timer Fired";
-
         // do nothing if already at target speed
     if( m_nextSpd == m_curSpd )
         return;
@@ -172,10 +176,15 @@ void SpeedControlProxy::_timerFire() {
     if( newSpd < 0.05 || newSpd == 0.0 ) {
             // next target is 'stopped'
         qDebug() << "SCP: Sending Stop";
+
         m_curDev->stopMotor();
+
         m_curPeriod = m_dampPeriods;
-        m_curSpd = 0.0;
+        m_curSpd    = 0.0;
+
         stopDampTimer();
+        emit motorStopped(m_curAddr);
+
         return;
     }
     else {
@@ -190,6 +199,7 @@ void SpeedControlProxy::_timerFire() {
                 // start at some random speed for a brief moment
             m_curDev->speed(newSpd);
             m_curDev->move(m_curDir, 0);
+            emit motorStarted(m_curAddr);
         }
         else {
                 // not currently stopped, just change the speed
@@ -253,9 +263,10 @@ void SpeedControlProxy::deviceChange(unsigned short p_addr) {
 
         qDebug() << "SCP: Device is known to us, selecting";
 
-        m_curDev = static_cast<OMAxis*>(m_devList.value(p_addr)->device);
-        m_opts = m_optObj->getOptions(p_addr);
+        m_curDev      = static_cast<OMAxis*>(m_devList.value(p_addr)->device);
+        m_opts        = m_optObj->getOptions(p_addr);
         m_devSelected = true;
+        m_curAddr     = p_addr;
 
         qDebug() << "SCP: Emiting Acceptance of" << p_addr;
         emit motorChangeAccepted(p_addr);

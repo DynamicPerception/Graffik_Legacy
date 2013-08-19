@@ -77,14 +77,32 @@ OTHER_FILES += \
        themes/DP-Blue/film.qss \
        themes/DP-Blue/film_win.qss \
        themes/DP-Blue/global_opts.qss \
+       themes/DP-Blue/jog.qss \
+       themes/DP-Blue/jog_win.qss \
+       themes/DP-Blue/main.qss \
+       themes/DP-Blue/main_win.qss \
+       themes/DP-Blue/motionbase.qss \
+       themes/DP-Blue/motionbase_osx.qss \
+       themes/DP-Blue/motion_error.qss \
+       themes/DP-Blue/motion_error_element.qss \
+       themes/DP-Blue/net_base.qss \
+       themes/DP-Blue/net_base_win.qss \
+       themes/DP-Blue/net_man.qss \
+       themes/DP-Blue/slim.qss \
+       themes/DP-Blue/theme.ini \
+       themes/DP-Blue/trackinfo.qss \
+       themes/DP-Blue/welcome.qss \
        themes/DP-Blue/img/accel-but-normal.png \
        themes/DP-Blue/img/accel-but-pressed.png \
+       themes/DP-Blue/img/affirmative-big-button-disabled.png \
        themes/DP-Blue/img/affirmative-big-button-normal.png \
        themes/DP-Blue/img/affirmative-big-button-pressed.png \
        themes/DP-Blue/img/axis-dist-bg.png \
        themes/DP-Blue/img/black-but-normal.png \
        themes/DP-Blue/img/black-but-pressed.png \
        themes/DP-Blue/img/blue-but-normal.png \
+       themes/DP-Blue/img/cam-sm-ds.png \
+       themes/DP-Blue/img/cam-sm-en.png \
        themes/DP-Blue/img/camset-but-desat.png \
        themes/DP-Blue/img/camset-but-normal.png \
        themes/DP-Blue/img/camset-but-pressed.png \
@@ -97,24 +115,51 @@ OTHER_FILES += \
        themes/DP-Blue/img/drop-down-sm-black.png \
        themes/DP-Blue/img/drop-down-sm-blue.png \
        themes/DP-Blue/img/edit-icon-sm.png \
+       themes/DP-Blue/img/elastic-gr-normal.png \
+       themes/DP-Blue/img/elastic-gr-pressed.png \
+       themes/DP-Blue/img/end-gr-normal.png \
+       themes/DP-Blue/img/end-gr-pressed.png \
+       themes/DP-Blue/img/error.png \
+       themes/DP-Blue/img/estop-pressed.png \
+       themes/DP-Blue/img/estop.png \
+       themes/DP-Blue/img/fwd-disable.png \
+       themes/DP-Blue/img/fwd-end-disable.png \
        themes/DP-Blue/img/fwd-end-normal.png \
        themes/DP-Blue/img/fwd-end-pressed.png \
        themes/DP-Blue/img/fwd-normal.png \
        themes/DP-Blue/img/fwd-pressed.png \
+       themes/DP-Blue/img/home-gr-normal.png \
+       themes/DP-Blue/img/home-gr-pressed.png \
        themes/DP-Blue/img/kinetic-bg.png \
        themes/DP-Blue/img/kinetic-sm-bg.png \
        themes/DP-Blue/img/kinetic-sm-wheel.png \
        themes/DP-Blue/img/kinetic-wheel.png \
+       themes/DP-Blue/img/led-blue-off-win.png \
+       themes/DP-Blue/img/led-blue-off.png \
+       themes/DP-Blue/img/led-blue-on-win.png \
+       themes/DP-Blue/img/led-blue-on.png \
+       themes/DP-Blue/img/led-green-off-win.png \
+       themes/DP-Blue/img/led-green-off.png \
+       themes/DP-Blue/img/led-green-on-win.png \
+       themes/DP-Blue/img/led-green-on.png \
+       themes/DP-Blue/img/led-yellow-off-win.png \
+       themes/DP-Blue/img/led-yellow-off.png \
+       themes/DP-Blue/img/led-yellow-on-win.png \
+       themes/DP-Blue/img/led-yellow-on.png \
        themes/DP-Blue/img/load-but-normal.png \
        themes/DP-Blue/img/load-but-pressed.png \
+       themes/DP-Blue/img/marker-icon.png \
        themes/DP-Blue/img/mute-but-normal.png \
        themes/DP-Blue/img/mute-but-pressed.png \
        themes/DP-Blue/img/pause-normal.png \
        themes/DP-Blue/img/pause-pressed.png \
+       themes/DP-Blue/img/play-disable.png \
        themes/DP-Blue/img/play-normal.png \
        themes/DP-Blue/img/play-pressed.png \
        themes/DP-Blue/img/res-but-normal.png \
        themes/DP-Blue/img/res-but-pressed.png \
+       themes/DP-Blue/img/rwd-disable.png \
+       themes/DP-Blue/img/rwd-home-disable.png \
        themes/DP-Blue/img/rwd-home-normal.png \
        themes/DP-Blue/img/rwd-home-pressed.png \
        themes/DP-Blue/img/rwd-normal.png \
@@ -145,6 +190,9 @@ OTHER_FILES += \
        themes/DP-Blue/img/stat-led-green.png \
        themes/DP-Blue/img/stat-led-grey.png \
        themes/DP-Blue/img/stat-led-red.png \
+       themes/DP-Blue/img/stop-disable.png \
+       themes/DP-Blue/img/stop-gr-normal.png \
+       themes/DP-Blue/img/stop-gr-pressed.png \
        themes/DP-Blue/img/stop-normal.png \
        themes/DP-Blue/img/stop-pressed.png \
        themes/DP-Blue/img/toggle-bg-off.png \
@@ -154,21 +202,9 @@ OTHER_FILES += \
        themes/DP-Blue/img/track-back-mute.png \
        themes/DP-Blue/img/track-back.png \
        themes/DP-Blue/img/track-div-back.png \
-       themes/DP-Blue/img/Untitled-25.png \
-       themes/DP-Blue/jog.qss \
-       themes/DP-Blue/main.qss \
-       themes/DP-Blue/main_win.qss \
-       themes/DP-Blue/motionbase.qss \
-       themes/DP-Blue/motionbase_osx.qss \
-       themes/DP-Blue/motion_error.qss \
-       themes/DP-Blue/motion_error_element.qss \
-       themes/DP-Blue/net_base.qss \
-       themes/DP-Blue/net_base_win.qss \
-       themes/DP-Blue/net_man.qss \
-       themes/DP-Blue/slim.qss \
-       themes/DP-Blue/theme.ini \
-       themes/DP-Blue/trackinfo.qss \
-       themes/DP-Blue/welcome.qss
+       themes/DP-Blue/img/trackdel-pressed.png \
+       themes/DP-Blue/img/trackdel.png \
+       themes/DP-Blue/img/warn-icon.png
 
 copyThemeFiles($$THEME_FILES)
 

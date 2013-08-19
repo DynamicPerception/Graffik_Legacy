@@ -32,6 +32,9 @@
 #include <QDir>
 #include <QFile>
 #include <QTextStream>
+#include <QWidget>
+#include <QStyle>
+#include <QObject>
 
 /** Dynamic Themer
 
@@ -80,6 +83,8 @@ public:
     QString theme();
 
     QString getThemeCSS(QString p_which);
+
+    static void rePolish(QWidget* p_widget);
 
 signals:
     void themeChanged();

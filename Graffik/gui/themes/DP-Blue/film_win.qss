@@ -1,6 +1,16 @@
-#camControlSlider {
- margin-left: 10px;
- margin-top: 0px;
- margin-right: 10px;
+#realTimeLabel, #filmLengthLabel, #runTimeDispLabel, #filmTimeDispLabel {
+    font: 10.5pt "Lucida Sans";
+    font-weight: bold;
 }
 
+FlickNumber QListWidget {
+    font: 20pt "Lucida Sans";
+}
+
+#runHHLabel, #runMMLabel, #runSSLabel, #filmHHLabel, #filmMMLabel, #filmSSLabel {
+    font: 31pt "Lucida Sans";
+}
+
+#rtHHLabel, #rtMMLabel, #rtSSLabel, #filmLenHHLabel, #filmLenMMLabel, #filmLenSSLabel, #curFramesLabel, #totalFramesLabel {
+    font: 8.5pt "Lucida Sans";
+}

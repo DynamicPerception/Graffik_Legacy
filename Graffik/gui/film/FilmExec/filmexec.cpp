@@ -26,28 +26,28 @@
 #include <QDebug>
 
 FilmExec::FilmExec(OMNetwork* c_net, FilmParameters* c_params, AxisOptions* c_opts, GlobalOptions *c_gopts, QObject *parent) : QObject(parent) {
-       m_net = c_net;
+    m_net    = c_net;
     m_params = c_params;
-      m_opts = c_opts;
-     m_gopts = c_gopts;
+    m_opts   = c_opts;
+    m_gopts  = c_gopts;
 
         // get an initial copy of film parameters
     m_film = m_params->getParamsCopy();
 
-           m_stat = FILM_STOPPED;
-        m_shuttle = SHUTTLE_NONE;
+    m_stat        = FILM_STOPPED;
+    m_shuttle     = SHUTTLE_NONE;
     m_filmPrepped = false;
-          m_check = false;
+    m_check       = false;
 
         // initialize our home position monitor (we'll need this later)
-      m_position = new PositionMonitor(m_net, m_gopts);
+    m_position   = new PositionMonitor(m_net, m_gopts);
     m_homeThread = new QThread();
 
     m_position->moveToThread(m_homeThread);
     m_homeThread->start();
 
         // initialize play status monitor
-          m_play = new PlayMonitor(m_net, m_params, m_gopts);
+    m_play       = new PlayMonitor(m_net, m_params, m_gopts);
     m_playThread = new QThread();
 
     m_play->moveToThread(m_playThread);
@@ -133,6 +133,8 @@ int FilmExec::_prepFilm(bool p_home) {
         unsigned short addr = axis->address();
         long distanceToMove = abs(m_film.axes.value(addr)->endDist);
         bool           mute = m_film.axes.value(addr)->mute;
+
+        axis->sleep(m_opts->getOptions(addr)->sleep); // enable or disable sleeping as requested
 
         if( distanceToMove != 0 && ! mute ) {
 
@@ -312,7 +314,8 @@ void FilmExec::start() {
 
     bool sentHome = false;
     bool   doHome = false;
-        m_shuttle = SHUTTLE_NONE;
+
+    m_shuttle     = SHUTTLE_NONE;
 
         // If stopped, we have to do several things before
         // starting - but if paused, we can just broadcast
@@ -473,11 +476,16 @@ void FilmExec::ffwd() {
                 // only do this if moving
             qDebug() << "FEx: Querying Device Position: " << addr;
 
+                // set maximum step speed
+            OMaxisOptions*    aopts = m_opts->getOptions(addr);
+            axis->maxStepSpeed(aopts->maxSteps);
+
+                // get distance fro home
             int cmdId = axis->getHomeDist();
             m_net->getManager()->hold(cmdId);
             m_cmds.insert(cmdId, axis);
 
-                // record that we sent axes home
+                // record that we want axis to go to a specific position
             m_axesHome.insert(axis, moveTo);
         }
 
@@ -535,14 +543,21 @@ void FilmExec::sendAxesTo(QHash<unsigned short, long> p_positions) {
         long         moveTo = p_positions.value(addr);
         bool           mute = m_film.axes.value(addr)->mute;
 
+        axis->sleep(m_opts->getOptions(addr)->sleep); // enable or disable sleeping as requested
+
         if( ! p_positions.contains(addr) )
             continue;
 
         if( moveTo != 0 && ! mute ) {
 
-
                 // only do this if moving
             qDebug() << "FEx: Querying Device Position: " << addr;
+
+                // set maximum step speed
+            OMaxisOptions*    aopts = m_opts->getOptions(addr);
+            axis->maxStepSpeed(aopts->maxSteps);
+
+                // request home distance
 
             int cmdId = axis->getHomeDist();
             m_net->getManager()->hold(cmdId);
@@ -616,7 +631,6 @@ unsigned long FilmExec::minInterval(OMfilmParams *p_film) {
     unsigned long delayMs = p_film->camParams->delayMS;
     unsigned long   focMs = p_film->camParams->focusMS;
     bool            focus = p_film->camParams->focus;
-
     unsigned long    ival = shutMs + delayMs;
 
     if( focus )
@@ -652,6 +666,7 @@ unsigned long FilmExec::interval(OMfilmParams* p_film) {
     unsigned long     iv = p_film->camParams->interval;
     unsigned long filmTm = p_film->length;
     unsigned long realTm = p_film->realLength;
+    int             mode = p_film->filmMode;
 
     // determine minimum amount of interval
     // time based on input values...
@@ -665,13 +680,17 @@ unsigned long FilmExec::interval(OMfilmParams* p_film) {
     else if( autoFPS ) {
             // auto fps - determine interval from
             // film length
-        iv = (float) realTm / ((float) filmTm / (float) fps);
+
+                // don't do it for SMS though, use the specified interval
+        if( mode != FILM_MODE_SMS ) {
+            iv = (float) realTm / ((float) filmTm / (float) fps);
+        }
 
         if( iv < minInt )
             iv = minInt;
 
     }
-    else if( ! manInt ) {
+    else if( ! manInt && mode != FILM_MODE_SMS ) {
             // only FPS specified, interval is minimum interval
         iv = minInt;
     }
@@ -685,16 +704,24 @@ unsigned long FilmExec::interval(OMfilmParams* p_film) {
 
 void FilmExec::_sendHome(OMfilmParams *p_film, OMAxis* p_axis) {
     qDebug() << "FEx: Sending node home" << p_axis->address();
-    OMfilmAxisParams* parms = p_film->axes.value(p_axis->address());
 
+    OMfilmAxisParams* parms = p_film->axes.value(p_axis->address());
+    OMaxisOptions*    aopts = m_opts->getOptions(p_axis->address());
+
+    p_axis->maxStepSpeed(aopts->maxSteps);
     p_axis->motorEnable();
     p_axis->easing(parms->easing);
     p_axis->microSteps(1);
     p_axis->home();
+
 }
 
 void FilmExec::_sendDistance(OMAxis *p_axis, unsigned long p_distance, bool p_dir) {
     qDebug() << "FEx: Sending node to position" << p_axis->address() << p_distance << p_dir;
+
+    OMaxisOptions*    aopts = m_opts->getOptions(p_axis->address());
+
+    p_axis->maxStepSpeed(aopts->maxSteps);
     p_axis->motorEnable();
     p_axis->microSteps(1);
     p_axis->move(p_dir, p_distance);
@@ -799,6 +826,7 @@ void FilmExec::_sendNodeMovements(OMfilmParams *p_film, OMAxis *p_axis) {
 
     qDebug() << "FE: Motor Params: " << which << dir << start << end << arrive << accel << decel << aopts->backlash;
 
+    p_axis->maxStepSpeed(aopts->maxSteps);
     p_axis->motorEnable();
     p_axis->autoPause(false); // always disable autopause
     p_axis->backlash(aopts->backlash);

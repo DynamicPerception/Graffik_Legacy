@@ -39,14 +39,22 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
     m_spinsPrepped = false;
     m_ignoreUpdate = false;
     m_checkRunning = false;
+    m_camOpts      = false;
 
     m_params = new FilmParameters(m_net, this);
     m_exec   = new FilmExec(m_net, m_params, m_opts, m_gopts, this);
-    m_busy   = new QProgressDialog(this);
-    m_jcp    = new JogControlPanel(m_net, m_opts, m_params, this);
+    m_busy   = 0;
+    m_jcp    = new JogControlPanel(m_net, m_opts, m_gopts, m_params, this);
     m_notw   = new NoTracksWidget(this);
     m_time   = new FilmTimeManager(m_exec, m_params);
     m_saver  = new FilmAutoSaver(m_net, m_params, this);
+
+    m_scPlay = new QShortcut(this);
+    m_scStop = new QShortcut(this);
+    m_scRwd  = new QShortcut(this);
+    m_scFwd  = new QShortcut(this);
+    m_scFRwd = new QShortcut(this);
+    m_scFFwd = new QShortcut(this);
 
     m_areaLayout = new QVBoxLayout;
     m_areaLayout->setContentsMargins(0, 0, 0, 0);
@@ -60,7 +68,8 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
 
     ui->visualSA->setWidget(m_areaViewPort);
 
-    m_curFrameShot = 0;
+    m_curFrameShot   = 0;
+    m_smsMinInterval = 1;
 
     // OSX has issues laying out these buttons w/o overlap,
     // this is a work-around
@@ -72,6 +81,8 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
     ui->frameFwdButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
     ui->frameRwdButton->setAttribute(Qt::WA_LayoutUsesWidgetRect);
 #endif
+
+
 
         // create our transparent overlay for drawing position line
         // this must be done after the layout is added to visualSAContents,
@@ -103,12 +114,11 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
     connect(m_exec, SIGNAL(error(QString)), this, SLOT(error(QString)));
     connect(m_exec, SIGNAL(shuttleComplete()), this, SLOT(_shuttleComplete()));
 
-    connect(m_busy, SIGNAL(canceled()), this, SLOT(_busyCanceled()));
-
     connect(this, SIGNAL(motionAreaBorders(int,int)), m_tape, SLOT(setBorders(int,int)));
     connect(this, SIGNAL(motionAreaBorders(int,int)), m_motion, SLOT(setBorders(int,int)));
 
     connect(m_params, SIGNAL(paramsReleased()), this, SLOT(filmParamsChanged()));
+    connect(m_gopts, SIGNAL(optionsChanged()), this, SLOT(optionsChanged()));
 
     connect(this, SIGNAL(playStatusChange(bool)), m_jcp, SIGNAL(playStatusChange(bool)));
     connect(this, SIGNAL(playStatusChange(bool)), m_tape, SLOT(disableClicks(bool)));
@@ -121,6 +131,15 @@ FilmWindow::FilmWindow(OMNetwork* c_net, AxisOptions *c_opts, GlobalOptions *c_g
     connect(m_time, SIGNAL(timePositionChanged(ulong)), m_motion, SLOT(timeChanged(ulong)));
 
     connect(m_jcp, SIGNAL(emergencyStop()), this, SLOT(_emergencyStop()));
+
+        // watch for key shortcuts being input
+
+    connect(m_scPlay, SIGNAL(activated()), this, SLOT(on_playButton_clicked()));
+    connect(m_scStop, SIGNAL(activated()), this, SLOT(on_stopButton_clicked()));
+    connect(m_scRwd, SIGNAL(activated()), this, SLOT(on_rewindButton_clicked()));
+    connect(m_scFwd, SIGNAL(activated()), this, SLOT(on_forwardButton_clicked()));
+    connect(m_scFRwd, SIGNAL(activated()), this, SLOT(on_frameRwdButton_clicked()));
+    connect(m_scFFwd, SIGNAL(activated()), this, SLOT(on_frameFwdButton_clicked()));
 
     _prepInputs();
 
@@ -142,6 +161,17 @@ FilmWindow::~FilmWindow() {
         delete m_areaBlocks.value(addr);
         m_areaBlocks.remove(addr);
     }
+
+    if( m_busy != 0 ) {
+        delete m_busy;
+    }
+
+    delete m_scPlay;
+    delete m_scStop;
+    delete m_scRwd;
+    delete m_scFwd;
+    delete m_scFRwd;
+    delete m_scFFwd;
 
     delete m_saver;
     delete m_time;
@@ -177,9 +207,7 @@ void FilmWindow::postInitialize() {
 
 void FilmWindow::_themeChanged() {
     setStyleSheet(SingleThemer::getStyleSheet("film"));
-    style()->unpolish(this);
-    style()->polish(this);
-    update();
+    Themer::rePolish(this);
 }
 
 
@@ -221,10 +249,7 @@ void FilmWindow::timelineClicked(unsigned long p_time) {
 
     m_error = false;
 
-    m_busy->setLabelText("Sending All Axes to Specified Point");
-    m_busy->setMinimum(0);
-    m_busy->setMaximum(0);
-    m_busy->show();
+    _drawBusyDialog(FW_STR_SPEC);
 
     m_exec->sendAxesTo(theseAxes);
 
@@ -277,8 +302,6 @@ void FilmWindow::_eraseAxis(QString p_bus, unsigned short p_addr) {
 
         _redrawMotionOverlay();
     }
-
-
 
 }
 
@@ -339,11 +362,18 @@ void FilmWindow::_displayCamControl() {
 // handle clicking the camera settings button
 
 void FilmWindow::on_camSetBut_clicked() {
+
+    m_camOpts = true;
+
     CameraControlDialog* control = new CameraControlDialog(m_params, m_net, m_opts);
     control->exec();
 
+    m_camOpts = false;
+
     OMfilmParams* params = m_params->getParams();
-    bool autoFPS = params->camParams->autoFPS;
+    bool         autoFPS = params->camParams->autoFPS;
+    int             mode = params->filmMode;
+
     m_params->releaseParams(false);
 
 
@@ -352,9 +382,17 @@ void FilmWindow::on_camSetBut_clicked() {
 
         // if not using auto fps, show what film time will be
         // based on FPS or manual interval
-    if( ! autoFPS )
+    if( ! autoFPS ) {
         _calcAutoFilmTime();
+    }
     else {
+
+            // we have to calculate a different minimum interval for
+            // SMS, instead of the normal min interval returned by FilmExec
+        if( mode == FILM_MODE_SMS ) {
+            _setSMSMinimumInterval();
+        }
+
         _checkFilmTimeConstraint();
         en = true;
     }
@@ -422,6 +460,50 @@ void FilmWindow::_prepInputs() {
     _displayCamControl();
     _inputEnable(true);
     _showFilmTime();
+
+
+}
+
+
+ // calculate minimum interval for an SMS move
+void FilmWindow::_setSMSMinimumInterval() {
+
+    OMfilmParams*  params = m_params->getParams();
+    unsigned long  minInt = m_exec->minInterval(params);
+    unsigned long minTime = minInt;
+
+    QHash<unsigned short, OMfilmAxisParams*> axes = params->axes;
+
+
+    foreach(unsigned short addr, axes.keys() ) {
+
+
+        unsigned long    maxSpeed = m_opts->getOptions(addr)->maxSteps;
+        float             maxMove = m_areaBlocks.value(addr)->area()->getPathPainter()->getMaxSpeed();
+        unsigned long      mSmove = ( (float) maxMove / (float) maxSpeed / 1000.0 );
+
+            // always give us at least 50mS to make a move
+        if( mSmove < 50 && maxMove > 0 )
+            mSmove = 50;
+
+        minTime = ( minInt + mSmove > minTime ) ? minInt + mSmove : minTime;
+
+        qDebug() << "FW: Calculating minimum interval time for" << addr << minInt << minTime << maxMove << mSmove;
+
+    }
+
+
+    m_smsMinInterval = minTime;
+
+    qDebug() << "FW: SMS Interval" << minTime << params->camParams->interval;
+
+    if( minTime > params->camParams->interval ) {
+        params->camParams->interval = minTime;
+        m_params->releaseParams(true);
+    }
+    else {
+        m_params->releaseParams(false);
+    }
 
 
 }
@@ -558,28 +640,39 @@ void FilmWindow::_checkFilmTimeConstraint() {
     unsigned long    minInt = m_exec->minInterval(params);
     unsigned long maxFrames = params->realLength / minInt;
     unsigned long   maxTime = (maxFrames / params->fps) * 1000;
+    bool            filmUpd = false;
 
-        // for SMS moves, we have to check each track and see
-        // if it can actually achieve the desired movement in the
-        // specified real time.
+
+        // Fpor SMS movements, we have a different interval, as we have to include move time
     if( params->filmMode == FILM_MODE_SMS ) {
-        m_smsErrorTracks = _checkSMSMovements(params);
+        minInt           = m_smsMinInterval;
+        maxFrames        = params->realLength / minInt;
+        maxTime          = (maxFrames / params->fps) * 1000;
     }
 
 
     maxTime = maxTime < 1000 ? 1000 : maxTime;
 
-    qDebug() << "FW: TimeConstraint: MT=" << maxTime << "LN=" << params->length;
+    qDebug() << "FW: TimeConstraint: MT=" << maxTime << "LN=" << params->length << "MI=" << minInt;
 
     if( params->length > maxTime ) {
         qDebug() << "FW: Constraining maximum film time";
         params->length = maxTime;
-        m_params->releaseParams();
+        filmUpd = true;
+    }
+
+        // for SMS moves, we have to check each track and see
+        // if it can actually achieve the desired movement in the
+        // specified real time.
+
+    if( params->filmMode == FILM_MODE_SMS ) {
+         m_smsErrorTracks = _checkSMSMovements(params);
+    }
+
+    m_params->releaseParams(filmUpd);
+
+    if( filmUpd)
         _showFilmTime();
-    }
-    else {
-        m_params->releaseParams(false);
-    }
 
         // now, do any track muting we need to...
     foreach(unsigned short addr, m_smsErrorTracks)
@@ -607,12 +700,13 @@ QList<unsigned short> FilmWindow::_checkSMSMovements(OMfilmParams *p_params) {
 
         OMfilmAxisParams* axParms = axes.value(addr);
 
-        unsigned long    moveDist = axParms->endDist;
+        long             moveDist = axParms->endDist;
         unsigned long   startShot = axParms->startTm / interval;
         unsigned long     endShot = axParms->endTm > 0 ? axParms->endTm / interval : filmLength / interval;
         unsigned long travelShots = endShot - startShot;
         unsigned long    maxSpeed = m_opts->getOptions(addr)->maxSteps;
         float             maxMove = m_areaBlocks.value(addr)->area()->getPathPainter()->getMaxSpeed();
+
 
             // set move as not sane if it can't be fulfilled
 
@@ -620,12 +714,16 @@ QList<unsigned short> FilmWindow::_checkSMSMovements(OMfilmParams *p_params) {
         m_opts->removeError(addr, AxisErrors::ErrorNoTime);
         m_opts->removeError(addr, AxisErrors::ErrorIntervalSpeed);
 
+            // normalize number to positive integer
+        if( moveDist < 0)
+            moveDist *= -1;
+
         if( moveDist > 0 ) {
 
             bool fail = false;
 
             if( freeInterval < 1 ) {
-                qDebug() << "FW: SMS Sane: No free interval time" << addr;
+                qDebug() << "FW: SMS Sane: No free interval time" << addr << interval << minInt << freeInterval;
                 m_opts->error(addr, AxisErrors::ErrorNoInterval);
                 fail = true;
             }
@@ -634,8 +732,8 @@ QList<unsigned short> FilmWindow::_checkSMSMovements(OMfilmParams *p_params) {
                 m_opts->error(addr, AxisErrors::ErrorNoTime);
                 fail = true;
             }
-            else if( (freeInterval / 1000) < (maxMove / maxSpeed) ) {
-                qDebug() << "FW: SMS Sane: Max Move will cause interval to be exceeded" << addr << maxMove;
+            else if( (freeInterval / 1000) < (maxMove / maxSpeed) && p_params->camParams->manInterval ) {
+                qDebug() << "FW: SMS Sane: Max Move will cause manual interval to be exceeded" << addr << maxMove;
                 m_opts->error(addr, AxisErrors::ErrorIntervalSpeed);
                 fail = true;
             }
@@ -703,7 +801,7 @@ void FilmWindow::_calcAutoFilmTime() {
     OMfilmParams* params = m_params->getParams();
     unsigned long interval = m_exec->interval(params);
 
-    unsigned short fps = params->fps;
+    unsigned short   fps = params->fps;
     unsigned long filmTm = params->length;
     unsigned long wallTm = params->realLength;
 
@@ -748,10 +846,7 @@ void FilmWindow::on_playButton_clicked() {
     if( fstat != FILM_STARTED ) {
         qDebug() << "FW: Send Start";
 
-        m_busy->setLabelText("Sending All Axes Home");
-        m_busy->setMinimum(0);
-        m_busy->setMaximum(0);
-        m_busy->show();
+        _drawBusyDialog(FW_STR_HOME);
 
         m_exec->start();
 
@@ -805,10 +900,7 @@ void FilmWindow::on_rewindButton_clicked() {
 
     m_error = false;
 
-    m_busy->setLabelText("Sending All Axes to Start Point");
-    m_busy->setMinimum(0);
-    m_busy->setMaximum(0);
-    m_busy->show();
+    _drawBusyDialog(FW_STR_START);
 
     m_exec->rewind();
 
@@ -824,10 +916,7 @@ void FilmWindow::on_forwardButton_clicked() {
 
     m_error = false;
 
-    m_busy->setLabelText("Sending All Axes to End Point");
-    m_busy->setMinimum(0);
-    m_busy->setMaximum(0);
-    m_busy->show();
+    _drawBusyDialog(FW_STR_END);
 
     m_exec->ffwd();
 
@@ -884,12 +973,15 @@ void FilmWindow::_setPlayButtonStatus(int p_stat) {
     if( p_stat == s_DisPres ) {
         ui->playButton->setEnabled(false);
         ui->playButton->setDown(true);
+        m_scPlay->setEnabled(false);
     }
     if( p_stat == s_Disable ) {
         ui->playButton->setEnabled(false);
+        m_scPlay->setEnabled(false);
     }
     else {
         ui->playButton->setEnabled(true);
+        m_scPlay->setEnabled(true);
     }
 
 
@@ -898,24 +990,24 @@ void FilmWindow::_setPlayButtonStatus(int p_stat) {
        ui->playButton->setState(0);
         // need to update stylesheet as it reads a custom property for border-image
         // selection
-       ui->playButton->style()->unpolish(ui->playButton);
-       ui->playButton->style()->polish(ui->playButton);
-       this->update();
+       Themer::rePolish(ui->playButton);
     }
     else if( p_stat == s_Pause ) {
        ui->playButton->setDown(false);
        ui->playButton->setState(1);
-       ui->playButton->style()->unpolish(ui->playButton);
-       ui->playButton->style()->polish(ui->playButton);
-       this->update();
+       Themer::rePolish(ui->playButton);
     }
 }
 
 void FilmWindow::_setStopButtonStatus(int p_stat) {
-    if( p_stat == s_Disable )
+    if( p_stat == s_Disable ) {
         ui->stopButton->setEnabled(false);
-    else
+        m_scStop->setEnabled(false);
+    }
+    else {
         ui->stopButton->setEnabled(true);
+        m_scStop->setEnabled(false);
+    }
 }
 
 
@@ -1046,7 +1138,7 @@ void FilmWindow::_redrawMotionOverlay() {
 
 void FilmWindow::_filmStarted() {
     qDebug() << "FW: Got filmStarted";
-    m_busy->hide();
+   _hideBusyDialog();
     _inputEnable(false);
     emit playStatusChange(true);
 }
@@ -1061,7 +1153,7 @@ void FilmWindow::error(QString p_err) {
             // make sure everything is stopped (may trigger another error)
         on_stopButton_clicked();
 
-        m_busy->hide();
+        _hideBusyDialog();
 
         ErrorDialog error;
         error.setError(p_err);
@@ -1088,6 +1180,9 @@ void FilmWindow::_inputEnable(bool p_stat) {
     ui->rewindButton->setEnabled(p_stat);
     ui->camControlSlider->setEnabled(p_stat);
 
+    m_scFwd->setEnabled(p_stat);
+    m_scRwd->setEnabled(p_stat);
+
         // only control status of certain camera inputs, if
         // cam control enabled
 
@@ -1107,16 +1202,22 @@ void FilmWindow::_inputEnable(bool p_stat) {
         if( mode == FILM_MODE_SMS ) {
             ui->frameFwdButton->setEnabled(p_stat);
             ui->frameRwdButton->setEnabled(p_stat);
+            m_scFFwd->setEnabled(p_stat);
+            m_scFRwd->setEnabled(p_stat);
         }
         else {
             ui->frameFwdButton->setEnabled(false);
             ui->frameRwdButton->setEnabled(false);
+            m_scFFwd->setEnabled(false);
+            m_scFRwd->setEnabled(false);
         }
     }
     else {
         ui->camSetBut->setEnabled(false);
         ui->frameFwdButton->setEnabled(false);
         ui->frameRwdButton->setEnabled(false);
+        m_scFFwd->setEnabled(false);
+        m_scFRwd->setEnabled(false);
     }
 }
 
@@ -1131,7 +1232,7 @@ void FilmWindow::on_plugJogButton_clicked() {
   */
 
 void FilmWindow::load() {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Film"), "", tr("Film Files (*.film)"));
+    QString fileName = QFileDialog::getOpenFileName(this, FW_STR_OPEN, "", tr("Film Files (*.film)"));
     qDebug() << "FW: FilmOpen Got File: " << fileName;
     FilmFileHandler::readFile(fileName, m_params, m_net);
 }
@@ -1143,20 +1244,78 @@ void FilmWindow::load() {
 
 void FilmWindow::save() {
 
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Film"), "", tr("Film Files (*.film)"));
+    QString fileName = QFileDialog::getSaveFileName(this, FW_STR_SAVE, "", tr("Film Files (*.film)"));
     qDebug() << "FW: FilmSave Got File: " << fileName;
     FilmFileHandler::writeFile(fileName, m_params);
 }
 
+void FilmWindow::optionsChanged() {
+
+    qDebug() << "FW: Got Options Changed";
+
+    QHash<int, QString> hotkeys = m_gopts->hotkeys();
+
+    if( hotkeys.contains(HotKeys::FilmPlay) )
+        m_scPlay->setKey(hotkeys.value(HotKeys::FilmPlay));
+
+    if( hotkeys.contains(HotKeys::FilmStop) )
+        m_scStop->setKey(hotkeys.value(HotKeys::FilmStop));
+
+    if( hotkeys.contains(HotKeys::FilmFwd) )
+        m_scFwd->setKey(hotkeys.value(HotKeys::FilmFwd));
+
+    if( hotkeys.contains(HotKeys::FilmRwd) )
+        m_scRwd->setKey(hotkeys.value(HotKeys::FilmRwd));
+
+    if( hotkeys.contains(HotKeys::FilmFFwd) )
+        m_scFFwd->setKey(hotkeys.value(HotKeys::FilmFFwd));
+
+    if( hotkeys.contains(HotKeys::FilmFRwd) )
+        m_scFRwd->setKey(hotkeys.value(HotKeys::FilmFRwd));
+
+
+}
+
 void FilmWindow::filmParamsChanged() {
         // re-display inputs when params change
+
     qDebug() << "FW: Got Film Params Changed";
-    _checkFilmTimeConstraint();
+
+        // don't check film time constraints if camera
+        // options screen is currently displayed
+    if( ! m_camOpts )
+        _checkFilmTimeConstraint();
+
     _prepInputs();
 }
 
 
 void FilmWindow::_shuttleComplete() {
-    m_busy->hide();
+    _hideBusyDialog();
     _inputEnable(true);
+}
+
+
+void FilmWindow::_drawBusyDialog(QString p_str) {
+
+    if( m_busy != 0 ) {
+        delete m_busy;
+        m_busy = 0;
+    }
+
+    m_busy = new QProgressDialog(p_str, FW_STR_CANCEL, 0, 0, this, Qt::CustomizeWindowHint | Qt::WindowTitleHint);
+    connect(m_busy, SIGNAL(canceled()), this, SLOT(_busyCanceled()));
+    m_busy->setLabelText(p_str);
+    m_busy->setWindowModality(Qt::WindowModal);
+    m_busy->show();
+}
+
+void FilmWindow::_hideBusyDialog() {
+
+    if( m_busy != 0 ) {
+        m_busy->hide();
+        disconnect(m_busy, SIGNAL(canceled()), this, SLOT(_busyCanceled()));
+        delete m_busy;
+        m_busy = 0;
+    }
 }

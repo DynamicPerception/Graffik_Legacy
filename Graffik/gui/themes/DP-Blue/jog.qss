@@ -4,6 +4,63 @@
     qproperty-maxAngle: 140;
 }
 
+#ledFrame {
+
+    border: 0px;
+    padding-left: 9px;
+    padding-right: 10px;
+}
+
+ /* Off */
+#ledHomeButton {
+
+    border-image: url(themes/DP-Blue/img/led-blue-off.png);
+    border: 0px transparent;
+    min-height: 13px;
+    max-height: 13px;
+    min-width: 13px;
+    max-width: 13px;
+}
+
+ /* On */
+#ledHomeButton[state="1"] {
+    border-image: url(themes/DP-Blue/img/led-blue-on.png);
+}
+
+ /* Off */
+#ledEndButton {
+
+    border-image: url(themes/DP-Blue/img/led-green-off.png);
+    border: 0px transparent;
+    min-height: 13px;
+    max-height: 13px;
+    min-width: 13px;
+    max-width: 13px;
+}
+
+ /* On */
+#ledEndButton[state="1"] {
+    border-image: url(themes/DP-Blue/img/led-green-on.png);
+}
+
+ /* Off */
+
+#ledMovingButton {
+
+    border-image: url(themes/DP-Blue/img/led-yellow-off.png);
+    border: 0px transparent;
+    min-height: 13px;
+    max-height: 13px;
+    min-width: 13px;
+    max-width: 13px;
+}
+
+ /* On */
+#ledMovingButton[state="1"] {
+
+    border-image: url(themes/DP-Blue/img/led-yellow-on.png);
+}
+
     /* Sticky Mode */
 #modeButton {
     border-image: url(themes/DP-Blue/img/elastic-gr-normal.png);

@@ -76,11 +76,14 @@ const int MA_MUTE_NA  = 0;
 const int MA_MUTE_MT  = 1;
 const int MA_MUTE_ER  = 2;
 
+// grab handle size, in px
+const unsigned int MA_GRAB_SIZE = 10;
+// region growth around grab circle for registering a hit
+const unsigned int MA_HIT_AREA = 40;
+
 namespace Ui {
 class MotionArea;
 }
-
-Q_DECLARE_METATYPE(QLinearGradient)
 
 
 /** Motion Area Widget
@@ -187,6 +190,7 @@ private:
 
 
     void _refreshStylesheet();
+    bool _inHitRegion(QPoint* p_point, QRect p_rect);
 };
 
 #endif // MOTIONAREA_H
