@@ -1,5 +1,6 @@
 DEFINES *= QT_USE_QSTRINGBUILDER
 # DEFINES *= QT_NO_DEBUG_OUTPUT
+QT += declarative
 
 CONFIG(release, debug|release) {
     # un-comment to disable all debugging output from libraries
@@ -33,7 +34,6 @@ HEADERS += \
     film/MotionArea/notrackswidget.h \
     film/FilmExec/filmtimemanager.h \
     film/FilmFileHandler/filmautosaver.h
-
 
 SOURCES += \
     film/filmwindow.cpp \
@@ -74,3 +74,6 @@ FORMS += \
     film/MotionArea/ErrorConsole/motionerrordialog.ui \
     film/MotionArea/ErrorConsole/motionerrorelement.ui \
     film/MotionArea/notrackswidget.ui
+
+RESOURCES += \
+    film/resources.qrc

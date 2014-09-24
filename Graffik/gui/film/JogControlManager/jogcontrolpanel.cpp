@@ -25,6 +25,9 @@
 #include "ui_jogcontrolpanel.h"
 
 #include <QDebug>
+#include <QDeclarativeView>
+#include <QVBoxLayout>
+#include <QGraphicsObject>
 
 JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, GlobalOptions *c_gopts, FilmParameters *c_params, QWidget *parent) : QWidget(parent), ui(new Ui::JogControlPanel) {
     ui->setupUi(this);
@@ -39,6 +42,15 @@ JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, GlobalOp
     m_ldModel = new LiveDeviceModel(m_net, this);
     m_jcm     = new JogControlManager(m_net, m_opts, m_ldModel, this);
 
+    QDeclarativeView *qmlView = new QDeclarativeView(this);
+    qmlView->setMinimumSize(240, 337);
+    qmlView->setSource(QUrl("qrc:/JogControlManager/qml/Joystick.qml"));
+    QVBoxLayout *layout = new QVBoxLayout(ui->jogDial);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->addWidget(qmlView);
+    qmlView->show();
+    QObject *jogDial = qmlView->rootObject();
+
         // connect the device list display to the live device model
     ui->devButtonList->setModel(m_ldModel);
 
@@ -48,9 +60,10 @@ JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, GlobalOp
         // reflect the eStop signal here, so it can be captured upstream as well
     connect(ui->stopButton, SIGNAL(clicked()), this, SLOT(_eStop()));
     connect(this, SIGNAL(emergencyStop()), m_jcm, SLOT(emergencyStop()));
+    connect(this, SIGNAL(emergencyStop()), jogDial, SLOT(emergencyStop()));
 
     connect(ui->modeButton, SIGNAL(clicked()), this, SLOT(_modeClicked()));
-    connect(ui->jogDial, SIGNAL(mouseReleased()), this, SLOT(_dialReleased()));
+    //connect(ui->jogDial, SIGNAL(mouseReleased()), this, SLOT(_dialReleased()));
 
         // listen to important signals from the JCM
     connect(m_jcm, SIGNAL(motorChangeDenied(unsigned short)), this, SLOT(_jogMotorChangeDenied(unsigned short)));
@@ -70,7 +83,7 @@ JogControlPanel::JogControlPanel(OMNetwork *c_net, AxisOptions* c_opts, GlobalOp
     connect(ui->jogDampSlider, SIGNAL(valueChanged(int)), this, SLOT(_jogDampChanged(int)));
     connect(ui->jogSpeedSlider, SIGNAL(valueChanged(int)), m_jcm, SLOT(jogMaxSpeedChange(int)));
     connect(ui->jogSpeedSlider, SIGNAL(valueChanged(int)), this, SLOT(_jogSpeedChanged(int)));
-    connect(ui->jogDial, SIGNAL(valueChanged(int)), m_jcm, SLOT(speedChange(int)));
+    connect(jogDial, SIGNAL(valueChanged(int)), m_jcm, SLOT(speedChange(int)));
 
     connect(ui->jogHomeButton, SIGNAL(clicked()), this, SLOT(_homeSet()));
 
@@ -185,13 +198,13 @@ void JogControlPanel::_modeClicked() {
 
 void JogControlPanel::_dialReleased() {
     if( m_curMode == true ) {
-        ui->jogDial->setValue(0);
+        //ui->jogDial->setValue(0);
         m_jcm->speedChange(0);
     }
 }
 
 void JogControlPanel::_eStop() {
-    ui->jogDial->setValue(0);
+    //ui->jogDial->setValue(0);
     emit emergencyStop();
 }
 

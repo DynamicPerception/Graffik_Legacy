@@ -1,8 +1,3 @@
-#jogDial {
-    qproperty-backgroundImage: url(themes/DP-Blue/img/dial-back.png);
-    qproperty-needleImage: url(themes/DP-Blue/img/dial-pointer.png);
-    qproperty-maxAngle: 140;
-}
 
 #ledFrame {
 
@@ -150,10 +145,9 @@
 }
 
 #jogDampSlider::groove:horizontal, #jogSpeedSlider::groove:horizontal {
-    border-image: url(themes/DP-Blue/img/slider-back.png);
+    border-image: url(themes/DP-Blue/img/slider-back2.png);
      border-left: 0px transparent;
      border-right: 0px transparent;
-     border-bottom: -3px transparent;
      border-top: 0px transparent;
      padding: 0px;
      margin: 0px;
@@ -162,19 +156,7 @@
 #jogDampSlider::handle:horizontal, #jogSpeedSlider::handle:horizontal {
     margin:0px;
     padding:0px;
-     image: url(themes/DP-Blue/img/slider-handle.png);
-}
-
-#jogDampSlider::sub-page:horizontal, #jogSpeedSlider::sub-page:horizontal {
-    background-image: url(themes/DP-Blue/img/slider-back-gray.png);
-    background-clip:content;
-    background-repeat:no-repeat;
-     border-left: 0px transparent;
-     border-right: 0px transparent;
-     border-bottom: -3px transparent;
-     border-top: 0px transparent;
-     padding: 0px;
-     margin: 0px;
+     image: url(themes/DP-Blue/img/slider-handle2.png);
 }
 
 #devButtonlist {

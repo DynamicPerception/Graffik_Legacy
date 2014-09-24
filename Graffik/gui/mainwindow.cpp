@@ -180,7 +180,6 @@ void MainWindow::on_actionHelp_Contents_triggered() {
     help->show();
 }
 
-
 void MainWindow::on_actionSettings_triggered() {
     qDebug() << "MW: Settings Triggered";
     GlobalOptionsDialog options(m_globalOpts);

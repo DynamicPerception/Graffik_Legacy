@@ -105,7 +105,6 @@ void SpeedControlProxy::setDamping(float p_secs) {
 
 
 void SpeedControlProxy::speedPosChange(int p_value) {
-
     if( m_devSelected == false )
         return;
 
@@ -142,8 +141,6 @@ void SpeedControlProxy::speedPosChange(int p_value) {
     m_curPeriod = 1;
 
     qDebug() << "SCP: Got Speed request: " << m_nextSpd << "Steps/Sec";
-
-
 }
 
  // handle the timer going off - make a speed change, if necessary

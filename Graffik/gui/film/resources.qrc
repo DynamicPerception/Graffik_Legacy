@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>JogControlManager/qml/beHandler.png</file>
+        <file>JogControlManager/qml/beWay.png</file>
+        <file>JogControlManager/qml/handlerShadow.png</file>
+        <file>JogControlManager/qml/Joystick.qml</file>
+        <file>JogControlManager/qml/joystickBackground.png</file>
+        <file>JogControlManager/qml/joystickHandler.png</file>
+    </qresource>
+</RCC>
